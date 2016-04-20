@@ -1,0 +1,94 @@
+<html>
+<head>
+	<title></title>
+	<link href="http://cdn.bootcss.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" rel="stylesheet">
+	<style type="text/css">
+	</style>
+</head>
+<body>
+	当前网页共包含 5 个脚本资源：2 个内嵌，3 个外链文件，0 个动态加载。
+<table class="table table-bordered table-hover">
+	<thead>
+		<tr>
+			<th>文件名</th>
+			<th>类型</th>
+			<th>耗时</th>
+			<th>大小</th>
+			<th>行数</th>
+			<th>执行报错</th>
+			<th>语法错误</th>
+			<th>状态</th>
+		</tr>
+	</thead>
+	<tbody>
+			<tr>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+	</tbody>
+	
+</table>
+
+
+<table class="table table-bordered table-hover">
+	<thead>
+		<tr>
+			<th>time</th>
+			<th>name</th>
+			<th>method</th>
+			<th>status</th>
+			<th>domain</th>
+			<th>type</th>
+		</tr>
+	</thead>
+	<tbody>
+		<% for(var i in data){
+			if(data[i].name =='ajax') {
+		%>
+			<tr>
+				<td><%=data[i].cb%></td>
+				<td><%=data[i].url%></td>
+				<td><%=data[i].method%></td>
+				<td>200</td>
+				<td><%=data[i].domain%></td>
+				<td><%=data[i].type%></td>
+			</tr>
+		<%}}%>
+	</tbody>
+	
+</table>
+
+<table class="table table-bordered table-hover">
+	<thead>
+		<tr>
+			<th>请求文件</th>
+			<th>行号</th>
+			<th>列号</th>
+			<th>name</th>
+			<th>message</th>
+			<th>stack</th>
+		</tr>
+	</thead>
+	<tbody>
+		<% for(var i in data){
+			if(data[i].name !='ajax') {
+		%>
+			<tr>
+				<!-- <td><%=data[i]['metaData[script][src]']%></td> -->
+				<td><%=data[i].file%></td>
+				<td><%=data[i].lineNumber%></td>
+				<td><%=data[i].columnNumber%></td>
+				<td><%=data[i].name%></td>
+				<td><%=data[i].message%></td>
+				<td><%=data[i].stacktrace%></td>
+			</tr>
+		<%}}%>
+	</tbody>
+	
+</table>
+
+</body>
+</html>
