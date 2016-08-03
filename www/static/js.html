@@ -1,57 +1,55 @@
 <div class="padding-md">
-	<div class="row">
-		<div class="col-sm-6">
-			<div class="page-title">
-				脚本错误
-			</div>
-			<div class="page-sub-header">
-				脚本错误 异常数据列表
-			</div>
-		</div>
-	</div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="page-title">
+                脚本错误
+            </div>
+            <div class="page-sub-header">
+                脚本错误 异常数据列表
+            </div>
+        </div>
+    </div>
 
-	<div class="row">
-		<div class="col-sm-12">
-			<table class="table table-bordered table-striped">
-				<thead>
-					<tr>
-						<th>发生时间</th>
-						<th>访问地址</th>
-						<th>行号</th>
-						<th>列号</th>
-						<th>错误信息</th>
-						<th>查看</th>
-					</tr>
-				</thead>
-				<tbody id="list">
-					
-				</tbody>
-			</table>
-		</div>
-	</div>
+    <div class="row">
+        <div class="col-sm-12">
+            <table class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>发生时间</th>
+                    <th>访问地址</th>
+                    <th>行号</th>
+                    <th>列号</th>
+                    <th>错误信息</th>
+                    <th>查看</th>
+                </tr>
+                </thead>
+                <tbody id="list">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
 
 </div>
 
-
 <script>
-	$(function(){
+    $(function () {
 
-		$.ajax({
-			url:'/js/view',
-			success: function(data) {
+        $.ajax({
+            url: '/js/view?type=error',
+            success: function (data) {
+                data = data.data;
 
-				var text = '';
+                var text = '';
 
-				for(var i=data.length-1; i>0; i--) {
-					if(data[i].severity == 'error') {
-						text += '<tr><td>'+data[i].cb+'</td><td>'+data[i].url+'</td><td>'+data[i].lineNumber+'</td><td>'+data[i].columnNumber+'</td><td>'+data[i].name+'</td><td><span class="badge badge-warning">详情</span></td></tr>'
-					} 
-				}
+                for (var i = data.length - 1; i > 0; i--) {
+                    text += '<tr><td>' + data[i].cb + '</td><td>' + data[i].url + '</td><td>' + data[i].lineNumber + '</td><td>' + data[i].columnNumber + '</td><td>' + data[i].name + '</td><td><span class="badge badge-warning">详情</span></td></tr>'
+                }
 
-				$('#list').html(text);
-			}
-		});
-	});
-	
+                $('#list').html(text);
+            }
+        });
+    });
+
 </script>
 

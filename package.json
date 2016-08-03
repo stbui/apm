@@ -1,6 +1,6 @@
 {
-  "name": "thinkjs-application",
-  "description": "application created by thinkjs",
+  "name": "apm",
+  "description": "apm",
   "version": "1.0.0",
   "scripts": {
     "start": "node www/development.js",
@@ -9,7 +9,7 @@
     "watch": "npm run watch-compile"
   },
   "dependencies": {
-    "thinkjs": "2.1.x",
+    "thinkjs": "2.2.x",
     "babel-runtime": "6.x.x"
   },
   "devDependencies": {

@@ -34,9 +34,9 @@
 	$(function(){
 
 		$.ajax({
-			url:'http://127.0.0.1:8080/js/view',
+			url:'/js/view?type=ajax',
 			success: function(data) {
-
+				data = data.data;
 				var text = '';
 				for(var i=data.length-1; i>0; i--) {
 					if(data[i].name == 'ajax') {

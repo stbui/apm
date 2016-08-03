@@ -6,6 +6,19 @@
 
 </head>
 <body>
-apm
+代码：<br>
+&lt;script src="http://172.16.96.188:8360/static/js/tongji.js" data-apikey="61e19fe93e5dcd255178a9b94d12c2cf"&gt;&lt;/script&gt;
+<script src="http://172.16.96.188:8360/static/js/tongji.js" data-autoNotify="true" data-apikey="61e19fe93e5dcd255178a9b94d12c2cf"></script>
+
+function createScript(){
+var script =  document.createElement('script');
+script.type='text/script';
+script.scr='http://172.16.96.188:8360/static/js/tongji.js';
+script.setAttribute('data-apiKey','61e19fe93e5dcd255178a9b94d12c2cf');
+script.setAttribute('data-autoNotify','true');
+
+document.getElementsByTagName("head")[ 0 ].appendChild(script);
+}
+
 </body>
 </html>
