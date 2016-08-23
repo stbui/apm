@@ -39,11 +39,11 @@ export default class extends Base {
 
         // 存入数据库中
         if (param['name'] == 'pef') {
-            this.model('appPef').add(param);
+            this.model('apppef').add(param);
         } else if (param.name == 'ajax') {
-            this.model('appAjax').add(param);
+            this.model('appajax').add(param);
         } else {
-            this.model('appError').add(param);
+            this.model('apperror').add(param);
         }
 
 
@@ -55,15 +55,14 @@ export default class extends Base {
         const {type} = param;
 
 
-        let  appPerData;
-        if(!think.isEmpty(type) && type =='pef') {
-            appPerData = await this.model('appPef').select();
-        } else if(type =='ajax') {
-            appPerData = await this.model('appAjax').select();
+        let appPerData;
+        if (!think.isEmpty(type) && type == 'pef') {
+            appPerData = await this.model('apppef').select();
+        } else if (type == 'ajax') {
+            appPerData = await this.model('appajax').select();
         } else {
-            appPerData = await this.model('appError').select();
+            appPerData = await this.model('apperror').select();
         }
-
 
 
         // this.assign('data',appPerData);

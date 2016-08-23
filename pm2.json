@@ -2,7 +2,7 @@
   "apps": [{
     "name": "apm",
     "script": "www/production.js",
-    "cwd": "/www/web/stbui/apm",
+    "cwd": "/www/web/stbui_com/public_html/apm",
     "exec_mode": "cluster",
     "instances": 0,
     "max_memory_restart": "1G",
