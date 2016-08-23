@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50547
 File Encoding         : 65001
 
-Date: 2016-08-03 17:53:02
+Date: 2016-08-22 18:05:27
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -96,4 +96,4 @@ CREATE TABLE `apppef` (
   `cb` varchar(255) DEFAULT NULL,
   `ct` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=310 DEFAULT CHARSET=gbk;
+) ENGINE=MyISAM AUTO_INCREMENT=315 DEFAULT CHARSET=gbk;

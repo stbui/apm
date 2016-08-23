@@ -135,7 +135,7 @@
   var API_KEY_REGEX = /^[0-9a-f]{32}$/i;
   var FUNCTION_REGEX = /function\s*([\w\-$]+)?\s*\(/i;
 
-  var DEFAULT_BASE_ENDPOINT = "http://172.16.96.188:8360/";
+  var DEFAULT_BASE_ENDPOINT = "http://apm.431103.com/";
   var DEFAULT_NOTIFIER_ENDPOINT = DEFAULT_BASE_ENDPOINT + "js";
   var NOTIFIER_VERSION = "2.5.0";
 
