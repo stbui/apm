@@ -1,1 +1,643 @@
-!function(e,t){function n(e,t){try{if("function"!=typeof e)return e;if(!e.bugsnag){var n=o();e.bugsnag=function(r){if(t&&t.eventHandler&&(b=r),w=n,!T){var o=e.apply(this,arguments);return w=null,o}try{return e.apply(this,arguments)}catch(a){throw f("autoNotify",!0)&&(R.notifyException(a,null,null,"error"),h()),a}finally{w=null}},e.bugsnag.bugsnag=e.bugsnag}return e.bugsnag}catch(r){return e}}function r(){U=!1}function o(){var e=document.currentScript||w;if(!e&&U){var t=document.scripts||document.getElementsByTagName("script");e=t[t.length-1]}return e}function a(e){var t=o();t&&(e.script={src:t.src,content:f("inlineScript",!0)?t.innerHTML:""})}function i(t){var n=f("disableLog"),r=e.console;void 0===r||void 0===r.log||n||r.log("[apm] "+t)}function u(t,n,r){var o=f("maxDepth",C);if(r>=o)return encodeURIComponent(n)+"=[RECURSIVE]";r=r+1||1;try{if(e.Node&&t instanceof e.Node)return encodeURIComponent(n)+"="+encodeURIComponent(y(t));var a=[];for(var i in t)if(t.hasOwnProperty(i)&&null!=i&&null!=t[i]){var c=n?n+"["+i+"]":i,s=t[i];a.push("object"==typeof s?u(s,c,r):encodeURIComponent(c)+"="+encodeURIComponent(s))}return a.join("&")}catch(l){return encodeURIComponent(n)+"="+encodeURIComponent(""+l)}}function c(e,t,n){if(null==t)return e;if(n>=f("maxDepth",C))return"[RECURSIVE]";e=e||{};for(var r in t)if(t.hasOwnProperty(r))try{e[r]=t[r].constructor===Object?c(e[r],t[r],n+1||1):t[r]}catch(o){e[r]=t[r]}return e}function s(e,t){if(e+="?"+u(t)+"&ct=img&cb="+(new Date).getTime(),"undefined"!=typeof BUGSNAG_TESTING&&R.testRequest)R.testRequest(e,t);else{var n=f("notifyHandler");if("xhr"===n){var r=new XMLHttpRequest;r.open("GET",e,!0),r.send()}else{var o=new Image;o.src=e}}}function l(e){var t={},n=/^data\-([\w\-]+)$/;if(e)for(var r=e.attributes,o=0;o<r.length;o++){var a=r[o];if(n.test(a.nodeName)){var i=a.nodeName.match(n)[1];t[i]=a.value||a.nodeValue}}return t}function f(e,t){q=q||l(_);var n=void 0!==R[e]?R[e]:q[e.toLowerCase()];return"false"===n&&(n=!1),void 0!==n?n:t}function d(e){return e&&e.match(x)?!0:(i("Invalid API key '"+e+"'"),!1)}function p(t,n){var r=f("apiKey");if(d(r)&&k){k-=1;var o=f("releaseStage","production"),a=f("notifyReleaseStages");if(a){for(var u=!1,l=0;l<a.length;l++)if(o===a[l]){u=!0;break}if(!u)return}var p=[t.name,t.message,t.stacktrace].join("|");if(p!==L){L=p,b&&(n=n||{},n["Last Event"]=v(b));var m={notifierVersion:H,apiKey:r,projectRoot:f("projectRoot")||e.location.protocol+"//"+e.location.host,context:f("context")||e.location.pathname,userId:f("userId"),user:f("user"),metaData:c(c({},f("metaData")),n),releaseStage:o,appVersion:f("appVersion"),url:e.location.href,userAgent:navigator.userAgent,language:navigator.language||navigator.userLanguage,severity:t.severity,name:t.name,message:t.message,stacktrace:t.stacktrace,file:t.file,lineNumber:t.lineNumber,columnNumber:t.columnNumber,payloadVersion:"2"},g=R.beforeNotify;if("function"==typeof g){var y=g(m,m.metaData);if(y===!1)return}return 0===m.lineNumber&&/Script error\.?/.test(m.message)?i("Ignoring cross-domain script error. See https://bugsnag.com/docs/notifiers/js/cors"):void s(f("endpoint")||G,m)}}}function m(){var e,t,n=10,r="[anonymous]";try{throw new Error("")}catch(o){e="<generated>\n",t=g(o)}if(!t){e="<generated-ie>\n";var a=[];try{for(var u=arguments.callee.caller.caller;u&&a.length<n;){var c=M.test(u.toString())?RegExp.$1||r:r;a.push(c),u=u.caller}}catch(s){i(s)}t=a.join("\n")}return e+t}function g(e){return e.stack||e.backtrace||e.stacktrace}function v(e){var t={millisecondsAgo:new Date-e.timeStamp,type:e.type,which:e.which,target:y(e.target)};return t}function y(e){if(e){var t=e.attributes;if(t){for(var n="<"+e.nodeName.toLowerCase(),r=0;r<t.length;r++)t[r].value&&"null"!==t[r].value.toString()&&(n+=" "+t[r].name+'="'+t[r].value+'"');return n+">"}return e.nodeName}}function h(){I+=1,e.setTimeout(function(){I-=1})}function E(t,n,r){var o=t[n],a=r(o);t[n]=a,"undefined"!=typeof BUGSNAG_TESTING&&e.undo&&e.undo.push(function(){t[n]=o})}function S(){if("undefined"===e.performance)return i("performance does not support"),!1;var t=e.performance.timing,n={apiKey:f("apiKey"),name:"pef",type:"pef",url:e.location.href,connect:t.connectEnd-t.connectStart,pageloadtime:t.loadEventStart-t.navigationStart,ttfb:t.responseStart-t.navigationStart,request:t.responseStart-t.requestStart,response:t.responseEnd-t.responseStart,dom:t.domContentLoadedEventStart-t.domLoading,domReady:"",load:t.loadEventStart-t.domLoading,tcp:t.connectEnd-t.connectStart,dns:t.domainLookupEnd-t.domainLookupStart,black_waiting_time:t.responseStart-t.navigationStart,fist_page_time:t.responseStart-t.navigationStart,operation_time:0,total_time:t.loadEventEnd-t.navigationStart,last_unload:t.unloadEventEnd-t.unloadEventStart,redirect:t.redirectEnd-t.redirectStart};console.log(t.loadEventEnd,t.navigationStart),s(f("endpoint")||G,n)}function N(){var t=e.XMLHttpRequest.prototype.open,n=e.XMLHttpRequest.prototype.send,r={apiKey:f("apiKey"),name:"ajax",domain:e.location.host,type:"xhr"};e.XMLHttpRequest.prototype.open=function(n,o){return r.method=n,r.url=/^http|https/g.test(o)?o:e.location.origin+o,s(f("endpoint")||G,r),t.apply(this,arguments)},e.XMLHttpRequest.prototype.send=function(){return n.apply(this,arguments)}}var b,w,L,R={},T=!0,I=0,k=10,C=5;R.noConflict=function(){return e.Bugsnag=t,"undefined"==typeof t&&delete e.Bugsnag,R},R.refresh=function(){k=10},R.notifyException=function(e,t,n,r){e&&(t&&"string"!=typeof t&&(n=t,t=void 0),n||(n={}),a(n),p({name:t||e.name,message:e.message||e.description,stacktrace:g(e)||m(),file:e.fileName||e.sourceURL,lineNumber:e.lineNumber||e.line,columnNumber:e.columnNumber?e.columnNumber+1:void 0,severity:r||"warning"},n))},R.notify=function(t,n,r,o){p({name:t,message:n,stacktrace:m(),file:e.location.toString(),lineNumber:1,severity:o||"warning"},r)};var U="complete"!==document.readyState;document.addEventListener?(document.addEventListener("DOMContentLoaded",r,!0),e.addEventListener("load",r,!0)):e.attachEvent("onload",r);var q,x=/^[0-9a-f]{32}$/i,M=/function\s*([\w\-$]+)?\s*\(/i,A="http://apm.431103.com/",G=A+"js",H="2.5.0",B=document.getElementsByTagName("script"),_=B[B.length-1];if(e.atob){if(e.ErrorEvent)try{0===new e.ErrorEvent("test").colno&&(T=!1)}catch(j){}}else T=!1;if(f("autoNotify",!0)&&(N(),setTimeout(function(){S()},0)),f("autoNotify",!0)){E(e,"onerror",function(t){return"undefined"!=typeof BUGSNAG_TESTING&&(R._onerror=t),function(n,r,o,i,u){var c=f("autoNotify",!0),s={};!i&&e.event&&(i=e.event.errorCharacter),a(s),w=null,c&&!I&&p({name:u&&u.name||"window.onerror",message:n,file:r,lineNumber:o,columnNumber:i,stacktrace:u&&g(u)||m(),severity:"error"},s),"undefined"!=typeof BUGSNAG_TESTING&&(t=R._onerror),t&&t(n,r,o,i,u)}});var D=function(e){return function(t,r){if("function"==typeof t){t=n(t);var o=Array.prototype.slice.call(arguments,2);return e(function(){t.apply(this,o)},r)}return e(t,r)}};E(e,"setTimeout",D),E(e,"setInterval",D),e.requestAnimationFrame&&E(e,"requestAnimationFrame",function(e){return function(t){return e(n(t))}}),e.setImmediate&&E(e,"setImmediate",function(e){return function(){var t=Array.prototype.slice.call(arguments);return t[0]=n(t[0]),e.apply(this,t)}}),"EventTarget Window Node ApplicationCache AudioTrackList ChannelMergerNode CryptoOperation EventSource FileReader HTMLUnknownElement IDBDatabase IDBRequest IDBTransaction KeyOperation MediaController MessagePort ModalWindow Notification SVGElementInstance Screen TextTrack TextTrackCue TextTrackList WebSocket WebSocketWorker Worker XMLHttpRequest XMLHttpRequestEventTarget XMLHttpRequestUpload".replace(/\w+/g,function(t){var r=e[t]&&e[t].prototype;r&&r.hasOwnProperty&&r.hasOwnProperty("addEventListener")&&(E(r,"addEventListener",function(e){return function(t,r,o,a){try{r&&r.handleEvent&&(r.handleEvent=n(r.handleEvent,{eventHandler:!0}))}catch(u){i(u)}return e.call(this,t,n(r,{eventHandler:!0}),o,a)}}),E(r,"removeEventListener",function(e){return function(t,r,o,a){return e.call(this,t,r,o,a),e.call(this,t,n(r),o,a)}}))})}e.Bugsnag=R,"function"==typeof define&&define.amd?define([],function(){return R}):"object"==typeof module&&"object"==typeof module.exports&&(module.exports=R)}(window,window.Bugsnag);
+(function(window, old) {
+  var self = {},
+    lastEvent,
+    lastScript,
+    previousNotification,
+    shouldCatch = true,
+    ignoreOnError = 0,
+
+    eventsRemaining = 32,
+    maxPayloadDepth = 5;
+
+  self.noConflict = function() {
+    window.Bugsnag = old;
+    if (typeof old === "undefined") {
+      delete window.Bugsnag;
+    }
+    return self;
+  };
+
+  self.refresh = function() {
+    eventsRemaining = 10;
+  };
+
+  self.notifyException = function(exception, name, metaData, severity) {
+    if (!exception) {
+      return;
+    }
+    if (name && typeof name !== "string") {
+      metaData = name;
+      name = undefined;
+    }
+    if (!metaData) {
+      metaData = {};
+    }
+    addScriptToMetaData(metaData);
+
+    sendToBugsnag({
+      name: name || exception.name,
+      message: exception.message || exception.description,
+      stacktrace: stacktraceFromException(exception) || generateStacktrace(),
+      file: exception.fileName || exception.sourceURL,
+      lineNumber: exception.lineNumber || exception.line,
+      columnNumber: exception.columnNumber ? exception.columnNumber + 1 : undefined,
+      severity: severity || "warning"
+    }, metaData);
+  };
+
+  self.notify = function(name, message, metaData, severity) {
+    sendToBugsnag({
+      name: name,
+      message: message,
+      stacktrace: generateStacktrace(),
+      file: window.location.toString(),
+      lineNumber: 1,
+      severity: severity || "warning"
+    }, metaData);
+  };
+
+  function wrap(_super, options) {
+    try {
+      if (typeof _super !== "function") {
+        return _super;
+      }
+      if (!_super.bugsnag) {
+        var currentScript = getCurrentScript();
+        _super.bugsnag = function(event) {
+          if (options && options.eventHandler) {
+            lastEvent = event;
+          }
+          lastScript = currentScript;
+
+          if (shouldCatch) {
+            try {
+              return _super.apply(this, arguments);
+            } catch (e) {
+              if (getSetting("autoNotify", true)) {
+                self.notifyException(e, null, null, "error");
+                ignoreNextOnError();
+              }
+              throw e;
+            } finally {
+              lastScript = null;
+            }
+          } else {
+            var ret = _super.apply(this, arguments);
+            lastScript = null;
+            return ret;
+          }
+        };
+        _super.bugsnag.bugsnag = _super.bugsnag;
+      }
+      return _super.bugsnag;
+
+    } catch (e) {
+      return _super;
+    }
+  }
+
+  var synchronousScriptsRunning = document.readyState !== "complete";
+
+  function loadCompleted() {
+    synchronousScriptsRunning = false;
+  }
+
+  if (document.addEventListener) {
+    document.addEventListener("DOMContentLoaded", loadCompleted, true);
+    window.addEventListener("load", loadCompleted, true);
+  } else {
+    window.attachEvent("onload", loadCompleted);
+  }
+
+  function getCurrentScript() {
+    var script = document.currentScript || lastScript;
+
+    if (!script && synchronousScriptsRunning) {
+      var scripts = document.scripts || document.getElementsByTagName("script");
+      script = scripts[scripts.length - 1];
+    }
+
+    return script;
+  }
+
+  function addScriptToMetaData(metaData) {
+    var script = getCurrentScript();
+
+    if (script) {
+      metaData.script = {
+        src: script.src,
+        content: getSetting("inlineScript", true) ? script.innerHTML : ""
+      };
+    }
+  }
+
+
+  var API_KEY_REGEX = /^[0-9a-zA-Z]{32}$/i;
+  var FUNCTION_REGEX = /function\s*([\w\-$]+)?\s*\(/i;
+
+  var DEFAULT_BASE_ENDPOINT = "http://127.0.0.1:8360/";
+  var DEFAULT_NOTIFIER_ENDPOINT = DEFAULT_BASE_ENDPOINT + "js";
+  var NOTIFIER_VERSION = "2.5.0";
+
+  var scripts = document.getElementsByTagName("script");
+  var thisScript = scripts[scripts.length - 1];
+
+  function log(msg) {
+    var disableLog = getSetting("disableLog");
+
+    var console = window.console;
+    if (console !== undefined && console.log !== undefined && !disableLog) {
+      console.log("[apm] " + msg);
+    }
+  }
+
+  function serialize(obj, prefix, depth) {
+    var maxDepth = getSetting("maxDepth", maxPayloadDepth);
+
+    if (depth >= maxDepth) {
+      return encodeURIComponent(prefix) + "=[RECURSIVE]";
+    }
+    depth = depth + 1 || 1;
+
+    try {
+      if (window.Node && obj instanceof window.Node) {
+        return encodeURIComponent(prefix) + "=" + encodeURIComponent(targetToString(obj));
+      }
+
+      var str = [];
+      for (var p in obj) {
+        if (obj.hasOwnProperty(p) && p != null && obj[p] != null) {
+          var k = prefix ? prefix + "[" + p + "]" : p,
+            v = obj[p];
+          str.push(typeof v === "object" ? serialize(v, k, depth) : encodeURIComponent(k) + "=" + encodeURIComponent(v));
+        }
+      }
+      return str.join("&");
+    } catch (e) {
+      return encodeURIComponent(prefix) + "=" + encodeURIComponent("" + e);
+    }
+  }
+
+  function merge(target, source, depth) {
+    if (source == null) {
+      return target;
+    } else if (depth >= getSetting("maxDepth", maxPayloadDepth)) {
+      return "[RECURSIVE]";
+    }
+
+    target = target || {};
+    for (var key in source) {
+      if (source.hasOwnProperty(key)) {
+        try {
+          if (source[key].constructor === Object) {
+            target[key] = merge(target[key], source[key], depth + 1 || 1);
+          } else {
+            target[key] = source[key];
+          }
+        } catch (e) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  }
+
+  function request(url, params) {
+    url += "?" + serialize(params) + "&ct=img&cb=" + new Date().getTime();
+    if (typeof BUGSNAG_TESTING !== "undefined" && self.testRequest) {
+      self.testRequest(url, params);
+    } else {
+      var notifyHandler = getSetting("notifyHandler");
+      if (notifyHandler === "xhr") {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", url, true);
+        xhr.send();
+      } else {
+        var img = new Image();
+        img.src = url;
+      }
+    }
+  }
+
+  function getData(node) {
+    var dataAttrs = {};
+    var dataRegex = /^data\-([\w\-]+)$/;
+
+    if (node) {
+      var attrs = node.attributes;
+      for (var i = 0; i < attrs.length; i++) {
+        var attr = attrs[i];
+        if (dataRegex.test(attr.nodeName)) {
+          var key = attr.nodeName.match(dataRegex)[1];
+          dataAttrs[key] = attr.value || attr.nodeValue;
+        }
+      }
+    }
+
+    return dataAttrs;
+  }
+
+  var data;
+
+  function getSetting(name, fallback) {
+    data = data || getData(thisScript);
+    var setting = self[name] !== undefined ? self[name] : data[name.toLowerCase()];
+    if (setting === "false") {
+      setting = false;
+    }
+    return setting !== undefined ? setting : fallback;
+  }
+
+  function validateApiKey(apiKey) {
+    if (!apiKey || !apiKey.match(API_KEY_REGEX)) {
+      log("Invalid API key '" + apiKey + "'");
+      return false;
+    }
+
+    return true;
+  }
+
+  function sendToBugsnag(details, metaData) {
+    var apiKey = getSetting("apiKey");
+    // if (!validateApiKey(apiKey) || !eventsRemaining) {
+    //   return;
+    // }
+    eventsRemaining -= 1;
+
+    var releaseStage = getSetting("releaseStage", "production");
+    var notifyReleaseStages = getSetting("notifyReleaseStages");
+    if (notifyReleaseStages) {
+      var shouldNotify = false;
+      for (var i = 0; i < notifyReleaseStages.length; i++) {
+        if (releaseStage === notifyReleaseStages[i]) {
+          shouldNotify = true;
+          break;
+        }
+      }
+
+      if (!shouldNotify) {
+        return;
+      }
+    }
+
+    var deduplicate = [details.name, details.message, details.stacktrace].join("|");
+    if (deduplicate === previousNotification) {
+      return;
+    } else {
+      previousNotification = deduplicate;
+    }
+
+    if (lastEvent) {
+      metaData = metaData || {};
+      metaData["Last Event"] = eventToMetaData(lastEvent);
+    }
+
+    var payload = {
+      notifierVersion: NOTIFIER_VERSION,
+
+      apiKey: apiKey,
+      projectRoot: getSetting("projectRoot") || window.location.protocol + "//" + window.location.host,
+      context: getSetting("context") || window.location.pathname,
+      userId: getSetting("userId"), // Deprecated, remove in v3
+      user: getSetting("user"),
+      metaData: merge(merge({}, getSetting("metaData")), metaData),
+      releaseStage: releaseStage,
+      appVersion: getSetting("appVersion"),
+
+      url: window.location.href,
+      userAgent: navigator.userAgent,
+      language: navigator.language || navigator.userLanguage,
+
+      severity: details.severity,
+
+      name: details.name,
+      message: details.message,
+      stacktrace: details.stacktrace,
+      file: details.file,
+      lineNumber: details.lineNumber,
+      columnNumber: details.columnNumber,
+      payloadVersion: "2"
+    };
+
+    var beforeNotify = self.beforeNotify;
+    if (typeof(beforeNotify) === "function") {
+      var retVal = beforeNotify(payload, payload.metaData);
+      if (retVal === false) {
+        return;
+      }
+    }
+
+    if (payload.lineNumber === 0 && (/Script error\.?/).test(payload.message)) {
+      return log("Ignoring cross-domain script error. See https://bugsnag.com/docs/notifiers/js/cors");
+    }
+
+    request(getSetting("endpoint") || DEFAULT_NOTIFIER_ENDPOINT, payload);
+  }
+
+  function generateStacktrace() {
+    var generated, stacktrace;
+    var MAX_FAKE_STACK_SIZE = 10;
+    var ANONYMOUS_FUNCTION_PLACEHOLDER = "[anonymous]";
+
+    try {
+      throw new Error("");
+    } catch (exception) {
+      generated = "<generated>\n";
+      stacktrace = stacktraceFromException(exception);
+    }
+
+    if (!stacktrace) {
+      generated = "<generated-ie>\n";
+      var functionStack = [];
+      try {
+        var curr = arguments.callee.caller.caller;
+        while (curr && functionStack.length < MAX_FAKE_STACK_SIZE) {
+          var fn = FUNCTION_REGEX.test(curr.toString()) ? RegExp.$1 || ANONYMOUS_FUNCTION_PLACEHOLDER : ANONYMOUS_FUNCTION_PLACEHOLDER;
+          functionStack.push(fn);
+          curr = curr.caller;
+        }
+      } catch (e) {
+        log(e);
+      }
+      stacktrace = functionStack.join("\n");
+    }
+
+    return generated + stacktrace;
+  }
+
+  function stacktraceFromException(exception) {
+    return exception.stack || exception.backtrace || exception.stacktrace;
+  }
+
+  function eventToMetaData(event) {
+    var tab = {
+      millisecondsAgo: new Date() - event.timeStamp,
+      type: event.type,
+      which: event.which,
+      target: targetToString(event.target)
+    };
+
+    return tab;
+  }
+
+  function targetToString(target) {
+    if (target) {
+      var attrs = target.attributes;
+
+      if (attrs) {
+        var ret = "<" + target.nodeName.toLowerCase();
+        for (var i = 0; i < attrs.length; i++) {
+          if (attrs[i].value && attrs[i].value.toString() !== "null") {
+            ret += " " + attrs[i].name + "=\"" + attrs[i].value + "\"";
+          }
+        }
+        return ret + ">";
+      } else {
+        // e.g. #document
+        return target.nodeName;
+      }
+    }
+  }
+
+  function ignoreNextOnError() {
+    ignoreOnError += 1;
+    window.setTimeout(function() {
+      ignoreOnError -= 1;
+    });
+  }
+
+  if (!window.atob) {
+    shouldCatch = false;
+
+  } else if (window.ErrorEvent) {
+    try {
+      if (new window.ErrorEvent("test").colno === 0) {
+        shouldCatch = false;
+      }
+    } catch (e) { /* No action needed */ }
+  }
+
+
+  function polyFill(obj, name, makeReplacement) {
+    var original = obj[name];
+    var replacement = makeReplacement(original);
+    obj[name] = replacement;
+
+    if (typeof BUGSNAG_TESTING !== "undefined" && window.undo) {
+      window.undo.push(function() {
+        obj[name] = original;
+      });
+    }
+  }
+
+  function perf() {
+    if (window.performance === 'undefined') {
+      log('performance does not support')
+      return false;
+    }
+
+    var time = window.performance.timing;
+
+    var payload = {
+      apiKey: getSetting("apiKey"),
+      name: 'pef',
+      type: 'pef',
+      url: window.location.href,
+      connect: time.connectEnd - time.connectStart,
+      pageloadtime: time.loadEventStart - time.navigationStart,
+      ttfb: time.responseStart - time.navigationStart,
+      request: time.responseStart - time.requestStart,
+      response: time.responseEnd - time.responseStart,
+      dom: time.domContentLoadedEventStart - time.domLoading,
+      domReady: '',
+      load: time.loadEventStart - time.domLoading,
+      tcp: time.connectEnd - time.connectStart,
+      dns: time.domainLookupEnd - time.domainLookupStart,
+      black_waiting_time: time.responseStart - time.navigationStart,
+      fist_page_time: time.responseStart - time.navigationStart,
+      operation_time: 0,
+      total_time: time.loadEventEnd - time.navigationStart,
+      last_unload: time.unloadEventEnd - time.unloadEventStart,
+      redirect: time.redirectEnd - time.redirectStart
+    }
+
+    console.log(time.loadEventEnd,time.navigationStart)
+
+    // function getCSS() {
+    //   var getEntries = window.getEntries();
+
+    //   var res = [];
+    //   for (var i = 0; i < getEntries.length; i++) {
+    //     if (getEntries[i].initiatorType === 'link') {
+    //       value.push(getEntries[i].name);
+    //     } else if(getEntries[i].initiatorType === 'script') {
+    //       // value.push(getEntries[i].name);
+    //     } else if(getEntries[i].initiatorType === 'css') {
+
+    //   }
+
+    //   return res;
+    // }
+
+    request(getSetting("endpoint") || DEFAULT_NOTIFIER_ENDPOINT, payload);
+
+  }
+
+  function xxs() {
+    var open = window.XMLHttpRequest.prototype.open,
+      send = window.XMLHttpRequest.prototype.send;
+
+    var http = {
+      apiKey: getSetting("apiKey"),
+      name: 'ajax',
+      domain: window.location.host,
+      type: 'xhr',
+    };
+
+    window.XMLHttpRequest.prototype.open = function(method, url, async, user, password) {
+      http.method = method;
+
+      if(/^http|https/g.test(url)) {
+        http.url = url;
+      } else {
+        http.url = window.location.origin+url;
+      }
+
+
+      request(getSetting("endpoint") || DEFAULT_NOTIFIER_ENDPOINT, http);
+
+      return open.apply(this, arguments);
+    }
+
+    window.XMLHttpRequest.prototype.send = function(data) {
+      // http.data = data;
+      // request(getSetting("endpoint") || DEFAULT_NOTIFIER_ENDPOINT, http);
+
+      return send.apply(this, arguments);
+    }
+  }
+
+  if (getSetting("autoNotify", true)) {
+    xxs();
+    setTimeout(function () {
+      perf();
+    },0);
+
+  }
+
+  if (getSetting("autoNotify", true)) {
+    polyFill(window, "onerror", function(_super) {
+      if (typeof BUGSNAG_TESTING !== "undefined") {
+        self._onerror = _super;
+      }
+
+      return function bugsnag(message, url, lineNo, charNo, exception) {
+        var shouldNotify = getSetting("autoNotify", true);
+        var metaData = {};
+
+        if (!charNo && window.event) {
+          charNo = window.event.errorCharacter;
+        }
+
+        addScriptToMetaData(metaData);
+        lastScript = null;
+
+        if (shouldNotify && !ignoreOnError) {
+
+          sendToBugsnag({
+            name: exception && exception.name || "window.onerror",
+            message: message,
+            file: url,
+            lineNumber: lineNo,
+            columnNumber: charNo,
+            stacktrace: (exception && stacktraceFromException(exception)) || generateStacktrace(),
+            severity: "error"
+          }, metaData);
+        }
+
+        if (typeof BUGSNAG_TESTING !== "undefined") {
+          _super = self._onerror;
+        }
+
+        if (_super) {
+          _super(message, url, lineNo, charNo, exception);
+        }
+      };
+    });
+
+    var hijackTimeFunc = function(_super) {
+      return function(f, t) {
+        if (typeof f === "function") {
+          f = wrap(f);
+          var args = Array.prototype.slice.call(arguments, 2);
+          return _super(function() {
+            f.apply(this, args);
+          }, t);
+        } else {
+          return _super(f, t);
+        }
+      };
+    };
+
+    polyFill(window, "setTimeout", hijackTimeFunc);
+    polyFill(window, "setInterval", hijackTimeFunc);
+
+    if (window.requestAnimationFrame) {
+      polyFill(window, "requestAnimationFrame", function(_super) {
+        return function(callback) {
+          return _super(wrap(callback));
+        };
+      });
+    }
+
+    if (window.setImmediate) {
+      polyFill(window, "setImmediate", function(_super) {
+        return function() {
+          var args = Array.prototype.slice.call(arguments);
+          args[0] = wrap(args[0]);
+          return _super.apply(this, args);
+        };
+      });
+    }
+
+    "EventTarget Window Node ApplicationCache AudioTrackList ChannelMergerNode CryptoOperation EventSource FileReader HTMLUnknownElement IDBDatabase IDBRequest IDBTransaction KeyOperation MediaController MessagePort ModalWindow Notification SVGElementInstance Screen TextTrack TextTrackCue TextTrackList WebSocket WebSocketWorker Worker XMLHttpRequest XMLHttpRequestEventTarget XMLHttpRequestUpload".replace(/\w+/g, function(global) {
+      var prototype = window[global] && window[global].prototype;
+      if (prototype && prototype.hasOwnProperty && prototype.hasOwnProperty("addEventListener")) {
+        polyFill(prototype, "addEventListener", function(_super) {
+          return function(e, f, capture, secure) {
+            try {
+              if (f && f.handleEvent) {
+                f.handleEvent = wrap(f.handleEvent, {
+                  eventHandler: true
+                });
+              }
+            } catch (err) {
+              log(err);
+            }
+            return _super.call(this, e, wrap(f, {
+              eventHandler: true
+            }), capture, secure);
+          };
+        });
+
+        polyFill(prototype, "removeEventListener", function(_super) {
+          return function(e, f, capture, secure) {
+            _super.call(this, e, f, capture, secure);
+            return _super.call(this, e, wrap(f), capture, secure);
+          };
+        });
+      }
+    });
+  }
+
+  window.Bugsnag = self;
+  if (typeof define === "function" && define.amd) {
+    define([], function() {
+      return self;
+    });
+  } else if (typeof module === "object" && typeof module.exports === "object") {
+    module.exports = self;
+  }
+
+})(window, window.Bugsnag);

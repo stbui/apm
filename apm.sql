@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50547
 File Encoding         : 65001
 
-Date: 2016-08-22 18:05:27
+Date: 2016-08-25 18:29:10
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -26,6 +26,7 @@ CREATE TABLE `appajax` (
   `type` varchar(255) DEFAULT NULL,
   `method` varchar(255) DEFAULT NULL,
   `url` varchar(255) DEFAULT NULL,
+  `apiKey` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=59 DEFAULT CHARSET=gbk;
 
@@ -53,8 +54,9 @@ CREATE TABLE `apperror` (
   `payloadVersion` varchar(255) DEFAULT NULL,
   `ct` varchar(255) DEFAULT NULL,
   `cb` varchar(255) DEFAULT NULL,
+  `apiKey` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=133 DEFAULT CHARSET=gbk;
+) ENGINE=MyISAM AUTO_INCREMENT=164 DEFAULT CHARSET=gbk;
 
 -- ----------------------------
 -- Table structure for appinfo
@@ -64,10 +66,10 @@ CREATE TABLE `appinfo` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
   `apiKey` varchar(255) DEFAULT NULL,
-  `createTime` datetime DEFAULT NULL,
+  `createTime` varchar(11) DEFAULT NULL,
   `url` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=gbk;
+) ENGINE=MyISAM AUTO_INCREMENT=16 DEFAULT CHARSET=gbk;
 
 -- ----------------------------
 -- Table structure for apppef
@@ -95,5 +97,6 @@ CREATE TABLE `apppef` (
   `redirect` float(255,0) DEFAULT NULL,
   `cb` varchar(255) DEFAULT NULL,
   `ct` varchar(255) DEFAULT NULL,
+  `apiKey` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=315 DEFAULT CHARSET=gbk;
+) ENGINE=MyISAM AUTO_INCREMENT=492 DEFAULT CHARSET=gbk;

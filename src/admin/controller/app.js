@@ -7,13 +7,20 @@ export default class extends Base {
    * index action
    * @return {Promise} []
    */
-  indexAction(){
+  async indexAction(){
+
+    const data = await this.model('appinfo').select();
+    this.assign('data',data);
+    return this.display();
+  }
+
+  addAction() {
     if(this.isPost()) {
       var type = this.post();
       console.log(type);
 
-      if(think.isEmpty(type.apiKey) || think.isEmpty(type.name)) {
-        return this.fail();
+      if(think.isEmpty(type.apiKey)) {
+          return false;
       }
 
       type.createTime = +new Date();
@@ -29,10 +36,5 @@ export default class extends Base {
     this.assign('data',{key:key,embed:'<script src="http://'+host+'/tongji.js" data-apikey="'+key+'"></script>'});
 
     return this.display();
-  }
-
-  dataAction() {
-  	let data = this.post();
-  	
   }
 }

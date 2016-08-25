@@ -11,3 +11,17 @@ npm i -g stbui
 npm run dev
 npm run prod
 ```
+
+data-apikey
+data-appversion
+data-autonotify
+data-autobreadcrumbs
+data-autoBreadcrumbsClicks
+data-autoBreadcrumbsErrors
+data-autoBreadcrumbsConsole
+data-autoBreadcrumbsNavigation
+data-context
+data-endpoint
+data-notifyhandler
+data-notifyReleaseStages []
+data-projectRoot

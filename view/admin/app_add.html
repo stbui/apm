@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>apm</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link href="/static/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="/static/css/ionicons.min.css" rel="stylesheet">
+    <link href="/static/css/morris.css" rel="stylesheet"/>
+    <link href="/static/css/animate.min.css" rel="stylesheet">
+
+    <link href="/static/admin/css/simplify.min.css" rel="stylesheet">
+
+    <script src="/static/lib/jquery-1.11.1.min.js"></script>
+    <script src="/static/lib/bootstrap/js/bootstrap.min.js"></script>
+</head>
+<body class="overflow-hidden">
+<div class="wrapper preload">
+    <% include common/silder-menu.html %>
+
+    <div class="main-container">
+
+        <div class="padding-md">
+
+            <div class="smart-widget widget-dark-blue">
+                <div class="smart-widget-header">
+                    应用添加
+                    <span class="smart-widget-option">
+                    <a class="" href="/admin/server"><i class="fa fa-reply"></i> 返回</a>
+                </span>
+                </div>
+                <div class="smart-widget-inner">
+
+                    <div class="smart-widget-body">
+
+                        <form id="formToggleLine" method="post" class="form-horizontal no-margin form-border">
+                            <div class="form-group">
+                                <label class="col-lg-2 control-label">应用名称</label>
+
+                                <div class="col-lg-10">
+                                    <div class="row">
+                                        <div class="col-lg-3">
+                                            <input type="text" name="name" class="form-control" placeholder=""
+                                                   value="">
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <span class="help-block"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-lg-2 control-label">应用key</label>
+
+                                <div class="col-lg-10">
+                                    <div class="row">
+                                        <div class="col-lg-3">
+                                            <input type="text" name="apiKey" class="form-control" placeholder=""
+                                                   value="<%=data.key%>" readonly>
+                                        </div>
+                                        <div class="col-lg-9">
+                                            <span class="help-block"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-lg-2 control-label">嵌入代码</label>
+
+                                <div class="col-lg-10">
+                                    <div class="row">
+                                        <div class="col-lg-9">
+                                            <textarea rows="3" class="form-control"><%=data.embed%></textarea>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <span class="help-block"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-lg-2 control-label"></label>
+
+                                <div class="col-lg-10">
+                                    <button type="submit" class="btn btn-danger" data-toggle="modal">保存</button>
+                                </div>
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <footer class="footer">
+				<span class="footer-brand">
+					<strong class="text-danger">APM</strong>
+				</span>
+
+        <p class="no-margin">
+            &copy; 2016 <strong>APM</strong>. ALL Rights Reserved.
+        </p>
+    </footer>
+</div>
+
+<% include common/footer.html %>
+
+<script src="/static/lib/jquery.slimscroll.min.js"></script>
+<script src="/static/lib/jquery.easypiechart.min.js"></script>
+<script src="/static/lib/jquery.flot.min.js"></script>
+<script src="/static/lib/jquery.localScroll.min.js"></script>
+<script src="/static/lib/jquery.popupoverlay.min.js"></script>
+<script src="/static/lib/jquery.scrollTo.min.js"></script>
+<script src="/static/admin/js/simplify/simplify.js"></script>
+</body>
+</html>

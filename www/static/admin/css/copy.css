@@ -1,0 +1,35 @@
+/* 选中后的文字样式 */
+::selection {
+    color: #fff;
+    background-color: #1abc9c;
+}
+::-moz-selection {
+    color: #fff;
+    background-color: #1abc9c;
+}
+/* Ctrl + C 的提示span*/
+.copy-tip {
+    font: 12px helvetica, Arial;
+    padding: 5px 10px;
+    /*margin-left: 10px;*/
+    background-color: #aaa;
+    color: #fff;
+    position: fixed;
+    *position: absolute;
+    top: 20px;
+    right: 80px;
+    z-index: 100;
+    display: none;
+}
+/* 复制成功 对应的span*/
+.success-tip {
+    position: fixed;
+    *position: absolute;
+    top: 20px;
+    right: 80px;
+    padding: 5px 0 5px 10px;
+    color: #fff;
+    background-color: #1abc9c;
+    z-index: 100;
+    display: none;
+}
