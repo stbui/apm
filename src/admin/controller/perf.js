@@ -8,9 +8,13 @@ export default class extends Base {
    * @return {Promise} []
    */
   async indexAction(){
-    const data = await this.model('apppef').select();
+    const {num} = this.get();
+
+    const data = await this.model('apppef').getPage(num);
+    const pageSize = await this.model('apppef').count();
 
     this.assign('data',data);
+    this.assign('page',pageSize);
 
     return this.display();
   }

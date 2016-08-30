@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50547
 File Encoding         : 65001
 
-Date: 2016-08-25 18:29:10
+Date: 2016-08-30 11:28:00
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -56,7 +56,7 @@ CREATE TABLE `apperror` (
   `cb` varchar(255) DEFAULT NULL,
   `apiKey` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=164 DEFAULT CHARSET=gbk;
+) ENGINE=MyISAM AUTO_INCREMENT=208 DEFAULT CHARSET=gbk;
 
 -- ----------------------------
 -- Table structure for appinfo
@@ -99,4 +99,4 @@ CREATE TABLE `apppef` (
   `ct` varchar(255) DEFAULT NULL,
   `apiKey` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=492 DEFAULT CHARSET=gbk;
+) ENGINE=MyISAM AUTO_INCREMENT=689 DEFAULT CHARSET=gbk;
