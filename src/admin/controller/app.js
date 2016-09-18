@@ -7,9 +7,11 @@ export default class extends Base {
      * index action
      * @return {Promise} []
      */
-    async indexAction() {
-        const data = await this.model('appinfo').select();
-        this.assign('data', data);
+    indexAction() {
+        const {num} = this.get();
+        const data = this.model('appinfo').getPage(num);
+        this.assign({data:data});
+
         return this.display();
     }
 

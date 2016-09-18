@@ -30,15 +30,6 @@
             <div class="smart-widget widget-dark-blue">
                 <div class="smart-widget-header">
                     脚本异常
-                    <span class="smart-widget-option">
-                        <select class="form-control">
-                          <option>1</option>
-                          <option>2</option>
-                          <option>3</option>
-                          <option>4</option>
-                          <option>5</option>
-                        </select>
-                    </span>
                 </div>
                 <div class="smart-widget-inner">
 
@@ -55,18 +46,29 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <% data.forEach(function(item){ %>
+                            <% data.data.forEach(function(item){ %>
                             <tr>
                                 <td><%=item.cb%></td>
                                 <td><%=item.url%></td>
                                 <td><%=item.lineNumber%></td>
                                 <td><%=item.columnNumber%></td>
                                 <td><%=item.name%></td>
-                                <td><a class="label label-warning" href="#?id=<%= item.id %>">详情</a></td>
+                                <td><a class="btn btn-primary btn-xs" href="#?id=<%= item.id %>"><i class="fa fa-link"></i> 详情</a></td>
                             </tr>
                             <% }) %>
                             </tbody>
                         </table>
+
+                        <ul class="pagination">
+                            <% for(var i=1;i<=data.totalPages;i++){
+                            if(data.currentPage == i) {
+                            %>
+                            <li class="active"><a href="javascript:;"><%=i%></a></li>
+                            <%    } else { %>
+                            <li><a href="?num=<%=i%>"><%=i%></a></li>
+                            <% } %>
+                            <% } %>
+                        </ul>
 
                     </div>
                 </div>

@@ -3,19 +3,15 @@
 import Base from './base.js';
 
 export default class extends Base {
-  /**
-   * index action
-   * @return {Promise} []
-   */
-  async indexAction(){
-    const {num} = this.get();
+    /**
+     * index action
+     * @return {Promise} []
+     */
+    indexAction() {
+        const {num} = this.get();
+        const data = this.model('apppef').getPage(num);
+        this.assign({data: data});
 
-    const data = await this.model('apppef').getPage(num);
-    const pageSize = await this.model('apppef').count();
-
-    this.assign('data',data);
-    this.assign('page',pageSize);
-
-    return this.display();
-  }
+        return this.display();
+    }
 }

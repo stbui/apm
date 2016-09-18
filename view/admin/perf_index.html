@@ -46,22 +46,27 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <% data.forEach(function(item){ %>
+                            <% data.data.forEach(function(item){ %>
                             <tr>
                                 <td><%=item.url%></td>
                                 <td><%=item.connect%></td>
                                 <td><%=item.dns%></td>
                                 <td><%=item.black_waiting_time%></td>
                                 <td><%=item.total_time%></td>
-                                <td><a class="label label-warning" href="#?id=<%= item.id %>">详情</a></td>
+                                <td><a class="btn btn-primary btn-xs" href="#?id=<%= item.id %>"><i class="fa fa-link"></i> 详情</a></td>
                             </tr>
                             <% }) %>
                             </tbody>
                         </table>
 
                         <ul class="pagination">
-                            <% for(var i=1;i<=5;i++){ %>
+                            <% for(var i=1;i<=data.totalPages;i++){
+                            if(data.currentPage == i) {
+                            %>
+                            <li class="active"><a href="javascript:;"><%=i%></a></li>
+                            <%    } else { %>
                             <li><a href="?num=<%=i%>"><%=i%></a></li>
+                            <% } %>
                             <% } %>
                         </ul>
                     </div>

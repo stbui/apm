@@ -50,19 +50,31 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <% data.forEach(function(item){ %>
+                            <% data.data.forEach(function(item){ %>
                             <tr>
                                 <td><%=item.name%></td>
                                 <td><%=item.apiKey%></td>
                                 <td><input class="form-control" type="text" value="&lt;script src=&quot;http://<%=http.host%>/tongji.js&quot; data-apikey=&quot;<%=item.apiKey%>&quot;&gt;&lt;/script&gt;"></td>
                                 <td>
                                     <!--<a class="label label-info code" data-toggle="popover" data-placement="left" title="复制代码" data-content="" href="#?id=<%= item.id %>">查看代码</a>-->
-                                    <a class="label label-warning delete" href="#?id=<%= item.id %>">删除</a>
+                                    <a class="btn btn-info btn-xs" href="/admin/app/edit.html?id=<%= item.id %>"><i class="fa fa-pencil"></i> 修改</a>
+                                    <a class="btn btn-danger btn-xs delete" href="/admin/app/delete.html?id=<%= item.id %>"><i class="fa fa-trash-o"></i> 删除</a>
                                 </td>
                             </tr>
                             <% }) %>
                             </tbody>
                         </table>
+
+                        <ul class="pagination">
+                            <% for(var i=1;i<=data.totalPages;i++){
+                            if(data.currentPage == i) {
+                            %>
+                            <li class="active"><a href="javascript:;"><%=i%></a></li>
+                            <%    } else { %>
+                            <li><a href="?num=<%=i%>"><%=i%></a></li>
+                            <% } %>
+                            <% } %>
+                        </ul>
 
                     </div>
                 </div>

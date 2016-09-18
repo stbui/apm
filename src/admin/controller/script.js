@@ -3,14 +3,15 @@
 import Base from './base.js';
 
 export default class extends Base {
-  /**
-   * index action
-   * @return {Promise} []
-   */
-  async indexAction(){
-    const data = await this.model('apperror').select();
-    this.assign('data',data);
+    /**
+     * index action
+     * @return {Promise} []
+     */
+    indexAction() {
+        const {num} = this.get();
+        const data = this.model('apperror').getPage(num);
+        this.assign({data:data});
 
-    return this.display();
-  }
+        return this.display();
+    }
 }
