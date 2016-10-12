@@ -3,14 +3,14 @@
 import Base from './base.js';
 
 export default class extends Base {
-    /**
-     * index action
-     * @return {Promise} []
-     */
+    __before() {
+        this.navType = 'app';
+    }
+
     indexAction() {
         const {num} = this.get();
         const data = this.model('appinfo').getPage(num);
-        this.assign({data:data});
+        this.assign({data: data});
 
         return this.display();
     }

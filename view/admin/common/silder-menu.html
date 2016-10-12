@@ -25,7 +25,7 @@
                 <li class="menu-header">
                     Main Menu
                 </li>
-                <li class="bg-palette1 active">
+                <li class="bg-palette2 <%=controller.navType=='index'?'active':''%>">
                     <a href="index.html">
 									<span class="menu-content block">
 										<span class="menu-icon"><i class="block fa fa-home fa-lg"></i></span>
@@ -35,7 +35,7 @@
                     </a>
                 </li>
 
-                <li class="bg-palette2">
+                <li class="bg-palette2 <%=controller.navType=='app'?'active':''%>">
                     <a href="/admin/app.html">
 									<span class="menu-content block">
 										<span class="menu-icon"><i class="block fa fa-cogs fa-lg"></i></span>
@@ -46,18 +46,16 @@
 									</span>
                     </a>
                 </li>
-                <li class="bg-palette2">
+                <li class="bg-palette2 <%=controller.navType=='script'?'active':''%>">
                     <a href="/admin/script.html">
 									<span class="menu-content block">
 										<span class="menu-icon"><i class="block fa fa-desktop fa-lg"></i></span>
 										<span class="text m-left-sm">脚本异常</span>
 									</span>
-                        <span class="menu-content-hover block">
-										脚本异常
-									</span>
+                        <span class="menu-content-hover block">脚本异常</span>
                     </a>
                 </li>
-                <li class="bg-palette2">
+                <li class="bg-palette2 <%=controller.navType=='collection'?'active':''%>">
                     <a href="/admin/collection.html">
 									<span class="menu-content block">
 										<span class="menu-icon"><i class="block fa fa-windows fa-lg"></i></span>
@@ -68,7 +66,7 @@
 									</span>
                     </a>
                 </li>
-                <li class="bg-palette2">
+                <li class="bg-palette2 <%=controller.navType=='perf'?'active':''%>">
                     <a href="/admin/perf.html">
 									<span class="menu-content block">
 										<span class="menu-icon"><i class="block fa fa-users fa-lg"></i></span>
@@ -79,20 +77,6 @@
 									</span>
                     </a>
                 </li>
-                <!--
-                <li class="bg-palette2">
-                    <a href="/admin/install">
-									<span class="menu-content block">
-										<span class="menu-icon"><i class="block fa fa-times-circle fa-lg"></i></span>
-										<span class="text m-left-sm">初始化安装</span>
-									</span>
-                        <span class="menu-content-hover block">
-										初始化安装
-									</span>
-                    </a>
-                </li>
-                -->
-
             </ul>
         </div>
     </div>

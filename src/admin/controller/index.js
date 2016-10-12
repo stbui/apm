@@ -3,24 +3,23 @@
 import Base from './base.js';
 
 export default class extends Base {
-    /**
-     * index action
-     * @return {Promise} []
-     */
+    __before() {
+        this.navType = 'index';
+    }
+
     async indexAction() {
-        const apperror =await this.viewapperror();
-        const apppajax =await this.viewajax();
-        const appinfo =await this.viewappinfo();
+        const apperror = await this.viewapperror();
+        const apppajax = await this.viewajax();
+        const appinfo = await this.viewappinfo();
 
-        let json=[];
+        let json = [];
 
-        for(var i=0;i<appinfo;i++) {
-            json.push({error:apperror,ajax:apppajax});
+        for (var i = 0; i < appinfo; i++) {
+            json.push({error: apperror, ajax: apppajax});
         }
 
-        this.assign('data',json)
+        this.assign('data', json)
 
-        // this.json(apperror)
         return this.display();
     }
 

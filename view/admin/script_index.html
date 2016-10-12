@@ -2,22 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>apm</title>
+    <title>apm - 前端数据异常采集系统</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
-    <meta name="author" content="">
-
-    <link href="/static/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/static/css/font-awesome.min.css" rel="stylesheet">
-
-    <link href="/static/css/ionicons.min.css" rel="stylesheet">
-    <link href="/static/css/morris.css" rel="stylesheet"/>
-    <link href="/static/css/animate.min.css" rel="stylesheet">
-
-    <link href="/static/admin/css/simplify.min.css" rel="stylesheet">
-
-    <script src="/static/lib/jquery-1.11.1.min.js"></script>
-    <script src="/static/lib/bootstrap/js/bootstrap.min.js"></script>
+    <meta name="author" content="stbui.com">
+    <% include common/style.html %>
 </head>
 <body class="overflow-hidden">
 <div class="wrapper preload">
@@ -48,7 +37,7 @@
                             <tbody>
                             <% data.data.forEach(function(item){ %>
                             <tr>
-                                <td><%=item.cb%></td>
+                                <td><%=controller.formatDate(item.cb)%></td>
                                 <td><%=item.url%></td>
                                 <td><%=item.lineNumber%></td>
                                 <td><%=item.columnNumber%></td>
@@ -90,13 +79,6 @@
     </footer>
 </div>
 
-<% include common/footer.html %>
-<script src="/static/lib/jquery.slimscroll.min.js"></script>
-<script src="/static/lib/jquery.easypiechart.min.js"></script>
-<script src="/static/lib/jquery.flot.min.js"></script>
-<script src="/static/lib/jquery.localScroll.min.js"></script>
-<script src="/static/lib/jquery.popupoverlay.min.js"></script>
-<script src="/static/lib/jquery.scrollTo.min.js"></script>
-<script src="/static/admin/js/simplify/simplify.js"></script>
+<% include common/script.html %>
 </body>
 </html>
