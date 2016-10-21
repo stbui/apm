@@ -9,7 +9,7 @@ export default class extends Base {
 
     indexAction() {
         const {num} = this.get();
-        const data = this.model('appajax').getPage(num);
+        const data = this.model('appajax').order('id desc').getPage(num);
         this.assign({data: data});
         return this.display();
     }

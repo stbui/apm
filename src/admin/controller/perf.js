@@ -9,7 +9,7 @@ export default class extends Base {
 
     indexAction() {
         const {num} = this.get();
-        const data = this.model('apppef').getPage(num);
+        const data = this.model('apppef').order('id desc').getPage(num);
         this.assign({data: data});
         return this.display();
     }

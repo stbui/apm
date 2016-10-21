@@ -9,7 +9,7 @@ export default class extends Base {
 
     indexAction() {
         const {num} = this.get();
-        const data = this.model('appinfo').getPage(num);
+        const data = this.model('appinfo').order('id desc').getPage(num);
         this.assign({data: data});
 
         return this.display();
@@ -27,7 +27,7 @@ export default class extends Base {
             type.createTime = +new Date();
 
             this.model('appinfo').add(type);
-            this.redirect('/admin/app');
+            this.redirect('/admin/app.html');
         }
 
 
@@ -36,7 +36,7 @@ export default class extends Base {
 
         this.assign('data', {
             key: key,
-            embed: '<script src="http://' + host + '/tongji.js" data-apikey="' + key + '"></script>'
+            embed: '<script src="http://' + host + '/static/js/tongji.js" data-apikey="' + key + '"></script>'
         });
 
         return this.display();
