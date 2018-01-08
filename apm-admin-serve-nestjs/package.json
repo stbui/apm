@@ -1,7 +1,7 @@
 {
-  "name": "test",
+  "name": "apm-admin-serve-nestjs",
   "version": "2.0.0",
-  "description": "Nest TypeScript starter repository",
+  "description": "apm",
   "license": "MIT",
   "scripts": {
     "build": "tsc",

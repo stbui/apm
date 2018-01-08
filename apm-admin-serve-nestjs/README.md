@@ -1,15 +1,13 @@
-# Nest framework TypeScript starter
+# apm-admin-serve-nestjs
 
-Starter repository for [Nest](https://github.com/kamilmysliwiec/nest) framework.
 
-### Installation
-
+# 安装
 ```
-$ npm install
+npm install
 ```
 
-### Start
-
+# 启动
 ```
-$ npm run start
+npm run start
 ```
+http://127.0.0.1:3000
