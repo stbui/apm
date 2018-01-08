@@ -166,7 +166,7 @@ _$config_3.schema = {
   },
   endpoint: {
     defaultValue: function () {
-      return '//127.0.1:3000';
+      return 'http://127.0.1:3000';
     },
     message: '(string) endpoint should be set',
     validate: function () {

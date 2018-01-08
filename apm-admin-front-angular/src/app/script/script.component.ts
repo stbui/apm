@@ -15,7 +15,7 @@ export class ScriptComponent implements OnInit {
 
   selected = [];
   openDetail: boolean = false;
-  detail = {};
+  detail;
 
 
   constructor(private service: ScriptService) {

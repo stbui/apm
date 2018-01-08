@@ -8,5 +8,5 @@ export const environment = {
     storageBucket: 'angular-material-app-stbui.appspot.com',
     messagingSenderId: '974351057659'
   },
-  apm: '/assets/data/apm'
+  apm: '/apm/assets/data/apm'
 };

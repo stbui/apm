@@ -7,9 +7,9 @@
     <mat-icon>delete</mat-icon> 删除</button>
 </div>
 
-<ngx-datatable class="material" [rows]="rows" [selectionType]="'checkbox'" [loadingIndicator]="loadingIndicator" [columns]="columns"
-  [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [limit]="10" (select)='onSelect($event)'
-  [selected]="selected" [reorderable]="reorderable">
+<ngx-datatable class="material" [rows]="rows" [selectionType]="'checkbox'" [loadingIndicator]="loadingIndicator" [columnMode]="'force'"
+  [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [limit]="10" (select)='onSelect($event)' [selected]="selected"
+  [reorderable]="reorderable">
   <ngx-datatable-column [width]="60" [canAutoResize]="false" [resizeable]="false">
     <ng-template ngx-datatable-header-template>
       <mat-checkbox [(ngModel)]="a" value="" color="primary"></mat-checkbox>

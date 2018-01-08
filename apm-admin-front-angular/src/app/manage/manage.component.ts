@@ -73,7 +73,7 @@ export class ManageComponent implements OnInit {
     this.loadingIndicator = false;
   }
 
-  onNew() {
+  onNew(e) {
     let dialogRef = this.dialog.open(NewComponent, {
       width: '500px',
     });

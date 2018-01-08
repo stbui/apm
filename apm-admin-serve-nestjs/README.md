@@ -8,6 +8,6 @@ npm install
 
 # 启动
 ```
-npm run start
+npm run serve
 ```
 http://127.0.0.1:3000
