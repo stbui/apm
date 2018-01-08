@@ -1,0 +1,49 @@
+$height__main-toolbar: 64px;
+
+:host {
+  display: block;
+  height: 100%;
+  background: #2f3d4a;
+  &:before,
+  &:after {
+    content: 'STBUI';
+    position: absolute;
+    top: 0;
+    color: rgba(255, 255, 255, 0.12);
+    overflow-wrap: break-word;
+    text-align: center;
+    transform: translate(0, 50%);
+    padding: 0 20px;
+    font-size: 62px;
+    width: 46px;
+  }
+  &:after {
+    right: 0;
+  }
+}
+
+.sidenav {
+  width: 250px;
+  max-width: 250px;
+  overflow-x: hidden;
+  z-index: 4;
+}
+
+.sidenav-container {
+  height: 100%
+}
+
+.main-container {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: calc(100% - #{$height__main-toolbar});
+  position: relative;
+}
+
+.boxed {
+  width: 1200px;
+  height: 100%;
+  display: block;
+  margin: 0 auto;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, .2), 0 8px 10px 1px rgba(0, 0, 0, .14), 0 3px 14px 2px rgba(0, 0, 0, .12);
+}

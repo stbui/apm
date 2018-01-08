@@ -1,0 +1,54 @@
+<table class="table" [class.table-hover]="disabledHover" [class.table-striped]="stripe"
+       [class.table-bordered]="border" *ngIf="!height">
+  <thead>
+  <tr>
+    <th *ngFor="let column of columns">
+      <div *ngIf="column.type === 'selection'">
+        <mat-checkbox (change)="onCheckBoxAllTrigger($event)" [(ngModel)]="checked"></mat-checkbox>
+      </div>
+      <div *ngIf="column.type !== 'selection'">{{ column.title }}</div>
+    </th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let row of data" (click)="onRowClickTrigger(row)">
+    <td *ngFor="let column of columns">
+      <div *ngIf="column.type === 'selection'">
+        <mat-checkbox (change)="onCheckBoxTrigger($event, row)" [checked]="checked"></mat-checkbox>
+      </div>
+      <div *ngIf="column.type !== 'selection'">{{ row[column.key] }}</div>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<div class="fixed-table" [ngStyle]="{'height.px': height}" *ngIf="height">
+  <div class="table-wrapper">
+    <table class="table" [class.table-hover]="disabledHover" [class.table-striped]="stripe"
+           [class.table-bordered]="border">
+      <thead #fixedTopCell>
+      <tr>
+        <th *ngFor="let column of columns; let i= index">
+          <div *ngIf="column.type === 'selection'">
+            <mat-checkbox (change)="onCheckBoxAllTrigger($event)" [(ngModel)]="checked"></mat-checkbox>
+          </div>
+          {{ column?.title }}
+          <div [ngStyle]="{'width.px':cells[i]?.width, 'height.px':cells[i]?.height}" class="fixed-table-heading"
+               *ngIf="column.type !== 'selection'">{{ column.title }}
+          </div>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let row of data" (click)="onRowClickTrigger(row)">
+        <td *ngFor="let column of columns">
+          <div *ngIf="column.type === 'selection'">
+            <mat-checkbox (change)="onCheckBoxTrigger($event, row)" [checked]="checked"></mat-checkbox>
+          </div>
+          <div *ngIf="column.type !== 'selection'">{{ row[column.key] }}</div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,24 @@
+@mixin notification-theme($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $warn: map-get($theme, warn);
+  $background: map-get($theme, background);
+  $foreground: map-get($theme, foreground);
+
+  .notification {
+    background-color: mat-color($primary);
+    pointer-events: auto;
+  }
+  .notification-success {
+    background-color: mat-color($accent);
+  }
+  .notification-error {
+    background-color: mat-color($accent);
+  }
+  .notification-info {
+    background-color: mat-color($primary);
+  }
+  .notification-warning {
+    background-color: mat-color($warn);
+  }
+}

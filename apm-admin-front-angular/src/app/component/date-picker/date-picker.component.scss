@@ -1,0 +1,13 @@
+.stb-date-picker {
+  display: inline-block;
+  position: relative;
+  width: 310px;
+
+  &.fullWidth {
+    width: 100%
+  }
+
+  &.landspace {
+    width: 479px;
+  }
+}
