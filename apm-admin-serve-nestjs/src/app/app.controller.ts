@@ -19,7 +19,7 @@ export class AppController {
     apmAction( @Res() res) {
         res.set('Content-Type', 'text/javascript');
         const rootPath = process.cwd();
-        const file = `${rootPath}/static/bugsnag.js`;
+        const file = `${rootPath}/static/raven.js`;
         const content = readFileSync(file, 'utf8');
         res.send(content);
     }

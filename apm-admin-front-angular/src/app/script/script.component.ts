@@ -17,14 +17,11 @@ export class ScriptComponent implements OnInit {
   openDetail: boolean = false;
   detail;
 
-
   constructor(private service: ScriptService) {
 
   }
 
   ngOnInit() {
-    // a[0]['device'] = userAgent(a[0].userAgent);
-
     this.service.getScripts();
     this.service.onScriptsChangedSubject.subscribe(script => {
       this.rows = script.data;
@@ -33,7 +30,6 @@ export class ScriptComponent implements OnInit {
   }
 
   onSelect({ selected }) {
-    console.log('Select Event', selected);
     this.selected = selected;
     this.detail = selected[0];
     this.openDetail = true;

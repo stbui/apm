@@ -18,6 +18,20 @@ import { FireBaseComponentsModule } from './shared/firebase.module';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 
+
+import { ErrorHandler } from '@angular/core';
+import * as Raven from 'raven-js';
+
+Raven
+    .config('http://2a4c17b3f26048fc8405775f5cb388c5@127.0.0.1:9000/2')
+    .install();
+
+export class RavenErrorHandler implements ErrorHandler {
+    handleError(err: any): void {
+        Raven.captureException(err);
+    }
+}
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -34,7 +48,7 @@ import { environment } from '../environments/environment';
     ReactiveFormsModule,
     environment['ngsw'] ? ServiceWorkerModule.register('./ngsw-worker.js') : []
   ],
-  providers: [],
+  providers: [ { provide: ErrorHandler, useClass: RavenErrorHandler } ],
   bootstrap: [AppComponent]
 })
 export class AppModule {
