@@ -1,0 +1,15 @@
+{
+  "name": "@apm/common",
+  "version": "0.0.0-PLACEHOLDER",
+  "description": "Apm - the common framework",
+  "main": "./bundles/common.umd.js",
+  "module": "./esm5/common.js",
+  "es2015": "./esm2015/common.js",
+  "typings": "./common.d.ts",
+  "author": "Apm",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stbui/apm.git"
+  }
+}
