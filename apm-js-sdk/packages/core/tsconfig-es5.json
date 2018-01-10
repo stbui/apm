@@ -22,6 +22,7 @@
     }
   },
   "files": [
+    "index.ts",
     "public_api.ts"
   ]
 }
