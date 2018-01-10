@@ -14,5 +14,6 @@ module.exports = {
   moduleName: 'apm.core',
   plugins: [resolve(), sourcemaps()],
   external: Object.keys(globals),
-  globals: globals
+  globals: globals,
+  banner: '/* test */'
 };

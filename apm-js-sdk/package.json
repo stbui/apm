@@ -4,20 +4,18 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "lerna run --parallel --scope @apm/* --scope apm dev",
     "build": "rollup -c ./packages/core/rollup.config.js",
     "es5": "tsc --p ./packages/core/tsconfig-es5.json",
-    "es2015": "tsc --p ./packages/core/tsconfig-build.json"
+    "es2015": "tsc --p ./packages/core/tsconfig-build.json",
+    "lerna": "lerna -h"
   },
   "author": "stbui",
   "license": "ISC",
   "dependencies": {
-    "rxjs": "^5.5.4"
   },
   "devDependencies": {
-    "fs-extra": "^4.0.0",
-    "gzip-size": "^4.0.0",
-    "pretty-size": "^2.0.0",
+    "lerna": "^2.6.0",
     "rollup": "^0.35.11",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-sourcemaps": "^0.4.2",
