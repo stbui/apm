@@ -1,4 +1,1 @@
-
-export class abc {
-    
-}
+export class Common {}

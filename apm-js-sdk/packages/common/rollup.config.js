@@ -1,17 +1,36 @@
-const resolve = require('rollup-plugin-node-resolve');
-const sourcemaps = require('rollup-plugin-sourcemaps');
+import commonjs from "rollup-plugin-commonjs";
+import uglify from "rollup-plugin-uglify";
+import resolve from "rollup-plugin-node-resolve";
+import sourcemaps from "rollup-plugin-sourcemaps";
 
-const globals = {
-  '@apm/common': 'apm.common',
-};
-
-module.exports = {
-  entry: './dist/packages/common/esm5/public_api.js',
-  dest: './dist/packages/common/bnundles/common.umd.js',
-  format: 'umd',
-  exports: 'named',
-  moduleName: 'apm.common',
-  plugins: [resolve(), sourcemaps()],
-  external: Object.keys(globals),
-  globals: globals
+export default {
+  input: "./dist/packages/common/esm5/public_api.js",
+  output: [
+    {
+      file: "./dist/packages/common/bnundles/common.common.js",
+      format: "cjs",
+      exports: "named"
+    },
+    {
+      file: "./dist/packages/common/bnundles/common.umd.js",
+      format: "umd",
+      exports: "named",
+      moduleName: "apm.common"
+    },
+    {
+      file: "./dist/packages/common/bnundles/common.esm.js",
+      format: "es",
+      exports: "named"
+    }
+  ],
+  plugins: [
+    resolve({
+      jsnext: true,
+      main: true,
+      browser: true
+    }),
+    commonjs(),
+    // uglify(),
+    sourcemaps()
+  ]
 };
