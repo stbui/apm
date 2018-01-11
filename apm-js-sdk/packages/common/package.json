@@ -1,10 +1,10 @@
 {
   "name": "@apm/common",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Apm - the common framework",
   "main": "./bundles/common.umd.js",
-  "module": "./esm5/common.js",
-  "es2015": "./esm2015/common.js",
+  "module": "./bnundles/common.common.js",
+  "es2015": "./bnundles/common.esm.js",
   "typings": "./common.d.ts",
   "author": "Apm",
   "license": "MIT",

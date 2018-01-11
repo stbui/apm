@@ -46,6 +46,13 @@ updateVersionReferences() {
   )
 }
 
+configPackage() {
+    echo ">>>      configPackage: ${2}/package.json <<<"
+    cp ${1}/package.json ${2}/package.json
+}
+
+
+rm -rf ./dist
 
 for PACKAGE in ${PACKAGES[@]}
 do
@@ -60,6 +67,7 @@ do
     
     compilePackageESM ${SRC_DIR}
     compilePackageES5 ${SRC_DIR}
+    configPackage ${SRC_DIR} ${OUT_DIR}
     runRollup ${SRC_DIR}
     updateVersionReferences ${BUNDLES_DIR}
 done
