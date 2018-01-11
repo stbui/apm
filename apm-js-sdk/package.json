@@ -6,7 +6,8 @@
   "scripts": {
     "build": "sh ./tools/build.sh",
     "build-rollup": "rollup -c ./packages/core/rollup.config.js",
-    "publish": "./node_modules/.bin/lerna publish -m \"chore(release) publish %s\""
+    "publish": "./node_modules/.bin/lerna publish -m \"chore(release) publish %s\"",
+    "tsc": "tsc -p ./packages/core/tsconfig-build.json"
   },
   "author": "stbui",
   "license": "ISC",
