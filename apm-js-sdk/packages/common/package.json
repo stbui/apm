@@ -1,6 +1,6 @@
 {
   "name": "@apm/common",
-  "version": "0.0.0-PLACEHOLDER",
+  "version": "1.0.0",
   "description": "Apm - the common framework",
   "main": "./bundles/common.umd.js",
   "module": "./esm5/common.js",

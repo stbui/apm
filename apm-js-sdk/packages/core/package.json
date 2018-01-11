@@ -1,6 +1,6 @@
 {
   "name": "@apm/core",
-  "version": "0.0.0-PLACEHOLDER",
+  "version": "1.0.0",
   "description": "Apm - the core framework",
   "main": "./bundles/core.umd.js",
   "module": "./esm5/core.js",

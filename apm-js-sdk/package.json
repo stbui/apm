@@ -4,9 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "rollup -c ./packages/core/rollup.config.js",
-    "es5": "tsc --p ./packages/core/tsconfig-es5.json",
-    "es2015": "tsc --p ./packages/core/tsconfig-build.json",
+    "build": "sh ./tools/build.sh",
+    "build-rollup": "rollup -c ./packages/core/rollup.config.js"
   },
   "author": "stbui",
   "license": "ISC",

@@ -16,15 +16,8 @@ PACKAGES=(
 VERSION_PREFIX=$(node -p "require('./package.json').version")
 VERSION_SUFFFIX="-$(git log --oneline -1 | awk '{print $1}')"
 VERSION="${VERSION_PREFIX}${VERSION_SUFFIX}"
+LICENSE_BANNER=`pwd`/packages/license-banner.txt
 
-
-rollupIndex() {
-    in_file="${1}/${3}.js"
-    out_file="${1}/$3}.js"
-
-    BANNER_TEXT=`cat ${LICENSE_BANNER}`
-    $ROLLUP -i ${in_file} -o ${out_file} --sourcemap -f es --banner "$BANNER_TEXT" >/dev/null 2>&1
-}
 
 runRollup() {
     BANNER_TEXT=`cat ${LICENSE_BANNER}`
@@ -32,7 +25,6 @@ runRollup() {
     
     $ROLLUP -c ${1}/rollup.config.js --sourcemap --banner "$BANNER_TEXT" >/dev/null 2>&1
 }
-
 
 compilePackageES5() {
     echo ">>>      compilePackageES5: ${TSC} -p ${1}/tsconfig-es5.json <<<"
@@ -54,15 +46,20 @@ updateVersionReferences() {
   )
 }
 
-SRC_DIR=`pwd`/packages/core
-OUT_DIR_ESM5=`pwd`/packages/core/esm5
-ROOT_OUT_DIR=`pwd`/dist/packages
-OUT_DIR=`pwd`/dist/packages/core
-ESM5_DIR=`pwd`/dist/packages/core/esm5
-LICENSE_BANNER=`pwd`/packages/license-banner.txt
-BUNDLES_DIR=`pwd`/dist/packages/core/bnundles
 
-# compilePackageES5 ${SRC_DIR}
-# compilePackageESM ${SRC_DIR}
-# runRollup ${SRC_DIR}
-updateVersionReferences ${BUNDLES_DIR}
+for PACKAGE in ${PACKAGES[@]}
+do
+    ROOT_OUT=`pwd`/packages
+    SRC_DIR=${ROOT_OUT}/${PACKAGE}
+
+    ROOT_OUT_DIR=`pwd`/dist/packages
+    OUT_DIR=${ROOT_OUT_DIR}/${PACKAGE}
+    OUT_DIR_ESM5=${OUT_DIR}/esm5
+    ESM5_DIR=${OUT_DIR}/esm5
+    BUNDLES_DIR=${OUT_DIR}/bnundles
+    
+    compilePackageESM ${SRC_DIR}
+    compilePackageES5 ${SRC_DIR}
+    runRollup ${SRC_DIR}
+    updateVersionReferences ${BUNDLES_DIR}
+done
