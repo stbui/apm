@@ -1,0 +1,29 @@
+{
+    "compilerOptions": {
+      "baseUrl": ".",
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true,
+      "module": "commonjs",
+      "target": "es5",
+      "noImplicitAny": false,
+      "outDir": "./dist",
+      "rootDir": ".",
+      "sourceMap": true,
+      "inlineSources": true,
+      "declaration": false,
+      "removeComments": true,
+      "strictNullChecks": true,
+      "lib": ["es2015", "dom"],
+      "skipLibCheck": true,
+      "moduleResolution": "node",
+      "paths": {
+      }
+    },
+    "include": [
+        "src/**/*.ts"
+    ],
+    "exclude": [
+        "node_modules/",
+        "packages/"
+    ]
+  } 

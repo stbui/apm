@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "sh ./tools/build.sh",
-    "build-rollup": "rollup -c ./packages/core/rollup.config.js",
-    "publish": "./node_modules/.bin/lerna publish -m \"chore(release) publish %s\"",
-    "tsc": "tsc -p ./packages/core/tsconfig-build.json"
+    "src:tsc": "tsc",
+    "build:src": "tsc && rollup -c && rm -rf ./dist/src",
+    "build:pkg": "sh ./tools/build.sh",
+    "publish": "./node_modules/.bin/lerna publish -m \"chore(release) publish %s\""
   },
   "author": "stbui",
   "license": "ISC",
