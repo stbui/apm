@@ -6,7 +6,13 @@
   "version": "0.5.2",
   "license": "MIT",
   "main": "dist/electron.js",
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
   "scripts": {
+    "commit":"git-cz",
     "ng": "ng",
     "start": "ng serve --extract-css",
     "start:proxy": "ng serve --extract-css --proxy-config proxy.conf.js",
@@ -70,10 +76,13 @@
     "@compodoc/compodoc": "^1.0.5",
     "@types/node": "^6.0.94",
     "codelyzer": "^3.2.2",
+    "commitizen": "^2.9.6",
+    "cz-conventional-changelog": "^2.1.0",
     "hads": "^1.6.0",
     "protractor": "^5.1.2",
     "ts-node": "^3.2.2",
     "tslint": "^5.7.0",
-    "typescript": "^2.4.2"
+    "typescript": "^2.4.2",
+    "validate-commit-msg": "^2.14.0"
   }
 }
