@@ -18,8 +18,12 @@ git clone https://github.com/stbui/apm
 # 项目结构
 > apm-admin-front-angular
 
-前端项目，基于`[angular-material-app](https://github.com/stbui/angular-material-app)`项目搭建，
+前端项目，基于[angular-material-app](https://github.com/stbui/angular-material-app)项目搭建，
 
 > amp-admin-serve-netstjs
 
 后端项目, 基于`nestjs`框架开发
+
+> apm-js-sdk
+
+收集数据sdk
