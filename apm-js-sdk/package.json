@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {},
   "devDependencies": {
+    "esdoc": "^1.0.4",
     "lerna": "^2.6.0",
     "rollup": "^0.52.1",
     "rollup-plugin-commonjs": "^8.2.6",
