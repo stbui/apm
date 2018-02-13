@@ -1,32 +1,18 @@
-import { Config } from "./config";
-import { Report } from "./report";
+import { Report } from './report';
 
 declare var window;
-
-const config = new Config({
-  project: "dev",
-  logger: "xhr",
-  platform: "javascript",
-  breadcrumbs: [
-    {
-      timestamp: 1516017703.995,
-      type: "http",
-      category: "xhr",
-      data: {
-        method: "GET",
-        url: "http://127.0.0.1:4200/sockjs-node/info?t=1516017703989",
-        status_code: 200
-      }
-    }
-  ]
-});
 
 export class HttpInterceptorHandler {
   constructor() {}
 
+  listener() {
+    this.handle();
+  }
+
   handle() {
     let open = window.XMLHttpRequest.prototype.open,
       send = window.XMLHttpRequest.prototype.send;
+    let self = this;
 
     window.XMLHttpRequest.prototype.open = function(
       method,
@@ -35,15 +21,11 @@ export class HttpInterceptorHandler {
       user,
       password
     ) {
-      config.breadcrumbs.push({
-        timestamp: 1,
-        type: "http",
-        category: "xhr",
-        data: {
-          method,
-          url: this.joinUrl(),
-          status_code: 200
-        }
+      self.send({
+        type: 'xhr',
+        url: self.joinUrl(url),
+        method,
+        status: 200
       });
       // send
       return open.apply(this, arguments);
@@ -53,6 +35,12 @@ export class HttpInterceptorHandler {
       // send
       return send.apply(this, arguments);
     };
+  }
+
+  send(config) {
+    console.log('xhr: ', config);
+    const report = new Report();
+    report.push(config);
   }
 
   joinUrl(url) {

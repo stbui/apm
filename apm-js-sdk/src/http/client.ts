@@ -15,5 +15,9 @@ export class HttpInterceptingHandle implements HttpHander {
 }
 
 export class Http {
-  constructor(parameters) {}
+  post(params) {}
+  get(params) {}
+  put(params) {}
+  delete(params) {}
+  request(params) {}
 }

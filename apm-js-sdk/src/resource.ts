@@ -51,4 +51,16 @@ export class Resource {
 
     return this._SCRIPT;
   }
+
+  collection() {
+    console.log('resource: ', {
+      css: this.css(),
+      scrilpt: this.script()
+    });
+
+    return {
+      css: this.css(),
+      scrilpt: this.script()
+    };
+  }
 }
