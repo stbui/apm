@@ -1,3 +1,7 @@
+/**
+ * @license
+ * Copyright stbui Inc. All Rights Reserved.
+ */
 export abstract class ResourceBase {
   private entries;
 

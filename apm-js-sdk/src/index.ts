@@ -1,3 +1,7 @@
+/**
+ * @license
+ * Copyright stbui Inc. All Rights Reserved.
+ */
 import { Config } from './config';
 import { ExceptionInterceptorHandler } from './exception-interceptor';
 import { Performance } from './performance';
@@ -18,4 +22,4 @@ const exceptionInterceptorHandler = new ExceptionInterceptorHandler();
 exceptionInterceptorHandler.listener();
 
 const httpInterceptorHandler = new HttpInterceptorHandler();
-httpInterceptorHandler.listener();
+// httpInterceptorHandler.listener();

@@ -1,3 +1,7 @@
+/**
+ * @license
+ * Copyright stbui Inc. All Rights Reserved.
+ */
 import { Report } from './report';
 
 declare var window;

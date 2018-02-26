@@ -1,3 +1,7 @@
+/**
+ * @license
+ * Copyright stbui Inc. All Rights Reserved.
+ */
 abstract class Base {
   abstract set(config);
 }

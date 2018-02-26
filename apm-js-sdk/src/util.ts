@@ -1,3 +1,7 @@
+/**
+ * @license
+ * Copyright stbui Inc. All Rights Reserved.
+ */
 export function isError(value) {
   return Object.prototype.toString.call(value) == "[object Error]";
 }

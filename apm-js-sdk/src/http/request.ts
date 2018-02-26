@@ -1,3 +1,7 @@
+/**
+ * @license
+ * Copyright stbui Inc. All Rights Reserved.
+ */
 export class HttpRequest<T> {
   readonly body: T | null = null;
   readonly headers;
