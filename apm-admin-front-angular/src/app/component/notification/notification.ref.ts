@@ -1,46 +1,88 @@
+/**
+ * @license
+ * Copyright Stbui All Rights Reserved.
+ */
+
 import { OverlayRef } from '@angular/cdk/overlay';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
+import { Observable, Subject } from 'rxjs';
+import { NotificationContainer } from './notification-container';
+
+export interface NotificationDismiss {
+  dismissedByAction: boolean;
+}
 
 export class NotificationRef<T> {
-  componentInstance: T;
+  instance: T;
 
-  private _afterClosed: Subject<any> = new Subject();
-  private _activate: Subject<any> = new Subject();
-  private _manualClose: Subject<any> = new Subject();
+  containerInstance: NotificationContainer;
 
-  constructor(private _overlayRef: OverlayRef) {
+  private readonly _afterDismissed = new Subject<NotificationDismiss>();
+  private readonly _afterOpened = new Subject<void>();
+  private readonly _onAction = new Subject<void>();
+
+  private _durationTimeoutId: any;
+  private _dismissedByAction = false;
+
+  constructor(
+    containerInstance: NotificationContainer,
+    private _overlayRef: OverlayRef
+  ) {
+    this.containerInstance = containerInstance;
+    this.onAction().subscribe(() => this.dismiss());
+    containerInstance._onExit.subscribe(() => this._finishDismiss());
   }
 
-  manualClose() {
-    this._manualClose.next();
-    this._manualClose.complete();
+  dismiss(): void {
+    if (!this._afterDismissed.closed) {
+      this.containerInstance.exit();
+    }
+    clearTimeout(this._durationTimeoutId);
   }
 
-  manualClosed(): Observable<any> {
-    return this._manualClose.asObservable();
+  dismissWithAction(): void {
+    if (!this._onAction.closed) {
+      this._dismissedByAction = true;
+      this._onAction.next();
+      this._onAction.complete();
+    }
   }
 
-  close(): void {
+  closeWithAction(): void {
+    this.dismissWithAction();
+  }
+
+  _dismissAfter(duration: number): void {
+    this._durationTimeoutId = setTimeout(() => this.dismiss(), duration);
+  }
+
+  _open(): void {
+    if (!this._afterOpened.closed) {
+      this._afterOpened.next();
+      this._afterOpened.complete();
+    }
+  }
+
+  private _finishDismiss(): void {
     this._overlayRef.dispose();
-    this._afterClosed.next();
-    this._afterClosed.complete();
+
+    if (!this._onAction.closed) {
+      this._onAction.complete();
+    }
+
+    this._afterDismissed.next({ dismissedByAction: this._dismissedByAction });
+    this._afterDismissed.complete();
+    this._dismissedByAction = false;
   }
 
-  afterClosed(): Observable<any> {
-    return this._afterClosed.asObservable();
+  afterDismissed(): Observable<NotificationDismiss> {
+    return this._afterDismissed.asObservable();
   }
 
-  isInactive() {
-    return this._activate.isStopped;
+  afterOpened(): Observable<void> {
+    return this.containerInstance._onEnter;
   }
 
-  activate() {
-    this._activate.next();
-    this._activate.complete();
-  }
-
-  afterActivate(): Observable<any> {
-    return this._activate.asObservable();
+  onAction(): Observable<void> {
+    return this._onAction.asObservable();
   }
 }

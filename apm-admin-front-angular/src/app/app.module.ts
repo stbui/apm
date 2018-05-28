@@ -12,31 +12,13 @@ import { AdminModule } from './admin/admin.module';
 import { AppComponent } from './app.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 
-
 import { FireBaseComponentsModule } from './shared/firebase.module';
 
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 
-
-import { ErrorHandler } from '@angular/core';
-import * as Raven from 'raven-js';
-
-Raven
-    .config('http://2a4c17b3f26048fc8405775f5cb388c5@127.0.0.1:9000/2')
-    .install();
-
-export class RavenErrorHandler implements ErrorHandler {
-    handleError(err: any): void {
-        Raven.captureException(err);
-    }
-}
-
 @NgModule({
-  declarations: [
-    AppComponent,
-    DashboardComponent
-  ],
+  declarations: [AppComponent, DashboardComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -48,8 +30,7 @@ export class RavenErrorHandler implements ErrorHandler {
     ReactiveFormsModule,
     environment['ngsw'] ? ServiceWorkerModule.register('./ngsw-worker.js') : []
   ],
-  providers: [ { provide: ErrorHandler, useClass: RavenErrorHandler } ],
+  providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule {
-}
+export class AppModule {}

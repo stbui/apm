@@ -1,16 +1,27 @@
-import { Component, Output, Input, EventEmitter } from '@angular/core';
+/**
+ * @license
+ * Copyright Stbui All Rights Reserved.
+ */
+
+import {
+  Component,
+  Output,
+  Input,
+  EventEmitter,
+  ViewEncapsulation
+} from '@angular/core';
 
 @Component({
   selector: 'stbui-calendar-toolbar',
   templateUrl: './toolbar.component.html',
-  styleUrls: ['./toolbar.component.scss']
+  styleUrls: ['./toolbar.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class ToolbarComponent {
-
   @Input() displayDates;
-  @Output() monthChange = new EventEmitter();
+  @Output() monthChange: EventEmitter<number> = new EventEmitter<number>();
 
-  constructor() { }
+  constructor() {}
 
   OnPrev() {
     this.monthChange.emit(-1);
@@ -19,5 +30,4 @@ export class ToolbarComponent {
   OnNext() {
     this.monthChange.emit(1);
   }
-
 }

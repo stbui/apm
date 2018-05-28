@@ -1,0 +1,12 @@
+<div class="speed-dial-container" [ngClass]="position">
+
+  <div class="speed-dial-trigger" (click)="toggle()">
+    <button mat-fab>
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+
+  <div class="speed-dial-actions" #actions>
+    <ng-content></ng-content>
+  </div>
+</div>

@@ -1,157 +1,182 @@
-import { ComponentRef, Injectable, Injector, Inject } from '@angular/core';
-import { Overlay, OverlayConfig } from '@angular/cdk/overlay';
-import { ComponentPortal } from '@angular/cdk/portal';
-import { Observable } from 'rxjs/Observable';
+/**
+ * @license
+ * Copyright Stbui All Rights Reserved.
+ */
 
+import {
+  ComponentRef,
+  Injectable,
+  Injector,
+  Inject,
+  Optional,
+  SkipSelf,
+  InjectionToken,
+  TemplateRef,
+  EmbeddedViewRef
+} from '@angular/core';
+import { Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
+import { ComponentPortal, TemplatePortal, ComponentType, PortalInjector } from '@angular/cdk/portal';
+
+import { STBUI_NOTIFICATION_DATA, NotificationConfig } from './notification.config';
 import { NotificationRef } from './notification.ref';
-import { NotificationInjector } from './notification.injector';
-import { NotificationConfig } from './notification.config';
 import { NotificationComponent } from './notification.component';
-import { NotificationInterface } from './notification.interface';
-import { STBUI_NOTIFICATION_DATA } from './notification.token';
+import { NotificationContainer } from './notification-container';
 
-export interface Activate {
-  id?: number;
-  message?: string;
-  portal?: ComponentRef<any>;
-  notificationRef: NotificationRef<any>;
-  onShown?: Observable<any>;
-  onHidden?: Observable<any>;
-  onTap?: Observable<any>;
-  onAction?: Observable<any>;
-}
-
+export const STBUI_NOTIFICATION_DEFAULT_OPTIONS = new InjectionToken<NotificationConfig>('notification-default-options');
 
 @Injectable()
 export class NotificationService {
 
-  notifications: Activate[] = [];
-  private index = 0;
+  constructor(
+    private _injector: Injector,
+    private _overlay: Overlay,
+    @Optional() @SkipSelf() private _parentNotication: NotificationService,
+    @Inject(STBUI_NOTIFICATION_DEFAULT_OPTIONS) private _defaultConfig: NotificationConfig) {
+  }
 
-  constructor(private _injector: Injector,
-              private _overlay: Overlay,
-              @Inject(STBUI_NOTIFICATION_DATA) public config: NotificationInterface) {
+  private _notificationRefAtThisLevel: NotificationRef<any> | null = null;
 
-    this.config = this._applyConfig(config);
+  get _openedNotificationRef(): NotificationRef<any> | null {
+    const parent = this._parentNotication;
+    return parent ? parent._openedNotificationRef : this._notificationRefAtThisLevel;
+  }
 
-    if (!this.config.iconClasses) {
-      this.config.iconClasses = {};
+  set _openedNotificationRef(value: NotificationRef<any> | null) {
+    if (this._parentNotication) {
+      this._parentNotication._openedNotificationRef = value;
+    } else {
+      this._notificationRefAtThisLevel = value;
     }
-    this.config.iconClasses.error = this.config.iconClasses.error || 'notification-error';
-    this.config.iconClasses.info = this.config.iconClasses.info || 'notification-info';
-    this.config.iconClasses.success = this.config.iconClasses.success || 'notification-success';
-    this.config.iconClasses.warning = this.config.iconClasses.warning || 'notification-warning';
-
-    this.config.closeButton = this._use(config, this.config.closeButton, false);
-    this.config.notificationClass = this._use(config, this.config.notificationClass, 'notification');
-    this.config.positionClass = this._use(config, this.config.positionClass, 'notification-top-right');
-    this.config.titleClass = this._use(config, this.config.titleClass, 'notification-title');
-    this.config.messageClass = this._use(config, this.config.messageClass, 'notification-message');
-    this.config.notificationComponent = this._use(config, this.config.notificationComponent, NotificationComponent);
   }
 
-  show(message?: string, title?: string, config?: NotificationInterface, type = '') {
-    return this.open(message, title, this._applyConfig(config), type);
+  success(message: string, title: string, config?: NotificationConfig): NotificationRef<NotificationComponent> {
+    const type = 'success';
+    return this.open(message, title, config, type);
   }
 
-  success(message?: string, title?: string, config?: NotificationInterface) {
-    const type = this.config.iconClasses.success || '';
-    return this.open(message, title, this._applyConfig(config), type);
+  error(message: string, title: string, config?: NotificationConfig): NotificationRef<NotificationComponent> {
+    const type = 'error';
+    return this.open(message, title, config, type);
   }
 
-  error(message?: string, title?: string, config?: NotificationInterface) {
-    const type = this.config.iconClasses.error || '';
-    return this.open(message, title, this._applyConfig(config), type);
+  info(message: string, title: string, config?: NotificationConfig): NotificationRef<NotificationComponent> {
+    const type = 'info';
+    return this.open(message, title, config, type);
   }
 
-  info(message?: string, title?: string, config?: NotificationInterface) {
-    const type = this.config.iconClasses.info || '';
-    return this.open(message, title, this._applyConfig(config), type);
+  warn(message: string, title: string, config?: NotificationConfig): NotificationRef<NotificationComponent> {
+    const type = 'warn';
+    return this.open(message, title, config, type);
   }
 
-  remove(id: number) {
-    const result = this._findNotification(id);
-    result.active.notificationRef.close();
-    this.notifications.splice(result.index, 1);
+  open(message: string, title: string, config?: NotificationConfig, type?: string): NotificationRef<NotificationComponent> {
+    const _config = {...this._defaultConfig, ...config};
+    _config.data = {message, title, type};
+    return this.openFromComponent(NotificationComponent, _config);
   }
 
-  clear(id?: number) {
-    for (const notification of this.notifications) {
-      if (id !== undefined) {
-        if (notification.id === id) {
-          notification.notificationRef.manualClose();
-          return;
-        }
-      } else {
-        notification.notificationRef.manualClose();
+  dismiss(): void {
+    if (this._openedNotificationRef) {
+      this._openedNotificationRef.dismiss();
+    }
+  }
+
+  openFromComponent<T>(component: ComponentType<T>, config?: NotificationConfig): NotificationRef<T> {
+    return this._attach(component, config) as NotificationRef<T>;
+  }
+
+  private _attchNotificationContainer(overlayRef: OverlayRef, config: NotificationConfig): NotificationContainer {
+    const containerPortal = new ComponentPortal(NotificationContainer, config.viewContainerRef);
+    const containerRef: ComponentRef<NotificationContainer> = overlayRef.attach(containerPortal);
+    containerRef.instance.notificationConfig = config;
+    return containerRef.instance;
+  }
+
+  private _attach<T>(content: ComponentType<T> | TemplateRef<T>, userConfig?: NotificationConfig):
+    NotificationRef<T | EmbeddedViewRef<any>> {
+
+    const config = {...this._defaultConfig, ...userConfig};
+    const overlayRef = this._createOverlay(config);
+    const container = this._attchNotificationContainer(overlayRef, config);
+    const notificationRef = new NotificationRef<T | EmbeddedViewRef<any>>(container, overlayRef);
+
+    if (content instanceof TemplateRef) {
+      const portal = new TemplatePortal(content, null!, {
+        $implicit: config.data,
+        notificationRef
+      } as any);
+
+      notificationRef.instance = container.attachTemplatePortal(portal);
+    } else {
+      const injector = this._createInjector(config, notificationRef);
+      const portal = new ComponentPortal(content, undefined, injector);
+      const contentRef = container.attachComponentPortal<T>(portal);
+      notificationRef.instance = contentRef.instance;
+    }
+
+    this._animateNotification(notificationRef, config);
+    this._openedNotificationRef = notificationRef;
+    return this._openedNotificationRef;
+  }
+
+  private _animateNotification(notificationRef: NotificationRef<any>, config: NotificationConfig) {
+    notificationRef.afterDismissed().subscribe(() => {
+      if (this._openedNotificationRef === notificationRef) {
+        this._openedNotificationRef = null;
       }
-    }
-  }
-
-  open(message?: string, title?: string, config?: NotificationInterface, type: string = '') {
-    if (!config.notificationComponent) {
-      throw new Error('notificationComponent required');
-    }
-
-    // todo message与之前比较一样不在重新创建
-
-    this.index += 1;
-    const overlayRef = this._createOverlay();
-    const notificationRef = new NotificationRef(overlayRef);
-    const notificationConfig = new NotificationConfig(this.index, config, message, title, type, notificationRef);
-    const injector = this._createInjector(notificationConfig, notificationRef);
-    const component = new ComponentPortal(config.notificationComponent, undefined, injector);
-
-    const instance: Activate = {
-      id: this.index,
-      message,
-      notificationRef,
-      onShown: notificationRef.afterActivate(),
-      onHidden: notificationRef.afterActivate(),
-      onTap: notificationConfig.onTap(),
-      onAction: notificationConfig.onAction(),
-      portal: overlayRef.attach(component)
-    };
-
-    setTimeout(() => {
-      instance.notificationRef.activate();
     });
 
-    this.notifications.push(instance);
-
-    return instance;
-  }
-
-  private _createOverlay(config?: NotificationInterface) {
-    const state = new OverlayConfig();
-    return this._overlay.create(state);
-  }
-
-  private _createInjector<T>(config: NotificationConfig, notificationRef: NotificationRef<T>) {
-    return new NotificationInjector(config, this._injector);
-  }
-
-  private _findNotification(id: number) {
-    for (let i = 0; i < this.notifications.length; i++) {
-      if (this.notifications[i].id === id) {
-        return {index: i, active: this.notifications[i]};
-      }
+    if (this._openedNotificationRef) {
+      this._openedNotificationRef.afterDismissed().subscribe(() => {
+        notificationRef.containerInstance.enter();
+      });
+      this._openedNotificationRef.dismiss();
+    } else {
+      notificationRef.containerInstance.enter();
     }
 
-    return null;
+    if (config.duration && config.duration > 0) {
+      notificationRef.afterOpened().subscribe(() => notificationRef._dismissAfter(config.duration!));
+    }
   }
 
-  private _applyConfig(override: NotificationInterface = {}) {
-    const current: NotificationInterface = {...this.config};
-    current.closeButton = this._use(override, override.closeButton, current.closeButton);
-    current.positionClass = this._use(override, override.positionClass, current.positionClass);
-    current.titleClass = this._use(override, override.titleClass, current.titleClass);
-    current.messageClass = this._use(override, override.messageClass, current.messageClass);
-    return current;
+  private _createOverlay(config: NotificationConfig): OverlayRef {
+    const overlayConfig = new OverlayConfig();
+    overlayConfig.direction = config.direction;
+
+    const positionStrategy = this._overlay.position().global();
+    const isRtl = config.direction === 'rtl';
+    const isLeft = (
+      config.horizontalPosition === 'left' ||
+      (config.horizontalPosition === 'start' && !isRtl) ||
+      (config.horizontalPosition === 'end' && isRtl));
+    const isRight = !isLeft && config.horizontalPosition !== 'center';
+    if (isLeft) {
+      positionStrategy.left('0');
+    } else if (isRight) {
+      positionStrategy.right('0');
+    } else {
+      positionStrategy.centerHorizontally();
+    }
+    if (config.verticalPosition === 'top') {
+      positionStrategy.top('0');
+    } else {
+      positionStrategy.bottom('0');
+    }
+
+    overlayConfig.positionStrategy = positionStrategy;
+
+    return this._overlay.create(overlayConfig);
   }
 
-  private _use<T>(config, source: T, defaultValue: T): T {
-    return config && source !== undefined ? source : defaultValue;
+  private _createInjector<T>(config: NotificationConfig, notificationRef): PortalInjector {
+    const userInjector = config && config.viewContainerRef && config.viewContainerRef.injector;
+    const injectionTokens = new WeakMap();
+
+    injectionTokens.set(NotificationRef, notificationRef);
+    injectionTokens.set(STBUI_NOTIFICATION_DATA, config.data);
+
+    return new PortalInjector(userInjector || this._injector, injectionTokens);
   }
 
 }

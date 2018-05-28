@@ -1,3 +1,8 @@
+/**
+ * @license
+ * Copyright Stbui All Rights Reserved.
+ */
+
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
@@ -31,6 +36,6 @@ export class DatePickerPipe implements PipeTransform {
   }
 
   formatDay(date) {
-    return date.getDate();
+    return date && date.getDate();
   }
 }

@@ -1,5 +1,6 @@
+
 export const environment = {
-  production: false,
+  production: true,
   firebase: {
     apiKey: 'AIzaSyAGcYsQtc9xqqEKstnoO3WasuZxJmKTwNc',
     authDomain: 'angular-material-app-stbui.firebaseapp.com',
@@ -8,5 +9,5 @@ export const environment = {
     storageBucket: 'angular-material-app-stbui.appspot.com',
     messagingSenderId: '974351057659'
   },
-  apm: '/apm/assets/data/apm'
+  apm: '/assets/data/apm'
 };

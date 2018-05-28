@@ -1,13 +1,18 @@
-import { Component, Input } from '@angular/core';
+/**
+ * @license
+ * Copyright Stbui All Rights Reserved.
+ */
+
+import { Component, Input, ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'stbui-date-display',
   templateUrl: './date-display.component.html',
-  styleUrls: ['./date-display.component.scss']
+  styleUrls: ['./date-display.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class DateDisplayComponent {
-
-  displayDates = [];
+  displayDates: any[] = [];
   @Input()
   set selectedDate(val) {
     this.displayDates = [val];
@@ -16,6 +21,5 @@ export class DateDisplayComponent {
     return this.displayDates;
   }
 
-  constructor() { }
-
+  constructor() {}
 }

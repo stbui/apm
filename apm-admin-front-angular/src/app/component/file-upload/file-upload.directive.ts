@@ -1,38 +1,60 @@
+/**
+ * @license
+ * Copyright Stbui All Rights Reserved.
+ */
+
 import { Directive, HostListener, Output, EventEmitter } from '@angular/core';
 import { FileUploadService } from './file-upload.service';
 import { Upload } from './file-upload.model';
 
 @Directive({
+  selector: '[stbuiFileDrop], [stbFileDrop]'
+})
+export class FileUploadDropDirective {
+  @Output() dropped = new EventEmitter();
+
+  constructor() {}
+
+  @HostListener('drop', ['$event'])
+  onDrop($event) {
+    $event.preventDefault();
+    this.dropped.emit($event.dataTransfer.files);
+  }
+}
+
+@Directive({
   selector: '[stbFileUpload],[stbuiFileUpload]'
 })
 export class FileUploadDirective {
+  public currentUpload: Upload;
+  private selectedFiles: FileList;
 
-  public currentUpload:Upload;
-  private selectedFiles:FileList;
+  @Output() uploader: EventEmitter<any> = new EventEmitter<any>();
 
-  @Output() uploader = new EventEmitter<any>();
-
-  @HostListener('change', ['$event']) onChange(event:Event) {
+  @HostListener('change', ['$event'])
+  onChange(event: Event) {
     this.detectFiles(event);
     this.uploadSingle();
   }
 
-  @HostListener('drop', ['$event']) onDrop(event:Event) {
+  @HostListener('drop', ['$event'])
+  onDrop(event: Event) {
     this.stopEvent(event);
     this.dataTransfer(event);
     this.uploadSingle();
   }
 
-  @HostListener('dragenter', ['$event']) onDragEnter(event) {
+  @HostListener('dragenter', ['$event'])
+  onDragEnter(event) {
     this.stopEvent(event);
   }
 
-  @HostListener('dragover', ['$event']) onDragOver(event) {
+  @HostListener('dragover', ['$event'])
+  onDragOver(event) {
     this.stopEvent(event);
   }
 
-  constructor(private service:FileUploadService) {
-  }
+  constructor(private service: FileUploadService) {}
 
   stopEvent(event) {
     event.stopPropagation();
@@ -50,7 +72,7 @@ export class FileUploadDirective {
   uploadSingle() {
     let file = this.selectedFiles.item(0);
     this.currentUpload = new Upload(file);
-    this.service.pushUpload(this.currentUpload);
+    // this.service.startUpload(this.currentUpload);
     this.uploader.emit(this.currentUpload);
   }
 }
