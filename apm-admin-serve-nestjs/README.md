@@ -1,13 +1,40 @@
 # apm-admin-serve-nestjs
 
+## Description
 
-# 安装
-```
-npm install
+description
+
+## Installation
+
+```bash
+$ npm install
 ```
 
-# 启动
+## Running the app
+
+```bash
+# development
+$ npm run start
+
+# watch mode
+$ npm run start:dev
+
+# production mode
+npm run start:prod
 ```
-npm run serve
+
+## Test
+
+```bash
+# unit tests
+$ npm run test
+
+# e2e tests
+$ npm run test:e2e
+
+# test coverage
+$ npm run test:cov
 ```
+
+
 http://127.0.0.1:3000
