@@ -3,7 +3,6 @@
 
 ```html
 <script src="http://127.0.0.1:3000/apm.js" data-apikey="qetBqF9Ja3v2oU8BRRzoLlWaKj0cFiN9"></script>
-<script>window.bugsnagClient = bugsnag('qetBqF9Ja3v2oU8BRRzoLlWaKj0cFiN9')</script>
 ```
 
 ### CDN
@@ -36,7 +35,7 @@ apm.setApiKey('qetBqF9Ja3v2oU8BRRzoLlWaKj0cFiN9');
 ### ES2015(ES6)
 ```javascript
 var apm = require('apm-js');
-import apm from 'apm-js;
+import apm from 'apm-js'
 apm.setApiKey('qetBqF9Ja3v2oU8BRRzoLlWaKj0cFiN9');
 ```
 
