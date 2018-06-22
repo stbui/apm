@@ -1,11 +1,10 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { ApiDb } from './api.db';
 
 @Injectable()
-export class ApiService {
+export class ProjectService {
   options;
 
-  constructor(@Inject('ApiModelToken') private readonly model) {
+  constructor(@Inject('ProjectModelToken') private readonly model) {
     this.options = {};
   }
 
@@ -18,7 +17,7 @@ export class ApiService {
       result = model.find(null, options);
     }
 
-    return result.sort({ _id: 1 }).exec();
+    return result.exec();
   }
 
   add(data) {

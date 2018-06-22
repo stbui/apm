@@ -9,7 +9,7 @@ export class ScriptService {
   // private db = ScriptDb;
 
   constructor(
-    @Inject('ScriptModelToken') private readonly scriptModel: Model<any>,
+    @Inject('ScriptModelToken') private readonly model: Model<any>,
   ) {
     this.options = {};
   }
@@ -29,11 +29,6 @@ export class ScriptService {
     return this;
   }
 
-  page(p: Number = 0, pageSize: Number = 10) {
-    this.options.limit = [p, pageSize];
-    return this;
-  }
-
   getId() {
     this.options.id = 1;
     return this;
@@ -42,11 +37,11 @@ export class ScriptService {
   find(options?) {
     if (this.options.where) options = this.options.where;
 
-    return this.scriptModel.findOne(options);
+    return this.model.findOne(options);
   }
 
   add(data) {
-    const model = new this.scriptModel(data);
+    const model = new this.model(data);
     return model.save();
   }
 
@@ -59,54 +54,51 @@ export class ScriptService {
     return { type: 'add', data: insertId };
   }
 
-  select() {
-    const model = this.scriptModel;
+  select(options?) {
+    const model = this.model;
+
     let result = model.find();
 
-    if (this.options.field) {
-      result = model.find({}, this.options.field);
+    if (options) {
+      result = model.find(null, options);
     }
 
     if (this.options.order) {
       return result.sort(this.options.order);
     }
 
-    return result;
+    return result.exec();
   }
 
-  async countSelect() {
+  page(p: Number = 1, pageSize: Number = 10) {
+    this.options.limit = [p, pageSize];
+    return this;
+  }
+
+  async countSelect(options?) {
     let limit = this.options.limit;
-    let count = this.count();
+    let count = await this.count();
     let data = {
-      count: null,
-      currentPage: 0,
-      pageSize: 10,
+      count: count,
+      currentPage: limit[0] - 1,
+      pageSize: limit[1],
       totalPage: null,
       data: null,
     };
 
-    data.totalPage = Math.ceil(count / data.pageSize);
-    data.currentPage = Math.floor(
-      this.options.limit[0] / this.options.limit[1] + 1,
-    );
+    const result = await this.model
+      .find(null, options)
+      .skip(data.currentPage * data.pageSize)
+      .limit(limit[1])
+      .exec();
 
-    if (data.currentPage > data.totalPage) {
-      if (this.options.limit) {
-        data.currentPage = this.options.limit[0];
-      } else {
-        data.currentPage = 0;
-      }
-    }
-
-    limit = [(data.totalPage - 1) * data.pageSize, data.pageSize];
-
-    data.count = count;
-    data.data = await this.select();
+    data.totalPage = Math.ceil(data.count / data.pageSize);
+    data.data = result;
 
     return data;
   }
 
   count(field: String = '') {
-    return 2;
+    return this.model.count();
   }
 }

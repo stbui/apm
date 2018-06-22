@@ -1,12 +1,19 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { ApiDb } from './api.db';
 
 @Injectable()
-export class ApiService {
+export class SnapshotService {
   options;
 
-  constructor(@Inject('ApiModelToken') private readonly model) {
+  constructor(@Inject('SnapshotModelToken') private readonly model) {
     this.options = {};
+  }
+
+  findById(id) {
+    return this.model
+      .findOne({
+        _id: id,
+      })
+      .exec();
   }
 
   select(options?) {
