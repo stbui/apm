@@ -1,5 +1,14 @@
 {
-  "lerna": "2.1.0",
-  "packages": ["dist/packages/*"],
+  "lerna": "2.11.0",
+  "packages": [
+    "packages/common",
+    "packages/core",
+    "packages/http"
+  ],
+  "command": {
+    "publish": {
+      "message": "chore(release): publish %s"
+    }
+  },
   "version": "0.0.1"
 }

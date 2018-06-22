@@ -6,9 +6,10 @@ import { CollectionModule } from './collection/collection.module';
 import { PerformanceModule } from './performance/performance.module';
 import { ScriptModule } from './script/script.module';
 import { UserModule } from './user/user.module';
+import { ApiModule } from './api/api.module';
 
 @Module({
-  imports: [DatabaseModule, CollectionModule, PerformanceModule, ScriptModule, UserModule],
+  imports: [CollectionModule, PerformanceModule, UserModule, ApiModule],
   controllers: [AppController],
   providers: [ AppService ]
 })

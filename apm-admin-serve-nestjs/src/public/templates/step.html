@@ -1,0 +1,111 @@
+<div layout="row" style="margin: 0px; padding: 0px;">
+    <div layout="column" flex>
+        <div layout="row" class="step-wrap" ng-class="{'md-primary md-raised selected-step': isSelected, 'md-primary md-raised executed-step': isExecuted}">
+            <div class="md-button step-button" layout="column"
+                        ng-click="selectStep()" aria-label="Step button">
+                <div layout="row">
+                    <div class="step-icon-container">
+                        <i class="step-icon {{ stepStyle.icon }} icon" ng-style="{'color': isSelected ? '#ffffff' : stepStyle.color}"></i>
+                        <span ng-class="isSelected || isExecuted ? 'step-count is-selected' : 'step-count'"
+                              ng-if="data.count > 1">
+                              {{ data.count | countformat }}
+                        </span>
+                    </div>
+                    <span class="step-title-word-wrapper" layout="column" flex>
+                        <span ng-show="stepStyle.showTitle"> {{ stepStyle.title }} </span>
+                        <span> {{ stepStyle.summary }} </span>
+                    </span>
+                    <span class="step-time">{{ data.time | momentformat }}</span>
+                </div>
+            </div>
+            <md-divider class="step-divider" layout="column" vertical></md-divider>
+            <md-button class="step-details-button" layout="column"
+                       ng-click="showDetails();" aria-label="Step details">
+                <div class="icon" ng-style="{'color': isSelected || isExecuted ? '#ffffff' : '#96999f' }" ng-class="{'selected-log': (data.isLog && data.details.id === selectedLogId)}">
+                    <svg class="chevron-down" ng-hide="isExpanded" width="12" height="10" xmlns="http://www.w3.org/2000/svg">
+                      <path fill="none" d="M-1-1h14v12H-1z"/>
+                      <path d="M5.99 8.2l4.865-4.866L9.72 2.2 5.99 5.93 2.26 2.2 1.125 3.335z" stroke="currentColor" fill="currentColor" fill-rule="evenodd"/>
+                    </svg>
+                    <svg class="chevron-up" ng-style="{'display': isExpanded ? 'inline-block' : 'none'}" width="12" height="10" xmlns="http://www.w3.org/2000/svg">
+                      <path fill="none" d="M-1-1h14v12H-1z"/>
+                      <path d="M5.927 2.2L1.063 7.063 2.197 8.2l3.73-3.73 3.73 3.73 1.134-1.135z" stroke="currentColor" fill="currentColor" fill-rule="evenodd"/>
+                    </svg>
+                </div>
+            </md-button>
+        </div>
+        <div layout="row" class="step-details" style="max-height: 200px;"
+             ng-class="{'md-primary md-raised selected-step': isSelected, 'collapsed': !isExpanded}">
+            <md-content layout="column" flex class="step-detail-info" ng-class="{'log': data.isLog}">
+                <md-content style="overflow: hidden;" ng-switch on="data.isLog ? 'log' : data.type">
+                    <md-content ng-switch-when="log">
+                        <log-details log="data"></log-details>
+                    </md-content>
+
+                    <md-content ng-switch-when="mouse_click">
+                            <span class="md-subhead" md-colors="{color: 'default-grey-700'}"> Selector </span>
+                            <md-content style="max-height: 48px;" layout="column" flex ng-scrollbars ng-scrollbars-config="scrollbarConfig">
+                                {{ stepStyle.summary }}
+                            </md-content>
+
+                            <span class="md-subhead" md-colors="{color: 'default-grey-700'}"> Absolute position </span>
+                            <md-content layout="row" flex>
+                                <md-content layout="column" flex>
+                                    <details-table-row row="{
+                                        label: 'Top',
+                                        value: data.details.absoluteTop
+                                    }"></details-table-row>
+                                </md-content>
+                                <md-content layout="column" flex>
+                                    <details-table-row row="{
+                                        label: 'Left',
+                                        value: data.details.absoluteLeft
+                                    }"></details-table-row>
+                                </md-content>
+                            </md-content>
+                            <span class="md-subhead" md-colors="{color: 'default-grey-700'}"> Relative position </span>
+                            <md-content layout="row" flex>
+                                <md-content layout="column" flex>
+                                    <details-table-row row="{
+                                        label: 'Top',
+                                        value: data.details.top
+                                    }"></details-table-row>
+                                </md-content>
+                                <md-content layout="column" flex>
+                                    <details-table-row row="{
+                                        label: 'Left',
+                                        value: data.details.left
+                                    }"></details-table-row>
+                                </md-content>
+                            </md-content>
+                    </md-content>
+
+                    <md-content ng-switch-when="window_resize" class="spaced">
+                        <details-table-row class="step-detail-row" row="{
+                            label: 'Height',
+                            value: data.details.height
+                        }"></details-table-row>
+                        <details-table-row class="step-detail-row" row="{
+                            label: 'Width',
+                            value: data.details.width
+                        }"></details-table-row>
+                    </md-content>
+
+                    <md-content ng-switch-when="dom_snapshot">
+                        <details-table-row row="{
+                            label: 'Page URL',
+                            value: data.details.pageUrl,
+                            isLink: true
+                        }"></details-table-row>
+                    </md-content>
+
+                    <md-content ng-switch-when="visibility_change">
+                        <details-table-row row="{
+                            label: 'document.visibilityState',
+                            value: data.details.visibilityState
+                        }"></details-table-row>
+                    </md-content>
+                </md-content>
+            </md-content>
+        </div>
+    </div>
+</div>

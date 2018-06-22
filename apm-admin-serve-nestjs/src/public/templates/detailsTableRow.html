@@ -1,0 +1,9 @@
+<md-content layout="row">
+    <span class="details-table-row-label" layout="column"> {{ row.label }} </span>
+    <span layout="column" flex ng-switch on="row.isLink">
+        <span class="details-table-row-value" ng-switch-when="true">
+            <a target="_blank" ng-href="{{ row.value }}"> {{ row.value }} </a>
+        </span>
+        <span class="details-table-row-value" ng-switch-default> {{ row.value }} </span>
+    </span>
+</md-content>
