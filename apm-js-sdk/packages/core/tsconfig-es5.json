@@ -11,7 +11,7 @@
     "importHelpers": true,
     "newLine": "lf",
     "moduleResolution": "node",
-    "outDir": "../../dist/packages/core/esm5",
+    "outDir": "./esm5/core",
     "rootDir": ".",
     "sourceMap": true,
     "inlineSources": true,

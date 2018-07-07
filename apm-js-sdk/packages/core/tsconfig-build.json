@@ -6,7 +6,7 @@
     "module": "commonjs",
     "target": "es2015",
     "noImplicitAny": false,
-    "outDir": "../../dist/packages/core",
+    "outDir": "./bundles/core",
     "rootDir": ".",
     "sourceMap": true,
     "inlineSources": true,

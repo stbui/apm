@@ -3,7 +3,7 @@
  * Copyright stbui Inc. All Rights Reserved.
  */
 
-import { HttpBackend } from './backend';
+import { HttpBackend } from "./backend";
 
 export abstract class XhrFactory {
   abstract build();

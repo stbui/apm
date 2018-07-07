@@ -12,7 +12,7 @@ export abstract class HttpResponseBase {
   constructor(
     init: { header?; status?: number; statusText?: string; url?: string },
     defaultStatus: number = 200,
-    defaultStatusText: string = 'OK'
+    defaultStatusText: string = "OK"
   ) {
     this.header = init.header;
     this.status = init.status || defaultStatus;

@@ -7,23 +7,25 @@ export class HttpRequest<T> {
   readonly headers;
   readonly reportProgress: boolean = false;
   readonly withCredentials: boolean = false;
-  readonly reponseType: 'json' | 'text' = 'json';
+  readonly reponseType: "json" | "text" = "json";
   readonly method: string;
   readonly params;
   readonly urlWithParams: string;
 
   constructor(
-    method: 'GET',
+    method: "GET",
     url: string,
-    third?: T|{
-      params?,
-      withCrendentials: boolean
-    },
+    third?:
+      | T
+      | {
+          params?;
+          withCrendentials: boolean;
+        },
     init?: {
       headers?;
       reportProgress?: boolean;
       params;
-      reponseType: 'json' | 'text';
+      reponseType: "json" | "text";
       withCredentials: boolean;
     }
   ) {
@@ -33,7 +35,7 @@ export class HttpRequest<T> {
   }
 
   serializeBody() {
-    if(this.body === null) {
+    if (this.body === null) {
       return null;
     }
 

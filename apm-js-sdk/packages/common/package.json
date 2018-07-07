@@ -8,8 +8,15 @@
   "typings": "./common.d.ts",
   "author": "Apm",
   "license": "MIT",
+  "scripts": {
+    "tsc": "tsc -p tsconfig-build.json && npm run rollup",
+    "build": "rollup -c rollup.config.js"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/stbui/apm.git"
+  },
+  "peerDependencies": {
+    "reflect-metadata": "^0.1.12"
   }
 }

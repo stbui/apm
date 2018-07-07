@@ -1,36 +1,35 @@
-import commonjs from "rollup-plugin-commonjs";
-import uglify from "rollup-plugin-uglify";
-import resolve from "rollup-plugin-node-resolve";
-import sourcemaps from "rollup-plugin-sourcemaps";
-
-export default {
-  input: "./dist/packages/common/esm5/public_api.js",
+const typescript = require('rollup-plugin-typescript2');
+const { join } = require('path');
+function resolver(path) {
+  return join(__dirname, path);
+}
+module.exports = {
+  input: resolver('src/index.ts'),
   output: [
     {
-      file: "./dist/packages/common/bnundles/common.common.js",
-      format: "cjs",
-      exports: "named"
+      file: resolver('bnundles/common.common.js'),
+      format: 'cjs',
+      sourcemap: true,
+      exports: 'named'
     },
     {
-      file: "./dist/packages/common/bnundles/common.umd.js",
-      format: "umd",
-      exports: "named",
-      moduleName: "apm.common"
+      file: resolver('bnundles/common.umd.js'),
+      format: 'umd',
+      exports: 'named',
+      sourcemap: true,
+      moduleName: 'apm.common'
     },
     {
-      file: "./dist/packages/common/bnundles/common.esm.js",
-      format: "es",
-      exports: "named"
+      file: resolver('bnundles/common.esm.js'),
+      format: 'es',
+      sourcemap: true,
+      exports: 'named'
     }
   ],
   plugins: [
-    resolve({
-      jsnext: true,
-      main: true,
-      browser: true
-    }),
-    commonjs(),
-    // uglify(),
-    sourcemaps()
+    typescript({
+      tsconfig: resolver('tsconfig.json'),
+      typescript: require('typescript')
+    })
   ]
 };
