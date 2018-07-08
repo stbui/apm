@@ -1,13 +1,13 @@
-import { Controller } from '../../packages/common';
-import { AppService } from './app.service';
+import { Controller } from "../../packages/common";
+import { AppService } from "./app.service";
 
 @Controller()
 export class AppController {
   constructor(private service: AppService) {
-    console.log('controller', this.service);
+    console.log("controller", this.service);
   }
 
   go() {
-    console.log('controller go')
+    console.log("controller go");
   }
 }

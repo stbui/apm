@@ -2,12 +2,15 @@
  * @license
  * Copyright stbui Inc. All Rights Reserved.
  */
-import { Report } from './report';
+
+import { Controller } from '../../../packages/common';
+import { AppService } from '../app.service';
 
 declare var window;
 
-export class HttpInterceptorHandler {
-  constructor() {}
+@Controller()
+export class HttpInterceptorController {
+  constructor(private service: AppService) {}
 
   listener() {
     this.handle();
@@ -43,8 +46,6 @@ export class HttpInterceptorHandler {
 
   send(config) {
     console.log('xhr: ', config);
-    const report = new Report();
-    report.push(config);
   }
 
   joinUrl(url) {

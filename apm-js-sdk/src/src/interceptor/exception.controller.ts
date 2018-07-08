@@ -2,10 +2,13 @@
  * @license
  * Copyright stbui Inc. All Rights Reserved.
  */
-import { Report } from './report';
 
-export class ExceptionInterceptorHandler {
-  constructor() {}
+import { Controller } from '../../../packages/common';
+import { AppService } from '../app.service';
+
+@Controller()
+export class ExceptionInterceptorController {
+  constructor(private service: AppService) {}
 
   listener() {
     this.intercptor();
@@ -19,8 +22,6 @@ export class ExceptionInterceptorHandler {
 
   send(config) {
     console.log('exception: ', config);
-    const report = new Report();
-    report.push(config);
   }
 
   notify() {
