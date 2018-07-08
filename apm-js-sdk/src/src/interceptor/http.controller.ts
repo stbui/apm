@@ -10,7 +10,9 @@ declare var window;
 
 @Controller()
 export class HttpInterceptorController {
-  constructor(private service: AppService) {}
+  constructor(private service: AppService) {
+    console.log('initialization controller:%c HttpInterceptorController', 'color:green', this.service);
+  }
 
   listener() {
     this.handle();

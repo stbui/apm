@@ -1,4 +1,5 @@
 import { Module } from "../../packages/common";
+import { Http } from "../../packages/http";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { ExceptionInterceptorController } from "./interceptor/exception.controller";
@@ -10,6 +11,6 @@ import { HttpInterceptorController } from "./interceptor/http.controller";
     ExceptionInterceptorController,
     HttpInterceptorController
   ],
-  providers: [AppService]
+  providers: [AppService, Http]
 })
 export class AppModule {}

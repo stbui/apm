@@ -4,7 +4,11 @@ import { AppService } from "./app.service";
 @Controller()
 export class AppController {
   constructor(private service: AppService) {
-    console.log("controller", this.service);
+    console.log(
+      "initialization controller:%c AppController",
+      "color:green",
+      this.service
+    );
   }
 
   go() {

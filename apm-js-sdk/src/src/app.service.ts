@@ -6,11 +6,11 @@ export class AppService {
   private url: string = "http://stbui.com/";
 
   constructor(private http: Http) {
-    console.log("service");
-  }
-
-  send() {
-    console.log("service send");
+    console.log(
+      "initialization service:%c AppService",
+      "color:blue",
+      this.http
+    );
   }
 
   save(options) {

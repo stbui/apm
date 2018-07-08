@@ -8,7 +8,9 @@ import { AppService } from '../app.service';
 
 @Controller()
 export class ExceptionInterceptorController {
-  constructor(private service: AppService) {}
+  constructor(private service: AppService) {
+    console.log('initialization controller:%c ExceptionInterceptorController', 'color:green', this.service);
+  }
 
   listener() {
     this.intercptor();
