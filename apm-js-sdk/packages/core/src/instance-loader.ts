@@ -1,59 +1,29 @@
 import 'reflect-metadata';
 
 export class InstanceLoader {
-  public loadInstanceOfComponent(componentType, collection) {
-    const currentFetchedComponentInstance = collection.get(componentType);
-
-    if (currentFetchedComponentInstance.instance === null) {
-      const argsInstances: any = [];
-      const params =
-        Reflect.getMetadata('design:paramtypes', componentType) || [];
-
-      params.map(param => {
-        if (typeof param === 'undefined')
-          throw new Error(
-            `Can't create instance of ` +
-              componentType +
-              `. It is possible that you are trying to do cycle-dependency A->B, B->A.`
-          );
-
-        const instance = this.resolveComponentInstance(
-          collection,
-          param,
-          componentType
-        );
-        argsInstances.push(instance);
-      });
-      currentFetchedComponentInstance.instance = new componentType(
-        ...argsInstances
-      );
-    }
+  loadInstanceOfComponent(componentType, module) {
+    const components = module.components;
+    this.loadInstance(componentType, components, module);
   }
 
-  loadInstanceOfController(controllerType, collection, components) {
-    const currentFetchedRoute = collection.get(controllerType);
+  loadInstanceOfController(componentType, module) {
+    const controllers = module.controllers;
+    this.loadInstance(componentType, controllers, module);
+  }
 
-    if (currentFetchedRoute.instance === null) {
-      const argsInstances: any = [];
-      const params =
-        Reflect.getMetadata('design:paramtypes', controllerType) || [];
-
-      params.map(param => {
-        if (typeof param === 'undefined')
-          throw new Error(
-            `Can't create instance of ` +
-              controllerType +
-              `. It is possible that you are trying to do cycle-dependency A->B, B->A.`
-          );
-
-        const componentType = this.resolveComponentInstance(
-          components,
-          param,
-          controllerType
+  loadInstance(type, collection, module) {
+    const currentFetchedInstance = collection.get(type);
+    if (typeof currentFetchedInstance === 'undefined') {
+      throw new Error('error');
+    }
+    if (!currentFetchedInstance.isResolved) {
+      this.resolveConstructorParams(type, module, argsInstances => {
+        currentFetchedInstance.instance = Object.assign(
+          currentFetchedInstance.instance,
+          new type(...argsInstances)
         );
-        argsInstances.push(componentType);
+        currentFetchedInstance.isResolved = true;
       });
-      currentFetchedRoute.instance = new controllerType(...argsInstances);
     }
   }
 
@@ -68,15 +38,73 @@ export class InstanceLoader {
     });
   }
 
-  private resolveComponentInstance(collection, param, componentType) {
-    if (!collection.has(param))
-      throw new Error(`Can't recognize dependencies of ` + componentType);
+  private resolveConstructorParams(type, module, callback) {
+    let constructorParams =
+      Reflect.getMetadata('design:paramtypes', type) || [];
 
-    const instanceWrapper = collection.get(param);
+    if ((<any>type).dependencies) {
+      constructorParams = (<any>type).dependencies;
+    }
+    const argsInstances = constructorParams.map(param =>
+      this.resolveSingleParam(type, param, module)
+    );
+    callback(argsInstances);
+  }
+
+  private resolveSingleParam(targetType, param, module) {
+    if (typeof param === 'undefined') {
+      throw new Error('resolveSingleParam');
+    }
+
+    return this.resolveComponentInstance(module, param, targetType);
+  }
+
+  private resolveComponentInstance(module, param, componentType) {
+    const components = module.components;
+    const instanceWrapper = this.scanForComponent(
+      components,
+      param,
+      module,
+      componentType
+    );
 
     if (instanceWrapper.instance === null) {
-      this.loadInstanceOfComponent(param, collection);
+      this.loadInstanceOfComponent(param, module);
     }
     return instanceWrapper.instance;
+  }
+
+  private scanForComponent(components, param, module, componentType) {
+    if (!components.has(param)) {
+      const instanceWrapper = this.scanForComponentInRelatedModules(
+        module,
+        param
+      );
+
+      if (instanceWrapper === null) {
+        throw new Error('UnkownDependenciesException');
+      }
+      return instanceWrapper;
+    }
+    return components.get(param);
+  }
+
+  private scanForComponentInRelatedModules(module, componentType) {
+    const relatedModules = module.relatedModules;
+    let component = null;
+
+    relatedModules.forEach(relatedModule => {
+      const { components, exports } = relatedModule;
+
+      if (!exports.has(componentType) || !components.has(componentType)) {
+        return;
+      }
+
+      component = components.get(componentType);
+      // if (!component.isResolved) {
+      //   this.loadInstanceOfComponent(componentType, relatedModule);
+      // }
+    });
+    return component;
   }
 }

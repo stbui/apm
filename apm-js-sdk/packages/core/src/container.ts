@@ -36,7 +36,8 @@ export class Container {
     if (this.modules.has(module)) {
       const storedModule = this.modules.get(module);
       storedModule.components.set(component, {
-        instance: null
+        instance: null,
+        isResolved: false
       });
     }
   }
@@ -45,7 +46,8 @@ export class Container {
     if (this.modules.has(module)) {
       const storedModule = this.modules.get(module);
       storedModule.controllers.set(controller, {
-        instance: null
+        instance: null,
+        isResolved: false
       });
     }
   }
