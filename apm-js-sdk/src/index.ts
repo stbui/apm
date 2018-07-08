@@ -23,9 +23,3 @@
 
 // const httpInterceptorHandler = new HttpInterceptorHandler();
 // // httpInterceptorHandler.listener();
-
-import { Runner } from '@apm/core';
-import { AppModule } from './app.module';
-// import { Runner } from './run';
-
-// Runner.run(AppModule);

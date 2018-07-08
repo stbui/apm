@@ -6,8 +6,7 @@
   "scripts": {
     "bootstrap:lerna": "lerna bootstrap -- --ignore-engines",
     "build": "lerna run build",
-    "start": "webpack-dev-server --config webpack.dev.js",
-    "build:umd": "webpack --config webpack.umd.js",
+    "start": "cd ./packages/apm && npm run start",
     "src:tsc": "tsc",
     "build:src": "tsc && rollup -c && rm -rf ./dist/src",
     "build:pkg": "sh ./tools/build.sh",
