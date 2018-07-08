@@ -23,3 +23,9 @@
 
 // const httpInterceptorHandler = new HttpInterceptorHandler();
 // // httpInterceptorHandler.listener();
+
+import { Runner } from '../packages/core';
+import { AppModule } from './src/app.module';
+
+// 启动模块
+Runner.run(AppModule);
