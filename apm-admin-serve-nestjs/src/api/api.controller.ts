@@ -97,7 +97,13 @@ export class ApiController {
   // 配置字段
   @Get('/settings')
   async settings(@Query() q) {
-    const result = await this.snapshotService.findById(q.session_id);
+    let isActive;
+    if (q.session_id) {
+      const result = await this.snapshotService.findById(q.session_id);
+      isActive = result.isLive;
+    } else {
+      isActive = false;
+    }
 
     return {
       website: {
@@ -117,7 +123,7 @@ export class ApiController {
         shouldRecordPage: true,
       },
       session: {
-        isActive: result.isLive,
+        isActive: isActive,
         sessionId: q.session_id,
       },
       mappings: {
