@@ -1,0 +1,26 @@
+{
+  "name": "apm",
+  "version": "1.0.0",
+  "description": "前端数据异常采集系统 ================ <p align=\"center\">   <a href=\"./\" target=\"blank\"><img src=\"apm-admin-front-angular/src/assets/logo.png\" alt=\"apm Logo\" /></a> </p>",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stbui/apm.git"
+  },
+  "author": "stbui",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stbui/apm/issues"
+  },
+  "homepage": "https://github.com/stbui/apm#readme",
+  "devDependencies": {
+    "lerna": "^2.11.0",
+    "shelljs": "^0.8.2"
+  }
+}

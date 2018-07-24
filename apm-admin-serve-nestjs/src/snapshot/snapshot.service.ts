@@ -8,6 +8,32 @@ export class SnapshotService {
     this.options = {};
   }
 
+  where(options: object) {
+    this.options.where = options;
+    return this;
+  }
+
+  async update(options: object) {
+    if (!this.options.where) {
+      return {
+        statusCode: 500,
+        error: '更新失败',
+        message: '更新文档条件有误',
+      };
+    }
+
+    const ret = await this.model.update(this.options.where, {
+      $set: options,
+    });
+
+    return {
+      statusCode: 0,
+      error: '更新成功',
+      message: '',
+      data: ret,
+    };
+  }
+
   findById(id) {
     return this.model
       .findOne({

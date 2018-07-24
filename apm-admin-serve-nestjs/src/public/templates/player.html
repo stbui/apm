@@ -26,7 +26,7 @@
                 <div class="player-loader-container" ng-if="shouldShowLoadingOverlay">
                     <div class="player-loader">
                         <div class="loader"></div>
-                        <div class="loader-footer">Loading</div>
+                        <div class="loader-footer">加载中</div>
                     </div>
                 </div>
                 <session-viewer resize
@@ -44,13 +44,13 @@
                 </session-viewer>
                 <div ng-show="errors.sessionNotFound" layout="column" layout-align="center center" flex>
                     <i class="icon ion-android-alert ion-icon"></i>
-                    <h4> Session not found </h4>
-                    <span>This session is no longer available. It’s been deleted or has already expired.</span>
+                    <h4> 会话未找到 </h4>
+                    <span>此会话不再可用，它已被删除或已经过期。</span>
                 </div>
                 <div ng-show="errors.invalidSessionId" layout="column" layout-align="center center" flex>
                     <i class="icon ion-android-alert ion-icon"></i>
-                    <h4> Invalid Session </h4>
-                    <span> The URL is not valid. If you entered it manually, please check your spelling and try again. </span>
+                    <h4> 无效会话 </h4>
+                    <span> URL无效。如果您手动输入，请检查您的拼写，然后再试一次。 </span>
                 </div>
             </md-content>
 
@@ -98,7 +98,7 @@
                            ng-click="selectNextStep()"
                            aria-label="Next step">
                     <md-tooltip md-direction="top">
-                      Next step
+                      下一步
                     </md-tooltip>
                     <svg width="18" height="19" fill="#D5D6D8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="player-controls-icon">
                         <path d="M24 .455c-1.1 0-2 .9-2 2v8.4c-.1-.1-.2-.2-.4-.3l-12.9-8.9c-.7-.5-1.5-.7-2.4-.7-2.3 0-4.3 1.9-4.3 4.3v17.7c0 2.4 1.9 4.3 4.3 4.3.8 0 1.7-.3 2.4-.8l12.9-8.9c.1-.1.2-.2.4-.3v8.2c0 1.1.9 2 2 2s2-.9 2-2v-23c0-1.1-.9-2-2-2zm-4.6 13.9l-12.9 8.9h-.1s-.3 0-.3-.3v-17.7c0-.3.3-.3.3-.3h.1l12.9 8.9c.1.1.1.2.1.2s0 .2-.1.3z"/>
@@ -165,7 +165,7 @@
                                ng-click="toggleConsole()"
                                ng-disabled="!snapshotData">
                         <md-tooltip md-direction="top">
-                            Console
+                            控制台
                         </md-tooltip>
                         <svg width="20" height="20" fill="#D5D6D8" xmlns="http://www.w3.org/2000/svg" version="1" viewBox="0 0 12 12">
                             <path d="M9.75842104,0 L1.70385129,0 C0.758988303,0 0,0.771146011 0,1.73114411 L0,9.12785074 C0,10.0878488 0.758988303,10.8589948 1.70385129,10.8589948 L9.75842104,10.8589948 C10.703284,10.8589948 11.4622723,10.0878488 11.4622723,9.12785074 L11.4622723,1.73114411 C11.4622723,0.771146011 10.703284,0 9.75842104,0 Z M1.70385129,0.944260421 L9.75842104,0.944260421 C10.1921286,0.944260421 10.5328989,1.29048924 10.5328989,1.73114411 L10.5328989,2.56524081 L0.929373432,2.56524081 L0.929373432,1.73114411 C0.929373432,1.29048924 1.27014369,0.944260421 1.70385129,0.944260421 Z M9.75842104,9.91473442 L1.70385129,9.91473442 C1.27014369,9.91473442 0.929373432,9.5685056 0.929373432,9.12785074 L0.929373432,3.50950123 L10.5328989,3.50950123 L10.5328989,9.12785074 C10.5328989,9.5685056 10.1921286,9.91473442 9.75842104,9.91473442 Z" id="Shape"></path>
@@ -176,14 +176,14 @@
 
                     <session-download-button md-menu-align-target class="player-controls-button md-button md-small-button" session-id="session.id" ng-show="PLAYER_ONLINE_MODE">
                       <md-tooltip md-direction="top">
-                        Download session
+                        下载会话
                       </md-tooltip>
                         <svg width="16" height="14" viewBox="0 0 16 14" xmlns="http://www.w3.org/2000/svg"><g fill="#D5D6D8" fill-rule="nonzero"><path d="M15.236 6.163c-.392 0-.712.308-.712.683v5.174c0 .324-.266.563-.604.563H2.098c-.32 0-.605-.256-.605-.563V6.846c0-.375-.32-.683-.71-.683-.392 0-.712.308-.712.683v5.174c0 1.058.907 1.929 2.027 1.929H13.92c1.12 0 2.027-.871 2.027-1.93V6.847c0-.375-.32-.683-.711-.683z"/><path d="M7.396 11.883l.088.085h.036l.036.034h.053c.018 0 .018 0 .035.018a.273.273 0 0 0 .125.017H8c.053 0 .089-.017.124-.017a.137.137 0 0 0 .072-.035c.017 0 .017-.017.035-.017h.036l.07-.068 3.254-2.68a.748.748 0 0 0 .249-.461.626.626 0 0 0-.16-.496c-.267-.273-.711-.307-.996-.068L8.64 9.885V.683L8.622.649A.818.818 0 0 0 7.858.05c-.391 0-.711.308-.711.683v9.134L5.084 8.195a.699.699 0 0 0-.515-.17.68.68 0 0 0-.48.238.639.639 0 0 0-.178.496.637.637 0 0 0 .249.46l3.236 2.664z"/></g></svg>
                     </session-download-button>
 
                     <md-button class="player-controls-button md-button md-small-button" ng-click="showSessionDetails(session)">
                       <md-tooltip md-direction="top">
-                        Session details
+                        会话详情
                       </md-tooltip>
                         <svg width="24" height="24" fill="#D5D6D8" xmlns="http://www.w3.org/2000/svg" version="1" viewBox="0 0 50 50">
                           <path d="M25 11.8C12.4 11.8 6.1 24 5.9 24.5c-.1.2-.1.4-.1.6 0 .8 2.3 4.3 4.9 6.9 4.2 4.2 9.1 6.4 14.4 6.4 12.5 0 18.8-12.2 19.1-12.7.2-.4.2-.8 0-1.1-.3-.7-6.6-12.8-19.2-12.8zm0 24c-9.6 0-15.2-8.5-16.6-10.7 1.3-2.3 6.9-10.8 16.6-10.8 9.6 0 15.2 8.5 16.6 10.7-1.4 2.3-7 10.8-16.6 10.8z"/>
@@ -193,13 +193,13 @@
 
                     <md-button md-menu-origin class="player-controls-button md-button md-small-button player-settings" ng-click="$mdOpenMenu($event)" aria-label="Menu" ng-disabled="!session">
                         <md-tooltip md-direction="top">
-                          Settings
+                          设置
                         </md-tooltip>
                         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18" viewBox="0 0 15 17" class="player-controls-icon"><path fill-opacity=".8" fill="#FFF" xlink:href="#a" transform="translate(-185 -155)" d="M193.048 166.783c-2.007 0-3.634-1.648-3.634-3.68 0-2.034 1.627-3.682 3.634-3.682 2.007 0 3.634 1.648 3.634 3.681 0 2.033-1.627 3.68-3.634 3.68zm7.906-5.064a.796.796 0 0 0-.917-.66l-.907.157a6.44 6.44 0 0 0-1.302-2.353l.586-.695a.812.812 0 0 0-.089-1.134l-.159-.139a.789.789 0 0 0-1.12.09l-.582.69a6.275 6.275 0 0 0-2.493-.939l.011-.92a.8.8 0 0 0-.785-.814l-.21-.002a.8.8 0 0 0-.805.796l-.01.933c-.93.13-1.794.46-2.549.951l-.615-.748a.788.788 0 0 0-1.12-.103l-.161.136a.812.812 0 0 0-.102 1.134l.635.772a6.443 6.443 0 0 0-1.257 2.236l-1.019-.199a.795.795 0 0 0-.93.64l-.04.208c-.082.436.2.858.63.942l1.053.205c-.001.067-.01.132-.01.2 0 .863.172 1.687.477 2.44l-.957.558a.811.811 0 0 0-.293 1.1l.105.184a.79.79 0 0 0 1.085.296l.974-.567a6.398 6.398 0 0 0 1.871 1.61l-.402 1.067a.808.808 0 0 0 .458 1.04l.197.075c.41.158.87-.05 1.026-.465l.4-1.064a6.3 6.3 0 0 0 1.42.167 6.29 6.29 0 0 0 1.208-.12l.374 1.045a.792.792 0 0 0 1.018.483l.197-.073a.807.807 0 0 0 .477-1.03l-.365-1.024a6.385 6.385 0 0 0 1.97-1.595l.882.53a.789.789 0 0 0 1.09-.28l.107-.182a.811.811 0 0 0-.278-1.104l-.853-.514c.34-.79.533-1.66.533-2.578 0-.029-.004-.056-.004-.084l.934-.161a.804.804 0 0 0 .65-.929l-.034-.209z"/></svg>
                     </md-button>
                   </div>
                     <md-menu-content class="card player-menu" width="6">
-                        <md-label>Speed</md-label>
+                        <md-label>速度</md-label>
                         <md-menu-item layout-padding>
                             <md-radio-group ng-model-options="{ getterSetter: true }"
                                             ng-model="settings.playback.speedOption"
@@ -216,24 +216,24 @@
                             <md-switch
                                     class="md-primary"
                                     ng-model="settings.playback.shouldSkipProlongedInactivity"
-                                    aria-label="Skip prolonged inactivity">
-                                Skip prolonged inactivity
+                                    aria-label="跳过不活动">
+                                跳过不活动
                             </md-switch>
                         </md-menu-item>
                         <md-menu-item>
                             <md-switch
                                     class="md-primary"
                                     ng-model="settings.playback.shouldVisualizeClicks"
-                                    aria-label="Clicks visualization">
-                                Clicks visualization
+                                    aria-label="点击可视化">
+                                点击可视化
                             </md-switch>
                         </md-menu-item>
                         <md-menu-item>
                             <md-switch
                                     class="md-primary"
                                     ng-model="settings.playback.shouldPauseOnMarker"
-                                    aria-label="Pause when marker is reached">
-                                Pause when marker is reached
+                                    aria-label="到达标记时暂停">
+                                到达标记时暂停
                             </md-switch>
                         </md-menu-item>
                     </md-menu-content>

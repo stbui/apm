@@ -30,3 +30,5 @@ git clone https://github.com/stbui/apm
 后端项目, 基于`nestjs`框架开发
 
 > apm-js-sdk
+
+前端数据收集脚本

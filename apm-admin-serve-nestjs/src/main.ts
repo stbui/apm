@@ -9,6 +9,12 @@ async function bootstrap() {
     root: join(__dirname, 'public'),
     prefix: '/public/',
   });
+  app.enableCors({
+    origin: '*',
+    methods: '*',
+    allowedHeaders: '*',
+    credentials: true,
+  });
   await app.listen(3000);
 }
 bootstrap();
