@@ -14,7 +14,8 @@ export class ProjectController {
   }
 
   @Get(':id')
-  installation(@Param() id) {
+  async installation(@Param() id) {
+    const ret = await this.projectService.findById(id);
     return id;
   }
 }

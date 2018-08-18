@@ -32,3 +32,8 @@ git clone https://github.com/stbui/apm
 > apm-js-sdk
 
 前端数据收集脚本
+
+- https://github.com/joeyguo/blog/issues/13
+- https://github.com/joeyguo/blog/issues/14
+
+https://juejin.im/post/5b62d68df265da0f9d1a1cd6?utm_source=gold_browser_extension

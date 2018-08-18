@@ -8,6 +8,14 @@ export class ProjectService {
     this.options = {};
   }
 
+  findById(id) {
+    return this.model
+      .findOne({
+        _id: id,
+      })
+      .exec();
+  }
+
   select(options?) {
     const model = this.model;
 

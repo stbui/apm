@@ -1,17 +1,5 @@
-import {
-  Controller,
-  Get,
-  Query,
-  Post,
-  Body,
-  Param,
-  Put,
-  Patch,
-} from '@nestjs/common';
+import { Controller, Get, Query, Post, Body, Param, Put } from '@nestjs/common';
 import { ApiService } from './api.service';
-import { activities1 } from './activities1';
-import { activities2 } from './activities2';
-import { ApiDb } from './api.db';
 import { SnapshotService } from '../snapshot/snapshot.service';
 
 @Controller('api')
@@ -30,8 +18,9 @@ export class ApiController {
    * 用于页面加载时渲染的数据
    */
   @Get('/sessions/:id')
-  async sessions(@Param() p) {
-    let session = await this.snapshotService.findById(p.id);
+  async sessions(@Param('id') id) {
+    console.log('/sessions/:id', id);
+    let session = await this.snapshotService.findById(id);
 
     let result = {
       log: null,
@@ -62,6 +51,7 @@ export class ApiController {
   // 建立全局页面快照
   @Post('/session')
   async session(@Body() body) {
+    console.log('timestamp =>', body.timestamp, typeof body.timestamp);
     this.timestamp = Number(body.timestamp);
 
     // 直接保存到数据库
@@ -273,9 +263,10 @@ export class ApiController {
     const sessionEndTime = sessions[size].time;
 
     // 在线状态
+    console.log('在线状态', this.clientOnline);
     if (this.clientOnline) {
       // 更新snapshot
-      this.snapshotService
+      await this.snapshotService
         .where({ _id: id })
         .update({ length: sessionEndTime, isLive: true });
 
@@ -311,8 +302,10 @@ export class ApiController {
   }
 
   @Get('/sessions/:id/status')
-  status(@Query() q) {
-    return { isLive: false, length: 9078133 };
+  async status(@Param('id') id) {
+    const result = await this.snapshotService.findById(id);
+    const { isLive, length } = result;
+    return { isLive, length };
   }
 
   proccessMappings(mappings, type) {
@@ -322,11 +315,5 @@ export class ApiController {
         type,
       };
     });
-  }
-
-  add() {
-    const { activities } = activities1;
-    activities.forEach(activitie => this.service.add(activitie));
-    return [];
   }
 }

@@ -1,5 +1,4 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { ApiDb } from './api.db';
 
 @Injectable()
 export class ApiService {
@@ -9,27 +8,27 @@ export class ApiService {
     this.options = {};
   }
 
-  field(options) {
+  field(options: object): this {
     this.options.field = options;
     return this;
   }
 
-  order(options) {
+  order(options: object): this {
     this.options.order = options;
     return this;
   }
 
-  where(options) {
+  where(options: object): this {
     this.options.where = options;
     return this;
   }
 
-  getId() {
+  getId(): this {
     this.options.id = 1;
     return this;
   }
 
-  find(options?) {
+  find(options?: object) {
     if (this.options.where) options = this.options.where;
 
     return this.model.findOne(options);
@@ -40,7 +39,7 @@ export class ApiService {
     return model.save();
   }
 
-  async thenAdd(data, where) {
+  async thenAdd(data, where): Promise<object> {
     const findData = await this.where(where).find();
     if (findData !== null) {
       return { type: 'exist', data: findData };
