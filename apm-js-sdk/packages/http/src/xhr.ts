@@ -1,9 +1,10 @@
 /**
  * @license
- * Copyright stbui Inc. All Rights Reserved.
+ * Copyright Stbui All Rights Reserved.
+ * https://github.com/stbui/apm
  */
 
-import { HttpBackend } from "./backend";
+import { HttpBackend } from './backend';
 
 export abstract class XhrFactory {
   abstract build();

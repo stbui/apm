@@ -1,7 +1,9 @@
 /**
  * @license
- * Copyright stbui Inc. All Rights Reserved.
+ * Copyright Stbui All Rights Reserved.
+ * https://github.com/stbui/apm
  */
+
 export abstract class HttpHander {
   abstract handle(req);
 }

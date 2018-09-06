@@ -1,10 +1,12 @@
 /**
  * @license
- * Copyright stbui Inc. All Rights Reserved.
+ * Copyright Stbui All Rights Reserved.
+ * https://github.com/stbui/apm
  */
-import { HttpHander, HttpBackend } from "./backend";
-import { BrowserXhr, HttpXhrBackend } from "./xhr";
-import { HttpRequest } from "./request";
+
+import { HttpHander, HttpBackend } from './backend';
+import { BrowserXhr, HttpXhrBackend } from './xhr';
+import { HttpRequest } from './request';
 
 export class HttpInterceptingHandle implements HttpHander {
   protected backend;
@@ -17,7 +19,7 @@ export class HttpInterceptingHandle implements HttpHander {
 export class Http {
   post(url: string, params) {
     const req = {
-      method: "POST",
+      method: 'POST',
       urlWithParams: url,
       body: params
     };
@@ -25,7 +27,7 @@ export class Http {
   }
   get(url: string, params) {
     const req = {
-      method: "GET",
+      method: 'GET',
       urlWithParams: url,
       body: params
     };

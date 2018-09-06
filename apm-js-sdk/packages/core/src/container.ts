@@ -1,3 +1,9 @@
+/**
+ * @license
+ * Copyright Stbui All Rights Reserved.
+ * https://github.com/stbui/apm
+ */
+
 import 'reflect-metadata';
 import { AppModule } from './interfaces/module.interface';
 import { Component, InstanceWrapper } from './interfaces/component.interface';

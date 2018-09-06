@@ -1,19 +1,21 @@
 /**
  * @license
- * Copyright stbui Inc. All Rights Reserved.
+ * Copyright Stbui All Rights Reserved.
+ * https://github.com/stbui/apm
  */
+
 export class HttpRequest<T> {
   readonly body: T | null = null;
   readonly headers;
   readonly reportProgress: boolean = false;
   readonly withCredentials: boolean = false;
-  readonly reponseType: "json" | "text" = "json";
+  readonly reponseType: 'json' | 'text' = 'json';
   readonly method: string;
   readonly params;
   readonly urlWithParams: string;
 
   constructor(
-    method: "GET",
+    method: 'GET',
     url: string,
     third?:
       | T
@@ -25,7 +27,7 @@ export class HttpRequest<T> {
       headers?;
       reportProgress?: boolean;
       params;
-      reponseType: "json" | "text";
+      reponseType: 'json' | 'text';
       withCredentials: boolean;
     }
   ) {

@@ -43,3 +43,4 @@ git clone https://github.com/stbui/apm
 - https://github.com/joeyguo/blog/issues/13
 - https://github.com/joeyguo/blog/issues/14
 - https://juejin.im/post/5b62d68df265da0f9d1a1cd6?utm_source=gold_browser_extension
+- https://juejin.im/post/5b7a50c0e51d4538af60d995?utm_source=gold_browser_extension

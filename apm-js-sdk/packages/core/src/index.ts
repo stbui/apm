@@ -1,3 +1,9 @@
+/**
+ * @license
+ * Copyright Stbui All Rights Reserved.
+ * https://github.com/stbui/apm
+ */
+
 import { Container } from './container';
 import { DependenciesScanner } from './scanner';
 import { Injector } from './injector';
