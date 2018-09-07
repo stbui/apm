@@ -15,6 +15,10 @@ export interface ModuleDependencies {
 export class Container {
   private readonly modules = new Map();
 
+  /**
+   * 将模块加入到列表中
+   * @param module 模块
+   */
   addModule(module: AppModule) {
     if (!this.modules.has(module)) {
       this.modules.set(module, {
