@@ -1,5 +1,0 @@
-/**
- * @license Apm v1.0.0
- * (c) 2013-2018 Google, Inc. 
- * License: MIT
- */

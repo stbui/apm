@@ -7,3 +7,5 @@ dist
 *.iml
 .rpt2_cache
 bnundles
+esm
+lib

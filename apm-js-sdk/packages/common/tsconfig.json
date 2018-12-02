@@ -1,21 +1,11 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "target": "es6",
-    "module": "es6",
-    "removeComments": false,
-    "preserveConstEnums": true,
-    "moduleResolution": "node",
-    "experimentalDecorators": true,
-    "noImplicitAny": false,
-    "allowSyntheticDefaultImports": true,
+    "module": "commonjs",
+    "target": "es2015",
     "outDir": "lib",
-    "noUnusedLocals": true,
-    "strictNullChecks": true,
-    "sourceMap": true,
-    "declaration": true,
-    "baseUrl": ".",
-    "rootDir": "."
+    "rootDir": "src"
   },
-  "include": ["src"],
-  "compileOnSave": false
+  "exclude": ["**/*.spec.ts", "**/*.spec.tsx", "**/*.spec.js"],
+  "include": ["src"]
 }

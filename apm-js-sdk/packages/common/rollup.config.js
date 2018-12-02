@@ -7,20 +7,20 @@ module.exports = {
   input: resolver('src/index.ts'),
   output: [
     {
-      file: resolver('bnundles/common.common.js'),
+      file: resolver('dist/common.common.js'),
       format: 'cjs',
       sourcemap: true,
       exports: 'named'
     },
     {
-      file: resolver('bnundles/common.umd.js'),
+      file: resolver('dist/common.umd.js'),
       format: 'umd',
       exports: 'named',
       sourcemap: true,
       name: 'apm.common'
     },
     {
-      file: resolver('bnundles/common.esm.js'),
+      file: resolver('dist/common.esm.js'),
       format: 'es',
       sourcemap: true,
       exports: 'named'

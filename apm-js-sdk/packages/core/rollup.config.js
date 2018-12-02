@@ -7,20 +7,20 @@ module.exports = {
   input: resolver('src/index.ts'),
   output: [
     {
-      file: resolver('bnundles/core.common.js'),
+      file: resolver('dist/core.common.js'),
       format: 'cjs',
       sourcemap: true,
       exports: 'named'
     },
     {
-      file: resolver('bnundles/core.umd.js'),
+      file: resolver('dist/core.umd.js'),
       format: 'umd',
       exports: 'named',
       sourcemap: true,
       name: 'apm.core'
     },
     {
-      file: resolver('bnundles/core.esm.js'),
+      file: resolver('dist/core.esm.js'),
       format: 'es',
       sourcemap: true,
       exports: 'named'
@@ -28,7 +28,7 @@ module.exports = {
   ],
   plugins: [
     typescript({
-      tsconfig: resolver('tsconfig.json'),
+      tsconfig: resolver('../tsconfig.json'),
       typescript: require('typescript')
     })
   ]

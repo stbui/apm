@@ -1,29 +1,19 @@
 {
     "compilerOptions": {
-      "baseUrl": ".",
-      "experimentalDecorators": true,
-      "emitDecoratorMetadata": true,
-      "module": "commonjs",
-      "target": "es5",
-      "noImplicitAny": false,
-      "outDir": "./dist",
-      "rootDir": ".",
-      "sourceMap": true,
-      "inlineSources": true,
-      "declaration": false,
-      "removeComments": true,
-      "strictNullChecks": true,
-      "lib": ["es2015", "dom"],
-      "skipLibCheck": true,
+      "target": "es6",
+      "module": "es6",
+      "removeComments": false,
+      "preserveConstEnums": true,
       "moduleResolution": "node",
-      "paths": {
-      }
+      "experimentalDecorators": true,
+      "noImplicitAny": false,
+      "allowSyntheticDefaultImports": true,
+      "noUnusedLocals": true,
+      "strictNullChecks": true,
+      "sourceMap": true,
+      "declaration": true,
+      "lib": ["es2015", "dom"]
     },
-    "include": [
-        "src/**/*.ts"
-    ],
-    "exclude": [
-        "node_modules/",
-        "packages/"
-    ]
-  } 
+    "compileOnSave": false
+  }
+  
