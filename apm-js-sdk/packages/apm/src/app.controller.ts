@@ -1,4 +1,4 @@
-import { Controller } from "../../common";
+import { Controller } from "@apm/common";
 import { AppService } from "./app.service";
 
 @Controller()
