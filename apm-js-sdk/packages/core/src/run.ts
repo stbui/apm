@@ -8,6 +8,9 @@ import { Container } from './container';
 import { DependenciesScanner } from './scanner';
 import { Injector } from './injector';
 
+/**
+ * this is Runner.
+ */
 export class Runner {
   private static container = new Container();
   private static dependenciesScanner = new DependenciesScanner(
@@ -17,7 +20,7 @@ export class Runner {
 
   /**
    * 开始分析模块依赖
-   * @param module 模块
+   * @param {object} module - this is a module.
    */
   static run(module) {
     this.dependenciesScanner.scan(module);

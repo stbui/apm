@@ -7,6 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
+    "docs": "cd docs && gitbook build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,6 +22,7 @@
   "homepage": "https://github.com/stbui/apm#readme",
   "devDependencies": {
     "lerna": "^3.5.1",
+    "gitbook-cli": "^2.3.2",
     "shelljs": "^0.8.3"
   }
 }
