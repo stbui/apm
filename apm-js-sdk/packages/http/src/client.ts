@@ -4,9 +4,8 @@
  * https://github.com/stbui/apm
  */
 
-import { HttpHander, HttpBackend } from './backend';
-import { BrowserXhr, HttpXhrBackend } from './xhr';
-import { HttpRequest } from './request';
+import { HttpHander } from './backend';
+import { HttpXhrBackend } from './xhr';
 
 export class HttpInterceptingHandle implements HttpHander {
   protected backend;

@@ -12,6 +12,8 @@
       "strictNullChecks": true,
       "sourceMap": true,
       "declaration": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
       "lib": ["es2015", "dom"]
     },
     "compileOnSave": false

@@ -3,7 +3,7 @@
  * Copyright stbui Inc. All Rights Reserved.
  */
 
-import { Controller } from '../../../packages/common';
+import { Controller } from '@apm/common';
 import { AppService } from '../app.service';
 
 @Controller()

@@ -3,8 +3,8 @@
  * Copyright stbui Inc. All Rights Reserved.
  */
 
-import { Runner } from '../packages/core';
-import { AppModule } from './src/app.module';
+import { Runner } from '@apm/core';
+import { AppModule } from './app.module';
 
 // 启动模块
 Runner.run(AppModule);

@@ -4,12 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "bootstrap:lerna": "lerna bootstrap -- --ignore-engines",
+    "bootstrap": "lerna bootstrap -- --ignore-engines",
     "build": "lerna run build",
     "start": "cd ./packages/apm && npm run start",
-    "dev": "webpack-dev-server --config webpack.dev.js",
-    "build:src": "tsc && rollup -c && rm -rf ./dist/src",
-    "build:pkg": "sh ./tools/build.sh",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "release:lerna": "lerna publish --force-publish=* --exact --skip-temp-tag",
     "release": "npm run release:lerna && npm run changelog",
