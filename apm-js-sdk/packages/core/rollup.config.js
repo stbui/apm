@@ -17,7 +17,7 @@ module.exports = {
       format: 'umd',
       exports: 'named',
       sourcemap: true,
-      moduleName: 'apm.core'
+      name: 'apm.core'
     },
     {
       file: resolver('bnundles/core.esm.js'),

@@ -17,7 +17,7 @@ module.exports = {
       format: 'umd',
       exports: 'named',
       sourcemap: true,
-      moduleName: 'apm.common'
+      name: 'apm.common'
     },
     {
       file: resolver('bnundles/common.esm.js'),

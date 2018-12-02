@@ -14,20 +14,8 @@
     "sourceMap": true,
     "declaration": true,
     "baseUrl": ".",
-    "paths": {
-      "common": ["packages/common/src"]
-    },
     "rootDir": "."
   },
-  "include": ["packages/*/src"],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "tests",
-    "jest",
-    "lib",
-    "__tests__",
-    "**/*.test.ts"
-  ],
+  "include": ["src"],
   "compileOnSave": false
 }
