@@ -12,8 +12,7 @@
     "build": "npm run build:cjs && npm run build:esm",
     "build:cjs": "rm -rf ./lib && tsc",
     "build:esm": "rm -rf ./esm && tsc --outDir esm --module es2015",
-    "watch": "tsc --watch",
-    "esdoc": "esdoc -c ../../esdoc.json"
+    "watch": "tsc --watch"
   },
   "repository": {
     "type": "git",

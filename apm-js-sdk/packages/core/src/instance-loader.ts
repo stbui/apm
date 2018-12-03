@@ -48,8 +48,8 @@ export class InstanceLoader {
     let constructorParams =
       Reflect.getMetadata('design:paramtypes', type) || [];
 
-    if ((<any>type).dependencies) {
-      constructorParams = (<any>type).dependencies;
+    if (type.dependencies) {
+      constructorParams = type.dependencies;
     }
     const argsInstances = constructorParams.map(param =>
       this.resolveSingleParam(type, param, module)
