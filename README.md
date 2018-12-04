@@ -1,7 +1,7 @@
 # 前端数据监控系统
 
 <p align="center">
-  <a href="./" target="blank"><img src="apm-admin-front-angular/src/assets/logo.png" alt="apm Logo" /></a>
+  <a href="./" target="blank"><img src="apm-mananger/src/assets/logo.png" alt="apm Logo" /></a>
 </p>
 
 # 介绍
