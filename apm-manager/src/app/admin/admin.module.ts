@@ -1,30 +1,24 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { SharedModule } from '../shared/shared.module';
 
-import { NavigationModule } from './navigation/navigation.module';
+import { NavigationModule } from '../component/navigation';
+import { BrandModule } from './brand/brand.module';
 import { HeaderModule } from './header/header.module';
 import { AdminComponent } from './admin.component';
-import { BrandComponent } from './brand/brand.component';
 import { CustomizerComponent } from './customizer/customizer.component';
 import { FooterComponent } from './footer/footer.component';
-
 
 @NgModule({
   imports: [
     RouterModule,
+    TranslateModule.forRoot(),
     SharedModule,
+    NavigationModule,
     HeaderModule,
-    NavigationModule
+    BrandModule
   ],
-  declarations: [
-    AdminComponent,
-    BrandComponent,
-    CustomizerComponent,
-    FooterComponent
-  ],
-  providers: [],
-  exports: []
+  declarations: [AdminComponent, CustomizerComponent, FooterComponent]
 })
-export class AdminModule {
-}
+export class AdminModule {}

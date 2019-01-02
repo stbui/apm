@@ -1,4 +1,4 @@
-@mixin notification-theme($theme) {
+@mixin stbui-notification-theme($theme) {
   $primary: map-get($theme, primary);
   $accent: map-get($theme, accent);
   $warn: map-get($theme, warn);
@@ -7,17 +7,15 @@
 
   .notification {
     background-color: mat-color($primary);
-  }
-  .notification-info {
-    background-color: mat-color($primary);
-  }
-  .notification-primary {
-    background-color: mat-color($primary);
-  }
-  .notification-success {
-    background-color: mat-color($accent);
-  }
-  .notification-warn {
-    background-color: mat-color($warn);
+
+    &.mat-primary {
+      background-color: mat-color($primary);
+    }
+    &.mat-accent {
+      background-color: mat-color($accent);
+    }
+    &.mat-warn {
+      background-color: mat-color($warn);
+    }
   }
 }

@@ -24,7 +24,13 @@ import {
   MatTooltipModule,
   MatRadioModule,
   MatInputModule,
-  MatRippleModule
+  MatRippleModule,
+  MatDividerModule,
+  MatExpansionModule,
+  MatTableModule,
+  MatPaginatorModule,
+  MatSortModule,
+  MatBadgeModule
 } from '@angular/material';
 
 @NgModule({
@@ -53,7 +59,13 @@ import {
     MatTooltipModule,
     MatRadioModule,
     MatInputModule,
-    MatRippleModule
+    MatRippleModule,
+    MatDividerModule,
+    MatExpansionModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatBadgeModule
   ]
 })
-export class MaterialComponentsModule { }
+export class MaterialComponentsModule {}

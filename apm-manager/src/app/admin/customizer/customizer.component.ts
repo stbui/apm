@@ -1,6 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { ConfigService } from '../../core/config.service';
-import { Subscription } from 'rxjs';
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
   selector: 'stbui-customizer',
@@ -8,31 +6,11 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./customizer.component.scss']
 })
 export class CustomizerComponent implements OnInit {
+  @Input() settings: any;
 
-  settings: any;
-  onSettingsChanged: Subscription;
+  _colors: any = ['primary', 'accent', 'red', 'blue', 'orange', 'material'];
 
-  _colors: any = [
-    'primary',
-    'accent',
-    'red',
-    'blue',
-    'orange',
-    'material'
-  ];
+  constructor() {}
 
-  constructor(private config: ConfigService) {
-    this.onSettingsChanged = this.config.onSettingsChanged.subscribe(settings => {
-      this.settings = settings;
-    });
-  }
-
-  ngOnInit() {
-
-  }
-
-  onSettingsChange() {
-    this.config.setSettings(this.settings);
-  }
-
+  ngOnInit() {}
 }

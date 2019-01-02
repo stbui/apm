@@ -1,3 +1,9 @@
+/**
+ * @license
+ * Copyright Stbui All Rights Reserved.
+ * https://github.com/stbui
+ */
+
 import {
   Component,
   Input,
@@ -17,7 +23,6 @@ import {
   encapsulation: ViewEncapsulation.None
 })
 export class PaginationComponent {
-  // @Input() total: number = 10;
   @Input()
   set total(value) {
     this.totalPages = value;
@@ -53,7 +58,7 @@ export class PaginationComponent {
 
   private _total: number = 10;
 
-  currentPage: number = 1;
+  @Input() currentPage: number = 1;
   totalPages: number;
   pages: number[] = [];
 
@@ -89,7 +94,7 @@ export class PaginationComponent {
 
     this.currentPage = page;
 
-    if (page > 5) {
+    if (page > 5 || page === 1) {
       this.setPage();
     }
     this.onPage.emit(page);

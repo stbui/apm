@@ -1,10 +1,7 @@
-import { NgModule } from '@angular/core';
-import { SharedModule } from '../../shared/shared.module';
-import { SearchComponent } from './search.component';
+/**
+ * @license
+ * Copyright Stbui All Rights Reserved.
+ * https://github.com/stbui
+ */
 
-@NgModule({
-  imports: [SharedModule],
-  declarations: [SearchComponent],
-  exports: [SearchComponent]
-})
-export class SearchModule {}
+export * from './public-api';

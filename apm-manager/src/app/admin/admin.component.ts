@@ -1,17 +1,26 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MediaChange, ObservableMedia } from '@angular/flex-layout';
 import { Observable, ReplaySubject, Subscription } from 'rxjs';
 import { ConfigService } from '../core/config.service';
+import { NavigationService } from '../component/navigation';
+
+import { TranslateService } from '@ngx-translate/core';
+import { TranslationService } from '../core/translation.service';
+import { locale as english } from './i18n/en';
+import { locale as chinese } from './i18n/zh';
 
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss']
 })
-export class AdminComponent implements OnInit {
+export class AdminComponent implements OnInit, OnDestroy {
   settings: any;
   onSettingsChanged: Subscription;
-  layoutMode = false;
+  layoutMode: boolean = false;
+
+  navigationModel;
+  navigationModelChangeSubscription: Subscription;
 
   private _media$: ReplaySubject<MediaChange> = new ReplaySubject(1);
   private _mediaSubscription: Subscription;
@@ -27,7 +36,19 @@ export class AdminComponent implements OnInit {
     return this._media$.asObservable();
   }
 
-  constructor(media: ObservableMedia, private config: ConfigService) {
+  constructor(
+    media: ObservableMedia,
+    private config: ConfigService,
+    private translateService: TranslateService,
+    private translationService: TranslationService,
+    private navigationService: NavigationService
+  ) {
+    this.navigationModelChangeSubscription = this.navigationService.onNavigationModelChange.subscribe(
+      navigation => {
+        this.navigationModel = navigation;
+      }
+    );
+
     media
       .asObservable()
       .subscribe(
@@ -59,6 +80,11 @@ export class AdminComponent implements OnInit {
         }
       }
     );
+
+    this.translateService.addLangs(['en', 'zh']);
+    this.translateService.setDefaultLang('en');
+
+    this.translationService.loadTranslations(english, chinese);
   }
 
   ngOnInit() {
@@ -74,11 +100,19 @@ export class AdminComponent implements OnInit {
     }, 2000);
   }
 
+  ngOnDestroy() {
+    this.navigationModelChangeSubscription.unsubscribe();
+  }
+
   /**
    * @param event {Event} 事件
    * @param scrollContainer {Object} 容器dom
    */
   onActivate(event, scrollContainer) {
     scrollContainer.scrollTop = 0;
+  }
+
+  onSettingsChange(settings) {
+    // this.config.setSettings(settings);
   }
 }

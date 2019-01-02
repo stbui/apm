@@ -1,0 +1,28 @@
+:host {
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 500px;
+  padding: 10px 15px;
+  background: #fff;
+  z-index: 10;
+
+  visibility: hidden;
+  transform: translateX(110%);
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+    visibility 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+  &.open {
+    transform: translateY(0);
+    visibility: visible;
+  }
+}
+
+.close {
+  position: absolute;
+  top: 0;
+  left: -40px;
+  background: #fff;
+  border-radius: 0;
+}

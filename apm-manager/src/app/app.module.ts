@@ -12,13 +12,21 @@ import { AdminModule } from './admin/admin.module';
 import { AppComponent } from './app.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 
+import { SignupComponent } from './pages/signup/signup.component';
+import { SigninComponent } from './pages/signin/signin.component';
+
 import { FireBaseComponentsModule } from './shared/firebase.module';
 
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 
 @NgModule({
-  declarations: [AppComponent, DashboardComponent],
+  declarations: [
+    AppComponent,
+    DashboardComponent,
+    SignupComponent,
+    SigninComponent
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -28,7 +36,9 @@ import { environment } from '../environments/environment';
     AppRoutingModule,
     FireBaseComponentsModule,
     ReactiveFormsModule,
-    environment['ngsw'] ? ServiceWorkerModule.register('./ngsw-worker.js') : []
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.production
+    })
   ],
   providers: [],
   bootstrap: [AppComponent]

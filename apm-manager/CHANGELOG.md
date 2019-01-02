@@ -1,3 +1,112 @@
+<a name="0.6.3"></a>
+## [0.6.3](https://github.com/stbui/angular-material-app/compare/0.6.5...0.6.3) (2018-10-19)
+
+
+
+<a name="0.6.5"></a>
+## [0.6.5](https://github.com/stbui/angular-material-app/compare/0.6.4...0.6.5) (2018-09-28)
+
+
+### Bug Fixes
+
+* 修复angular-calendar模块没有导入date-fns ([195a7da](https://github.com/stbui/angular-material-app/commit/195a7da))
+* 删除environment.ngsw文件 ([539c83b](https://github.com/stbui/angular-material-app/commit/539c83b))
+* 添加core模块，并导入管道 ([20b38ad](https://github.com/stbui/angular-material-app/commit/20b38ad))
+
+
+### Features
+
+* **blog:** 使用graphql获取github接口数据 ([ef4b072](https://github.com/stbui/angular-material-app/commit/ef4b072))
+* **shared:** 添加graphql模块 ([a8cf2a7](https://github.com/stbui/angular-material-app/commit/a8cf2a7))
+
+
+
+<a name="0.6.4"></a>
+## [0.6.4](https://github.com/stbui/angular-material-app/compare/0.6.3...0.6.4) (2018-09-02)
+
+
+### Bug Fixes
+
+* **dialog:** 没有定于模版变量 ([ce4a6ae](https://github.com/stbui/angular-material-app/commit/ce4a6ae))
+
+
+### Features
+
+* **pipe:** 新增字符截取管道 ([29a53d7](https://github.com/stbui/angular-material-app/commit/29a53d7))
+* **pipes:** 新增时间管道 ([2860946](https://github.com/stbui/angular-material-app/commit/2860946))
+
+
+
+<a name="0.6.3"></a>
+## [0.6.3](https://github.com/stbui/angular-material-app/compare/0.6.2...0.6.3) (2018-08-05)
+
+
+### Bug Fixes
+
+* [#39](https://github.com/stbui/angular-material-app/issues/39) ([fc7e933](https://github.com/stbui/angular-material-app/commit/fc7e933))
+
+
+### Features
+
+* **crm:** 更新线索模块 ([1602bf7](https://github.com/stbui/angular-material-app/commit/1602bf7))
+* add layout ([24f4308](https://github.com/stbui/angular-material-app/commit/24f4308))
+* **blog:** 对接github issues接口 ([8f7aca8](https://github.com/stbui/angular-material-app/commit/8f7aca8))
+* **compoent:** add websocket ([58e52d6](https://github.com/stbui/angular-material-app/commit/58e52d6))
+* **core:** 新增api前缀service ([382a072](https://github.com/stbui/angular-material-app/commit/382a072))
+* **core:** 新增httpCache service ([c1cf88a](https://github.com/stbui/angular-material-app/commit/c1cf88a))
+* **dialog:** dialog增加alert&confirm组件 ([1f3cd11](https://github.com/stbui/angular-material-app/commit/1f3cd11))
+* **file-manager:** 修改service，替换firebase ([f5430c7](https://github.com/stbui/angular-material-app/commit/f5430c7))
+* 新增http拦截器缓存数据 ([743cba8](https://github.com/stbui/angular-material-app/commit/743cba8))
+* **material:** 增加dialog demo ([94286dc](https://github.com/stbui/angular-material-app/commit/94286dc))
+* **message:** 新增message组件 ([3eb9a03](https://github.com/stbui/angular-material-app/commit/3eb9a03))
+* 更新crm页面 ([f6cda24](https://github.com/stbui/angular-material-app/commit/f6cda24))
+* 添加message链接 ([ce03ea4](https://github.com/stbui/angular-material-app/commit/ce03ea4))
+
+
+
+<a name="0.6.2"></a>
+## [0.6.2](https://github.com/stbui/angular-material-app/compare/0.6.1...0.6.2) (2018-06-23)
+
+
+
+<a name="0.6.1"></a>
+## [0.6.1](https://github.com/stbui/angular-material-app/compare/0.6.0...0.6.1) (2018-06-07)
+
+
+### Bug Fixes
+
+* [#30](https://github.com/stbui/angular-material-app/issues/30) calendar bug ([73973bc](https://github.com/stbui/angular-material-app/commit/73973bc))
+* **component:** specify default color ([848ac82](https://github.com/stbui/angular-material-app/commit/848ac82))
+* **materials:** 修复calendar locale ([b08d832](https://github.com/stbui/angular-material-app/commit/b08d832))
+* [#39](https://github.com/stbui/angular-material-app/issues/39) ([fc7e933](https://github.com/stbui/angular-material-app/commit/fc7e933))
+* add material divider ([883976d](https://github.com/stbui/angular-material-app/commit/883976d))
+* build compiler error ([4f5ccad](https://github.com/stbui/angular-material-app/commit/4f5ccad))
+* 修复在注册页按钮事件添加 ([7916abd](https://github.com/stbui/angular-material-app/commit/7916abd))
+* 修改footer日期 ([57fbc71](https://github.com/stbui/angular-material-app/commit/57fbc71))
+
+
+### Features
+
+* blog页面增加toolbar ([bf21d3a](https://github.com/stbui/angular-material-app/commit/bf21d3a))
+* 新增 chat-widget 组件 ([286f67f](https://github.com/stbui/angular-material-app/commit/286f67f))
+* 新增 speed dial ([cc60691](https://github.com/stbui/angular-material-app/commit/cc60691))
+* 完善blog页面 ([7c338c7](https://github.com/stbui/angular-material-app/commit/7c338c7))
+* **layout:** 新增页面布局示例 ([2cd453a](https://github.com/stbui/angular-material-app/commit/2cd453a))
+* 新增http拦截器缓存数据 ([743cba8](https://github.com/stbui/angular-material-app/commit/743cba8))
+* **component:** 完善speed-dial组件功能 ([3d549d5](https://github.com/stbui/angular-material-app/commit/3d549d5))
+* 新增layout组件 ([dae2615](https://github.com/stbui/angular-material-app/commit/dae2615))
+* 新增layout组件页面 ([5d89206](https://github.com/stbui/angular-material-app/commit/5d89206))
+* 更新crm页面 ([f6cda24](https://github.com/stbui/angular-material-app/commit/f6cda24))
+* 添加导航菜单动态创建菜单项 ([90eae28](https://github.com/stbui/angular-material-app/commit/90eae28))
+* **compoent:** 新增 websocket 组件 ([58e52d6](https://github.com/stbui/angular-material-app/commit/58e52d6))
+* **component:** 更新speed dial组件功能 ([5590276](https://github.com/stbui/angular-material-app/commit/5590276))
+* **core:** 新增api前缀service ([382a072](https://github.com/stbui/angular-material-app/commit/382a072))
+* **core:** 新增httpCache service ([c1cf88a](https://github.com/stbui/angular-material-app/commit/c1cf88a))
+* **demo:** 增加chatWidget组件demo ([b78dcda](https://github.com/stbui/angular-material-app/commit/b78dcda))
+* **layout:** 增加布局页面组件 ([1376ace](https://github.com/stbui/angular-material-app/commit/1376ace))
+* **layout:** 新增页面布局示例 ([7b60d18](https://github.com/stbui/angular-material-app/commit/7b60d18))
+
+
 # 0.6.0
 
 ### Update
