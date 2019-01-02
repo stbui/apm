@@ -9,12 +9,12 @@ export const environment = {
     storageBucket: 'angular-material-app-stbui.appspot.com',
     messagingSenderId: '974351057659'
   },
-  navigationApi: '/angular-material-app/assets/data/navigation',
-  todoApi: '/angular-material-app/assets/data/todo/list.json',
-  mailApi: '/angular-material-app/assets/data/mail/list.json',
-  chatsApi: '/angular-material-app/assets/data/chats/list.json',
-  analysisApi: '/angular-material-app/assets/data/analysis',
-  crmApi: '/angular-material-app/assets/data/crm',
-  tableApi: '/angular-material-app/assets/data/table',
-  apm: '/assets/data/apm'
+  navigationApi: '/apm/assets/data/navigation',
+  todoApi: '/apm/assets/data/todo/list.json',
+  mailApi: '/apm/assets/data/mail/list.json',
+  chatsApi: '/apm/assets/data/chats/list.json',
+  analysisApi: '/apm/assets/data/analysis',
+  crmApi: '/apm/assets/data/crm',
+  tableApi: '/apm/assets/data/table',
+  apm: '/apm/assets/data/apm'
 };
