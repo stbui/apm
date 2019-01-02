@@ -1,0 +1,79 @@
+[
+  {
+    "from": {
+      "name": "bright",
+      "mail": "demo@stbui.com"
+    },
+    "subject": "您的帐户在iPhone设备上的Youtube中有新的登录活动",
+    "content": "您的帐户在iPhone设备上的Youtube中有新的登录活动",
+    "when": "2018年12月13日",
+    "read": true,
+    "starred": true,
+    "labels": [
+      {
+        "name": "Private",
+        "color": "darkgrey"
+      }
+    ],
+    "group": "promotions",
+    "type": "sent",
+    "attachments": ["assets/img/backgrounds/1.jpg"]
+  },
+  {
+    "from": {
+      "name": "bright",
+      "mail": "demo@stbui.com"
+    },
+    "subject": "您的帐户在Windows设备上的Chrome中有新的登录活动",
+    "content": "您的帐户在Windows设备上的Chrome中有新的登录活动",
+    "when": "2018年12月13日",
+    "read": true,
+    "starred": true,
+    "labels": [
+      {
+        "name": "Private",
+        "color": "darkgrey"
+      }
+    ],
+    "group": "promotions",
+    "type": "sent"
+  },
+  {
+    "from": {
+      "name": "bright",
+      "mail": "demo@stbui.com"
+    },
+    "subject": "重要提示：您的免费试用期还剩 30 天",
+    "content": "重要提示：您的免费试用期还剩 30 天",
+    "when": "2018年12月13日",
+    "read": true,
+    "starred": true,
+    "labels": [
+      {
+        "name": "Private",
+        "color": "darkgrey"
+      }
+    ],
+    "group": "promotions",
+    "type": "sent"
+  },
+  {
+    "from": {
+      "name": "bright",
+      "mail": "demo@stbui.com"
+    },
+    "subject": "保存到您的 Google 帐号的卡已过期",
+    "content": "保存到您的 Google 帐号的卡已过期",
+    "when": "2018年12月15日",
+    "read": true,
+    "starred": true,
+    "labels": [
+      {
+        "name": "Private",
+        "color": "darkgrey"
+      }
+    ],
+    "group": "promotions",
+    "type": "sent"
+  }
+]
