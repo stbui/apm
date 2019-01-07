@@ -1,15 +1,20 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 @Injectable()
 export class ScriptService {
-  api = environment.apm;
+  private apiUrl = environment.apm;
 
   constructor(private http: HttpClient) {}
 
-  getList() {
-    const url = `${this.api}/script.json`;
-    return this.http.get<any>(url);
+  getList(page?: any, search?: any): Observable<any> {
+    const url: string = `${this.apiUrl}/error/getOneErrorList.json`;
+    const params = new HttpParams()
+      .set('page', page)
+      .set('resource_url', search);
+
+    return this.http.get<any>(url, { params });
   }
 }
