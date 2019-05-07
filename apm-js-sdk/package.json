@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "bootstrap": "lerna bootstrap -- --ignore-engines",
+    "postinstall": "lerna bootstrap -- --ignore-engines",
     "build": "lerna run build",
     "start": "cd ./packages/apm && npm run start",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
@@ -46,6 +46,9 @@
     "webpack-dev-server": "^3.1.10"
   },
   "dependencies": {
+    "bootstrap": "^4.3.1",
+    "build": "^0.1.4",
+    "postinstall": "^0.4.2",
     "reflect-metadata": "^0.1.12"
   }
 }

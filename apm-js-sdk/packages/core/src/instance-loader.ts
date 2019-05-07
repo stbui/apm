@@ -7,6 +7,11 @@
 import 'reflect-metadata';
 
 export class InstanceLoader {
+  /**
+   * 加载组件实例
+   * @param componentType 组件的实例包装器
+   * @param module 所属Module实例
+   */
   loadInstanceOfComponent(componentType, module) {
     const components = module.components;
     this.loadInstance(componentType, components, module);
@@ -17,6 +22,12 @@ export class InstanceLoader {
     this.loadInstance(componentType, controllers, module);
   }
 
+  /**
+   * 根据集合加载包装器中实例，此时原型已经创建
+   * @param type 组件实例包装器
+   * @param collection 所属模块组件集合
+   * @param module Module实例
+   */
   loadInstance(type, collection, module) {
     const currentFetchedInstance = collection.get(type);
     if (typeof currentFetchedInstance === 'undefined') {
@@ -33,6 +44,11 @@ export class InstanceLoader {
     }
   }
 
+  /**
+   * 加载组件原型对象
+   * @param type 组件的实例包装器
+   * @param collection 所属模块组件集合
+   */
   loadPrototypeOfInstance<T>(type, collection) {
     if (!collection) {
       return;
@@ -57,6 +73,12 @@ export class InstanceLoader {
     callback(argsInstances);
   }
 
+  /**
+   * 解析参数类，获取其包装器
+   * @param targetType 所属组件包装器
+   * @param param 参数类型
+   * @param module
+   */
   private resolveSingleParam(targetType, param, module) {
     if (typeof param === 'undefined') {
       throw new Error('resolveSingleParam');
@@ -80,6 +102,13 @@ export class InstanceLoader {
     return instanceWrapper.instance;
   }
 
+  /**
+   * 扫描指定名称参数组件包装器
+   * @param components 所属模块组件集合
+   * @param param 参数类名、下标、长度
+   * @param module 模块实例
+   * @param componentType 所属组件类
+   */
   private scanForComponent(components, param, module, componentType) {
     if (!components.has(param)) {
       const instanceWrapper = this.scanForComponentInRelatedModules(

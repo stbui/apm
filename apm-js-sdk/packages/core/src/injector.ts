@@ -8,6 +8,7 @@ import 'reflect-metadata';
 import { Container } from './container';
 import { InstanceLoader } from './instance-loader';
 
+//注射器，依赖注入
 export class Injector {
   private instanceLoader = new InstanceLoader();
 

@@ -15,7 +15,7 @@
     "@apm/common": "*",
     "@apm/core": "*",
     "@apm/http": "*",
-    "reflect-metadata": "^0.1.12"
+    "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
     "@types/node": "^8.0.26",
