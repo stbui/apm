@@ -1,0 +1,11 @@
+type Query {
+  getUsers: [User]
+  user(id: ID!): User
+}
+
+
+type User {
+  id: Int
+  name: String
+  age: Int
+}
