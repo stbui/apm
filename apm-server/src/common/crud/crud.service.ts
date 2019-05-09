@@ -1,50 +1,55 @@
 import {
   Injectable,
-  BadRequestException,
-  NotFoundException
+  UnprocessableEntityException
 } from '@nestjs/common';
+import { validate } from 'class-validator';
+import { BaseEntity, DeleteResult, Repository, DeepPartial } from 'typeorm';
+import { FindOneOptions } from 'typeorm/find-options/FindOneOptions';
+import { FindConditions } from 'typeorm/find-options/FindConditions';
+import { Config } from '../../config/config';
+
 
 @Injectable()
-export class CrudService<T> {
-  constructor(private readonly _model) {}
+export class CrudService<T extends BaseEntity> {
+  protected repository: Repository<T>;
 
   public async findAll(): Promise<T[]> {
-    return this._model.find().exec();
+    return await this.repository.find();
   }
 
-  public async findOne(entity: object, projection?: string): Promise<T> {
-    if (!entity) throw new BadRequestException();
-    const one = await this._model.findOne(entity, projection).exec();
-    if (!one) throw new NotFoundException();
-    return one;
+  public async findOneById(id: number): Promise<T> {
+    return this.repository.findOneOrFail(id);
   }
 
-  public findOneById(id: Number): Promise<T> {
-    return this.findOne({ _id: id });
+  public async findOne(conditions?: FindConditions<T>, options?: FindOneOptions<T>): Promise<T> {
+    return this.repository.findOne(conditions, options);
   }
 
-  public findById(id: Number): Promise<T> {
-    return this._model.findById(id);
+  public async create(data: DeepPartial<T>): Promise<T> {
+    const entity: T = this.repository.create(data);
+    await this.validate(entity);
+    return entity.save();
   }
 
-  public create(data: object): Promise<T> {
-    const model = new this._model(data);
-    return model.save();
+  public async update(data: DeepPartial<T>): Promise<T> {
+    return this.create(data);
   }
 
-  public async update(id: Number, data: any): Promise<T> {
-    const resut = await this.findById(id);
+  public async patch(id: number, data: DeepPartial<T>): Promise<T> {
+    const entity: T = await this.findOneById(id);
+    Object.assign(entity, data);
+    await this.validate(entity);
+    return entity.save();
+  }
 
-    if (!resut) {
-      throw new BadRequestException();
+  public async delete(id: number): Promise<DeleteResult> {
+    return this.repository.delete(id);
+  }
+
+  private async validate(entity: T) {
+    const errors = await validate(entity, Config.validator);
+    if (errors.length) {
+      throw new UnprocessableEntityException(errors);
     }
-
-    await this._model.updateOne({ _id: id }, data);
-
-    return await this.findById(id);
-  }
-
-  public delete(id: Number): Promise<T> {
-    return this._model.deleteOne({ _id: id });
   }
 }

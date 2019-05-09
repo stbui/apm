@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { DatabaseModule } from '../common/database/database.module'
 import { ScriptController } from './script.controller';
 import { ScriptService } from './script.service';
-import { ScriptEntity } from './script.entity';
+import { ScriptProviders } from './script.providers';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ScriptEntity])],
+  imports: [DatabaseModule],
   controllers: [ScriptController],
-  providers: [ScriptService],
+  providers: [ScriptService, ...ScriptProviders],
 })
 export class ScriptModule { }

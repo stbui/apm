@@ -1,14 +1,16 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+
+import { Injectable, Inject } from '@nestjs/common';
 import { Repository } from 'typeorm';
+import { CrudService } from '../common/crud/crud.service';
 import { SnapshotEntity } from './snapshot.entity'
+import { SNAPSHOT_TOKEN } from './snapshot.constants';
+
 
 @Injectable()
-export class SnapshotService {
-  constructor(
-    @InjectRepository(SnapshotEntity)
-    private readonly repository: Repository<SnapshotEntity>,
-  ) { }
+export class SnapshotService extends CrudService<SnapshotEntity> {
 
+  constructor(@Inject(SNAPSHOT_TOKEN) protected readonly repository: Repository<SnapshotEntity>) {
+    super();
+  }
 
 }

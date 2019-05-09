@@ -1,13 +1,14 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { DatabaseModule } from '../common/database/database.module'
+
 import { SnapshotController } from './snapshot.controller';
 import { SnapshotService } from './snapshot.service';
-import { SnapshotEntity } from './snapshot.entity'
+import { SnapshotProviders } from './snapshot.providers'
 
 @Module({
-  imports: [TypeOrmModule.forFeature([SnapshotEntity])],
+  imports: [DatabaseModule],
   controllers: [SnapshotController],
-  providers: [SnapshotService],
+  providers: [SnapshotService, ...SnapshotProviders],
   exports: [SnapshotService],
 })
 export class SnapshotModule { }

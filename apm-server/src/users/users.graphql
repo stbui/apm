@@ -1,11 +1,21 @@
-type Query {
-  getUsers: [User]
-  user(id: ID!): User
+type User {
+  id: ID!
+  username: String!
+  email: String
+  roles: String
 }
 
+type Auth {
+  username: String!
+  token: String!
+} 
 
-type User {
-  id: Int
-  name: String
-  age: Int
+type Query {
+  users(page: Int): [User!]
+  user(username: String!): User
+}
+
+type Mutation {
+  login(username: String!, password: String!): Auth
+  register(username: String!, password: String!): Auth
 }

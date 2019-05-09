@@ -1,13 +1,14 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { DatabaseModule } from '../common/database/database.module'
+
 import { PerformanceController } from './performance.controller';
 import { PerformanceService } from './performance.service';
-import { PerformanceEntity } from './performance.entity'
+import { PerformanceProviders } from './performance.providers';
 
 
 @Module({
-  imports: [TypeOrmModule.forFeature([PerformanceEntity])],
+  imports: [DatabaseModule],
   controllers: [PerformanceController],
-  providers: [PerformanceService]
+  providers: [PerformanceService, ...PerformanceProviders]
 })
 export class PerformanceModule { }

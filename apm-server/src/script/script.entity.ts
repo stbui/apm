@@ -1,6 +1,6 @@
-import { Entity, Column, ObjectID, ObjectIdColumn } from 'typeorm';
+import { BaseEntity, Entity, Column, ObjectID, ObjectIdColumn } from 'typeorm';
 
 @Entity()
-export class ScriptEntity {
+export class ScriptEntity extends BaseEntity {
     @ObjectIdColumn() id: ObjectID;
 }

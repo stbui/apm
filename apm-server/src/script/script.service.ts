@@ -1,17 +1,21 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+
+import { Injectable, Inject } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { ScriptEntity } from './script.entity'
-import { ScriptDb } from './script.db';
+import { CrudService } from '../common/crud/crud.service';
+import { ScriptEntity } from './script.entity';
+import { SCRIPT_TOKEN } from './script.constants';
+import { ScriptDb } from './script.db'
+
 
 @Injectable()
-export class ScriptService {
-  constructor(
-    @InjectRepository(ScriptEntity)
-    private readonly repository: Repository<ScriptEntity>,
-  ) { }
+export class ScriptService extends CrudService<ScriptEntity> {
 
-  findAll() {
+  constructor(@Inject(SCRIPT_TOKEN) protected readonly repository: Repository<ScriptEntity>) {
+    super();
+  }
+
+  findAll(): any {
     return ScriptDb.index
   }
+
 }

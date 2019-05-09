@@ -1,22 +1,13 @@
-import { Injectable, } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable, Inject } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { CollectionEntity } from './collection.entity'
 import { CrudService } from '../common/crud/crud.service';
-
+import { CollectionEntity } from './collection.entity';
+import { COLLECTION_TOKEN } from './collection.constants'
 
 @Injectable()
-export class CollectionService {
-  constructor(
-    @InjectRepository(CollectionEntity)
-    private readonly repository: Repository<CollectionEntity>,
-  ) { }
+export class CollectionService extends CrudService<CollectionEntity> {
 
-  async findAll(): Promise<CollectionEntity[]> {
-    return await this.repository.find();
-  }
-
-  async create(body) {
-    return await this.repository.save(body)
+  constructor(@Inject(COLLECTION_TOKEN) protected readonly repository: Repository<CollectionEntity>) {
+    super();
   }
 }

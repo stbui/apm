@@ -2,7 +2,7 @@ import { ApiModelProperty } from '@nestjs/swagger';
 import { BaseEntity, Entity, Column, ObjectID, ObjectIdColumn } from 'typeorm';
 
 @Entity()
-export class CollectionEntity extends BaseEntity {
+export class ApiEntity extends BaseEntity {
     @ObjectIdColumn() id: ObjectID;
     @Column() name: string;
     @Column() domain: string;

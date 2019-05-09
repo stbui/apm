@@ -5,9 +5,8 @@ import { PassportModule } from '@nestjs/passport';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
-import { UserModule } from '../../user/user.module';
-import { DatabaseModule } from '../database/database.module';
 import { Config } from '../../config/config';
+import { UsersModule } from '../../users/users.module'
 
 @Module({
   imports: [
@@ -18,11 +17,10 @@ import { Config } from '../../config/config';
         expiresIn: 60 * 60
       }
     }),
-    DatabaseModule,
-    forwardRef(() => UserModule)
+    forwardRef(() => UsersModule)
   ],
   providers: [AuthService, JwtStrategy],
   controllers: [AuthController],
   exports: [AuthService]
 })
-export class AuthModule {}
+export class AuthModule { }

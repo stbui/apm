@@ -2,8 +2,11 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { GraphQLModule } from '@nestjs/graphql';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Config } from './config/config'
+// 数据模块
+import { DatabaseModule } from './common/database/database.module'
+// 鉴权模块
+import { AuthModule } from './common/auth/auth.module';
+// 业务模块（核心）
 import { UsersModule } from './users/users.module'
 import { CollectionModule } from './collection/collection.module'
 import { PerformanceModule } from './performance/performance.module'
@@ -13,15 +16,13 @@ import { ProjectModule } from './project/project.module'
 
 @Module({
   imports: [
-    UsersModule,
     GraphQLModule.forRoot({
       typePaths: ['./**/*.graphql'],
       installSubscriptionHandlers: true,
     }),
-    TypeOrmModule.forRoot({
-      ...Config.database,
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
-    }),
+    DatabaseModule,
+    AuthModule,
+    UsersModule,
     CollectionModule,
     PerformanceModule, SnapshotModule, ScriptModule, ProjectModule
   ],

@@ -1,19 +1,19 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UserService } from '../../user/user.service';
 import { JwtPayload } from './jwt-payload.interface';
 import { Credentials } from './auth.dto';
+import { UsersService } from '../../users/users.service'
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly userService: UserService
-  ) {}
+    private readonly usersService: UsersService
+  ) { }
 
   async signIn(data) {
-    const user = await this.userService.findOneByEmailWithPassword(data.email);
-    const passwordMatch = this.userService.validateCredentials(
+    const user = await this.usersService.findOneByEmail(data.email);
+    const passwordMatch = this.usersService.validateCredentials(
       user,
       data.passwrod
     );
@@ -35,7 +35,8 @@ export class AuthService {
    * @param data 邮箱和密码
    */
   register(data: any) {
-    return this.userService.register(data);
+    return this.usersService.register(data);
+
   }
 
   async signOut() {
@@ -43,7 +44,8 @@ export class AuthService {
   }
 
   async createToken(credentials: Credentials) {
-    const payload = { email: 1, id: 2 };
+    // const payload = { email: 1, id: 2 };
+    const payload = this.usersService.login(credentials)
 
     return this.createAccessTokenFromUser(payload);
   }
@@ -53,7 +55,7 @@ export class AuthService {
   }
 
   async validateUser(payload: JwtPayload): Promise<any> {
-    return await this.userService.findOneById(payload.id);
+    return await this.usersService.findOneById(payload.id);
   }
 
   private createAccessTokenFromUser(user): string {

@@ -22,7 +22,8 @@ export const Config = {
     password: process.env.APP_DATABASE_PASSWORD,
     database: process.env.APP_DATABASE_NAME || 'apm',
     synchronize: true,
-    logging: process.env.APP_DATABASE_LOGGING as any
+    entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+    logging: process.env.APP_DATABASE_LOGGING as any,
   },
   logger: {
     level: process.env.APP_LOGGER_LEVEL
@@ -36,5 +37,15 @@ export const Config = {
       target: false,
       value: false
     }
-  }
+  },
+  email: {
+    host: 'smtp.qq.com',
+    secure: true,
+    port: 465,
+    auth: {
+      user: '',
+      pass: '',
+    },
+  },
+  email_from: 'stbui@stbui.com'
 };

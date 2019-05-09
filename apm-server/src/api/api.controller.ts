@@ -12,7 +12,7 @@ export class ApiController {
   constructor(
     private service: ApiService,
     private snapshotService: SnapshotService,
-  ) {}
+  ) { }
 
   /**
    * 用于页面加载时渲染的数据
@@ -20,7 +20,7 @@ export class ApiController {
   @Get('/sessions/:id')
   async sessions(@Param('id') id) {
     console.log('/sessions/:id', id);
-    let session = await this.snapshotService.findById(id);
+    let session = await this.snapshotService.findOneById(id);
 
     let result = {
       log: null,

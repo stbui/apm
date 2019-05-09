@@ -1,19 +1,19 @@
-import { Controller, Get, Query, Post, Body } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { ApiUseTags, ApiBearerAuth } from '@nestjs/swagger';
+import { CrudController } from '../common/crud/crud.controller';
+import { UsersService } from './users.service';
+import { UsersEntity } from './users.entity'
 
+@ApiBearerAuth()
 @ApiUseTags('users')
 @Controller('users')
-export class UserController {
-
-    @Get()
-    indexAction() {
-        console.log('UserController')
-        return { message: 'UserController' }
+export class UserController extends CrudController<UsersEntity> {
+    constructor(protected service: UsersService) {
+        super();
     }
 
-    @Post()
-    postAction(@Body() body) {
-        console.log('UserController')
-        return { message: body }
+    @Get('/search')
+    async findOneByEmail(@Query() email) {
+        return await this.service.findOneByEmail(email)
     }
 }

@@ -1,11 +1,13 @@
-import { Connection } from 'mongoose';
-import { ProjectSchema } from './project.schema';
+
+import { Connection } from 'typeorm';
+import { DB_CON_TOKEN } from '../common/database/database.constants';
+import { ProjectEntity } from './project.entity';
+import { PROJECT_TOKEN } from './project.constants';
 
 export const ProjectProviders = [
   {
-    provide: 'ProjectModelToken',
-    useFactory: (connection: Connection) =>
-      connection.model('project', ProjectSchema),
-    inject: ['DbConnectionToken'],
-  },
+    provide: PROJECT_TOKEN,
+    useFactory: (connection: Connection) => connection.getRepository(ProjectEntity),
+    inject: [DB_CON_TOKEN]
+  }
 ];

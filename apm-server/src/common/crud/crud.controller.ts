@@ -1,20 +1,22 @@
-import { Get, Post, Body, Put, Param, Delete } from '@nestjs/common';
+import { Get, Post, Body, Put, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { BaseEntity, DeleteResult, DeepPartial } from 'typeorm';
 import { ApiResponse } from '@nestjs/swagger';
+import { CrudService } from './crud.service';
 
-export class CrudController<T> {
-  constructor(private readonly _service) {}
+export class CrudController<T extends BaseEntity> {
+  protected service: CrudService<T>;
 
   @Get()
   @ApiResponse({ status: 200, description: 'Ok' })
-  findAll(): Promise<T[]> {
-    return this._service.findAll();
+  public async findAll(): Promise<T[]> {
+    return this.service.findAll();
   }
 
   @Get(':id')
   @ApiResponse({ status: 200, description: 'Entity retrieved successfully.' })
   @ApiResponse({ status: 404, description: 'Entity does not exist' })
-  findfindByIdOne(@Param('id') id: number): Promise<T> {
-    return this._service.findOneById(id);
+  public async findOne(@Param('id', new ParseIntPipe()) id: number) {
+    return this.service.findOneById(id);
   }
 
   @Post()
@@ -24,21 +26,28 @@ export class CrudController<T> {
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
-  create(@Body() entity: T) {
-    return this._service.create(entity);
+  public async create(@Body() data: DeepPartial<T>): Promise<T> {
+    return this.service.create(data);
   }
 
   @Put(':id')
   @ApiResponse({ status: 400, description: 'Bad Request.' })
   @ApiResponse({ status: 200, description: 'Entity deleted successfully.' })
-  update(@Body() entity: T): Promise<T> {
-    return this._service.update(entity);
+  public async update(@Body() data: DeepPartial<T>): Promise<T> {
+    return this.service.update(data);
+  }
+
+  @Patch('/:id')
+  @ApiResponse({ status: 400, description: 'Bad Request.' })
+  @ApiResponse({ status: 200, description: 'Entity deleted successfully.' })
+  public async patch(@Param('id', new ParseIntPipe()) id: number, @Body() data: DeepPartial<T>): Promise<T> {
+    return this.service.patch(id, data);
   }
 
   @Delete(':id')
   @ApiResponse({ status: 200, description: 'Entity deleted successfully.' })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
-  delete(@Param('id') id: number) {
-    return this._service.delete(id);
+  public async delete(@Param('id') id: number): Promise<DeleteResult> {
+    return this.service.delete(id);
   }
 }

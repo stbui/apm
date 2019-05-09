@@ -1,13 +1,16 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+
+import { Injectable, Inject } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { ProjectEntity } from './project.entity'
+import { CrudService } from '../common/crud/crud.service';
+import { ProjectEntity } from './project.entity';
+import { PROJECT_TOKEN } from './project.constants';
+
 
 @Injectable()
-export class ProjectService {
-  constructor(
-    @InjectRepository(ProjectEntity)
-    private readonly repository: Repository<ProjectEntity>,
-  ) { }
+export class ProjectService extends CrudService<ProjectEntity> {
+
+  constructor(@Inject(PROJECT_TOKEN) protected readonly repository: Repository<ProjectEntity>) {
+    super();
+  }
 
 }

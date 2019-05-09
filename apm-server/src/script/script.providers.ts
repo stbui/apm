@@ -1,11 +1,13 @@
-import { Connection } from 'mongoose';
-import { ScriptSchema } from './script.schema';
+
+import { Connection } from 'typeorm';
+import { DB_CON_TOKEN } from '../common/database/database.constants';
+import { ScriptEntity } from './script.entity';
+import { SCRIPT_TOKEN } from './script.constants';
 
 export const ScriptProviders = [
   {
-    provide: 'ScriptModelToken',
-    useFactory: (connection: Connection) =>
-      connection.model('script', ScriptSchema),
-    inject: ['DbConnectionToken'],
-  },
+    provide: SCRIPT_TOKEN,
+    useFactory: (connection: Connection) => connection.getRepository(ScriptEntity),
+    inject: [DB_CON_TOKEN]
+  }
 ];
