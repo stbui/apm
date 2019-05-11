@@ -21,10 +21,10 @@ async function bootstrap() {
 
   // swagger
   const options = new DocumentBuilder()
-    .setTitle('apm')
-    .setDescription('The apm API description')
-    .setVersion('1.0')
-    .addTag('apm')
+    .setTitle(Config.name)
+    .setDescription(Config.description)
+    .setVersion(Config.version)
+    .addTag(Config.name)
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('docs', app, document);

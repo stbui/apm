@@ -43,7 +43,7 @@ export class UsersEntity extends BaseEntity {
   // })
   @ApiModelProperty()
   @IsEmail()
-  @Column()
+  @Column({ unique: true })
   public email: string;
 
   @ApiModelProperty()

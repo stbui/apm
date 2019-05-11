@@ -2,7 +2,7 @@
  * Auth controller.
  * @file 权限模块控制器
  * @module common/auth/controller
- * @author Surmon <https://github.com/stbui>
+ * @author Stbui <https://github.com/stbui>
  */
 
 import {
@@ -11,7 +11,7 @@ import {
   Post,
   UseGuards,
   Body,
-  Headers
+  Headers,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiUseTags } from '@nestjs/swagger';
@@ -21,7 +21,7 @@ import { Credentials } from './auth.dto';
 @ApiUseTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService) {}
 
   @Post('signin')
   signIn(@Body() body: Credentials) {

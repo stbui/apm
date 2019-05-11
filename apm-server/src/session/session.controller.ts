@@ -7,8 +7,10 @@ import {
   Body,
   Put,
   Patch,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiUseTags, ApiBearerAuth } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 import { CrudController } from '../common/crud/crud.controller';
 import { SessionService } from './session.service';
 import { SessionEntity } from './session.entity';
@@ -63,6 +65,7 @@ export class SessionController extends CrudController<SessionEntity> {
    * 用于页面加载时渲染的数据
    */
   @Get(':id')
+  @UseGuards(AuthGuard())
   async sessions(@Param('id') id) {
     console.log(':id', id);
     let session = await this.service.findOneById(id);

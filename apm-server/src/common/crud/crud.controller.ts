@@ -1,4 +1,18 @@
-import { Get, Post, Body, Put, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+/**
+ * Crud controller.
+ * @author Stbui <https://github.com/stbui>
+ */
+
+import {
+  Get,
+  Post,
+  Body,
+  Put,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { BaseEntity, DeleteResult, DeepPartial } from 'typeorm';
 import { ApiResponse } from '@nestjs/swagger';
 import { CrudService } from './crud.service';
@@ -22,7 +36,7 @@ export class CrudController<T extends BaseEntity> {
   @Post()
   @ApiResponse({
     status: 201,
-    description: 'The record has been successfully created.'
+    description: 'The record has been successfully created.',
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
@@ -40,7 +54,10 @@ export class CrudController<T extends BaseEntity> {
   @Patch('/:id')
   @ApiResponse({ status: 400, description: 'Bad Request.' })
   @ApiResponse({ status: 200, description: 'Entity deleted successfully.' })
-  public async patch(@Param('id', new ParseIntPipe()) id: number, @Body() data: DeepPartial<T>): Promise<T> {
+  public async patch(
+    @Param('id', new ParseIntPipe()) id: number,
+    @Body() data: DeepPartial<T>,
+  ): Promise<T> {
     return this.service.patch(id, data);
   }
 
