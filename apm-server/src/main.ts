@@ -5,9 +5,10 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { Config } from './config/config';
 import { AppModule } from './app.module';
 
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // app.setGlobalPrefix('v1');
 
   app.enableCors({
     origin: [
@@ -28,9 +29,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('docs', app, document);
 
-
   await app.listen(Config.port);
   Logger.log(`Server running on http://localhost:${Config.port}`);
-
 }
 bootstrap();

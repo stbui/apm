@@ -1,72 +1,97 @@
 import { ApiModelProperty } from '@nestjs/swagger';
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn, BaseEntity, ObjectIdColumn, ObjectID, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { IsArray, IsEmail, IsString, MinLength, Validate, } from 'class-validator';
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  BaseEntity,
+  ObjectIdColumn,
+  ObjectID,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import {
+  IsArray,
+  IsEmail,
+  IsString,
+  MinLength,
+  Validate,
+  IsEmpty,
+} from 'class-validator';
 import * as crypto from 'crypto';
-import { Config } from '../config/config'
-import { IsUsersAlreadyExist } from './users.validator';
+import { Config } from '../config/config';
+import { IsUserAlreadyExist } from './users.validator';
+import { USER_ROLE } from './users.constants';
 
-
-@Entity()
+@Entity('apm_users')
 export class UsersEntity extends BaseEntity {
-    // @ApiModelProperty()
-    // @PrimaryGeneratedColumn()
-    // public id: string;
+  // @ApiModelProperty()
+  // @PrimaryGeneratedColumn()
+  // public id: string;
 
-    @ApiModelProperty()
-    @ObjectIdColumn()
-    id: ObjectID;
+  @ApiModelProperty()
+  @ObjectIdColumn()
+  id: ObjectID;
 
-    @ApiModelProperty()
-    @IsString()
-    @Column()
-    public username: string;
+  @ApiModelProperty()
+  @IsString()
+  @Column()
+  public username: string;
 
-    // @Validate(IsUsersAlreadyExist, {
-    //     message: 'User already exists'
-    // })
-    @ApiModelProperty()
-    @IsEmail()
-    @Column()
-    public email: string;
+  // @Validate(IsUserAlreadyExist, {
+  //     message: 'User already exists'
+  // })
+  @ApiModelProperty()
+  @IsEmail()
+  @Column()
+  public email: string;
 
-    @ApiModelProperty()
-    @Column()
-    @MinLength(6)
-    public password: string;
+  @ApiModelProperty()
+  @Column()
+  @MinLength(6)
+  public password: string;
 
-    @ApiModelProperty()
-    @IsArray()
-    @Column({ type: 'text', array: true })
-    public roles: string[];
+  @ApiModelProperty()
+  @IsArray()
+  @Column({
+    type: 'enum',
+    enum: USER_ROLE,
+    default: USER_ROLE.DEFAULT,
+  })
+  roles: USER_ROLE;
 
-    // @BeforeInsert()
-    // hashPassword() {
-    //     this.password = crypto.createHmac('sha256', Config.salt)
-    //         .update(this.password)
-    //         .digest('hex');;
-    // }
+  @BeforeInsert()
+  hashPassword() {
+    this.password = crypto.createHmac('sha256', this.password).digest('hex');
+  }
 
-    @CreateDateColumn()
-    createdAt: Date;
+  @Column({ default: '' })
+  ip: string;
 
-    @UpdateDateColumn()
-    modifiedAt: Date;
+  @CreateDateColumn()
+  createdAt: Date;
 
-    @Column({ type: 'jsonb', default: {} })
-    profile: {
-        name?: string;
-        surname?: string;
-        phone?: string;
-        description?: string;
+  @UpdateDateColumn()
+  modifiedAt: Date;
+
+  @Column()
+  lastLogin: Date;
+
+  @Column({ type: 'jsonb', default: {} })
+  profile: {
+    name?: string;
+    surname?: string;
+    phone?: string;
+    description?: string;
+  };
+
+  @Column({ type: 'jsonb' })
+  oauth: {
+    google?: {
+      userId: string;
     };
-
-    @Column({ type: 'jsonb' })
-    oauth: {
-        google?: {
-            userId: string,
-        },
-        facebook?: {
-            userId: string,
-        },
+    facebook?: {
+      userId: string;
     };
+  };
 }
