@@ -11,9 +11,7 @@ async function bootstrap() {
   // app.setGlobalPrefix('v1');
 
   app.enableCors({
-    origin: [
-      'http://127.0.0.1:4200', // angular
-    ],
+    origin: '*',
     methods: '*',
     allowedHeaders: '*',
     credentials: true,
