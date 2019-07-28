@@ -1,319 +1,237 @@
-import { Controller, Get, Query, Post, Body, Param, Put } from '@nestjs/common';
+import {
+    Controller,
+    Get,
+    Query,
+    Post,
+    Body,
+    Param,
+    Put,
+    Headers,
+} from '@nestjs/common';
 import { ApiService } from './api.service';
-import { SnapshotService } from '../snapshot/snapshot.service';
 
 @Controller('api')
 export class ApiController {
-  lastActive = null;
-  timestamp: number;
-  clientOnline: boolean = true;
-  clientUnOnlineTimer: NodeJS.Timer;
+    timestamp: number;
+    clientOnline: boolean = true;
+    clientUnOnlineTimer: NodeJS.Timer;
 
-  constructor(
-    private service: ApiService,
-    private snapshotService: SnapshotService,
-  ) { }
+    constructor(private service: ApiService) {}
 
-  /**
-   * 用于页面加载时渲染的数据
-   */
-  @Get('/sessions/:id')
-  async sessions(@Param('id') id) {
-    console.log('/sessions/:id', id);
-    let session = await this.snapshotService.findOneById(id);
+    /**
+     * 播放页面
+     * ?with_last_activity_index=true
+     */
+    @Get('/sessions/:id')
+    async sessions(@Param('id') id) {
+        // const test = {
+        //     start: 1564326003057.0,
+        //     userIdentity: {
+        //         displayName: 'User 1',
+        //         customFields: [],
+        //         email: null,
+        //         identifier: 'e9521746-ddd2-4001-adbf-7615acb64adf',
+        //     },
+        //     manufacturer: null,
+        //     top: 0,
+        //     length: 179617,
+        //     // 开始event时间戳
+        //     clientStartMilliseconds: 1564326217290.0,
+        //     browserName: 'Chrome',
+        //     browserVersion: '75.0.3770.100',
+        //     version: '63',
+        //     ip: '23.98.42.232',
+        //     isLive: false,
+        //     id: '5d3db8739b85ed4f1ab38a7f',
+        //     country: 'Hong Kong',
+        //     lastActive: 1564326422523.0,
+        //     visibilityState: 'visible',
+        //     referrer: null,
+        //     layoutName: 'Blink',
+        //     screenHeight: 342,
+        //     os: 'OS X 10.14.5 64-bit',
+        //     screenWidth: 1623,
+        //     product: null,
+        //     left: 0,
+        //     pageUrl: 'http://127.0.0.1:8080/test.html',
+        //     hasInaccessibleResources: null,
+        //     origin: 'http://127.0.0.1:8080/test.html',
+        //     city: 'Hong Kong',
+        // };
 
-    let result = {
-      log: null,
-      session: session,
-    };
+        const session = await this.service.getSession(id);
 
-    return result;
-  }
-
-  // 播放列表
-  @Get('/sessions/:session_id/activities')
-  async activities(@Param('session_id') session_id, @Query() q) {
-    const activities = await this.service
-      .where({ snaphot_id: session_id })
-      .order({ _id: 1 })
-      .select({ _id: 0, __v: 0 });
-
-    return {
-      activities,
-      lastEventIndex: 0,
-      // lastEventTimestamp: 0,
-      // lastLogTimestamp: 0,
-      lastEventTimestamp: activities[activities.length - 1].timestamp,
-      lastLogTimestamp: q.events_timestamp,
-    };
-  }
-
-  // 建立全局页面快照
-  @Post('/session')
-  async session(@Body() body) {
-    console.log('timestamp =>', body.timestamp, typeof body.timestamp);
-    this.timestamp = Number(body.timestamp);
-
-    // 直接保存到数据库
-    const result = await this.snapshotService.add(body);
-
-    // 返回配置参数
-    return {
-      id: result.id,
-      mappings: {
-        lastActive: 'la',
-        logs: 'lg',
-        css_rule_delete: 'crd',
-        css_rule_insert: 'cri',
-        url_change: 'uc',
-        visibility_change: 'vc',
-        checkbox_change: 'cbc',
-        radio_button_change: 'rbc',
-        scroll_position_change: 'spc',
-        dom_snapshot: 'ds',
-        window_resize: 'wr',
-        mouse_out: 'mou',
-        mouse_over: 'mov',
-        mouse_click: 'mc',
-        mouse_move: 'mm',
-        dom_mutation: 'dm',
-        dom_element_value_change: 'evc',
-      },
-      serverSessionId: '5b0d85b42fb746c2082a38ae',
-      nr: false,
-    };
-  }
-
-  // 配置字段
-  @Get('/settings')
-  async settings(@Query() q) {
-    let isActive;
-    if (q.session_id) {
-      const result = await this.snapshotService.findById(q.session_id);
-      isActive = result.isLive;
-    } else {
-      isActive = false;
+        return {
+            log: null,
+            session: session,
+            customOrigin: null,
+            askUserForStreamingPermission: false,
+            lastActivityIndex: 83,
+        };
     }
 
-    return {
-      website: {
-        autoLogErrors: 1,
-        autoStartRecording: 1,
-        sensitiveInputFields: 0,
-        autoLogFailedNetworkRequests: 1,
-        autoLogConsoleLog: 1,
-        autoLogConsoleError: 1,
-        autoLogConsoleWarn: 1,
-        autoLogConsoleInfo: 1,
-        autoLogConsoleDebug: 1,
-        maxLogMessageLength: 1000,
-        storeStaticResources: 1,
-        origin: null,
-        sensitiveElementsSelector: '',
-        shouldRecordPage: true,
-      },
-      session: {
-        isActive: isActive,
-        sessionId: q.session_id,
-      },
-      mappings: {
-        lastActive: 'la',
-        logs: 'lg',
-        css_rule_delete: 'crd',
-        css_rule_insert: 'cri',
-        url_change: 'uc',
-        visibility_change: 'vc',
-        checkbox_change: 'cbc',
-        radio_button_change: 'rbc',
-        scroll_position_change: 'spc',
-        dom_snapshot: 'ds',
-        window_resize: 'wr',
-        mouse_out: 'mou',
-        mouse_over: 'mov',
-        mouse_click: 'mc',
-        mouse_move: 'mm',
-        dom_mutation: 'dm',
-        dom_element_value_change: 'evc',
-      },
-    };
-  }
+    // 播放列表
+    /**
+     *
+     * @param session_id
+     * @param q
+     * ?events_index=-1&events_timestamp=-1&logs_timestamp=0
+     * ?events_index=2&events_timestamp=1495539033675&logs_timestamp=1495539033246
+     */
+    @Get('/sessions/:session_id/activities')
+    async activities(@Param('session_id') sessionId, @Query() q) {
+        const activities = await this.service.getEvents(sessionId);
+        const session = await this.service.getSession(sessionId);
 
-  /**
-   * 实时接收dom变化数据
-   * @param id
-   * @param b
-   * @param server_session_id
-   */
-  @Post('/session/:id/data')
-  async data(
-    @Param('id') id,
-    @Body() b,
-    @Query('server_session_id') server_session_id,
-  ) {
-    let mappings = b;
-    let sessions = [];
+        const result = {
+            activities: activities,
+            // 最后一条索引
+            lastEventIndex: 33,
+            // 最后记录时间
+            lastEventTimestamp: session.lastActive,
+            // lastLogTimestamp: 1564326391724,
+            offset: 0,
+        };
 
-    // 转换数据
-    for (let mapping in mappings) {
-      switch (mapping) {
-        case 'uc':
-          sessions.push(
-            ...this.proccessMappings(mappings[mapping], 'url_change'),
-          );
-          break;
-        case 'mov':
-          sessions.push(
-            ...this.proccessMappings(mappings[mapping], 'mouse_over'),
-          );
-          break;
-        case 'mm':
-          sessions.push(
-            ...this.proccessMappings(mappings[mapping], 'mouse_move'),
-          );
-          break;
-        case 'mou':
-          sessions.push(
-            ...this.proccessMappings(mappings[mapping], 'mouse_out'),
-          );
-          break;
-        case 'dm':
-          sessions.push(
-            ...this.proccessMappings(mappings[mapping], 'dom_mutation'),
-          );
-          break;
-        case 'crd':
-          sessions.push(
-            ...this.proccessMappings(mappings[mapping], 'css_rule_delete'),
-          );
-          break;
-        case 'cri':
-          sessions.push(
-            ...this.proccessMappings(mappings[mapping], 'css_rule_insert'),
-          );
-          break;
-        case 'vc':
-          sessions.push(
-            ...this.proccessMappings(mappings[mapping], 'visibility_change'),
-          );
-          break;
-        case 'cbc':
-          sessions.push(
-            ...this.proccessMappings(mappings[mapping], 'checkbox_change'),
-          );
-          break;
-        case 'rbc':
-          sessions.push(
-            ...this.proccessMappings(mappings[mapping], 'radio_button_change'),
-          );
-          break;
-        case 'spc':
-          sessions.push(
-            ...this.proccessMappings(
-              mappings[mapping],
-              'scroll_position_change',
-            ),
-          );
-          break;
-        case 'ds':
-          sessions.push(
-            ...this.proccessMappings(mappings[mapping], 'dom_snapshot'),
-          );
-          break;
-        case 'wr':
-          sessions.push(
-            ...this.proccessMappings(mappings[mapping], 'window_resize'),
-          );
-          break;
-        case 'mc':
-          sessions.push(
-            ...this.proccessMappings(mappings[mapping], 'mouse_click'),
-          );
-          break;
-        case 'evc':
-          sessions.push(
-            ...this.proccessMappings(
-              mappings[mapping],
-              'dom_element_value_change',
-            ),
-          );
-          break;
-        case 'la':
-          this.lastActive = mappings[mapping];
-          break;
-      }
+        return result;
     }
 
-    sessions = sessions.map((session, index) => {
-      const data = {
-        ...session,
-        time: session.timestamp - this.timestamp,
-        snaphot_id: id,
-        server_session_id,
-      };
+    // 建立页面快照
+    @Post('/session')
+    async session(@Body() body, @Headers('authorization') accessToken) {
+        const data = {
+            docType: body.docType,
+            left: body.left,
+            origin: body.origin,
+            pageUrl: body.pageUrl,
+            referrer: body.referrer,
+            screenWidth: body.screenWidth,
+            top: body.top,
+            visibilityState: body.visibilityState,
+            snapshot: body.snapshot,
+        };
 
-      this.service.add(data);
+        const session = {
+            ...body,
+            start: body.timestamp,
+            clientStartMilliseconds: body.timestamp,
+        };
+        const result = await this.service.saveSession(session);
 
-      return data;
-    });
+        const model = {
+            data,
+            index: 0,
+            time: -1,
+            timestamp: body.timestamp,
+            type: 'dom_snapshot',
+            serverSessionId: result.id + '',
+        };
 
-    // 将time最后一个值保存到全局快照length中
-    // console.log('start', sessions[0]);
-    // bug
-    const size = sessions.length - 1 <= 0 ? 0 : sessions.length - 1;
-    const sessionEndTime = sessions[size].time;
+        await this.service.createSnapshot(model);
+        const mappings = this.service.findMappings();
 
-    // 在线状态
-    console.log('在线状态', this.clientOnline);
-    if (this.clientOnline) {
-      // 更新snapshot
-      await this.snapshotService
-        .where({ _id: id })
-        .update({ length: sessionEndTime, isLive: true });
-
-      clearTimeout(this.clientUnOnlineTimer);
-      this.clientUnOnlineTimer = setTimeout(() => {
-        this.clientOnline = false;
-        console.log('离线');
-        this.snapshotService.where({ _id: id }).update({ isLive: false });
-      }, 60 * 1000);
+        return {
+            id: result.id,
+            mappings,
+            serverSessionId: 1,
+            nr: false,
+        };
     }
 
-    return sessions;
-  }
+    // 配置字段
+    @Get('/settings')
+    async settings(@Query() q, @Headers('authorization') accessToken) {
+        // const website = await this.service.findWebsite(
+        //     '5d3d95106e562d4d018e8a38',
+        // );
 
-  @Post('/session/:id/identity')
-  async identity(@Body() b, @Param() p) {
-    const result = await this.snapshotService.findById(p.id);
-    // console.log(result.userIdentity.identifier)
-    return { identifier: '79deb911-198e-4265-aad4-492246beef22' };
-  }
+        const mappings = this.service.findMappings();
 
-  // 客户端与服务端是否同时在线
-  @Put('/session/:id/ping')
-  ping(@Param('id') id) {
-    this.clientOnline = true;
-    this.snapshotService.where({ _id: id }).update({ isLive: true });
-    return {};
-  }
+        return {
+            website: {
+                autoLogErrors: 1,
+                autoStartRecording: 1,
+                sensitiveInputFields: 0,
+                autoLogFailedNetworkRequests: 1,
+                autoLogConsoleLog: 1,
+                autoLogConsoleError: 1,
+                autoLogConsoleWarn: 1,
+                autoLogConsoleInfo: 1,
+                autoLogConsoleDebug: 1,
+                maxLogMessageLength: 1000,
+                storeStaticResources: 1,
+                origin: null,
+                sensitiveElementsSelector: '',
+                shouldRecordPage: true,
+            },
+            session: {
+                isActive: false,
+                sessionId: q.session_id,
+                hasEvents: false,
+                maxSessionInactivityMinutes: 1,
+            },
+            mappings,
+        };
+    }
 
-  @Put('/session/:id/server_session/:i')
-  server_session() {
-    return { id: '5b154cb1455b11537d0baa84' };
-  }
+    /**
+     * 实时接收dom变化数据
+     * @param sessionn_id
+     * @param b
+     * @param serverSessionId
+     */
+    @Post('/session/:sessionn_id/data')
+    async data(
+        @Param('sessionn_id') sessionnId,
+        @Body() body,
+        @Query('server_session_id') serverSessionId,
+    ) {
+        let { lastActive, sessions } = this.service.convertMappings(body);
+        const se = await this.service.getSession(sessionnId);
 
-  @Get('/sessions/:id/status')
-  async status(@Param('id') id) {
-    const result = await this.snapshotService.findById(id);
-    const { isLive, length } = result;
-    return { isLive, length };
-  }
+        let newSessions = sessions.map((session, index) => {
+            const data = {
+                ...session,
+                data: session.data,
+                time: session.timestamp - se.timestamp,
+                serverSessionId: sessionnId,
+            };
 
-  proccessMappings(mappings, type) {
-    return mappings.map(value => {
-      return {
-        ...value,
-        type,
-      };
-    });
-  }
+            this.service.createSnapshot(data);
+            return data;
+        });
+
+        this.service.updateSession(sessionnId, {
+            lastActive: lastActive,
+            length: newSessions[newSessions.length - 1].time,
+        });
+
+        return newSessions;
+    }
+
+    @Post('/session/:id/identity')
+    async identity(@Body() b, @Param() p) {
+        return { identifier: '79deb911-198e-4265-aad4-492246beef22' };
+    }
+
+    // 客户端与服务端是否同时在线
+    // server_session_id
+    @Put('/session/:id/ping')
+    ping(@Param('id') id, @Query('server_session_id') serverSessionId) {
+        console.log('在线状态检查');
+        this.clientOnline = true;
+        return {};
+    }
+
+    @Put('/session/:id/server_session/:i')
+    server_session() {
+        return { id: '5b154cb1455b11537d0baa84' };
+    }
+
+    @Get('/sessions/:id/status')
+    async status(@Param('id') id) {
+        // const result = await this.snapshotService.findById(id);
+        // const { isLive, length } = result;
+        return {};
+    }
 }

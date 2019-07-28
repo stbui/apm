@@ -1,97 +1,88 @@
-import { ApiModelProperty } from '@nestjs/swagger';
 import {
-  BeforeInsert,
-  Column,
-  Entity,
-  PrimaryGeneratedColumn,
-  BaseEntity,
-  ObjectIdColumn,
-  ObjectID,
-  CreateDateColumn,
-  UpdateDateColumn,
+    BeforeInsert,
+    Column,
+    Entity,
+    BaseEntity,
+    ObjectIdColumn,
+    ObjectID,
+    CreateDateColumn,
+    UpdateDateColumn,
 } from 'typeorm';
 import {
-  IsArray,
-  IsEmail,
-  IsString,
-  MinLength,
-  Validate,
-  IsEmpty,
+    IsArray,
+    IsEmail,
+    IsString,
+    MinLength,
+    Validate,
+    IsEmpty,
 } from 'class-validator';
 import * as crypto from 'crypto';
-import { Config } from '../config/config';
 import { IsUserAlreadyExist } from './users.validator';
 import { USER_ROLE } from './users.constants';
 
 @Entity('apm_users')
 export class UsersEntity extends BaseEntity {
-  // @ApiModelProperty()
-  // @PrimaryGeneratedColumn()
-  // public id: string;
+    @ObjectIdColumn() id: ObjectID;
+    @Column() displayName: string;
 
-  @ApiModelProperty()
-  @ObjectIdColumn()
-  id: ObjectID;
+    // @Validate(IsUserAlreadyExist, {
+    //     message: 'User already exists'
+    // })
+    @IsEmail()
+    @Column({ unique: true })
+    email: string;
 
-  @ApiModelProperty()
-  @IsString()
-  @Column()
-  public username: string;
+    @Column()
+    @MinLength(6)
+    password: string;
 
-  // @Validate(IsUserAlreadyExist, {
-  //     message: 'User already exists'
-  // })
-  @ApiModelProperty()
-  @IsEmail()
-  @Column({ unique: true })
-  public email: string;
+    @BeforeInsert()
+    hashPassword() {
+        this.password = crypto
+            .createHmac('sha256', this.password)
+            .digest('hex');
+    }
 
-  @ApiModelProperty()
-  @Column()
-  @MinLength(6)
-  public password: string;
+    @Column() pricingPlan: string = 'free';
+    @Column() ip: string;
+    @CreateDateColumn() created: Date;
+    @UpdateDateColumn() modifiedAt: Date;
+    @Column() lastLogin: Date;
+    @Column({ comment: '组织' }) organizationName: string;
+    @Column({ comment: '组织' }) organizationRole: string;
+    @Column({ comment: '组织path' }) organizationUrl: string;
+    @Column() specialOffer: string;
+    @Column() trialDaysLeft: number;
+    @Column() verificationToken: string;
+    @Column() accountIsSettingUp: number;
+    @Column() hasActivePlan: number;
+    @Column() isAdmin: number;
+    @Column() isTrial: number;
+    @Column() isVerified: number;
 
-  @ApiModelProperty()
-  @IsArray()
-  @Column({
-    type: 'enum',
-    enum: USER_ROLE,
-    default: USER_ROLE.DEFAULT,
-  })
-  roles: USER_ROLE;
+    @IsArray()
+    @Column({
+        type: 'enum',
+        enum: USER_ROLE,
+        default: USER_ROLE.DEFAULT,
+    })
+    roles: USER_ROLE;
 
-  @BeforeInsert()
-  hashPassword() {
-    this.password = crypto.createHmac('sha256', this.password).digest('hex');
-  }
-
-  @Column({ default: '' })
-  ip: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  modifiedAt: Date;
-
-  @Column()
-  lastLogin: Date;
-
-  @Column({ type: 'jsonb', default: {} })
-  profile: {
-    name?: string;
-    surname?: string;
-    phone?: string;
-    description?: string;
-  };
-
-  @Column({ type: 'jsonb' })
-  oauth: {
-    google?: {
-      userId: string;
+    @Column({ type: 'jsonb', default: {} })
+    profile: {
+        name?: string;
+        surname?: string;
+        phone?: string;
+        description?: string;
     };
-    facebook?: {
-      userId: string;
+
+    @Column({ type: 'jsonb' })
+    oauth: {
+        google?: {
+            userId: string;
+        };
+        facebook?: {
+            userId: string;
+        };
     };
-  };
 }

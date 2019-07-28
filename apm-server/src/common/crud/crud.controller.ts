@@ -82,7 +82,7 @@ export class CrudController<T extends BaseEntity> {
     @UseInterceptors(TransformInterceptor)
     @ApiResponse({ status: 200, description: 'Entity retrieved successfully.' })
     @ApiResponse({ status: 404, description: 'Entity does not exist' })
-    public async findOne(@Param('id', new ParseIntPipe()) id: number) {
+    public async findOne(@Param('id') id: number | string) {
         return this.service.findOneById(id);
     }
 

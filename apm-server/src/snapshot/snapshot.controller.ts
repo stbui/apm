@@ -7,7 +7,7 @@ import { SnapshotEntity } from './snapshot.entity';
 @ApiUseTags('snapshot')
 @Controller('snapshot')
 export class SnapshotController extends CrudController<SnapshotEntity> {
-  constructor(protected service: SnapshotService) {
-    super();
-  }
+    constructor(protected service: SnapshotService) {
+        super();
+    }
 }

@@ -46,6 +46,10 @@ export class CrudService<T extends BaseEntity> {
         return entity.save();
     }
 
+    public insertMany(entity) {
+        return this.repository.insert(entity);
+    }
+
     public async update(
         criteria:
             | string

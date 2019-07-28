@@ -17,29 +17,33 @@ import { ScriptModule } from './script/script.module';
 import { ProjectModule } from './project/project.module';
 import { SettingModule } from './setting/setting.module';
 import { SessionModule } from './session/session.module';
+import { WebsiteModule } from './website/website.module';
+import { ApiModule } from './api/api.module';
 
 @Module({
-  imports: [
-    GraphQLModule.forRoot({
-      typePaths: ['./**/*.graphql'],
-      installSubscriptionHandlers: true,
-    }),
-    DatabaseModule,
-    AuthModule,
-    UsersModule,
-    CollectionModule,
-    PerformanceModule,
-    SnapshotModule,
-    ScriptModule,
-    ProjectModule,
-    SettingModule,
-    SessionModule,
-  ],
-  controllers: [AppController],
-  providers: [AppService],
+    imports: [
+        GraphQLModule.forRoot({
+            typePaths: ['./**/*.graphql'],
+            installSubscriptionHandlers: true,
+        }),
+        DatabaseModule,
+        AuthModule,
+        UsersModule,
+        CollectionModule,
+        PerformanceModule,
+        SnapshotModule,
+        ScriptModule,
+        ProjectModule,
+        SettingModule,
+        SessionModule,
+        WebsiteModule,
+        ApiModule,
+    ],
+    controllers: [AppController],
+    providers: [AppService],
 })
 export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(OriginMiddleware).forRoutes('session');
-  }
+    configure(consumer: MiddlewareConsumer) {
+        consumer.apply(OriginMiddleware).forRoutes('session');
+    }
 }
