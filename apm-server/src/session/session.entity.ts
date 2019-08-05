@@ -18,7 +18,6 @@ export class SessionEntity extends BaseEntity {
     @Column({ comment: '高度' }) screenHeight: number;
     @Column({ comment: '时间戳' }) timestamp: number;
     //
-    // @Column({ comment: '文档快照' }) snapshot: Object;
     @Column() left: number;
     @Column() top: number;
     @Column() sensitiveInputFields: boolean;
@@ -37,7 +36,7 @@ export class SessionEntity extends BaseEntity {
     @Column() isWatched: boolean = true;
     @Column({ comment: '时长' }) length: number;
     // 关联用户
-    @Column() userIdentity: Object;
+    // @Column() userIdentity: Object;
     // @Column() userIdentity: any = {
     //     displayName: 'stbui',
     //     email: 'stbui',

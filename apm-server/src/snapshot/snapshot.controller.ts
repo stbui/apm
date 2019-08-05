@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common';
-import { ApiUseTags, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiUseTags } from '@nestjs/swagger';
 import { CrudController } from '../common/crud/crud.controller';
 import { SnapshotService } from './snapshot.service';
 import { SnapshotEntity } from './snapshot.entity';
