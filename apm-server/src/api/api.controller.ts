@@ -7,6 +7,7 @@ import {
     Param,
     Put,
     Headers,
+    ParseIntPipe,
 } from '@nestjs/common';
 import { ApiService } from './api.service';
 
@@ -24,41 +25,6 @@ export class ApiController {
      */
     @Get('/sessions/:id')
     async sessions(@Param('id') id) {
-        // const test = {
-        //     start: 1564326003057.0,
-        //     userIdentity: {
-        //         displayName: 'User 1',
-        //         customFields: [],
-        //         email: null,
-        //         identifier: 'e9521746-ddd2-4001-adbf-7615acb64adf',
-        //     },
-        //     manufacturer: null,
-        //     top: 0,
-        //     length: 179617,
-        //     // 开始event时间戳
-        //     clientStartMilliseconds: 1564326217290.0,
-        //     browserName: 'Chrome',
-        //     browserVersion: '75.0.3770.100',
-        //     version: '63',
-        //     ip: '23.98.42.232',
-        //     isLive: false,
-        //     id: '5d3db8739b85ed4f1ab38a7f',
-        //     country: 'Hong Kong',
-        //     lastActive: 1564326422523.0,
-        //     visibilityState: 'visible',
-        //     referrer: null,
-        //     layoutName: 'Blink',
-        //     screenHeight: 342,
-        //     os: 'OS X 10.14.5 64-bit',
-        //     screenWidth: 1623,
-        //     product: null,
-        //     left: 0,
-        //     pageUrl: 'http://127.0.0.1:8080/test.html',
-        //     hasInaccessibleResources: null,
-        //     origin: 'http://127.0.0.1:8080/test.html',
-        //     city: 'Hong Kong',
-        // };
-
         const session = await this.service.getSession(id);
 
         return {
@@ -79,17 +45,18 @@ export class ApiController {
      * ?events_index=2&events_timestamp=1495539033675&logs_timestamp=1495539033246
      */
     @Get('/sessions/:session_id/activities')
-    async activities(@Param('session_id') sessionId, @Query() q) {
-        const activities = await this.service.getEvents(sessionId);
+    async activities(
+        @Param('session_id') sessionId,
+        @Query('events_index', new ParseIntPipe()) eventsIndex,
+    ) {
+        const activities = await this.service.getEvents(sessionId, eventsIndex);
         const session = await this.service.getSession(sessionId);
 
         const result = {
             activities: activities,
-            // 最后一条索引
-            lastEventIndex: 33,
+            lastEventIndex: eventsIndex + 1,
             // 最后记录时间
             lastEventTimestamp: session.lastActive,
-            // lastLogTimestamp: 1564326391724,
             offset: 0,
         };
 

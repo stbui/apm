@@ -9,8 +9,6 @@ import { SessionService } from '../session/session.service';
 
 @Injectable()
 export class ApiService extends CrudService<ApiEntity> {
-    public lastActive = 0;
-
     constructor(
         @Inject(API_TOKEN) protected readonly repository: Repository<ApiEntity>,
         public readonly snapshotService: SnapshotService,
@@ -20,8 +18,10 @@ export class ApiService extends CrudService<ApiEntity> {
         super();
     }
 
-    getEvents(serverSessionId) {
+    getEvents(serverSessionId: number, eventsIndex: number) {
         return this.snapshotService.find({
+            take: 100,
+            skip: eventsIndex * 100,
             where: { serverSessionId: serverSessionId },
             order: { timestamp: 1 },
         });
