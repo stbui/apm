@@ -13,7 +13,7 @@ export class AppService {
     );
   }
 
-  save(options) {
+  report(options) {
     this.http.post(this.url, options);
   }
 }

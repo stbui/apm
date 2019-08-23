@@ -10,6 +10,8 @@ import { AppService } from '../app.service';
 export class ExceptionInterceptorController {
   constructor(private service: AppService) {
     console.log('initialization controller:%c ExceptionInterceptorController', 'color:green', this.service);
+
+    this.listener()
   }
 
   listener() {
@@ -20,10 +22,28 @@ export class ExceptionInterceptorController {
     window.onerror = (message, url, line, col, stack) => {
       this.send({ type: 'error', message, line, col, stack });
     };
+
+    window.addEventListener("error", (error) => {
+      console.log(error)
+    }, true);
+
+    window.onunhandledrejection = (e) => {
+      console.log(e)
+      this.send({ type: 'error', message: e.reason, });
+    }
   }
 
-  send(config) {
-    console.log('exception: ', config);
+  send(data) {
+    console.log('exception: ', data);
+    const config = {
+      version: '1.0.0',
+      type: 'error',
+      url: window.location.href,
+      message: data,
+      token: '1234'
+    }
+
+    this.service.report(config)
   }
 
   notify() {

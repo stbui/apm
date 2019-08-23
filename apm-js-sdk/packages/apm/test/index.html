@@ -1,25 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>apm debug</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <h3>apm-js-sdk debug</h3>
     <p>请打开google浏览器开发者工具</p>
 
+    <button onclick="running()">js执行错误</button>
+    <button onclick="promiseError()">Promise错误</button>
+    <button onclick="jsload()">资源加载错误</button>
+    <button onclick="ajaxFailed()">ajax请求错误</button>
+
     <script>
-        // 测试ajax
+      function running() {
+        // 测试变量
+        stbui;
+      }
+
+      function promiseError() {
+        new Promise((resolve, reject) => {
+          reject();
+        });
+      }
+
+      function jsload() {
+        var script = document.createElement('script');
+        script.src = `stbui.js`;
+        document.body.appendChild(script);
+      }
+
+      function cssload() {
+        var css = document.createElement('link');
+        css.type = `text/css`;
+        css.rel = 'stylesheet';
+        css.href = `stbui.css`;
+        document.head.appendChild(css);
+      }
+
+      function imgload() {
+        var img = document.createElement('img');
+        img.src = `stbui.png`;
+        document.body.appendChild(img);
+      }
+
+      // 测试ajax
+      function ajax() {
         // var xhr = new XMLHttpRequest();
         // xhr.open('get', '/xxx');
+      }
 
-        // 测试变量
-        // xxx;
+      function ajaxTimeout() {
+        var xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
+        xhr.timeout = 3000;
+        xhr.open('get', '/stbui', true);
+        xhr.setRequestHeader('content-type', 'application/json;charset=utf-8');
+        xhr.setRequestHeader('Accept', 'application/json');
+        xhr.send();
+      }
+
+      function ajaxFailed() {
+        var xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
+        xhr.timeout = 3000;
+        xhr.open('get', '/stbui', true);
+        xhr.setRequestHeader('content-type', 'application/json;charset=utf-8');
+        xhr.setRequestHeader('Accept', 'application/json');
+        xhr.send();
+      }
+
+      function ajaxservererr() {
+        var xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
+        xhr.timeout = 3000;
+        xhr.open('get', '/servererr', true);
+        xhr.setRequestHeader('content-type', 'application/json;charset=utf-8');
+        xhr.setRequestHeader('Accept', 'application/json');
+        xhr.send();
+      }
     </script>
-</body>
-
+  </body>
 </html>

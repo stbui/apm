@@ -12,6 +12,7 @@ declare var window;
 export class HttpInterceptorController {
   constructor(private service: AppService) {
     console.log('initialization controller:%c HttpInterceptorController', 'color:green', this.service);
+    this.handle();
   }
 
   listener() {
@@ -23,7 +24,7 @@ export class HttpInterceptorController {
       send = window.XMLHttpRequest.prototype.send;
     let self = this;
 
-    window.XMLHttpRequest.prototype.open = function(
+    window.XMLHttpRequest.prototype.open = function (
       method,
       url,
       async,
@@ -40,7 +41,7 @@ export class HttpInterceptorController {
       return open.apply(this, arguments);
     };
 
-    window.XMLHttpRequest.prototype.send = function(data) {
+    window.XMLHttpRequest.prototype.send = function (data) {
       // send
       return send.apply(this, arguments);
     };
