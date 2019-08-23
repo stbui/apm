@@ -1,26 +1,33 @@
 {
-  "name": "apm",
-  "version": "1.0.0",
-  "description": "前端数据异常采集系统 ================ <p align=\"center\">   <a href=\"./\" target=\"blank\"><img src=\"apm-admin-front-angular/src/assets/logo.png\" alt=\"apm Logo\" /></a> </p>",
-  "main": "index.js",
-  "directories": {
-    "doc": "docs"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start:server": "cd ./apm-server && npm run start"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/stbui/apm.git"
-  },
-  "author": "stbui",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/stbui/apm/issues"
-  },
-  "homepage": "https://github.com/stbui/apm#readme",
-  "devDependencies": {
-    "lerna": "^3.5.1"
-  }
+    "name": "apm",
+    "version": "1.0.0",
+    "homepage": "https://github.com/stbui/apm",
+    "bugs": "https://github.com/stbui/apm/issues",
+    "main": "index.js",
+    "private": true,
+    "scripts": {
+        "build": "lerna run build",
+        "release": "yarn run build && lerna publish --exact --conventional-commits",
+        "start": "cd packages/apm-server && yarn run start:dev",
+        "docs": "cd docs && gitbook build",
+        "prettier": "prettier --config ./.prettierrc.js --write --list-different \"packages/*/src/**/*.{js,json,ts,tsx}\"",
+        "start:docs": "cd docs && gitbook serve",
+        "publish:github": "gh-pages -d docs/_book",
+        "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
+        "lint": "eslint --ext .js,.ts,.tsx \"./packages/**/src/**/*.{js,ts,tsx}\""
+    },
+    "author": "stbui",
+    "license": "ISC",
+    "description": "",
+    "workspaces": [
+        "packages/*"
+    ],
+    "devDependencies": {
+        "gh-pages": "^2.0.1",
+        "gitbook-cli": "^2.3.2",
+        "lerna": "^3.15.0",
+        "prettier": "^1.18.2",
+        "typescript": "^3.5.3",
+        "conventional-changelog-cli": "^2.0.21"
+    }
 }
