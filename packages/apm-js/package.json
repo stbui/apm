@@ -13,13 +13,27 @@
         "url": "git+https://github.com/stbui/apm.git"
     },
     "scripts": {
+        "build:bundle": "rollup --config",
+        "build:bundle:watch": "rollup --config --watch",
         "build": "yarn run build-cjs && yarn run build-esm",
         "build-cjs": "rimraf ./lib && tsc",
         "build-esm": "rimraf ./esm && tsc --outDir esm --module es2015",
-        "watch": "rimraf ./lib && tsc --watch"
+        "watch": "rimraf ./lib && tsc --watch",
+        "prettier": "prettier --write \"{src,test}/**/*.ts\""
     },
     "bugs": {
         "url": "https://github.com/stbui/apm/issues"
     },
-    "dependencies": {}
+    "dependencies": {},
+    "devDependencies": {
+        "prettier": "^1.17.0",
+        "rimraf": "^2.6.3",
+        "rollup": "^1.10.1",
+        "rollup-plugin-commonjs": "^9.3.4",
+        "rollup-plugin-license": "^0.8.1",
+        "rollup-plugin-node-resolve": "^4.2.3",
+        "rollup-plugin-terser": "^4.0.4",
+        "rollup-plugin-typescript2": "^0.21.0",
+        "typescript": "^3.4.5"
+    }
 }

@@ -1,0 +1,95 @@
+{
+    "apiKey": "123",
+    "notifier": {
+        "name": "apm",
+        "version": "1.0.0",
+        "url": "https://github.com/stbui/apm"
+    },
+    "events": [
+        {
+            "payloadVersion": "1",
+            "exceptions": [
+                {
+                    "errorClass": "ReferenceError",
+                    "message": "stbui is not defined",
+                    "stacktrace": [
+                        {
+                            "file": "http://192.168.0.109:8080/",
+                            "method": "running",
+                            "lineNumber": 28,
+                            "columnNumber": 17,
+                            "code": {
+                                "25": "            function running() {",
+                                "26": "                // 测试变量",
+                                "27": "                stbui;",
+                                "28": "            }",
+                                "29": "            function promiseError() {",
+                                "30": "                new Promise((resolve, reject) => {"
+                            }
+                        },
+                        {
+                            "file": "http://192.168.0.109:8080/",
+                            "method": "HTMLButtonElement.onclick",
+                            "lineNumber": 20,
+                            "columnNumber": 37
+                        }
+                    ],
+                    "type": "browserjs"
+                }
+            ],
+            "severity": "error",
+            "unhandled": true,
+            "severityReason": { "type": "unhandledException" },
+            "app": { "releaseStage": "production" },
+            "device": {
+                "locale": "zh-CN",
+                "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36",
+                "time": "2019-08-24T07:23:39.441Z"
+            },
+            "breadcrumbs": [
+                {
+                    "type": "navigation",
+                    "name": "Bugsnag loaded",
+                    "timestamp": "2019-08-24T07:23:37.195Z",
+                    "metaData": {}
+                },
+                {
+                    "type": "navigation",
+                    "name": "DOMContentLoaded",
+                    "timestamp": "2019-08-24T07:23:37.201Z",
+                    "metaData": {}
+                },
+                {
+                    "type": "navigation",
+                    "name": "Page loaded",
+                    "timestamp": "2019-08-24T07:23:37.236Z",
+                    "metaData": {}
+                },
+                {
+                    "type": "navigation",
+                    "name": "Page shown",
+                    "timestamp": "2019-08-24T07:23:37.237Z",
+                    "metaData": {}
+                },
+                {
+                    "type": "user",
+                    "name": "UI click",
+                    "timestamp": "2019-08-24T07:23:39.437Z",
+                    "metaData": {
+                        "targetText": "js执行错误",
+                        "targetSelector": "BUTTON:nth-child(6)"
+                    }
+                }
+            ],
+            "context": "/",
+            "user": {},
+            "metaData": {},
+            "request": { "url": "http://192.168.0.109:8080/" },
+            "session": {
+                "id": "cjzp7w9yl00003h5f1bx6x5vi",
+                "startedAt": "2019-08-24T07:23:37.197Z",
+                "events": { "handled": 0, "unhandled": 1 }
+            }
+        }
+    ]
+}
