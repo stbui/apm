@@ -20,6 +20,7 @@
     "license": "ISC",
     "description": "",
     "workspaces": [
+        "examples/*",
         "packages/*"
     ],
     "devDependencies": {
