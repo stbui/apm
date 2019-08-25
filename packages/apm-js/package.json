@@ -25,7 +25,10 @@
         "url": "https://github.com/stbui/apm/issues"
     },
     "dependencies": {
-        "reflect-metadata": "^0.1.12"
+        "reflect-metadata": "^0.1.12",
+        "@apm/core": "*",
+        "@apm/http": "*",
+        "@apm/common": "*"
     },
     "devDependencies": {
         "prettier": "^1.17.0",

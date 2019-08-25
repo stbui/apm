@@ -1,7 +1,7 @@
 export const Interceptor = {
     init: apm => {
-        let open = XMLHttpRequest.prototype.open,
-            send = XMLHttpRequest.prototype.send;
+        let open = XMLHttpRequest.prototype.open;
+        // send = XMLHttpRequest.prototype.send;
 
         // @ts-ignore
         XMLHttpRequest.prototype.open = function(method, url) {

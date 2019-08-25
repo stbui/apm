@@ -22,7 +22,9 @@ const terserInstance = terser({
 });
 
 const paths = {
-    // '@apm/utils': ['../utils/src'],
+    '@apm/core': ['../apm-core/src'],
+    '@apm/common': ['../apm-common/src'],
+    '@apm/http': ['../apm-http/src'],
 };
 
 const plugins = [
@@ -33,7 +35,7 @@ const plugins = [
                 declaration: false,
                 declarationMap: false,
                 module: 'ES2015',
-                // paths,
+                paths,
             },
         },
         include: ['*.ts+(|x)', '**/*.ts+(|x)', '../**/*.ts+(|x)'],
@@ -96,7 +98,7 @@ export default [
                         declaration: false,
                         declarationMap: false,
                         module: 'ES2015',
-                        // paths,
+                        paths,
                         target: 'es6',
                     },
                 },
@@ -119,7 +121,7 @@ export default [
                         declaration: false,
                         declarationMap: false,
                         module: 'ES2015',
-                        // paths,
+                        paths,
                         target: 'es6',
                     },
                 },

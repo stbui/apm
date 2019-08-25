@@ -9,7 +9,9 @@ export class Report {
     errorMessage = '[no error message]';
     stacktrace = [];
 
-    constructor(errorClass, errorMessage, stacktrace = []) {
+    constructor() {}
+
+    create(errorClass, errorMessage, stacktrace = []) {
         this.errorClass = errorClass;
         this.errorMessage = errorMessage;
         this.stacktrace = stacktrace;

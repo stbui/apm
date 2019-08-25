@@ -1,19 +1,20 @@
-import { config } from './config';
 import { Breadcrumb } from './breadcrumb';
 import { Report } from './report';
 
 export class Client {
     private _plugins: any = {};
-    private _configure: any = config;
     private _delivery: any;
 
     public device: any = undefined;
     public user: any = {};
-    public breadcrumb = Breadcrumb;
     public breadcrumbs = [];
-    public report = Report;
+    public report: Report;
+    public breadcrumb: Breadcrumb;
 
-    constructor(options?) {}
+    constructor() {
+        this.breadcrumb = new Breadcrumb();
+        this.report = new Report();
+    }
 
     configure() {
         return this;
@@ -38,16 +39,8 @@ export class Client {
         return this;
     }
 
-    leaveBreadcrumb(name, metaData, type, timestamp) {
-        const crumb = new Breadcrumb(name, metaData, type, timestamp);
-
-        this.breadcrumbs.push(crumb);
-
-        return this;
-    }
-
     notify(error, options = {}, cb) {
-        const report: any = new Report(
+        const report: any = this.report.create(
             error.errorClass,
             error.errorMessage,
             error.stacktrace
