@@ -24,7 +24,9 @@
     "bugs": {
         "url": "https://github.com/stbui/apm/issues"
     },
-    "dependencies": {},
+    "dependencies": {
+        "reflect-metadata": "^0.1.12"
+    },
     "devDependencies": {
         "prettier": "^1.17.0",
         "rimraf": "^2.6.3",

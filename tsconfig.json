@@ -1,16 +1,20 @@
 {
   "compilerOptions": {
-    "jsx": "react",
-    "target": "es5",
-    "module": "commonjs",
+    "target": "es6",
+    "module": "es6",
+    "removeComments": false,
+    "preserveConstEnums": true,
     "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "noImplicitAny": false,
     "allowSyntheticDefaultImports": true,
+    "noUnusedLocals": true,
+    "strictNullChecks": true,
+    "sourceMap": true,
+    "declaration": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "declaration": true,
-    "sourceMap": true,
-    "lib": ["esnext", "dom"]
+    "lib": ["es2015", "dom"]
   }
 }
