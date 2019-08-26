@@ -1,8 +1,12 @@
 import { Breadcrumb } from './breadcrumb';
 import { Report } from './report';
 
-export class Client {
-    private _plugins: any = {};
+export abstract class ClientAbstract {
+    abstract use(plugin);
+    abstract notify(error, options, cb);
+}
+
+export class Client implements ClientAbstract {
     private _delivery: any;
 
     public device: any = undefined;
@@ -10,28 +14,17 @@ export class Client {
     public breadcrumbs = [];
     public report: Report;
     public breadcrumb: Breadcrumb;
+    public config;
 
     constructor() {
         this.breadcrumb = new Breadcrumb();
         this.report = new Report();
+        this.config = {}
     }
 
-    configure() {
+    use(plugin) {
+        plugin.init(this);
         return this;
-    }
-
-    use(plugin, ...args) {
-        const result = plugin.init(this, ...args);
-
-        if (plugin.name) {
-            this._plugins[`~${plugin.name}~`] = result;
-        }
-
-        return this;
-    }
-
-    getPlugin(name: string) {
-        return this._plugins[`~${name}~`];
     }
 
     delivery(d) {
