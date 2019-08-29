@@ -9,12 +9,14 @@ export class Report {
     errorMessage = '[no error message]';
     stacktrace = [];
 
-    constructor() {}
+    constructor() { }
 
     create(errorClass, errorMessage, stacktrace = []) {
         this.errorClass = errorClass;
         this.errorMessage = errorMessage;
         this.stacktrace = stacktrace;
+
+        return this;
     }
 
     updateMetaData(section, ...args) {
@@ -32,11 +34,11 @@ export class Report {
         return this;
     }
 
-    removeMetaData(section, property?) {}
+    removeMetaData(section, property?) { }
 
     toJSON() {
         return {
-            payloadVersion: '4',
+            payloadVersion: '1',
             exceptions: [
                 {
                     errorClass: this.errorClass,

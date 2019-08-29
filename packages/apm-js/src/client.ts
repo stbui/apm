@@ -23,12 +23,12 @@ export class Client implements ClientAbstract {
     }
 
     use(plugin) {
-        plugin.init(this);
+        new plugin(this);
         return this;
     }
 
-    delivery(d) {
-        this._delivery = d(this);
+    delivery(ajax) {
+        this._delivery = new ajax(this);
         return this;
     }
 

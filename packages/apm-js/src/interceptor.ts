@@ -1,10 +1,19 @@
-export const Interceptor = {
-    init: apm => {
+export class Interceptor {
+    // @ts-ignore
+    private instance: any
+
+    constructor(client) {
+        this.instance = client
+
+        this.catch()
+    }
+
+    catch() {
         let open = XMLHttpRequest.prototype.open;
         // send = XMLHttpRequest.prototype.send;
 
         // @ts-ignore
-        XMLHttpRequest.prototype.open = function(method, url) {
+        XMLHttpRequest.prototype.open = (method, url) => {
             console.log({
                 type: 'xhr',
                 url: joinUrl(url),
@@ -12,7 +21,7 @@ export const Interceptor = {
                 status: 200,
             });
 
-            // apm.notify({
+            // this.instance.notify({
             //     type: 'xhr',
             //     url: joinUrl(url),
             //     method,
@@ -25,7 +34,7 @@ export const Interceptor = {
         // XMLHttpRequest.prototype.send = function(data) {
         //     return send.apply(this, arguments);
         // };
-    },
+    }
 };
 
 function joinUrl(url) {

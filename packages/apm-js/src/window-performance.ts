@@ -1,5 +1,12 @@
-export const WindowPerformance = {
-    init: apm => {
+export class WindowPerformance {
+    private instance: any
+
+    constructor(client) {
+        this.instance = client
+        this.catch()
+    }
+
+    catch() {
         let time = window.performance.timing;
 
         var payload = {
@@ -22,6 +29,6 @@ export const WindowPerformance = {
             redirect: time.redirectEnd - time.redirectStart,
         };
 
-        apm.notify(payload);
-    },
+        this.instance.notify(payload);
+    }
 };
