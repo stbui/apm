@@ -1,5 +1,4 @@
 export class Config {
-
     toJSON() {
         return {
             url: 'http://stbui.com',
@@ -8,6 +7,6 @@ export class Config {
             onError: true,
             onPromise: true,
             onConsole: true,
-        }
+        };
     }
 }

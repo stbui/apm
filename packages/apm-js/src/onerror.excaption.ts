@@ -1,16 +1,20 @@
-
 export class OnErroExcaption {
-
-    private instance: any
+    private instance: any;
 
     constructor(client) {
-        this.instance = client
+        this.instance = client;
 
-        this.catch()
+        this.catch();
     }
 
     catch() {
-        window.onerror = (messageOrEvent: any, url: string, lineNo, charNo, error) => {
+        window.onerror = (
+            messageOrEvent: any,
+            url: string,
+            lineNo,
+            charNo,
+            error
+        ) => {
             if (lineNo === 0 && /Script error\.?/.test(messageOrEvent)) {
                 console.log('cross-domain');
             } else {
@@ -24,8 +28,8 @@ export class OnErroExcaption {
 
                 if (error) {
                     if (error.name && error.message) {
-
-                        report = this.instance.report.create(error.name,
+                        report = this.instance.report.create(
+                            error.name,
                             error.message,
                             [
                                 {
@@ -36,9 +40,11 @@ export class OnErroExcaption {
                                 },
                             ],
                             handledState,
-                            error)
+                            error
+                        );
                     } else {
-                        report = this.instance.report.create(error.name,
+                        report = this.instance.report.create(
+                            error.name,
                             'window.onerror',
                             String(error),
                             [],
@@ -84,10 +90,8 @@ export class OnErroExcaption {
                     );
                 }
 
-                this.instance.notify(report)
+                this.instance.notify(report);
             }
-
-
         };
     }
 }

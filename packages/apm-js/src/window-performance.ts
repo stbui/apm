@@ -1,9 +1,9 @@
 export class WindowPerformance {
-    private instance: any
+    private instance: any;
 
     constructor(client) {
-        this.instance = client
-        this.catch()
+        this.instance = client;
+        this.catch();
     }
 
     catch() {
@@ -31,4 +31,4 @@ export class WindowPerformance {
 
         this.instance.notify(payload);
     }
-};
+}

@@ -1,9 +1,8 @@
-
 export class BrowserDevice {
-    private instance: any
+    private instance: any;
 
     constructor(client) {
-        this.instance = client
+        this.instance = client;
 
         this.getDevice();
     }

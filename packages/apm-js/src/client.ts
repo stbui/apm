@@ -1,5 +1,6 @@
 import { Breadcrumb } from './breadcrumb';
 import { Report } from './report';
+import { Config } from './config';
 
 export abstract class ClientAbstract {
     abstract use(plugin);
@@ -16,10 +17,10 @@ export class Client implements ClientAbstract {
     public breadcrumb: Breadcrumb;
     public config;
 
-    constructor() {
+    constructor(options?) {
         this.breadcrumb = new Breadcrumb();
         this.report = new Report();
-        this.config = {}
+        this.config = new Config();
     }
 
     use(plugin) {
@@ -36,7 +37,9 @@ export class Client implements ClientAbstract {
         const report: any = this.report.create(
             error.errorClass,
             error.errorMessage,
-            error.stacktrace
+            error.stacktrace,
+            error.severity,
+            error.originalError
         );
 
         report.device = this.device;

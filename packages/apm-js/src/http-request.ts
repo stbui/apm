@@ -1,10 +1,9 @@
 export class HttpRequest {
-    public url: string = window.location.origin
-    public apiKey: string = 'stbui'
-    public payloadVersion: string = '1'
+    public url: string = window.location.origin;
+    public apiKey: string = 'stbui';
+    public payloadVersion: string = '1';
 
-    constructor(client?: any) {
-    }
+    constructor(client?: any) {}
 
     sendReport(report) {
         const req = new XMLHttpRequest();

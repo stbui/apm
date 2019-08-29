@@ -1,11 +1,11 @@
 export class Interceptor {
     // @ts-ignore
-    private instance: any
+    private instance: any;
 
     constructor(client) {
-        this.instance = client
+        this.instance = client;
 
-        this.catch()
+        this.catch();
     }
 
     catch() {
@@ -35,7 +35,7 @@ export class Interceptor {
         //     return send.apply(this, arguments);
         // };
     }
-};
+}
 
 function joinUrl(url) {
     let regular = /^http|https/g;

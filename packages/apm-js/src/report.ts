@@ -8,13 +8,25 @@ export class Report {
     errorClass = '[no error class]';
     errorMessage = '[no error message]';
     stacktrace = [];
+    severity = undefined;
+    originalError = undefined;
 
-    constructor() { }
+    context = undefined;
 
-    create(errorClass, errorMessage, stacktrace = []) {
+    constructor() {}
+
+    create(
+        errorClass,
+        errorMessage,
+        stacktrace = [],
+        handledState,
+        originalError
+    ) {
         this.errorClass = errorClass;
         this.errorMessage = errorMessage;
         this.stacktrace = stacktrace;
+        this.severity = handledState;
+        this.originalError = originalError;
 
         return this;
     }
@@ -34,7 +46,7 @@ export class Report {
         return this;
     }
 
-    removeMetaData(section, property?) { }
+    removeMetaData(section, property?) {}
 
     toJSON() {
         return {
