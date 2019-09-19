@@ -11,11 +11,11 @@ export default options => {
 
     client.delivery(HttpRequest);
 
-    client.use(BrowserDevice);
-    client.use(OnErroExcaption);
-    client.use(UnnHanndledRejectionExcaption);
-    client.use(WindowPerformance);
-    client.use(Interceptor);
+    client.register(BrowserDevice);
+    client.register(OnErroExcaption);
+    client.register(UnnHanndledRejectionExcaption);
+    client.register(WindowPerformance);
+    client.register(Interceptor);
 
     return client;
 };

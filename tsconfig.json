@@ -1,20 +1,21 @@
 {
-  "compilerOptions": {
-    "target": "es6",
-    "module": "es6",
-    "removeComments": false,
-    "preserveConstEnums": true,
-    "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "noImplicitAny": false,
-    "allowSyntheticDefaultImports": true,
-    "noUnusedLocals": true,
-    "strictNullChecks": true,
-    "sourceMap": true,
-    "declaration": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "lib": ["es2015", "dom"]
-  }
+    "compilerOptions": {
+        "baseUrl": ".",
+        "target": "es6",
+        "module": "es6",
+        "removeComments": false,
+        "preserveConstEnums": true,
+        "moduleResolution": "node",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "noImplicitAny": false,
+        "allowSyntheticDefaultImports": true,
+        "noUnusedLocals": true,
+        "strictNullChecks": true,
+        "sourceMap": true,
+        "declaration": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "lib": ["es2015", "dom"]
+    }
 }

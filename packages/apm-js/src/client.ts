@@ -3,7 +3,7 @@ import { Report } from './report';
 import { Config } from './config';
 
 export abstract class ClientAbstract {
-    abstract use(plugin);
+    abstract register(plugin);
     abstract notify(error, options, cb);
 }
 
@@ -20,16 +20,16 @@ export class Client implements ClientAbstract {
     constructor(options?) {
         this.breadcrumb = new Breadcrumb();
         this.report = new Report();
-        this.config = new Config();
+        this.config = Config;
     }
 
-    use(plugin) {
+    register(plugin) {
         new plugin(this);
         return this;
     }
 
-    delivery(ajax) {
-        this._delivery = new ajax(this);
+    delivery(request) {
+        this._delivery = new request(this.config.url, this.config.apiKey);
         return this;
     }
 

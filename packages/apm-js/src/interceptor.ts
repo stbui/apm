@@ -13,20 +13,15 @@ export class Interceptor {
         // send = XMLHttpRequest.prototype.send;
 
         // @ts-ignore
-        XMLHttpRequest.prototype.open = (method, url) => {
+        console.log(this.instance);
+
+        XMLHttpRequest.prototype.open = function(method, url) {
             console.log({
                 type: 'xhr',
                 url: joinUrl(url),
                 method,
                 status: 200,
             });
-
-            // this.instance.notify({
-            //     type: 'xhr',
-            //     url: joinUrl(url),
-            //     method,
-            //     status: 200,
-            // });
 
             return open.apply(this, arguments);
         };

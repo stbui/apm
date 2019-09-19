@@ -123,4 +123,9 @@ _book
 ############################
 
 packages/*/yarn.lock
+esm
+lib
+*.tgz
+examples/**
 .rpt2_cache
+dist
