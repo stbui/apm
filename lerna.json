@@ -1,4 +1,13 @@
 {
-  "packages": ["packages/*"],
-  "version": "0.0.0"
+    "command": {
+        "publish": {
+            "conventionalCommits": true,
+            "allowBranch": ["master", "next"],
+            "message": "chore(release): Publish"
+        }
+    },
+    "npmClient": "yarn",
+    "packages": ["packages/*"],
+    "useWorkspaces": true,
+    "version": "0.0.0"
 }
