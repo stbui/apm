@@ -1,0 +1,41 @@
+@import '~antd/dist/antd.css';
+
+.ant-layout-sider {
+    box-shadow: 2px 0 6px rgba(0, 21, 41, 0.35);
+  }
+  
+  .exception {
+    display: flex;
+    align-items: center;
+    height: 80%;
+    min-height: 500px;
+  }
+  
+  .exception-imgBlock {
+    flex: 0 0 62.5%;
+    width: 62.5%;
+    padding-right: 152px;
+    zoom: 1;
+  }
+  
+  .exception-imgEle {
+    height: 360px;
+    width: 100%;
+    max-width: 430px;
+    float: right;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: contain;
+  }
+  
+  .exception-content {
+    flex: auto;
+  }
+  
+  .exception-desc {
+    color: rgba(0, 0, 0, 0.45);
+    font-size: 20px;
+    line-height: 28px;
+    margin-bottom: 16px;
+  }
+  
