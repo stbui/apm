@@ -1,6 +1,6 @@
 import React from 'react';
-import { Prophet, Resource } from 'prophet-core';
-import { Layout, CatchAll } from 'prophet-antd';
+import { Prophet, Resource } from '@stbui/prophet';
+import { Layout, CatchAll } from '@stbui/prophet-antd';
 import dataProvider from './dataProvider';
 import Dashboard from './dashboard';
 import users from './setting/users';
