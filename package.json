@@ -12,7 +12,7 @@
         "docs": "cd docs && gitbook build",
         "prettier": "prettier --config ./.prettierrc.js --write --list-different \"packages/*/src/**/*.{js,json,ts,tsx}\"",
         "start:docs": "cd docs && gitbook serve",
-        "publish:github": "gh-pages -d docs/_book",
+        "deploy:github": "gh-pages -d docs/_book",
         "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
         "lint": "eslint --ext .js,.ts,.tsx \"./packages/**/src/**/*.{js,ts,tsx}\""
     },
@@ -24,11 +24,11 @@
         "packages/*"
     ],
     "devDependencies": {
-        "gh-pages": "^2.0.1",
+        "gh-pages": "^2.1.1",
         "gitbook-cli": "^2.3.2",
-        "lerna": "^3.15.0",
+        "lerna": "^3.18.3",
         "prettier": "^1.18.2",
-        "typescript": "^3.5.3",
-        "conventional-changelog-cli": "^2.0.21"
+        "typescript": "^3.6.4",
+        "conventional-changelog-cli": "^2.0.25"
     }
 }
