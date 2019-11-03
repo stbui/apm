@@ -5,85 +5,56 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta http-equiv="X-UA-Compatible" content="ie=edge" />
         <title>apm debug</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+            }
+
+            .table {
+                background-color: rgb(246, 246, 246);
+                font-size: 12px;
+                color: rgb(89, 94, 94);
+            }
+            .table-header {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                height: 25px;
+                overflow: hidden;
+                padding-right: 0px;
+                width: 1623px;
+                border-bottom: 1px solid rgb(227, 227, 227);
+                background-color: transparent;
+                padding: 2px;
+            }
+
+            .table-column {
+                flex: 0 1 70px;
+                min-width: 70px;
+            }
+
+            .table-body {
+            }
+
+            .table-row:nth-of-type(odd) {
+                background: #fff;
+            }
+
+            .table-row {
+                padding: 2px;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+            }
+
+            .table-row:hover {
+                background: rgba(103, 58, 184, 0.1);
+            }
+        </style>
     </head>
 
     <body>
-        <h3>apm-js-sdk debug</h3>
-        <p>请打开google浏览器开发者工具</p>
-
-        <button onclick="running()">js执行错误</button>
-        <button onclick="promiseError()">Promise错误</button>
-        <button onclick="jsload()">资源加载错误</button>
-        <button onclick="ajaxFailed()">ajax请求错误</button>
-
-        <script>
-            function running() {
-                // 测试变量
-                stbui;
-            }
-            function promiseError() {
-                new Promise((resolve, reject) => {
-                    reject();
-                });
-            }
-            function jsload() {
-                var script = document.createElement('script');
-                script.src = `stbui.js`;
-                document.body.appendChild(script);
-            }
-            function cssload() {
-                var css = document.createElement('link');
-                css.type = `text/css`;
-                css.rel = 'stylesheet';
-                css.href = `stbui.css`;
-                document.head.appendChild(css);
-            }
-            function imgload() {
-                var img = document.createElement('img');
-                img.src = `stbui.png`;
-                document.body.appendChild(img);
-            }
-            // 测试ajax
-            function ajax() {
-                // var xhr = new XMLHttpRequest();
-                // xhr.open('get', '/xxx');
-            }
-            function ajaxTimeout() {
-                var xhr = new XMLHttpRequest();
-                xhr.withCredentials = true;
-                xhr.timeout = 3000;
-                xhr.open('get', '/stbui', true);
-                xhr.setRequestHeader(
-                    'content-type',
-                    'application/json;charset=utf-8'
-                );
-                xhr.setRequestHeader('Accept', 'application/json');
-                xhr.send();
-            }
-            function ajaxFailed() {
-                var xhr = new XMLHttpRequest();
-                xhr.withCredentials = true;
-                xhr.timeout = 3000;
-                xhr.open('get', '/stbui', true);
-                xhr.setRequestHeader(
-                    'content-type',
-                    'application/json;charset=utf-8'
-                );
-                xhr.setRequestHeader('Accept', 'application/json');
-                xhr.send();
-            }
-            function ajaxservererr() {
-                var xhr = new XMLHttpRequest();
-                xhr.withCredentials = true;
-                xhr.timeout = 3000;
-                xhr.open('get', '/servererr', true);
-                xhr.setRequestHeader(
-                    'content-type',
-                    'application/json;charset=utf-8'
-                );
-                xhr.setRequestHeader('Accept', 'application/json');
-                xhr.send();
-            }
-        </script>
+        <div id="apm"></div>
     </body>
 </html>
