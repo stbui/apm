@@ -72,7 +72,21 @@ export default () => {
     }, []);
 
     return (
-        <div>
+        <div className="panel network">
+            <div className="network-container"></div>
+
+            {/* <div className="network-toolbar-container toolbar">
+                <div className="table-column">Status</div>
+                <div className="table-column">Method</div>
+                <div
+                    className="table-column"
+                    style={{ flex: '0 1 428.05px', minWidth: '428.05px' }}
+                >
+                    URL
+                </div>
+            </div>
+            <br /> */}
+
             <div className="table">
                 <div className="table-header">
                     <div className="table-column">Status</div>
