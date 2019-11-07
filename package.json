@@ -9,6 +9,7 @@
         "build": "lerna run build",
         "release": "yarn run build && lerna publish --exact --conventional-commits",
         "start": "cd packages/apm-server && yarn run start:dev",
+        "demo": "cd examples/demo && yarn start",
         "docs": "cd docs && gitbook build",
         "prettier": "prettier --config ./.prettierrc.js --write --list-different \"packages/*/src/**/*.{js,json,ts,tsx}\"",
         "start:docs": "cd docs && gitbook serve",

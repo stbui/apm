@@ -73,18 +73,70 @@ export default () => {
 
     return (
         <div className="panel network">
-            <div id="network-container no-node-selected">
+            <div id="network-container network-toolbar-container no-node-selected">
                 <div className="toolbar network-summary-bar">
-                    Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6)
-                    AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.70
-                    Safari/537.36
+                    <div className="toolbar-shadow wrappable">
+                        <div className="toolbar-text">
+                            <div className="toolbar-item">
+                                <button className="toolbar-button">
+                                    <div className="toolbar-text hidden">
+                                        button
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                        <div className="toolbar-divider"></div>
+                        <div className="toolbar-text">
+                            <div className="toolbar-item checkbox">
+                                <input type="checkbox" /> Disable cache
+                            </div>
+                        </div>
+                        <div className="toolbar-divider"></div>
+                        <div className="toolbar-text">
+                            <div className="toolbar-item">
+                                <select className="toolbar-select-container">
+                                    <option value="1">1</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div className="toolbar-text">
+                            <div className="toolbar-item">
+                                <div className="toolbar-input">
+                                    <div className="toolbar-input-prompt">
+                                        <input type="text" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="network-status-pane fill">
                     <div className="recording-hint">
-                        <span></span>
+                        <span>2</span>
                     </div>
                 </div>
+
+                <div className="networkPanel">
+                    <div className="filter-bar">
+                        <div className="filter-text-filter">
+                            <span className="filter-input-field">
+                                <input type="text" />
+                            </span>
+                        </div>
+
+                        <div className="filter-bitset-filter">
+                            1
+                            <div className="filter-bitset-filter-divider"></div>
+                            2
+                        </div>
+
+                        <div className="filter-checkbox-filter">
+                            <input type="checkbox" /> Disable cache
+                        </div>
+                    </div>
+                </div>
+
                 <div className="data-grid inline network-log-grid small striped-data-grid">
                     <div className="header-container">
                         <table className="header">
