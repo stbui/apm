@@ -73,102 +73,102 @@ export default () => {
 
     return (
         <div className="panel network">
-            <div className="network-container"></div>
-
-            {/* <div className="network-toolbar-container toolbar">
-                <div className="table-column">Status</div>
-                <div className="table-column">Method</div>
-                <div
-                    className="table-column"
-                    style={{ flex: '0 1 428.05px', minWidth: '428.05px' }}
-                >
-                    URL
+            <div id="network-container no-node-selected">
+                <div className="toolbar network-summary-bar">
+                    Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6)
+                    AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.70
+                    Safari/537.36
                 </div>
-            </div>
-            <br /> */}
 
-            <div className="table">
-                <div className="table-header">
-                    <div className="table-column">Status</div>
-                    <div className="table-column">Method</div>
+                <div className="network-status-pane fill">
+                    <div className="recording-hint">
+                        <span></span>
+                    </div>
+                </div>
+                <div className="data-grid inline network-log-grid small striped-data-grid">
+                    <div className="header-container">
+                        <table className="header">
+                            <colgroup></colgroup>
+                            <tbody>
+                                <tr>
+                                    <th className="sortable">
+                                        Name
+                                        <i className="sort-order-icon-container"></i>
+                                    </th>
+                                    <th className="sortable">Status</th>
+                                    <th className="sortable">Type</th>
+                                    <th className="sortable">Initiator</th>
+                                    <th className="sortable">Size</th>
+                                    <th className="sortable">Time</th>
+                                    <th className="sortable">Waterfall</th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div className="data-container">
+                        <table className="data">
+                            <colgroup></colgroup>
+                            <tbody>
+                                <tr className="data-grid-filler-row revealed data-grid-data-grid-node">
+                                    <td>Name</td>
+                                    <td>Status</td>
+                                    <td>Type</td>
+                                    <td>Initiator</td>
+                                    <td>Size</td>
+                                    <td>Time</td>
+                                    <td>Waterfall</td>
+                                </tr>
+                                <tr className="data-grid-filler-row revealed data-grid-data-grid-node">
+                                    <td>Name</td>
+                                    <td>Status</td>
+                                    <td>Type</td>
+                                    <td>Initiator</td>
+                                    <td>Size</td>
+                                    <td>Time</td>
+                                    <td>Waterfall</td>
+                                </tr>
+                                <tr className="data-grid-filler-row revealed data-grid-data-grid-node">
+                                    <td>Name</td>
+                                    <td>Status</td>
+                                    <td>Type</td>
+                                    <td>Initiator</td>
+                                    <td>Size</td>
+                                    <td>Time</td>
+                                    <td>Waterfall</td>
+                                </tr>
+                                <tr className="data-grid-filler-row revealed data-grid-data-grid-node">
+                                    <td>Name</td>
+                                    <td>Status</td>
+                                    <td>Type</td>
+                                    <td>Initiator</td>
+                                    <td>Size</td>
+                                    <td>Time</td>
+                                    <td>Waterfall</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="network-overview-panel">
                     <div
-                        className="table-column"
-                        style={{ flex: '0 1 428.05px', minWidth: '428.05px' }}
+                        id="network-overview-container"
+                        className="network-overview"
                     >
-                        URL
+                        <div className="toolbar-text">12345</div>
                     </div>
                 </div>
-                <div className="table-body">
-                    {state.map(item => (
-                        <div className="table-row">
-                            <div className="table-column">
-                                {item.response.status}
-                            </div>
-                            <div className="table-column">
-                                {item.request.method}
-                            </div>
-                            <div
-                                className="table-column"
-                                style={{
-                                    flex: '0 1 428.05px',
-                                    minWidth: '428.05px',
-                                }}
-                            >
-                                {item.request.url}
-                            </div>
-                        </div>
-                    ))}
-                    <div className="table-row">
-                        <div className="table-column">200</div>
-                        <div className="table-column">GET</div>
-                        <div
-                            className="table-column"
-                            style={{
-                                flex: '0 1 428.05px',
-                                minWidth: '428.05px',
-                            }}
-                        >
-                            http://localhost:9000/
-                        </div>
-                    </div>
+            </div>
 
-                    <div className="table-row">
-                        <div className="table-column">200</div>
-                        <div className="table-column">GET</div>
-                        <div
-                            className="table-column"
-                            style={{
-                                flex: '0 1 428.05px',
-                                minWidth: '428.05px',
-                            }}
-                        >
-                            http://localhost:9000/
-                        </div>
-                    </div>
-                </div>
+            {/* <div className="network-details-view">
+                <div className="network-details-view-tall-header"></div>
             </div>
-            <div>
-                <div className="tab">
-                    <div className="tab-header">
-                        <div>Header</div>
-                        <div>Preview</div>
-                        <div>Response</div>
-                        <div>Cookies</div>
-                        <div>Timing</div>
-                    </div>
-                    <div className="tab-body">
-                        <div>Request URL: http://localhost:9000/</div>
-                        <div>Request Method: GET</div>
-                        <div>Status Code: 200 OK</div>
-                        <div>Remote Address: 127.0.0.1:9000</div>
-                        <div>
-                            User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X
-                            10_14_6) AppleWebKit/537.36 (KHTML, like Gecko)
-                            Chrome/78.0.3904.70 Safari/537.36
-                        </div>
-                    </div>
-                </div>
-            </div>
+
+            <div className="network-item-view"></div>
+
+            <div className="network-container">
+                
+            </div> */}
         </div>
     );
 };

@@ -5,6 +5,8 @@ import { h, render } from './core';
 import { useRoutes, push } from './core/routes';
 import Network from './network';
 
+import './style/index.scss';
+
 function running() {
     // 测试变量
     stbui;

@@ -186,7 +186,7 @@
 
 .data-grid td.disclosure::before {
     -webkit-user-select: none;
-    -webkit-mask-image: url(Images/treeoutlineTriangles.svg);
+    // -webkit-mask-image: url(Images/treeoutlineTriangles.svg);
     -webkit-mask-position: 0 0;
     -webkit-mask-size: 32px 24px;
     float: left;
