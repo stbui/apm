@@ -1,4 +1,7 @@
 import { h, useState, useEffect } from '../core';
+import Datagrid from './Datagrid';
+import Filter from './Filter';
+import SummaryBar from './SummaryBar';
 
 const data = [
     {
@@ -72,144 +75,63 @@ export default () => {
     }, []);
 
     return (
-        <div className="panel network">
-            <div id="network-container network-toolbar-container no-node-selected">
-                <div className="toolbar network-summary-bar">
-                    <div className="toolbar-shadow wrappable">
-                        <div className="toolbar-text">
-                            <div className="toolbar-item">
-                                <button className="toolbar-button">
-                                    <div className="toolbar-text hidden">
-                                        button
+        <div className="">
+            <div className="widget">
+                <div className="vbox network-settings-pane">
+                    <div className="network-toolbar-container">
+                        {/* <div className="toolbar network-summary-bar">
+                            <div className="toolbar-shadow">
+                                <div className="filter-bar">
+                                    <div className="filter-text-filter">
+                                        <span className="filter-input-field">
+                                            <input
+                                                type="text"
+                                                placeholder="Filter"
+                                                className="text-prompt"
+                                            />
+                                        </span>
                                     </div>
-                                </button>
-                            </div>
-                        </div>
-                        <div className="toolbar-divider"></div>
-                        <div className="toolbar-text">
-                            <div className="toolbar-item checkbox">
-                                <input type="checkbox" /> Disable cache
-                            </div>
-                        </div>
-                        <div className="toolbar-divider"></div>
-                        <div className="toolbar-text">
-                            <div className="toolbar-item">
-                                <select className="toolbar-select-container">
-                                    <option value="1">1</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div className="toolbar-text">
-                            <div className="toolbar-item">
-                                <div className="toolbar-input">
-                                    <div className="toolbar-input-prompt">
-                                        <input type="text" />
+
+                                    <div className="filter-checkbox-filter">
+                                        <label
+                                            is="dt-checkbox"
+                                            className="checkboxTextLabel dt-checkbox-text"
+                                        >
+                                            <input type="checkbox" />
+                                            Hide data URLs
+                                        </label>
+                                    </div>
+
+                                    <div className="filter-bitset-filter">
+                                        <span>All</span>
+                                        <div className="filter-bitset-filter-divider"></div>
+                                        <span>XHR</span>
+                                        <span>JS</span>
+                                        <span>CSS</span>
+                                        <span>Img</span>
+                                        <span>Media</span>
+                                        <span>Font</span>
+                                        <span>Doc</span>
+                                        <span>WS</span>
+                                        <span>Manifest</span>
+                                        <span>Other</span>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
-
-                <div className="network-status-pane fill">
+                <div className="hbox network-settings-pane">1</div>
+            </div>
+            <div id="network-container network-toolbar-container no-node-selected">
+                {/* <div className="network-status-pane fill">
                     <div className="recording-hint">
                         <span>2</span>
                     </div>
-                </div>
-
-                <div className="networkPanel">
-                    <div className="filter-bar">
-                        <div className="filter-text-filter">
-                            <span className="filter-input-field">
-                                <input type="text" />
-                            </span>
-                        </div>
-
-                        <div className="filter-bitset-filter">
-                            1
-                            <div className="filter-bitset-filter-divider"></div>
-                            2
-                        </div>
-
-                        <div className="filter-checkbox-filter">
-                            <input type="checkbox" /> Disable cache
-                        </div>
-                    </div>
-                </div>
-
-                <div className="data-grid inline network-log-grid small striped-data-grid">
-                    <div className="header-container">
-                        <table className="header">
-                            <colgroup></colgroup>
-                            <tbody>
-                                <tr>
-                                    <th className="sortable">
-                                        Name
-                                        <i className="sort-order-icon-container"></i>
-                                    </th>
-                                    <th className="sortable">Status</th>
-                                    <th className="sortable">Type</th>
-                                    <th className="sortable">Initiator</th>
-                                    <th className="sortable">Size</th>
-                                    <th className="sortable">Time</th>
-                                    <th className="sortable">Waterfall</th>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div className="data-container">
-                        <table className="data">
-                            <colgroup></colgroup>
-                            <tbody>
-                                <tr className="data-grid-filler-row revealed data-grid-data-grid-node">
-                                    <td>Name</td>
-                                    <td>Status</td>
-                                    <td>Type</td>
-                                    <td>Initiator</td>
-                                    <td>Size</td>
-                                    <td>Time</td>
-                                    <td>Waterfall</td>
-                                </tr>
-                                <tr className="data-grid-filler-row revealed data-grid-data-grid-node">
-                                    <td>Name</td>
-                                    <td>Status</td>
-                                    <td>Type</td>
-                                    <td>Initiator</td>
-                                    <td>Size</td>
-                                    <td>Time</td>
-                                    <td>Waterfall</td>
-                                </tr>
-                                <tr className="data-grid-filler-row revealed data-grid-data-grid-node">
-                                    <td>Name</td>
-                                    <td>Status</td>
-                                    <td>Type</td>
-                                    <td>Initiator</td>
-                                    <td>Size</td>
-                                    <td>Time</td>
-                                    <td>Waterfall</td>
-                                </tr>
-                                <tr className="data-grid-filler-row revealed data-grid-data-grid-node">
-                                    <td>Name</td>
-                                    <td>Status</td>
-                                    <td>Type</td>
-                                    <td>Initiator</td>
-                                    <td>Size</td>
-                                    <td>Time</td>
-                                    <td>Waterfall</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div id="network-overview-panel">
-                    <div
-                        id="network-overview-container"
-                        className="network-overview"
-                    >
-                        <div className="toolbar-text">12345</div>
-                    </div>
-                </div>
+                </div> */}
+                <Filter />
+                <Datagrid />
+                <SummaryBar />
             </div>
 
             {/* <div className="network-details-view">
