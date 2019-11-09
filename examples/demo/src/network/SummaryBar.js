@@ -4,39 +4,6 @@ export default () => {
     return (
         <div className="network-summary-bar toolbar">
             <div className="toolbar-shadow">
-                {/* <div className="toolbar-text">
-            <div className="toolbar-item">
-                <button className="toolbar-button">
-                    <div className="toolbar-text hidden">
-                        button
-                    </div>
-                </button>
-            </div>
-        </div>
-        <div className="toolbar-divider"></div>
-        <div className="toolbar-text">
-            <div className="toolbar-item checkbox">
-                <input type="checkbox" /> Disable cache
-            </div>
-        </div>
-        <div className="toolbar-divider"></div>
-        <div className="toolbar-text">
-            <div className="toolbar-item">
-                <select className="toolbar-select-container">
-                    <option value="1">1</option>
-                </select>
-            </div>
-        </div>
-        <div className="toolbar-text">
-            <div className="toolbar-item">
-                <div className="toolbar-input">
-                    <span className="toolbar-input-prompt">
-                        <input type="text" />
-                    </span>
-                </div>
-            </div>
-        </div> */}
-
                 <div className="toolbar-item">
                     <div className="toolbar-text">4 requests</div>
                     <div className="toolbar-divider"></div>

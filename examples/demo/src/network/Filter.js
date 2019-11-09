@@ -1,28 +1,13 @@
 import { h } from '../core';
+import TextFilter from './TextFilter';
+import CheckboxFilter from './CheckboxFilter';
 
 export default () => {
     return (
         <div className="network-toolbar-container">
             <div className="filter-bar">
-                <div className="filter-text-filter">
-                    <span className="filter-input-field">
-                        <input
-                            type="text"
-                            placeholder="Filter"
-                            className="text-prompt"
-                        />
-                    </span>
-                </div>
-
-                <div className="filter-checkbox-filter">
-                    <label
-                        is="dt-checkbox"
-                        className="checkboxTextLabel dt-checkbox-text"
-                    >
-                        <input type="checkbox" />
-                        Hide data URLs
-                    </label>
-                </div>
+                <TextFilter />
+                <CheckboxFilter />
 
                 <div className="filter-bitset-filter">
                     <span>All</span>
