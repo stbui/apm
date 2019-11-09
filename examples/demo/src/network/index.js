@@ -2,6 +2,7 @@ import { h, useState, useEffect } from '../core';
 import Datagrid from './Datagrid';
 import Filter from './Filter';
 import SummaryBar from './SummaryBar';
+import { Widget } from '../components';
 
 const data = [
     {
@@ -75,64 +76,48 @@ export default () => {
     }, []);
 
     return (
-        <div className="">
-            <div className="widget">
-                <div className="vbox network-settings-pane">
-                    <div className="network-toolbar-container">
-                        {/* <div className="toolbar network-summary-bar">
-                            <div className="toolbar-shadow">
-                                <div className="filter-bar">
-                                    <div className="filter-text-filter">
-                                        <span className="filter-input-field">
-                                            <input
-                                                type="text"
-                                                placeholder="Filter"
-                                                className="text-prompt"
-                                            />
-                                        </span>
-                                    </div>
+        <div className="widget">
+            <div className="vbox">
+                <div className="panel network">
+                    <div className="widget">
+                        <div className="hbox network-settings-pane">1</div>
+                    </div>
 
-                                    <div className="filter-checkbox-filter">
-                                        <label
-                                            is="dt-checkbox"
-                                            className="checkboxTextLabel dt-checkbox-text"
-                                        >
-                                            <input type="checkbox" />
-                                            Hide data URLs
-                                        </label>
-                                    </div>
-
-                                    <div className="filter-bitset-filter">
-                                        <span>All</span>
-                                        <div className="filter-bitset-filter-divider"></div>
-                                        <span>XHR</span>
-                                        <span>JS</span>
-                                        <span>CSS</span>
-                                        <span>Img</span>
-                                        <span>Media</span>
-                                        <span>Font</span>
-                                        <span>Doc</span>
-                                        <span>WS</span>
-                                        <span>Manifest</span>
-                                        <span>Other</span>
-                                    </div>
-                                </div>
+                    <div>
+                        <Widget>
+                            <div id="network-overview-panel network-overview">
+                                2
                             </div>
-                        </div> */}
+                        </Widget>
+                    </div>
+
+                    <div className="network-film-strip-placeholder">3</div>
+
+                    <div className="widget shadow-split-widget">
+                        <div className="shadow-split-widget-contents shadow-split-widget-sidebar vbox">
+                            aa
+                        </div>
+                        <div className="shadow-split-widget-contents shadow-split-widget-main vbox">
+                            dd
+                        </div>
+                        <div className="shadow-split-widget-resizer">cc</div>
                     </div>
                 </div>
-                <div className="hbox network-settings-pane">1</div>
             </div>
-            <div id="network-container network-toolbar-container no-node-selected">
-                {/* <div className="network-status-pane fill">
+
+            <Widget>
+                <div id="network-container" className="no-node-selected">
+                    <Filter />
+                    <Datagrid />
+                    <SummaryBar />
+                </div>
+            </Widget>
+
+            {/* <div className="network-status-pane fill">
                     <div className="recording-hint">
                         <span>2</span>
                     </div>
                 </div> */}
-                <Filter />
-                <Datagrid />
-                <SummaryBar />
-            </div>
 
             {/* <div className="network-details-view">
                 <div className="network-details-view-tall-header"></div>
@@ -140,9 +125,7 @@ export default () => {
 
             <div className="network-item-view"></div>
 
-            <div className="network-container">
-                
-            </div> */}
+            */}
         </div>
     );
 };

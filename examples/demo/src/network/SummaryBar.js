@@ -2,7 +2,7 @@ import { h } from '../core';
 
 export default () => {
     return (
-        <div className="toolbar network-summary-bar">
+        <div className="network-summary-bar toolbar">
             <div className="toolbar-shadow">
                 {/* <div className="toolbar-text">
             <div className="toolbar-item">

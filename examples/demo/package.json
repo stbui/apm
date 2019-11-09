@@ -4,7 +4,7 @@
     "description": "demo",
     "main": "index.js",
     "scripts": {
-        "start": "webpack-dev-server --open",
+        "start": "cross-env NODE_ENV=development webpack-dev-server --hot --config webpack.config.js",
         "build": "webpack"
     },
     "license": "MIT",
@@ -24,7 +24,12 @@
         "style-loader": "^1.0.0",
         "css-loader": "^3.2.0",
         "sass-loader": "^8.0.0",
-        "node-sass": "^4.13.0"
+        "mini-css-extract-plugin": "^0.8.0",
+        "node-sass": "^4.13.0",
+        "file-loader": "^4.2.0",
+        "image-webpack-loader": "^6.0.0",
+        "clean-webpack-plugin": "^3.0.0",
+        "cross-env": "^6.0.3"
     },
     "dependencies": {
         "react": "^16.11.0",

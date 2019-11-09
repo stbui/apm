@@ -27,7 +27,16 @@ export default () => {
                     <colgroup></colgroup>
                     <tbody>
                         <tr className="data-grid-filler-row revealed data-grid-data-grid-node">
-                            <td>Name</td>
+                            <td className="name-column">Name</td>
+                            <td>Status</td>
+                            <td>Type</td>
+                            <td>Initiator</td>
+                            <td>Size</td>
+                            <td>Time</td>
+                            <td className="waterfall-column">Waterfall</td>
+                        </tr>
+                        <tr className="data-grid-filler-row revealed data-grid-data-grid-node selected">
+                            <td className="name-column">Name</td>
                             <td>Status</td>
                             <td>Type</td>
                             <td>Initiator</td>
@@ -36,16 +45,7 @@ export default () => {
                             <td>Waterfall</td>
                         </tr>
                         <tr className="data-grid-filler-row revealed data-grid-data-grid-node">
-                            <td>Name</td>
-                            <td>Status</td>
-                            <td>Type</td>
-                            <td>Initiator</td>
-                            <td>Size</td>
-                            <td>Time</td>
-                            <td>Waterfall</td>
-                        </tr>
-                        <tr className="data-grid-filler-row revealed data-grid-data-grid-node">
-                            <td>Name</td>
+                            <td className="name-column">Name</td>
                             <td>Status</td>
                             <td>Type</td>
                             <td>Initiator</td>

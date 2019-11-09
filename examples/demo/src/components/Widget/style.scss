@@ -1,0 +1,17 @@
+.widget {
+    position: relative;
+    flex: auto;
+    contain: style;
+}
+
+.hbox {
+    display: flex;
+    flex-direction: row !important;
+    position: relative;
+}
+
+.vbox {
+    display: flex;
+    flex-direction: column !important;
+    position: relative;
+}
