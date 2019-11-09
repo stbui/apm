@@ -2,7 +2,14 @@ import { h, useState, useEffect } from '../core';
 import Datagrid from './Datagrid';
 import Filter from './Filter';
 import SummaryBar from './SummaryBar';
-import { Widget } from '../components';
+import {
+    Widget,
+    TabbedPane,
+    Toolbar,
+    ToolbarButton,
+    Icon,
+    Checkbox,
+} from '../components';
 
 const data = [
     {
@@ -98,148 +105,76 @@ export default () => {
 
             <div className="widget vbox">
                 <div className="network-toolbar-container">
-                    <div className="toolbar">
-                        <div className="toolbar-shadow">
-                            <button
-                                className="toolbar-button toolbar-item toolbar-has-glyph toolbar-toggle-with-red-color toolbar-state-on"
-                                aria-label="Record network log"
-                                aria-pressed="true"
-                            >
-                                <span
-                                    is="ui-icon"
-                                    class="toolbar-glyph spritesheet-largeicons largeicon-stop-recording icon-mask"
-                                    style="--spritesheet-position:-84px 24px; width: 28px; height: 24px;"
-                                ></span>
-                                <div className="toolbar-text hidden"></div>
-                            </button>
-
-                            <button
-                                className="toolbar-button toolbar-item toolbar-has-glyph"
-                                aria-label="Clear"
-                            >
-                                <span
-                                    is="ui-icon"
-                                    class="toolbar-glyph spritesheet-largeicons largeicon-clear icon-mask"
-                                    style="--spritesheet-position:0px 144px;width: 28px;height: 24px;"
-                                ></span>
-                                <div className="toolbar-text hidden"></div>
-                            </button>
-
-                            <div className="toolbar-divider toolbar-item"></div>
-
-                            <button
-                                className="toolbar-button toolbar-item toolbar-has-glyph toolbar-state-on"
-                                aria-label="Filter"
-                                aria-pressed="true"
-                            >
-                                <span
-                                    is="ui-icon"
-                                    class="toolbar-glyph spritesheet-largeicons largeicon-search icon-mask"
-                                    style="--spritesheet-position:-196px 96px; width: 28px; height: 24px;"
-                                ></span>
-                                <div className="toolbar-text hidden"></div>
-                            </button>
-
-                            <button
-                                className="toolbar-button toolbar-item toolbar-has-glyph toolbar-state-off"
-                                aria-label="Search"
-                                aria-pressed="false"
-                            >
-                                <span
-                                    is="ui-icon"
-                                    class="toolbar-glyph spritesheet-largeicons largeicon-search icon-mask"
-                                    style="--spritesheet-position:-196px 96px; width: 28px; height: 24px;"
-                                ></span>
-                                <div className="toolbar-text hidden"></div>
-                            </button>
-
-                            <div class="toolbar-divider toolbar-item"></div>
-
+                    <Toolbar>
+                        <button
+                            className="toolbar-button toolbar-item toolbar-has-glyph toolbar-toggle-with-red-color toolbar-state-on"
+                            aria-label="Record network log"
+                            aria-pressed="true"
+                        >
                             <span
-                                is="dt-checkbox"
-                                className="toolbar-item checkbox"
-                            >
-                                <input
-                                    type="checkbox"
-                                    id="ui-checkbox-label2"
-                                />
-                                <label
-                                    className="dt-checkbox-text"
-                                    for="ui-checkbox-label2"
-                                >
-                                    Preserve log
-                                </label>
-                            </span>
+                                is="ui-icon"
+                                class="toolbar-glyph spritesheet-largeicons largeicon-stop-recording icon-mask"
+                                style="--spritesheet-position:-84px 24px; width: 28px; height: 24px;"
+                            ></span>
+                            <div className="toolbar-text hidden"></div>
+                        </button>
 
-                            <span
-                                is="dt-checkbox"
-                                className="toolbar-item checkbox"
-                            >
-                                <input
-                                    type="checkbox"
-                                    id="ui-checkbox-label3"
-                                />
-                                <label
-                                    className="dt-checkbox-text"
-                                    for="ui-checkbox-label3"
-                                >
-                                    Disable cache
-                                </label>
-                            </span>
+                        {/* <ToolbarButton state="on">
+                            <Icon type="largeicons" coordinates="-84px 24px" />
+                        </ToolbarButton> */}
 
-                            <div className="toolbar-divider toolbar-item"></div>
+                        <ToolbarButton>
+                            <Icon type="largeicons" coordinates="0px 144px" />
+                        </ToolbarButton>
 
-                            <span className="toolbar-select-container toolbar-item">
-                                <select className="toolbar-item">
-                                    <option value="1">Online</option>
-                                </select>
-                            </span>
-                            <div class="toolbar-divider toolbar-item"></div>
+                        <div className="toolbar-divider toolbar-item"></div>
 
-                            <button
-                                class="toolbar-button toolbar-item toolbar-has-glyph"
-                                aria-label="Import HAR file..."
-                            >
-                                <span
-                                    is="ui-icon"
-                                    class="toolbar-glyph spritesheet-largeicons largeicon-load icon-mask"
-                                    style="--spritesheet-position:-196px 120px; width: 28px; height: 24px;"
-                                ></span>
-                                <div class="toolbar-text hidden"></div>
-                            </button>
+                        <ToolbarButton state="on">
+                            <Icon type="largeicons" coordinates="-56px 120px" />
+                        </ToolbarButton>
 
-                            <button
-                                class="toolbar-button toolbar-item toolbar-has-glyph"
-                                aria-label="Export HAR..."
-                            >
-                                <span
-                                    is="ui-icon"
-                                    class="toolbar-glyph spritesheet-largeicons largeicon-download icon-mask"
-                                    style="--spritesheet-position:-196px 144px; width: 28px; height: 24px;"
-                                ></span>
-                                <div class="toolbar-text hidden"></div>
-                            </button>
-                        </div>
-                    </div>
+                        <ToolbarButton state="off">
+                            <Icon type="largeicons" coordinates="-196px 96px" />
+                        </ToolbarButton>
 
-                    <div class="toolbar">
-                        <div class="toolbar-shadow">
-                            <div class="toolbar-item"></div>
-                            <div class="toolbar-divider toolbar-item"></div>
-                            <button
-                                class="toolbar-button toolbar-item toolbar-has-glyph toolbar-state-off"
-                                aria-label="Network settings"
-                                aria-pressed="false"
-                            >
-                                <span
-                                    is="ui-icon"
-                                    class="toolbar-glyph spritesheet-largeicons largeicon-settings-gear icon-mask"
-                                    style="--spritesheet-position:-168px 168px; width: 28px; height: 24px;"
-                                ></span>
-                                <div class="toolbar-text hidden"></div>
-                            </button>
-                        </div>
-                    </div>
+                        <div class="toolbar-divider toolbar-item"></div>
+
+                        <Checkbox label="Preserve log" />
+                        <Checkbox label="Disable cache" />
+
+                        <div className="toolbar-divider toolbar-item"></div>
+
+                        <span className="toolbar-select-container toolbar-item">
+                            <select className="toolbar-item">
+                                <option value="1">Online</option>
+                            </select>
+                        </span>
+                        <div class="toolbar-divider toolbar-item"></div>
+
+                        <ToolbarButton>
+                            <Icon
+                                type="largeicons"
+                                coordinates="-196px 120px"
+                            />
+                        </ToolbarButton>
+                        <ToolbarButton>
+                            <Icon
+                                type="largeicons"
+                                coordinates="-196px 144px"
+                            />
+                        </ToolbarButton>
+                    </Toolbar>
+
+                    <Toolbar>
+                        <div class="toolbar-item"></div>
+                        <div class="toolbar-divider toolbar-item"></div>
+                        <ToolbarButton>
+                            <Icon
+                                type="largeicons"
+                                coordinates="-168px 168px"
+                            />
+                        </ToolbarButton>
+                    </Toolbar>
                 </div>
 
                 <Filter />
