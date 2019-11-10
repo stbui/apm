@@ -1,12 +1,13 @@
 import { h } from '../../core';
 import './index';
 
-export default ({ label }) => {
+export default ({ children, label, id }) => {
     return (
         <span is="dt-checkbox" className="toolbar-item checkbox">
-            <input type="checkbox" id="ui-checkbox-label2" />
-            <label className="dt-checkbox-text" for="ui-checkbox-label2">
+            <input type="checkbox" id={`ui-checkbox-label${id}`} />
+            <label className="dt-checkbox-text" for={`ui-checkbox-label${id}`}>
                 {label}
+                {children}
             </label>
         </span>
     );

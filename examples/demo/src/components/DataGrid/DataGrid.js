@@ -1,18 +1,18 @@
-import { h } from '../core';
+import { h } from '../../core';
 
-export default () => {
+export default ({ children }) => {
     return (
         <div class="data-grid small network-log-grid">
             <div class="header-container">
                 <table class="header">
                     <colgroup>
-                        <col style="width: 299px;"></col>
-                        <col style="width: 90px;"></col>
-                        <col style="width: 89px;"></col>
-                        <col style="width: 150px;"></col>
-                        <col style="width: 150px;"></col>
-                        <col style="width: 90px;"></col>
-                        <col class="corner"></col>
+                        <col style="width: 508px;" />
+                        <col style="width: 153px;" />
+                        <col style="width: 153px;" />
+                        <col style="width: 254px;" />
+                        <col style="width: 153px;" />
+                        <col style="width: 153px;" />
+                        <col class="corner" />
                     </colgroup>
                     <tbody>
                         <tr>
@@ -76,16 +76,16 @@ export default () => {
                 </table>
             </div>
 
-            <div className="data-container">
-                <table className="data">
+            <div class="data-container">
+                <table class="data">
                     <colgroup>
-                        <col style="width: 299px;"></col>
-                        <col style="width: 90px;"></col>
-                        <col style="width: 89px;"></col>
-                        <col style="width: 150px;"></col>
-                        <col style="width: 150px;"></col>
-                        <col style="width: 90px;"></col>
-                        <col class="corner"></col>
+                        <col style="width: 508px;" />
+                        <col style="width: 153px;" />
+                        <col style="width: 153px;" />
+                        <col style="width: 254px;" />
+                        <col style="width: 153px;" />
+                        <col style="width: 153px;" />
+                        <col class="corner" />
                     </colgroup>
                     <tbody>
                         <tr
@@ -112,6 +112,7 @@ export default () => {
                             </th>
                             <th class="corner top-filler-td" scope="col"></th>
                         </tr>
+
                         <tr
                             class="data-grid-data-grid-node revealed odd"
                             style="background-color: rgb(221, 238, 255);"
@@ -120,25 +121,26 @@ export default () => {
                                 <img class="icon document" alt="Document" />
                                 <span class="hidden network-badge"></span>
                                 inspector.html
-                                <div class="network-cell-subtitle">
-                                    127.0.0.1
-                                </div>
+                                <div class="network-cell-subtitle"></div>
                             </td>
                             <td class="status-column">
-                                200<div class="network-cell-subtitle">OK</div>
+                                304
+                                <div class="network-cell-subtitle">
+                                    Not Modified
+                                </div>
                             </td>
                             <td class="type-column">document</td>
                             <td class="initiator-column network-dim-cell">
                                 Other
                             </td>
                             <td class="size-column right">
-                                915&nbsp;B
+                                238&nbsp;B
                                 <div class="network-cell-subtitle">
                                     626&nbsp;B
                                 </div>
                             </td>
                             <td class="time-column right">
-                                3&nbsp;ms
+                                2&nbsp;ms
                                 <div class="network-cell-subtitle">
                                     2&nbsp;ms
                                 </div>
@@ -188,8 +190,11 @@ export default () => {
                                 inspector.js
                                 <div class="network-cell-subtitle"></div>
                             </td>
-                            <td class="status-column network-dim-cell">
-                                200<div class="network-cell-subtitle">OK</div>
+                            <td class="status-column">
+                                304
+                                <div class="network-cell-subtitle">
+                                    Not Modified
+                                </div>
                             </td>
                             <td class="type-column">script</td>
                             <td class="initiator-column">
@@ -198,16 +203,16 @@ export default () => {
                                 </span>
                                 <div class="network-cell-subtitle">Parser</div>
                             </td>
-                            <td class="size-column right network-dim-cell">
-                                (disk cache)
+                            <td class="size-column right">
+                                238&nbsp;B
                                 <div class="network-cell-subtitle">
                                     209&nbsp;B
                                 </div>
                             </td>
                             <td class="time-column right">
-                                1&nbsp;ms
+                                3&nbsp;ms
                                 <div class="network-cell-subtitle">
-                                    1&nbsp;ms
+                                    2&nbsp;ms
                                 </div>
                             </td>
                             <td class="corner"></td>
@@ -239,9 +244,9 @@ export default () => {
                                 </div>
                             </td>
                             <td class="time-column right">
-                                2&nbsp;ms
+                                3&nbsp;ms
                                 <div class="network-cell-subtitle">
-                                    0&nbsp;ms
+                                    2&nbsp;ms
                                 </div>
                             </td>
                             <td class="corner"></td>
@@ -249,11 +254,6 @@ export default () => {
                     </tbody>
                 </table>
             </div>
-
-            <div
-                class="data-grid-resizer"
-                style="cursor: col-resize; left: 513px;"
-            ></div>
         </div>
     );
 };

@@ -3,79 +3,71 @@
 
 import { h, render } from './core';
 import { useRoutes, push } from './core/routes';
-import Network from './network';
-
 import './style/index.scss';
 
-function running() {
-    // 测试变量
-    stbui;
-}
-function promiseError() {
-    new Promise((resolve, reject) => {
-        reject();
-    });
-}
-function jsload() {
-    var script = document.createElement('script');
-    script.src = `stbui.js`;
-    document.body.appendChild(script);
-}
-function cssload() {
-    var css = document.createElement('link');
-    css.type = `text/css`;
-    css.rel = 'stylesheet';
-    css.href = `stbui.css`;
-    document.head.appendChild(css);
-}
-function imgload() {
-    var img = document.createElement('img');
-    img.src = `stbui.png`;
-    document.body.appendChild(img);
-}
-// 测试ajax
-function ajax() {
-    // var xhr = new XMLHttpRequest();
-    // xhr.open('get', '/xxx');
-}
-function ajaxTimeout() {
-    var xhr = new XMLHttpRequest();
-    xhr.withCredentials = true;
-    xhr.timeout = 3000;
-    xhr.open('get', '/stbui', true);
-    xhr.setRequestHeader('content-type', 'application/json;charset=utf-8');
-    xhr.setRequestHeader('Accept', 'application/json');
-    xhr.send();
-}
-function ajaxFailed() {
-    var xhr = new XMLHttpRequest();
-    xhr.withCredentials = true;
-    xhr.timeout = 3000;
-    xhr.open('get', '/stbui', true);
-    xhr.setRequestHeader('content-type', 'application/json;charset=utf-8');
-    xhr.setRequestHeader('Accept', 'application/json');
-    xhr.send();
-}
-function ajaxservererr() {
-    var xhr = new XMLHttpRequest();
-    xhr.withCredentials = true;
-    xhr.timeout = 3000;
-    xhr.open('get', '/servererr', true);
-    xhr.setRequestHeader('content-type', 'application/json;charset=utf-8');
-    xhr.setRequestHeader('Accept', 'application/json');
-    xhr.send();
-}
+import {
+    RootView,
+    TabbedPane,
+    Toolbar,
+    ToolbarButton,
+    Icon,
+    SplitWidget,
+} from './components';
+import Element from './Element';
+import Network from './network';
+import Console from './Console';
+import Timeline from './Timeline';
+import Resources from './Resources';
 
 const Home = () => (
-    <div>
-        <h3>apm-js-sdk debug</h3>
-        <p>请打开google浏览器开发者工具</p>
-
-        <button onClick={running}>js执行错误</button>
-        <button onClick={promiseError}>Promise错误</button>
-        <button onClick={jsload}>资源加载错误</button>
-        <button onClick={ajaxFailed}>ajax请求错误</button>
-    </div>
+    <RootView>
+        <div class="vbox flex-auto split-widget">
+            <SplitWidget>
+                <div class="widget vbox">
+                    <div class="vbox flex-auto split-widget">
+                        <SplitWidget direction="vertical">
+                            <div class="vbox flex-auto tabbed-pane">
+                                <TabbedPane
+                                    headerLeft={
+                                        <Toolbar>
+                                            <ToolbarButton>
+                                                <Icon
+                                                    type="largeicons"
+                                                    coordinates="-140px 96px"
+                                                />
+                                            </ToolbarButton>
+                                            <ToolbarButton>
+                                                <Icon
+                                                    type="largeicons"
+                                                    coordinates="-112px 72px"
+                                                />
+                                            </ToolbarButton>
+                                            <div class="toolbar-divider toolbar-item"></div>
+                                        </Toolbar>
+                                    }
+                                    headerRight={
+                                        <Toolbar>
+                                            <div class="toolbar-divider toolbar-item"></div>
+                                            <ToolbarButton>
+                                                <Icon
+                                                    type="largeicons"
+                                                    coordinates="-56px 96px"
+                                                />
+                                            </ToolbarButton>
+                                        </Toolbar>
+                                    }
+                                >
+                                    <div class="widget vbox flex-auto view-container overflow-auto">
+                                        <Network />
+                                    </div>
+                                </TabbedPane>
+                            </div>
+                        </SplitWidget>
+                    </div>
+                </div>
+            </SplitWidget>
+        </div>
+    </RootView>
 );
 
 window.onload = function() {
@@ -84,19 +76,8 @@ window.onload = function() {
     );
 
     const routes = {
-        '/': () => (
-            <div>
-                <Network />
-                <Home />
-                <button onClick={() => push('/network')}>Go</button>
-            </div>
-        ),
-        '/home/:id': ({ id }) => (
-            <div>
-                <p>{id}</p>
-                <button onClick={() => push('/')}>Go home</button>
-            </div>
-        ),
+        '/': () => <Home />,
+
         '/network': () => (
             <div>
                 <Network />
