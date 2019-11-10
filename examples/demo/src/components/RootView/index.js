@@ -1,4 +1,4 @@
 import RootView from './RootView';
-import './style.scss';
+import './RootView.scss';
 
 export default RootView;

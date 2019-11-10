@@ -251,6 +251,8 @@ export default ({ children }) => {
                             </td>
                             <td class="corner"></td>
                         </tr>
+
+                        <tr class="data-grid-filler-row revealed" style="height: auto;"><td class="bottom-filler-td"></td><td class="bottom-filler-td"></td><td class="bottom-filler-td"></td><td class="bottom-filler-td"></td><td class="bottom-filler-td"></td><td class="bottom-filler-td"></td><td class="corner bottom-filler-td"></td></tr>
                     </tbody>
                 </table>
             </div>

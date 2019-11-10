@@ -13,6 +13,7 @@ import {
     Icon,
     Checkbox,
     SplitWidget,
+    Treeoutline,
 } from '../components';
 
 export default () => {

@@ -1,4 +1,4 @@
 import SplitWidget from './SplitWidget';
-import './style.scss';
+import './SplitWidget.scss';
 
 export default SplitWidget;

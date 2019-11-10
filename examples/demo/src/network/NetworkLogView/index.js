@@ -1,4 +1,4 @@
 import NetworkLogView from './NetworkLogView';
-import './style.scss';
+import './NetworkLogView.scss';
 
 export default NetworkLogView;

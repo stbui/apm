@@ -1,4 +1,4 @@
 import DataGrid from './DataGrid';
-import './style.scss';
+import './DataGrid.scss';
 
 export default DataGrid;

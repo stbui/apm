@@ -1,4 +1,4 @@
 import Treeoutline from './Treeoutline';
-import './style.scss';
+import './Treeoutline.scss';
 
 export default Treeoutline;

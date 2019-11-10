@@ -1,5 +1,5 @@
 import { h } from '../../core';
-import './index';
+import './index.scss';
 
 export default ({ children }) => {
     return (
