@@ -1,7 +1,4 @@
-import { h } from '../../core';
-
-const Widget = ({ children, type = 'vbox' }) => {
-    return <div className={`widget ${type}`}>{children}</div>;
-};
+import Widget from './Widget';
+import './Widget.scss';
 
 export default Widget;

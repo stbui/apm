@@ -1,5 +1,5 @@
-import { h } from '../core';
-import { Checkbox } from '../components';
+import { h } from '../../core';
+import { Checkbox } from '../../components';
 
 export default () => (
     <div className="filter-checkbox-filter">

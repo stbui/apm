@@ -1,10 +1,4 @@
-import { h } from '../../core';
-import './index.scss';
+import Toolbar from './Toolbar';
+import './Toolbar.scss';
 
-export default ({ children }) => {
-    return (
-        <div class="toolbar">
-            <div class="toolbar-shadow">{children}</div>
-        </div>
-    );
-};
+export default Toolbar;

@@ -8,6 +8,7 @@ import Checkbox from './Checkbox';
 import Treeoutline from './Treeoutline';
 import SplitWidget from './SplitWidget';
 import DataGrid from './DataGrid';
+import TextPrompt from './TextPrompt';
 
 export {
     RootView,
@@ -20,4 +21,5 @@ export {
     Toolbar,
     ToolbarButton,
     Checkbox,
+    TextPrompt,
 };

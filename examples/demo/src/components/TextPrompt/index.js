@@ -1,4 +1,4 @@
 import TextPrompt from './TextPrompt';
-import './style.scss';
+import './TextPrompt.scss';
 
 export default TextPrompt;

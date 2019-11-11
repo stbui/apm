@@ -14,7 +14,7 @@ import {
     SplitWidget,
 } from './components';
 import Element from './Element';
-import Network from './network';
+import Network from './Network';
 import Console from './Console';
 import Timeline from './Timeline';
 import Resources from './Resources';

@@ -1,9 +1,11 @@
 import { h, useState, useEffect } from '../core';
-import FilterBar from './FilterBar';
 import NetworkToolbar from './NetworkToolbar';
+import FilterBar from './FilterBar';
 import NetworkSettingsPane from './NetworkSettingsPane';
 import NetworkOverviewPanel from './NetworkOverviewPanel';
 import NetworkLogView from './NetworkLogView';
+
+import './networkPanel.scss';
 
 import {
     Widget,

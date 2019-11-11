@@ -1,4 +1,4 @@
-import { h } from '../core';
+import { h } from '../../core';
 import TextFilter from './TextFilter';
 import CheckboxFilter from './CheckboxFilter';
 
