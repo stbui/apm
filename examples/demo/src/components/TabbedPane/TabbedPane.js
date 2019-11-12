@@ -1,6 +1,38 @@
-import { h } from '../../core';
+import { h, useState, useEffect } from '../../core';
 
-export default ({ headerLeft, headerContents, headerRight, children }) => {
+const tablistData = [
+    { label: 'Elements', width: 73 },
+    { label: 'Console', width: 68 },
+    { label: 'Sources', width: 68 },
+    { label: 'Network', width: 69 },
+    { label: 'Memory', width: 68 },
+    { label: 'Application', width: 84 },
+    { label: 'Security', width: 67 },
+    { label: 'Audits', width: 58 },
+];
+
+export default ({
+    headerLeft,
+    headerContents,
+    headerRight,
+    children,
+    onChange,
+    defaultSelect,
+}) => {
+    const [selectKey, setSelectKey] = useState(defaultSelect);
+
+    const onSelectkey = key => {
+        setSelectKey(key);
+        onChange && onChange(key);
+    };
+
+    const translateX =
+        selectKey === 0
+            ? 0
+            : tablistData.slice(0, selectKey).reduce((a, b) => {
+                  return { ...b, width: a.width + b.width };
+              }).width;
+
     return (
         <div class="widget vbox tabbed-pane-shadow">
             <div class="tabbed-pane-header">
@@ -12,119 +44,30 @@ export default ({ headerLeft, headerContents, headerRight, children }) => {
                         aria-label="Panels"
                         style=""
                     >
-                        <div
-                            class="tabbed-pane-header-tab selected"
-                            id="tab-elements"
-                            role="tab"
-                            aria-selected="true"
-                            aria-label="Elements"
-                            style="cursor: pointer; width: 73px;"
-                            tabindex="0"
-                        >
-                            <span class="tabbed-pane-header-tab-title">
-                                Elements
-                            </span>
-                        </div>
-                        <div
-                            class="tabbed-pane-header-tab"
-                            id="tab-console"
-                            role="tab"
-                            aria-selected="false"
-                            aria-label="Console"
-                            style="cursor: pointer; width: 68px;"
-                        >
-                            <span class="tabbed-pane-header-tab-title">
-                                Console
-                            </span>
-                        </div>
-                        <div
-                            class="tabbed-pane-header-tab"
-                            id="tab-sources"
-                            role="tab"
-                            aria-selected="false"
-                            aria-label="Sources"
-                            style="cursor: pointer; width: 68px;"
-                        >
-                            <span class="tabbed-pane-header-tab-title">
-                                Sources
-                            </span>
-                        </div>
-                        <div
-                            class="tabbed-pane-header-tab"
-                            id="tab-network"
-                            role="tab"
-                            aria-selected="false"
-                            aria-label="Network"
-                            style="cursor: pointer; width: 69px;"
-                        >
-                            <span class="tabbed-pane-header-tab-title">
-                                Network
-                            </span>
-                        </div>
-                        <div
-                            class="tabbed-pane-header-tab"
-                            id="tab-timeline"
-                            role="tab"
-                            aria-selected="false"
-                            aria-label="Performance"
-                            style="cursor: pointer; width: 93px;"
-                        >
-                            <span class="tabbed-pane-header-tab-title">
-                                Performance
-                            </span>
-                        </div>
-                        <div
-                            class="tabbed-pane-header-tab"
-                            id="tab-heap_profiler"
-                            role="tab"
-                            aria-selected="false"
-                            aria-label="Memory"
-                            style="cursor: pointer; width: 68px;"
-                        >
-                            <span class="tabbed-pane-header-tab-title">
-                                Memory
-                            </span>
-                        </div>
-                        <div
-                            class="tabbed-pane-header-tab"
-                            id="tab-resources"
-                            role="tab"
-                            aria-selected="false"
-                            aria-label="Application"
-                            style="cursor: pointer; width: 84px;"
-                        >
-                            <span class="tabbed-pane-header-tab-title">
-                                Application
-                            </span>
-                        </div>
-                        <div
-                            class="tabbed-pane-header-tab"
-                            id="tab-security"
-                            role="tab"
-                            aria-selected="false"
-                            aria-label="Security"
-                            style="cursor: pointer; width: 67px;"
-                        >
-                            <span class="tabbed-pane-header-tab-title">
-                                Security
-                            </span>
-                        </div>
-                        <div
-                            class="tabbed-pane-header-tab"
-                            id="tab-audits"
-                            role="tab"
-                            aria-selected="false"
-                            aria-label="Audits"
-                            style="cursor: pointer; width: 58px;"
-                        >
-                            <span class="tabbed-pane-header-tab-title">
-                                Audits
-                            </span>
-                        </div>
+                        {tablistData.map((item, index) => (
+                            <div
+                                class={`tabbed-pane-header-tab${
+                                    selectKey === index ? ' selected' : ''
+                                }`}
+                                id={`tab-${item.label}`}
+                                style={{
+                                    cursor: 'pointer',
+                                    width: `${item.width}px`,
+                                }}
+                                onClick={() => onSelectkey(index)}
+                            >
+                                <span class="tabbed-pane-header-tab-title">
+                                    {item.label}
+                                </span>
+                            </div>
+                        ))}
                     </div>
                     <div
                         class="tabbed-pane-tab-slider enabled"
-                        style="width: 73px; transform: translateX(0px) scaleY(0.75);"
+                        style={{
+                            width: `${tablistData[selectKey].width}px`,
+                            transform: `translateX(${translateX}px) scaleY(0.75)`,
+                        }}
                     ></div>
                 </div>
                 <div class="tabbed-pane-right-toolbar toolbar">
