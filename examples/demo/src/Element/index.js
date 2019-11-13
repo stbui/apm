@@ -1,4 +1,4 @@
-import { h } from '../core';
+import React from 'react';
 import StylesSidebarPane from './StylesSidebarPane';
 
 export default () => {

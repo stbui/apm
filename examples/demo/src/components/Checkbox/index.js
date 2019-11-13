@@ -1,4 +1,4 @@
-import { h } from '../../core';
+import React from 'react';
 import './index';
 
 export default ({ children, label, id }) => {

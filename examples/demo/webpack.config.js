@@ -18,6 +18,7 @@ module.exports = {
         extensions: ['.ts', '.js', '.tsx', '.json', '.scss'],
         alias: {
             apm: path.join(__dirname, '..', '..', 'packages', 'apm-js', 'src'),
+            react: path.join(__dirname, '.', 'src', 'core'),
         },
     },
     module: {

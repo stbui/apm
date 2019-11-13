@@ -1,4 +1,4 @@
-import { h } from '../../core';
+import React from 'react';
 import { Checkbox } from '../../components';
 
 export default () => (

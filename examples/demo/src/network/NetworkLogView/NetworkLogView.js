@@ -1,4 +1,4 @@
-import { h } from '../../core';
+import React from 'react';
 import { SplitWidget, DataGrid } from '../../components';
 import NetworkSummaryBar from '../NetworkSummaryBar';
 import NetworkStatusPane from '../NetworkStatusPane';
@@ -8,9 +8,12 @@ export default () => {
         <div class="widget vbox" id="network-container">
             <div class="vbox flex-auto split-widget">
                 <SplitWidget>
-                    <div class="widget vbox">
-                        <DataGrid />
-                    </div>
+                    <SplitWidget.Main>
+                        <div class="widget vbox">
+                            <DataGrid />
+                        </div>
+                    </SplitWidget.Main>
+                    <SplitWidget.Sidebar>1234</SplitWidget.Sidebar>
                 </SplitWidget>
                 {/* <div class="widget vbox network-waterfall-view">
                     <canvas

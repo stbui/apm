@@ -1,4 +1,4 @@
-import { h } from '../../core';
+import React from 'react';
 import TextFilter from './TextFilter';
 import CheckboxFilter from './CheckboxFilter';
 

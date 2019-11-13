@@ -1,4 +1,4 @@
-import { h } from '../core';
+import React from 'react';
 import ConsoleView from './ConsoleView';
 
 export default () => {
@@ -91,14 +91,32 @@ export default () => {
                 </div>
                 <div class="vbox flex-auto split-widget">
                     <div class="vbox flex-auto console-searchable-view">
-
-                        <div id="console-messages" class="monospace" style="overflow: auto;">
-                            <div aria-hidden="true" style="height: 0px; color: transparent;">﻿</div>
+                        <div
+                            id="console-messages"
+                            class="monospace"
+                            style="overflow: auto;"
+                        >
+                            <div
+                                aria-hidden="true"
+                                style="height: 0px; color: transparent;"
+                            >
+                                ﻿
+                            </div>
                             <div class="console-group console-group-messages"></div>
-                            <div aria-hidden="true" style="height: 0px; color: transparent;">﻿</div>
+                            <div
+                                aria-hidden="true"
+                                style="height: 0px; color: transparent;"
+                            >
+                                ﻿
+                            </div>
 
                             <div class="source-code" id="console-prompt"></div>
-                            <div class="console-view-fix-select-all" aria-hidden="true">.</div>
+                            <div
+                                class="console-view-fix-select-all"
+                                aria-hidden="true"
+                            >
+                                .
+                            </div>
                         </div>
                     </div>
                 </div>

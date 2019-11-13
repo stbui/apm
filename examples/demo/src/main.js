@@ -1,8 +1,7 @@
 // import Apm from 'apm';
 // Apm('1dw43f34232424');
 
-import { h, render, useState } from './core';
-import { useRoutes, push } from './core/routes';
+import React, { render, useState } from 'react';
 import './style/index.scss';
 
 import {
@@ -101,22 +100,5 @@ const Home = () => {
 };
 
 window.onload = function() {
-    const Header = () => (
-        <div style={{ height: '64px', background: '#673ab8' }}></div>
-    );
-
-    const routes = {
-        '/': () => <Home />,
-
-        '/network': () => (
-            <div>
-                <Network />
-                <button onClick={() => push('/')}>Go home</button>
-            </div>
-        ),
-    };
-
-    const App = () => useRoutes(routes);
-
-    render(<App />, document.getElementById('apm'));
+    render(<Home />, document.getElementById('apm'));
 };

@@ -20,9 +20,9 @@ const plugins = [
     '@babel/plugin-syntax-dynamic-import',
     [
         '@babel/plugin-transform-react-jsx',
-        {
-            pragma: 'h',
-        },
+        // {
+        //     pragma: 'h',
+        // },
     ],
 ];
 

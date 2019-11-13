@@ -1,4 +1,4 @@
-import { h } from '../../core';
+import React from 'react';
 
 export default () => {
     return <div></div>;

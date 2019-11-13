@@ -1,4 +1,5 @@
-import { h, useState, useEffect } from '../core';
+import React from 'react';
+
 import NetworkToolbar from './NetworkToolbar';
 import FilterBar from './FilterBar';
 import NetworkSettingsPane from './NetworkSettingsPane';

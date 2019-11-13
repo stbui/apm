@@ -1,4 +1,4 @@
-import { h } from '../../core';
+import React from 'react';
 
 export const SpriteSheets = {
     smallicons: { width: 10, height: 10, padding: 10 },

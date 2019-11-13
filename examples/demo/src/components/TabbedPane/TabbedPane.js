@@ -1,4 +1,4 @@
-import { h, useState, useEffect } from '../../core';
+import React, { useState } from 'react';
 
 const tablistData = [
     { label: 'Elements', width: 73 },

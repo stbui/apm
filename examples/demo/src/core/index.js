@@ -1,24 +1,26 @@
-import { h } from './h'
-import { render, scheduleWork, options } from './reconciler'
+import { h } from './h';
+import { render, scheduleWork, options } from './reconciler';
 import {
-  useState,
-  useReducer,
-  useEffect,
-  useMemo,
-  useCallback,
-  useRef
-} from './hooks'
+    useState,
+    useReducer,
+    useEffect,
+    useMemo,
+    useCallback,
+    useRef,
+} from './hooks';
 
 export {
-  h,
-  h as createElement,
-  render,
-  scheduleWork,
-  options,
-  useState,
-  useReducer,
-  useEffect,
-  useMemo,
-  useCallback,
-  useRef
-}
+    h,
+    h as createElement,
+    render,
+    scheduleWork,
+    options,
+    useState,
+    useReducer,
+    useEffect,
+    useMemo,
+    useCallback,
+    useRef,
+};
+
+export default { createElement: h };
