@@ -3,17 +3,21 @@ import { SplitWidget, DataGrid } from '../../components';
 import NetworkSummaryBar from '../NetworkSummaryBar';
 import NetworkStatusPane from '../NetworkStatusPane';
 
+const Demo = () => <div>1</div>;
+
 export default () => {
     return (
         <div class="widget vbox" id="network-container">
             <div class="vbox flex-auto split-widget">
+                <Demo>123</Demo>
+                <SplitWidget.Sidebar>1234</SplitWidget.Sidebar>
                 <SplitWidget>
+                    1234
                     <SplitWidget.Main>
                         <div class="widget vbox">
                             <DataGrid />
                         </div>
                     </SplitWidget.Main>
-                    <SplitWidget.Sidebar>1234</SplitWidget.Sidebar>
                 </SplitWidget>
                 {/* <div class="widget vbox network-waterfall-view">
                     <canvas

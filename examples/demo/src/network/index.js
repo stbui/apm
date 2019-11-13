@@ -24,22 +24,29 @@ export default () => {
         <div className="widget vbox panel network">
             <div className="vbox flex-auto split-widget">
                 <SplitWidget>
-                    <div class="widget vbox">
-                        <NetworkToolbar />
-                        <FilterBar />
-                        <NetworkSettingsPane />
-                        <div className="network-film-strip-placeholder"></div>
+                    <SplitWidget.Main>
+                        <div class="widget vbox">
+                            <NetworkToolbar />
+                            <FilterBar />
+                            <NetworkSettingsPane />
+                            <div className="network-film-strip-placeholder"></div>
 
-                        <div class="widget vbox" id="network-overview-panel">
-                            <NetworkOverviewPanel />
-                        </div>
+                            <div
+                                class="widget vbox"
+                                id="network-overview-panel"
+                            >
+                                <NetworkOverviewPanel />
+                            </div>
 
-                        <div className="vbox flex-auto split-widget">
-                            <SplitWidget
-                                sidebar={<NetworkLogView />}
-                            ></SplitWidget>
+                            <div className="vbox flex-auto split-widget">
+                                <SplitWidget>
+                                    <SplitWidget.Sidebar>
+                                        <NetworkLogView />
+                                    </SplitWidget.Sidebar>
+                                </SplitWidget>
+                            </div>
                         </div>
-                    </div>
+                    </SplitWidget.Main>
                 </SplitWidget>
             </div>
         </div>

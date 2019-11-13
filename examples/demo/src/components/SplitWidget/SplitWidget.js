@@ -3,7 +3,7 @@ import React from 'react';
 export const Sidebar = ({ children, maximized }) => {
     const cls = `shadow-split-widget-contents shadow-split-widget-sidebar vbox ${maximized &&
         'maximized'}`;
-
+        console.log(children)
     return <div class={cls}>{children}</div>;
 };
 
@@ -22,7 +22,7 @@ export default ({
 }) => {
     const _direction = direction === 'vertical' ? 'vbox' : 'hbox';
 
-    console.log(children)
+   
 
     return (
         <div class={`widget shadow-split-widget ${_direction}`}>
