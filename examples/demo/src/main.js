@@ -49,50 +49,54 @@ const Home = () => {
         <RootView>
             <div class="vbox flex-auto split-widget">
                 <SplitWidget>
-                    <div class="widget vbox">
-                        <div class="vbox flex-auto split-widget">
-                            <SplitWidget direction="vertical">
-                                <div class="vbox flex-auto tabbed-pane">
-                                    <TabbedPane
-                                        defaultSelect={module}
-                                        onChange={onTabbedPaneChange}
-                                        headerLeft={
-                                            <Toolbar>
-                                                <ToolbarButton>
-                                                    <Icon
-                                                        type="largeicons"
-                                                        coordinates="-140px 96px"
-                                                    />
-                                                </ToolbarButton>
-                                                <ToolbarButton>
-                                                    <Icon
-                                                        type="largeicons"
-                                                        coordinates="-112px 72px"
-                                                    />
-                                                </ToolbarButton>
-                                                <div class="toolbar-divider toolbar-item"></div>
-                                            </Toolbar>
-                                        }
-                                        headerRight={
-                                            <Toolbar>
-                                                <div class="toolbar-divider toolbar-item"></div>
-                                                <ToolbarButton>
-                                                    <Icon
-                                                        type="largeicons"
-                                                        coordinates="-56px 96px"
-                                                    />
-                                                </ToolbarButton>
-                                            </Toolbar>
-                                        }
-                                    >
-                                        <div class="widget vbox flex-auto view-container overflow-auto">
-                                            {renderModule(module)}
+                    <SplitWidget.Main>
+                        <div class="widget vbox">
+                            <div class="vbox flex-auto split-widget">
+                                <SplitWidget direction="vertical">
+                                    <SplitWidget.Main>
+                                        <div class="vbox flex-auto tabbed-pane">
+                                            <TabbedPane
+                                                defaultSelect={module}
+                                                onChange={onTabbedPaneChange}
+                                                headerLeft={
+                                                    <Toolbar>
+                                                        <ToolbarButton>
+                                                            <Icon
+                                                                type="largeicons"
+                                                                coordinates="-140px 96px"
+                                                            />
+                                                        </ToolbarButton>
+                                                        <ToolbarButton>
+                                                            <Icon
+                                                                type="largeicons"
+                                                                coordinates="-112px 72px"
+                                                            />
+                                                        </ToolbarButton>
+                                                        <div class="toolbar-divider toolbar-item"></div>
+                                                    </Toolbar>
+                                                }
+                                                headerRight={
+                                                    <Toolbar>
+                                                        <div class="toolbar-divider toolbar-item"></div>
+                                                        <ToolbarButton>
+                                                            <Icon
+                                                                type="largeicons"
+                                                                coordinates="-56px 96px"
+                                                            />
+                                                        </ToolbarButton>
+                                                    </Toolbar>
+                                                }
+                                            >
+                                                <div class="widget vbox flex-auto view-container overflow-auto">
+                                                    {renderModule(module)}
+                                                </div>
+                                            </TabbedPane>
                                         </div>
-                                    </TabbedPane>
-                                </div>
-                            </SplitWidget>
+                                    </SplitWidget.Main>
+                                </SplitWidget>
+                            </div>
                         </div>
-                    </div>
+                    </SplitWidget.Main>
                 </SplitWidget>
             </div>
         </RootView>

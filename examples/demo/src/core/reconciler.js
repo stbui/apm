@@ -7,7 +7,7 @@ export const options = {};
 export const [HOST, SVG, HOOK, PLACE, UPDATE, DELETE] = [0, 1, 2, 3, 4, 5];
 
 let preCommit = null;
-let currentHook = null;
+export let currentHook = null;
 let WIP = null;
 let commitQueue = [];
 
@@ -71,10 +71,6 @@ function reconcile(WIP) {
 
 function updateHOOK(WIP) {
     WIP.props = WIP.props || {};
-    WIP.state = WIP.state || {};
-    WIP.effect = {};
-    WIP.memo = WIP.memo || {};
-    WIP.__deps = WIP.__deps || { m: {}, e: {} };
     currentHook = WIP;
     resetCursor();
     let children = WIP.type(WIP.props);
@@ -166,22 +162,11 @@ function commitWork(fiber) {
     commitQueue.forEach(c => {
         if (c.parent) commit(c);
     });
+    commitQueue = [];
 
     WIP = null;
-    commitQueue = [];
     preCommit = null;
     fiber.done && fiber.done();
-}
-
-function applyEffect(fiber) {
-    fiber.pending = fiber.pending || {};
-    for (const k in fiber.effect) {
-        const pend = fiber.pending[k];
-        pend && pend();
-        const after = fiber.effect[k]();
-        after && (fiber.pending[k] = after);
-    }
-    fiber.effect = null;
 }
 
 function commit(fiber) {
@@ -190,12 +175,12 @@ function commit(fiber) {
     let dom = fiber.node;
     let ref = fiber.ref;
     if (op === DELETE) {
-        cleanup(fiber);
+        defer(fiber);
         while (fiber.tag === HOOK) fiber = fiber.child;
         parent.removeChild(fiber.node);
-        fiber.node = null;
+        fiber.node = dom = null;
     } else if (fiber.tag === HOOK) {
-        applyEffect(fiber);
+        defer(fiber);
     } else if (op === UPDATE) {
         updateElement(dom, fiber.alternate.props, fiber.props);
     } else {
@@ -205,14 +190,7 @@ function commit(fiber) {
         if (after === null && dom === parent.lastChild) return;
         parent.insertBefore(dom, after);
     }
-
     if (ref) isFn(ref) ? ref(dom) : (ref.current = dom);
-}
-
-function cleanup(fiber) {
-    let pend = fiber.pending;
-    for (const k in pend) pend[k]();
-    fiber.pending = null;
 }
 
 function createFiber(vnode, op) {
@@ -244,6 +222,15 @@ function hashfy(arr) {
 
 export const isFn = fn => typeof fn === 'function';
 
-export function getHook() {
-    return currentHook || {};
+function defer(fiber) {
+    requestAnimationFrame(() => {
+        if (fiber.hooks) {
+            fiber.hooks.cleanup.forEach(c => c());
+            fiber.hooks.effect.forEach((e, i) => {
+                const res = e[0]();
+                if (res) fiber.hooks.cleanup[i] = res;
+            });
+            fiber.hooks.effect = [];
+        }
+    });
 }
