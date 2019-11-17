@@ -10,6 +10,7 @@ import {
 
 export default ({ width, height }) => {
     const ref = useRef();
+    const refView = useRef();
 
     const _buildRequestTimeRangeStyle = () => {
         const types = {
@@ -102,14 +103,28 @@ export default ({ width, height }) => {
 
     const resetCanvas = () => {};
 
+    const onScroll = e => {
+        console.log(e);
+    };
+
+    const onMouseWheel = e => {
+        console.log(e);
+    };
+
     useEffect(() => {
         if (ref.current) {
             drawCanvas();
         }
     }, [ref, width, height]);
 
+    useEffect(() => {
+        if (refView.current) {
+            refView.current.addEventListener('mousewheel', onMouseWheel);
+        }
+    }, [refView]);
+
     return (
-        <div class="widget vbox network-waterfall-view">
+        <div ref={refView} class="widget vbox network-waterfall-view">
             <canvas ref={ref}></canvas>
 
             <div class="network-waterfall-v-scroll small">
