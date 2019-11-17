@@ -1,12 +1,4 @@
 import React from 'react';
-import {
-    Widget,
-    TabbedPane,
-    Toolbar,
-    ToolbarButton,
-    Icon,
-    Checkbox,
-} from '../../components';
 
 export default () => {
     return (

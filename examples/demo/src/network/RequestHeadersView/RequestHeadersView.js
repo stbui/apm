@@ -6,6 +6,7 @@ import {
     ToolbarButton,
     Icon,
     Checkbox,
+    Treeoutline,
 } from '../../components';
 
 export default () => {
@@ -13,7 +14,7 @@ export default () => {
         <div class="widget vbox request-headers-view">
             <div class="request-headers-tree">
                 <div class="tree-outline-disclosure">
-                    <ol class="tree-outline tree-outline-dense" role="tree">
+                    <Treeoutline>
                         <li
                             role="treeitem"
                             class="parent expanded"
@@ -417,7 +418,7 @@ export default () => {
                             </span>
                         </li>
                         <ol class="children hidden expanded" role="group"></ol>
-                    </ol>
+                    </Treeoutline>
                 </div>
             </div>
         </div>

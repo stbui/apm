@@ -7,6 +7,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
 
 module.exports = {
     mode: 'development',
+    devtool: 'source-map',
     entry: {
         main: path.join(__dirname, 'src', 'main.js'),
     },

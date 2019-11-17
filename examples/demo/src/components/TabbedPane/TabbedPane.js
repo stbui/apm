@@ -1,23 +1,13 @@
 import React, { useState } from 'react';
 
-const tablistData = [
-    { label: 'Elements', width: 73 },
-    { label: 'Console', width: 68 },
-    { label: 'Sources', width: 68 },
-    { label: 'Network', width: 69 },
-    { label: 'Memory', width: 68 },
-    { label: 'Application', width: 84 },
-    { label: 'Security', width: 67 },
-    { label: 'Audits', width: 58 },
-];
-
 export default ({
     headerLeft,
     headerContents,
     headerRight,
     children,
     onChange,
-    defaultSelect,
+    defaultSelect = 0,
+    tablistData,
 }) => {
     const [selectKey, setSelectKey] = useState(defaultSelect);
 
@@ -38,12 +28,7 @@ export default ({
             <div class="tabbed-pane-header">
                 <div class="tabbed-pane-left-toolbar toolbar">{headerLeft}</div>
                 <div class="tabbed-pane-header-contents">
-                    <div
-                        class="tabbed-pane-header-tabs"
-                        role="tablist"
-                        aria-label="Panels"
-                        style=""
-                    >
+                    <div class="tabbed-pane-header-tabs" role="tablist">
                         {tablistData.map((item, index) => (
                             <div
                                 class={`tabbed-pane-header-tab${

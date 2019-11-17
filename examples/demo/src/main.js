@@ -38,6 +38,17 @@ const renderModule = module => {
     }
 };
 
+const tablistData = [
+    { label: 'Elements', width: 73 },
+    { label: 'Console', width: 68 },
+    { label: 'Sources', width: 68 },
+    { label: 'Network', width: 69 },
+    { label: 'Memory', width: 68 },
+    { label: 'Application', width: 84 },
+    { label: 'Security', width: 67 },
+    { label: 'Audits', width: 58 },
+];
+
 const Home = () => {
     const [module, setModule] = useState(3);
 
@@ -57,6 +68,7 @@ const Home = () => {
                                         <div class="vbox flex-auto tabbed-pane">
                                             <TabbedPane
                                                 defaultSelect={module}
+                                                tablistData={tablistData}
                                                 onChange={onTabbedPaneChange}
                                                 headerLeft={
                                                     <Toolbar>
