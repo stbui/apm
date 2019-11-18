@@ -1,4 +1,4 @@
 import ConsoleView from './ConsoleView';
-import './style.scss';
+import './ConsoleView.scss';
 
 export default ConsoleView;

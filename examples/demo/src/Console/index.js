@@ -1,49 +1,36 @@
 import React from 'react';
+import { TabbedPane, Toolbar, ToolbarButton, Icon } from '../components';
 import ConsoleView from './ConsoleView';
 
 export default () => {
     return (
-        <ConsoleView>
+        <div class="widget vbox panel console">
             <div class="widget vbox console-view">
                 <div class="console-toolbar-container">
                     <div class="console-main-toolbar toolbar">
                         <div class="toolbar-shadow">
-                            <button
-                                class="toolbar-button toolbar-item toolbar-has-glyph"
-                                aria-label="Show console sidebar"
-                            >
-                                <span
-                                    is="ui-icon"
-                                    class="toolbar-glyph spritesheet-largeicons largeicon-show-left-sidebar icon-mask"
-                                    style="--spritesheet-position:-168px 120px; width: 28px; height: 24px;"
-                                ></span>
-                                <div class="toolbar-text hidden"></div>
-                            </button>
-                            <button
-                                class="toolbar-button toolbar-item toolbar-has-glyph"
-                                aria-label="Clear console"
-                            >
-                                <span
-                                    is="ui-icon"
-                                    class="toolbar-glyph spritesheet-largeicons largeicon-clear icon-mask"
-                                    style="--spritesheet-position:0px 144px; width: 28px; height: 24px;"
-                                ></span>
-                                <div class="toolbar-text hidden"></div>
-                            </button>
+                            <ToolbarButton>
+                                <Icon
+                                    type="largeicons"
+                                    coordinates="-168px 120px"
+                                />
+                            </ToolbarButton>
+                            <ToolbarButton>
+                                <Icon
+                                    type="largeicons"
+                                    coordinates="0px 144px"
+                                />
+                            </ToolbarButton>
+
                             <div class="toolbar-divider toolbar-item"></div>
 
                             <div class="toolbar-divider toolbar-item"></div>
-                            <button
-                                class="toolbar-button toolbar-item toolbar-has-glyph"
-                                aria-label="Create live expression"
-                            >
-                                <span
-                                    is="ui-icon"
-                                    class="toolbar-glyph spritesheet-largeicons largeicon-visibility icon-mask"
-                                    style="--spritesheet-position:-196px 216px; width: 28px; height: 24px;"
-                                ></span>
-                                <div class="toolbar-text hidden"></div>
-                            </button>
+                            <ToolbarButton>
+                                <Icon
+                                    type="largeicons"
+                                    coordinates="-196px 216px"
+                                />
+                            </ToolbarButton>
                             <div class="toolbar-divider toolbar-item"></div>
 
                             <button
@@ -90,37 +77,14 @@ export default () => {
                     </div>
                 </div>
                 <div class="vbox flex-auto split-widget">
-                    <div class="vbox flex-auto console-searchable-view">
-                        <div
-                            id="console-messages"
-                            class="monospace"
-                            style="overflow: auto;"
-                        >
-                            <div
-                                aria-hidden="true"
-                                style="height: 0px; color: transparent;"
-                            >
-                                ﻿
-                            </div>
-                            <div class="console-group console-group-messages"></div>
-                            <div
-                                aria-hidden="true"
-                                style="height: 0px; color: transparent;"
-                            >
-                                ﻿
-                            </div>
-
-                            <div class="source-code" id="console-prompt"></div>
-                            <div
-                                class="console-view-fix-select-all"
-                                aria-hidden="true"
-                            >
-                                .
-                            </div>
+                    <div className="widget shadow-split-widget hbox">
+                        <div className="shadow-split-widget-contents shadow-split-widget-sidebar vbox hidden"></div>
+                        <div className="shadow-split-widget-contents shadow-split-widget-main vbox maximized">
+                            <ConsoleView />
                         </div>
                     </div>
                 </div>
             </div>
-        </ConsoleView>
+        </div>
     );
 };

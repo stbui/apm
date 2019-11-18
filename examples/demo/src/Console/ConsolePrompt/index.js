@@ -1,4 +1,4 @@
 import ConsolePrompt from './ConsolePrompt';
-import './style.scss';
+import './ConsolePrompt.scss';
 
 export default ConsolePrompt;
