@@ -24,22 +24,18 @@ const GridFilterRow = ({ columns = [], type = 'top', height = 0 }) => {
     );
 };
 
-export default ({ data, columns }) => {
+export default ({ data, columns, onScroll }) => {
     const ref = useRef();
     const [row, setRow] = useState([]);
     let _lastWheelTime;
 
     const onMouseWheel = e => {
-        console.log(e.wheelDeltaY);
-        let scrollTop = ref.current.scrollTop;
-        const hasRecentWheel = Date.now() - _lastWheelTime < 80;
-        ref.current.scrollTop = -e.wheelDeltaY;
-        _lastWheelTime = Date.now();
+        onScroll && onScroll(e);
     };
 
     useEffect(() => {
         if (ref.current) {
-            ref.current.addEventListener('mousewheel', onMouseWheel);
+            // ref.current.addEventListener('mousewheel', onMouseWheel);
 
             const clientHeight = ref.current.clientHeight;
 
@@ -51,7 +47,7 @@ export default ({ data, columns }) => {
     }, [ref]);
 
     return (
-        <div ref={ref} class="data-container">
+        <div ref={ref} class="data-container" onMouseWheel={onMouseWheel}>
             <table class="data">
                 <colgroup>
                     {columns.map(column => (

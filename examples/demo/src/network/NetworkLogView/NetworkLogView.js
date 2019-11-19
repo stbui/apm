@@ -11,17 +11,24 @@ export default () => {
         setHeigth(ref.current.offsetHeight);
     };
 
+    const onScroll = () => {};
+    const onBodyScroll = () => {};
+
     return (
         <div class="widget vbox" id="network-container">
             <div class="vbox flex-auto split-widget">
                 <SplitWidget drag>
                     <SplitWidget.Main>
                         <div class="widget vbox">
-                            <DataGrid />
+                            <DataGrid onBodyScroll={onBodyScroll} />
                         </div>
                     </SplitWidget.Main>
                     <SplitWidget.Sidebar Ref={onRef} width={200}>
-                        <NetworkWaterfallColumn width={200} height={height} />
+                        <NetworkWaterfallColumn
+                            width={200}
+                            height={height}
+                            onScroll={onScroll}
+                        />
                     </SplitWidget.Sidebar>
                 </SplitWidget>
             </div>

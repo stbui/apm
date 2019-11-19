@@ -8,9 +8,10 @@ import {
     Checkbox,
 } from '../../components';
 
-export default ({ width, height }) => {
+export default ({ width, height, onRefScroller, onScroll }) => {
     const ref = useRef();
     const refView = useRef();
+    const refScroller = useRef();
 
     const _buildRequestTimeRangeStyle = () => {
         const types = {
@@ -107,8 +108,20 @@ export default ({ width, height }) => {
         console.log(e);
     };
 
+    let _lastWheelTime = 0;
+
     const onMouseWheel = e => {
         console.log(e);
+        const hasRecentWheel = Date.now() - _lastWheelTime < 80;
+
+        refScroller.current.scrollBy({
+            top: -event.wheelDeltaY,
+            behavior: hasRecentWheel ? 'instant' : 'smooth',
+        });
+
+        _lastWheelTime = Date.now();
+
+        onScroll && onScroll(e);
     };
 
     useEffect(() => {
@@ -118,16 +131,20 @@ export default ({ width, height }) => {
     }, [ref, width, height]);
 
     useEffect(() => {
-        if (refView.current) {
-            refView.current.addEventListener('mousewheel', onMouseWheel);
+        if (refScroller.current) {
+            onRefScroller && onRefScroller(refScroller);
         }
-    }, [refView]);
+    }, [refScroller]);
 
     return (
-        <div ref={refView} class="widget vbox network-waterfall-view">
+        <div
+            ref={refView}
+            class="widget vbox network-waterfall-view"
+            onMouseWheel={onMouseWheel}
+        >
             <canvas ref={ref}></canvas>
 
-            <div class="network-waterfall-v-scroll small">
+            <div ref={refScroller} class="network-waterfall-v-scroll small">
                 <div
                     class="network-waterfall-v-scroll-content"
                     style="height: 862px;"

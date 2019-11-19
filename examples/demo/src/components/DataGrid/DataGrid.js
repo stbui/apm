@@ -181,7 +181,7 @@ const data = [
     },
 ];
 
-export default ({ children }) => {
+export default ({ children, onBodyScroll }) => {
     return (
         <div class="data-grid small network-log-grid">
             <div class="header-container">
@@ -211,7 +211,11 @@ export default ({ children }) => {
                 </table>
             </div>
 
-            <DataContainer columns={columns} data={data} />
+            <DataContainer
+                onScroll={onBodyScroll}
+                columns={columns}
+                data={data}
+            />
         </div>
     );
 };
