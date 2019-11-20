@@ -8,10 +8,9 @@ import {
     Checkbox,
 } from '../../components';
 
-export default ({ width, height, onRefScroller, onScroll }) => {
+export default ({ children, width, height, onRefScroller, onScroll }) => {
     const ref = useRef();
     const refView = useRef();
-    const refScroller = useRef();
 
     const _buildRequestTimeRangeStyle = () => {
         const types = {
@@ -102,26 +101,8 @@ export default ({ width, height, onRefScroller, onScroll }) => {
         }
     };
 
-    const resetCanvas = () => {};
-
-    const onScroll = e => {
-        console.log(e);
-    };
-
-    let _lastWheelTime = 0;
-
-    const onMouseWheel = e => {
-        console.log(e);
-        const hasRecentWheel = Date.now() - _lastWheelTime < 80;
-
-        refScroller.current.scrollBy({
-            top: -event.wheelDeltaY,
-            behavior: hasRecentWheel ? 'instant' : 'smooth',
-        });
-
-        _lastWheelTime = Date.now();
-
-        onScroll && onScroll(e);
+    const onMouseWheel = event => {
+        onScroll && onScroll(event);
     };
 
     useEffect(() => {
@@ -129,12 +110,6 @@ export default ({ width, height, onRefScroller, onScroll }) => {
             drawCanvas();
         }
     }, [ref, width, height]);
-
-    useEffect(() => {
-        if (refScroller.current) {
-            onRefScroller && onRefScroller(refScroller);
-        }
-    }, [refScroller]);
 
     return (
         <div
@@ -144,12 +119,7 @@ export default ({ width, height, onRefScroller, onScroll }) => {
         >
             <canvas ref={ref}></canvas>
 
-            <div ref={refScroller} class="network-waterfall-v-scroll small">
-                <div
-                    class="network-waterfall-v-scroll-content"
-                    style="height: 862px;"
-                ></div>
-            </div>
+            {children}
 
             <div class="network-waterfall-header small">
                 <div>Waterfall</div>

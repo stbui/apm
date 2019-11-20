@@ -27,27 +27,104 @@ const GridFilterRow = ({ columns = [], type = 'top', height = 0 }) => {
 export default ({ data, columns, onScroll }) => {
     const ref = useRef();
     const [row, setRow] = useState([]);
-    let _lastWheelTime;
+    const [fillerRow, setFillerRow] = useState({ top: 0, bottom: '0' });
 
-    const onMouseWheel = e => {
-        onScroll && onScroll(e);
+    const onMouseWheel = event => {
+        onScroll && onScroll(event, ref.current.scrollHeight);
+    };
+
+    const onDataScroll = event => {
+        console.log(event);
+    };
+
+    const _contentHeight = () => {
+        const nodes = data;
+        let result = 0;
+        for (let i = 0, size = nodes.length; i < size; ++i) {
+            result += 21;
+        }
+        return result;
+    };
+
+    const _calculateVisibleNodes = (clientHeight, scrollTop) => {
+        const size = data.length;
+        let i = 0;
+        let y = 0;
+
+        for (; i < size && y + 21 < scrollTop; ++i) {
+            y += 21;
+        }
+
+        const start = i;
+        const topPadding = y;
+        for (; i < size && y < scrollTop + clientHeight; ++i) {
+            y += 21;
+        }
+        const end = i;
+
+        let bottomPadding = 0;
+        for (; i < size; ++i) {
+            bottomPadding += 21;
+        }
+
+        return {
+            topPadding: topPadding,
+            bottomPadding: bottomPadding,
+            contentHeight: y - topPadding,
+            visibleNodes: data.slice(start, end),
+            offset: start,
+        };
+    };
+
+    const setVerticalPadding = (top, bottom) => {
+        const bottomPx = top || bottom ? bottom + 'px' : 'auto';
+
+        setFillerRow({ top: top, bottom: bottomPx });
     };
 
     useEffect(() => {
         if (ref.current) {
-            // ref.current.addEventListener('mousewheel', onMouseWheel);
-
             const clientHeight = ref.current.clientHeight;
+            let scrollTop = ref.current.scrollTop;
+            const currentScrollTop = scrollTop;
+            const maxScrollTop = Math.max(0, _contentHeight() - clientHeight);
+            scrollTop = Math.min(maxScrollTop, scrollTop);
+            const viewportState = _calculateVisibleNodes(
+                clientHeight,
+                scrollTop
+            );
+            const visibleNodes = viewportState.visibleNodes;
+            const visibleNodesSet = new Set(visibleNodes);
 
-            const lineNume = Math.floor(clientHeight / 21);
-            const newData = data.filter((_, index) => index < lineNume);
+            // for (let i = 0; i < this._visibleNodes.length; ++i) {
+            //     const oldNode = this._visibleNodes[i];
+            //     if (!visibleNodesSet.has(oldNode) && oldNode.attached()) {
+            //         const element = oldNode.existingElement();
+            //         element.remove();
+            //     }
+            // }
+            // let previousElement = this.topFillerRowElement();
+            // const tBody = this.dataTableBody;
+            let offset = viewportState.offset;
 
-            setRow(newData);
+            // const lineNume = Math.floor(clientHeight / 21);
+            // const newData = data.filter((_, index) => index < lineNume);
+            setRow(visibleNodes);
+
+            setVerticalPadding(
+                viewportState.topPadding,
+                viewportState.bottomPadding
+            );
         }
     }, [ref]);
 
     return (
-        <div ref={ref} class="data-container" onMouseWheel={onMouseWheel}>
+        <div
+            ref={ref}
+            class="data-container"
+            onMouseWheel={onMouseWheel}
+            onScroll={onDataScroll}
+        >
             <table class="data">
                 <colgroup>
                     {columns.map(column => (
@@ -60,7 +137,7 @@ export default ({ data, columns, onScroll }) => {
                     <GridFilterRow
                         columns={columns}
                         type="top"
-                        // height={110}
+                        height={fillerRow.top}
                     />
 
                     {row.map((row, index) => {
@@ -207,7 +284,7 @@ export default ({ data, columns, onScroll }) => {
 
                     <tr
                         class="data-grid-filler-row revealed"
-                        style="height: 0px;"
+                        style={{ height: fillerRow.bottom }}
                     >
                         <td class="bottom-filler-td"></td>
                         <td class="bottom-filler-td"></td>

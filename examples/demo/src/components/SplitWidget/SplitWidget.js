@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 
-export const Sidebar = ({ Ref, children, maximized, width }) => {
+export const Sidebar = ({ onRef, children, maximized, width }) => {
     const ref = useRef();
 
     const cls = `shadow-split-widget-contents shadow-split-widget-sidebar vbox ${
@@ -9,7 +9,7 @@ export const Sidebar = ({ Ref, children, maximized, width }) => {
 
     useEffect(() => {
         if (ref.current) {
-            Ref && Ref(ref);
+            onRef && onRef(ref.current);
         }
     }, [ref]);
 
