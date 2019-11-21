@@ -188,6 +188,7 @@ export default () => {
     const refWaterfallScroll = useRef();
     const [height, setHeigth] = useState(0);
     const [waterfallContentHeight, setWaterfallContentHeigth] = useState(800);
+    const [dataGridBodyScrollTop, setDataGridBodyScrollTop] = useState(0);
 
     const onRef = dom => {
         setHeigth(dom.offsetHeight);
@@ -195,11 +196,7 @@ export default () => {
 
     let _lastWheelTime = 0;
 
-    const onRefScroller = dom => {
-        setRefWaterfallScroll(dom);
-    };
-
-    const onScroll = (event, scrollHeight) => {
+    const onScroll = event => {
         const waterfallScroller = refWaterfallScroll.current;
         const hasRecentWheel = Date.now() - _lastWheelTime < 80;
 
@@ -209,13 +206,15 @@ export default () => {
         });
 
         _lastWheelTime = Date.now();
-
         // console.log(waterfallScroller.scrollTop);
 
         // setWaterfallContentHeigth(scrollHeight);
+        setDataGridBodyScrollTop(waterfallScroller.scrollTop);
     };
 
-    // useEffect(() => {}, [refWaterfallScroll]);
+    const onWaterfallMouseWheel = event => {
+        onScroll(event);
+    };
 
     return (
         <div class="widget vbox" id="network-container">
@@ -227,7 +226,8 @@ export default () => {
                                 <DataGrid.Body
                                     columns={columns}
                                     data={data}
-                                    onScroll={onScroll}
+                                    scrollTop={dataGridBodyScrollTop}
+                                    onMouseWheel={onWaterfallMouseWheel}
                                 ></DataGrid.Body>
                             </DataGrid>
                         </div>
@@ -236,8 +236,7 @@ export default () => {
                         <NetworkWaterfallColumn
                             width={200}
                             height={height}
-                            onRefScroller={onRefScroller}
-                            onScroll={onScroll}
+                            onMouseWheel={onWaterfallMouseWheel}
                         >
                             <div
                                 ref={refWaterfallScroll}

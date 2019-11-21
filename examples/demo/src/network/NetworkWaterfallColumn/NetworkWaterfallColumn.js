@@ -1,16 +1,7 @@
 import React, { useRef, useEffect } from 'react';
-import {
-    Widget,
-    TabbedPane,
-    Toolbar,
-    ToolbarButton,
-    Icon,
-    Checkbox,
-} from '../../components';
 
-export default ({ children, width, height, onRefScroller, onScroll }) => {
+export default ({ children, width, height, onMouseWheel }) => {
     const ref = useRef();
-    const refView = useRef();
 
     const _buildRequestTimeRangeStyle = () => {
         const types = {
@@ -101,10 +92,6 @@ export default ({ children, width, height, onRefScroller, onScroll }) => {
         }
     };
 
-    const onMouseWheel = event => {
-        onScroll && onScroll(event);
-    };
-
     useEffect(() => {
         if (ref.current) {
             drawCanvas();
@@ -113,7 +100,6 @@ export default ({ children, width, height, onRefScroller, onScroll }) => {
 
     return (
         <div
-            ref={refView}
             class="widget vbox network-waterfall-view"
             onMouseWheel={onMouseWheel}
         >

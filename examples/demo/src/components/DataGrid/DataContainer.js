@@ -24,16 +24,12 @@ const GridFilterRow = ({ columns = [], type = 'top', height = 0 }) => {
     );
 };
 
-export default ({ data, columns, onScroll }) => {
+export default ({ data, columns, scrollTop, onMouseWheel }) => {
     const ref = useRef();
     const [row, setRow] = useState([]);
-    const [fillerRow, setFillerRow] = useState({ top: 0, bottom: '0' });
+    const [fillerRow, setFillerRow] = useState({ top: 0, bottom: '0px' });
 
-    const onMouseWheel = event => {
-        onScroll && onScroll(event, ref.current.scrollHeight);
-    };
-
-    const onDataScroll = event => {
+    const onScroll = event => {
         console.log(event);
     };
 
@@ -79,51 +75,58 @@ export default ({ data, columns, onScroll }) => {
     const setVerticalPadding = (top, bottom) => {
         const bottomPx = top || bottom ? bottom + 'px' : 'auto';
 
+        if (fillerRow.top === top && fillerRow.bottom === bottomPx) {
+            return;
+        }
+
         setFillerRow({ top: top, bottom: bottomPx });
+    };
+
+    const _update = () => {
+        const scrollContainer = ref.current;
+        const clientHeight = scrollContainer.clientHeight;
+        let scrollTop = scrollContainer.scrollTop;
+        const currentScrollTop = scrollTop;
+        const maxScrollTop = Math.max(0, _contentHeight() - clientHeight);
+        scrollTop = Math.min(maxScrollTop, scrollTop);
+        const viewportState = _calculateVisibleNodes(clientHeight, scrollTop);
+        const visibleNodes = viewportState.visibleNodes;
+
+        setRow(visibleNodes);
+
+        setVerticalPadding(
+            viewportState.topPadding,
+            viewportState.bottomPadding
+        );
+
+        if (scrollTop !== currentScrollTop) {
+            scrollContainer.scrollTop = scrollTop;
+        }
     };
 
     useEffect(() => {
         if (ref.current) {
-            const clientHeight = ref.current.clientHeight;
-            let scrollTop = ref.current.scrollTop;
-            const currentScrollTop = scrollTop;
-            const maxScrollTop = Math.max(0, _contentHeight() - clientHeight);
-            scrollTop = Math.min(maxScrollTop, scrollTop);
-            const viewportState = _calculateVisibleNodes(
-                clientHeight,
-                scrollTop
-            );
-            const visibleNodes = viewportState.visibleNodes;
-            const visibleNodesSet = new Set(visibleNodes);
+            _update();
 
-            // for (let i = 0; i < this._visibleNodes.length; ++i) {
-            //     const oldNode = this._visibleNodes[i];
-            //     if (!visibleNodesSet.has(oldNode) && oldNode.attached()) {
-            //         const element = oldNode.existingElement();
-            //         element.remove();
-            //     }
-            // }
-            // let previousElement = this.topFillerRowElement();
-            // const tBody = this.dataTableBody;
-            let offset = viewportState.offset;
+            const scrollContainer = ref.current;
+            scrollContainer.scrollTop = scrollTop;
 
-            // const lineNume = Math.floor(clientHeight / 21);
-            // const newData = data.filter((_, index) => index < lineNume);
-            setRow(visibleNodes);
-
-            setVerticalPadding(
-                viewportState.topPadding,
-                viewportState.bottomPadding
-            );
+            // window.addEventListener(
+            //     'resize',
+            //     () => {
+            //         _update();
+            //     },
+            //     true
+            // );
         }
-    }, [ref]);
+    }, [ref, scrollTop]);
 
     return (
         <div
             ref={ref}
             class="data-container"
             onMouseWheel={onMouseWheel}
-            onScroll={onDataScroll}
+            onScroll={onScroll}
         >
             <table class="data">
                 <colgroup>
@@ -268,19 +271,6 @@ export default ({ data, columns, onScroll }) => {
                             type="bottom"
                             height={0}
                         /> */}
-
-                    {/* <tr
-                            class="data-grid-filler-row revealed"
-                            style="height: 0;"
-                        >
-                            <td class="bottom-filler-td"></td>
-                            <td class="bottom-filler-td"></td>
-                            <td class="bottom-filler-td"></td>
-                            <td class="bottom-filler-td"></td>
-                            <td class="bottom-filler-td"></td>
-                            <td class="bottom-filler-td"></td>
-                            <td class="corner bottom-filler-td"></td>
-                        </tr> */}
 
                     <tr
                         class="data-grid-filler-row revealed"
