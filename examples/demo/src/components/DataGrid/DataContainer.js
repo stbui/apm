@@ -33,6 +33,19 @@ export default ({ data, columns, scrollTop, onMouseWheel }) => {
         console.log(event);
     };
 
+    const scheduleUpdate = isFromUser => {
+        if (this._stickToBottom && isFromUser) {
+            this._stickToBottom = this.scrollContainer.isScrolledToBottom();
+        }
+        this._updateIsFromUser = this._updateIsFromUser || isFromUser;
+        if (this._updateAnimationFrameId) {
+            return;
+        }
+        this._updateAnimationFrameId = this.element
+            .window()
+            .requestAnimationFrame(this._update.bind(this));
+    };
+
     const _contentHeight = () => {
         const nodes = data;
         let result = 0;
@@ -111,13 +124,13 @@ export default ({ data, columns, scrollTop, onMouseWheel }) => {
             const scrollContainer = ref.current;
             scrollContainer.scrollTop = scrollTop;
 
-            // window.addEventListener(
-            //     'resize',
-            //     () => {
-            //         _update();
-            //     },
-            //     true
-            // );
+            window.addEventListener(
+                'resize',
+                () => {
+                    // _update();
+                },
+                true
+            );
         }
     }, [ref, scrollTop]);
 

@@ -234,6 +234,7 @@ export default () => {
                     </SplitWidget.Main>
                     <SplitWidget.Sidebar onRef={onRef} width={200}>
                         <NetworkWaterfallColumn
+                            data={data}
                             width={200}
                             height={height}
                             onMouseWheel={onWaterfallMouseWheel}

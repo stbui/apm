@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 
-export default ({ children, width, height, onMouseWheel }) => {
+export default ({ children, data, width, height, onMouseWheel }) => {
     const ref = useRef();
 
     const _buildRequestTimeRangeStyle = () => {
@@ -81,7 +81,7 @@ export default ({ children, width, height, onMouseWheel }) => {
         context.rect(0, 0, width, height);
         context.clip();
 
-        for (let i = 0; i < 21; i++) {
+        for (let i = 0; i < data.length; i++) {
             const rowOffset = 21 * i;
 
             context.save();
