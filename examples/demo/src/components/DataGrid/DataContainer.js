@@ -119,10 +119,11 @@ export default ({ data, columns, scrollTop, onMouseWheel }) => {
             // if (element !== previousElement.nextSibling) {
             //     tBody.insertBefore(element, previousElement.nextSibling);
             // }
+            tBody.push(element);
             previousElement = element;
         }
 
-        setRow(visibleNodes);
+        setRow(tBody);
 
         setVerticalPadding(viewportState.topPadding, viewportState.bottomPadding);
 

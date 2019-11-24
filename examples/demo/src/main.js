@@ -4,36 +4,33 @@
 import React, { render, useState } from 'react';
 import './style/index.scss';
 
-import {
-    RootView,
-    TabbedPane,
-    Toolbar,
-    ToolbarButton,
-    Icon,
-    SplitWidget,
-} from './components';
+import { RootView, TabbedPane, Toolbar, ToolbarButton, Icon, SplitWidget } from './components';
 import Element from './Element';
 import Network from './Network';
 import Console from './Console';
 import Timeline from './Timeline';
 import Resources from './Resources';
+import View from './View';
 import { WebSocketConnection } from './sdk/Connections';
 
 const renderModule = module => {
     switch (module) {
         case 0: {
-            return <Element />;
+            return <View />;
         }
         case 1: {
-            return <Console />;
+            return <Element />;
         }
         case 2: {
             return <Console />;
         }
         case 3: {
-            return <Network />;
+            return <Console />;
         }
         case 4: {
+            return <Network />;
+        }
+        case 5: {
             return <Timeline />;
         }
         case 6: {
@@ -46,6 +43,7 @@ const renderModule = module => {
 };
 
 const tablistData = [
+    { label: 'View', width: 45 },
     { label: 'Elements', width: 73 },
     { label: 'Console', width: 68 },
     { label: 'Sources', width: 68 },
@@ -58,7 +56,7 @@ const tablistData = [
 ];
 
 const Home = () => {
-    const [module, setModule] = useState(3);
+    const [module, setModule] = useState(4);
 
     const onTabbedPaneChange = key => {
         setModule(key);
@@ -81,16 +79,10 @@ const Home = () => {
                                                 headerLeft={
                                                     <Toolbar>
                                                         <ToolbarButton>
-                                                            <Icon
-                                                                type="largeicons"
-                                                                coordinates="-140px 96px"
-                                                            />
+                                                            <Icon type="largeicons" coordinates="-140px 96px" />
                                                         </ToolbarButton>
                                                         <ToolbarButton>
-                                                            <Icon
-                                                                type="largeicons"
-                                                                coordinates="-112px 72px"
-                                                            />
+                                                            <Icon type="largeicons" coordinates="-112px 72px" />
                                                         </ToolbarButton>
                                                         <div class="toolbar-divider toolbar-item"></div>
                                                     </Toolbar>
@@ -99,10 +91,7 @@ const Home = () => {
                                                     <Toolbar>
                                                         <div class="toolbar-divider toolbar-item"></div>
                                                         <ToolbarButton>
-                                                            <Icon
-                                                                type="largeicons"
-                                                                coordinates="-56px 96px"
-                                                            />
+                                                            <Icon type="largeicons" coordinates="-56px 96px" />
                                                         </ToolbarButton>
                                                     </Toolbar>
                                                 }
@@ -124,9 +113,7 @@ const Home = () => {
 };
 
 window.onload = function() {
-    const ws = new WebSocket(
-        'ws://localhost:9222/devtools/page/6F1DFF456B28EC7C246772266758CAAE'
-    );
+    const ws = new WebSocket('ws://localhost:9222/devtools/page/6F1DFF456B28EC7C246772266758CAAE');
 
     ws.onopen = function() {
         console.log('client：打开连接');

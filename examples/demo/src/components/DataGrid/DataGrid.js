@@ -198,10 +198,7 @@ export default ({ children, data, columns, onBodyScroll }) => {
                                 <th class={`${column.id}-column sortable`}>
                                     <div>{column.title}</div>
                                     <div class="sort-order-icon-container">
-                                        <span
-                                            is="ui-icon"
-                                            class="sort-order-icon"
-                                        ></span>
+                                        <span is="ui-icon" class="sort-order-icon"></span>
                                     </div>
                                 </th>
                             ))}
@@ -218,6 +215,8 @@ export default ({ children, data, columns, onBodyScroll }) => {
                 columns={columns}
                 data={data}
             /> */}
+
+            <div class="data-grid-resizer" style={{ cursor: 'col-resize', left: columns[0].width + 'px' }}></div>
         </div>
     );
 };
