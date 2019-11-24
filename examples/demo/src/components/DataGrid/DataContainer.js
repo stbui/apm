@@ -8,11 +8,7 @@ const GridFilterRow = ({ columns = [], type = 'top', height = 0 }) => {
     }, [ref]);
 
     return (
-        <tr
-            ref={ref}
-            class="data-grid-filler-row revealed"
-            style={{ height: height + 'px' }}
-        >
+        <tr ref={ref} class="data-grid-filler-row revealed" style={{ height: height + 'px' }}>
             {columns.map(column => (
                 <th class={`${type}-filler-td`} scope="col">
                     {column.title}
@@ -26,24 +22,20 @@ const GridFilterRow = ({ columns = [], type = 'top', height = 0 }) => {
 
 export default ({ data, columns, scrollTop, onMouseWheel }) => {
     const ref = useRef();
+    const refTopFiller = useRef();
     const [row, setRow] = useState([]);
     const [fillerRow, setFillerRow] = useState({ top: 0, bottom: '0px' });
 
-    const onScroll = event => {
-        console.log(event);
-    };
+    let _stickToBottom = false;
+    let _updateIsFromUser = false;
+    let _lastScrollTop = 0;
+    let _firstVisibleIsStriped = false;
+    let _isStriped = false;
 
-    const scheduleUpdate = isFromUser => {
-        if (this._stickToBottom && isFromUser) {
-            this._stickToBottom = this.scrollContainer.isScrolledToBottom();
-        }
-        this._updateIsFromUser = this._updateIsFromUser || isFromUser;
-        if (this._updateAnimationFrameId) {
-            return;
-        }
-        this._updateAnimationFrameId = this.element
-            .window()
-            .requestAnimationFrame(this._update.bind(this));
+    let _updateAnimationFrameId;
+
+    const topFillerRowElement = () => {
+        return refTopFiller.current;
     };
 
     const _contentHeight = () => {
@@ -96,24 +88,74 @@ export default ({ data, columns, scrollTop, onMouseWheel }) => {
     };
 
     const _update = () => {
+        if (_updateAnimationFrameId) {
+            document
+                .getElementsByClassName('data-grid')[0]
+                .ownerDocument.defaultView.cancelAnimationFrame(_updateAnimationFrameId);
+            _updateAnimationFrameId = undefined;
+        }
+
         const scrollContainer = ref.current;
         const clientHeight = scrollContainer.clientHeight;
         let scrollTop = scrollContainer.scrollTop;
         const currentScrollTop = scrollTop;
         const maxScrollTop = Math.max(0, _contentHeight() - clientHeight);
+        if (!_updateIsFromUser && _stickToBottom) {
+            scrollTop = maxScrollTop;
+        }
+        _updateIsFromUser = false;
         scrollTop = Math.min(maxScrollTop, scrollTop);
         const viewportState = _calculateVisibleNodes(clientHeight, scrollTop);
         const visibleNodes = viewportState.visibleNodes;
 
+        let previousElement = topFillerRowElement();
+        let offset = viewportState.offset;
+        let tBody = [];
+
+        for (let i = 0; i < visibleNodes.length; ++i) {
+            const node = visibleNodes[i];
+            console.log(node);
+            const element = node;
+            // if (element !== previousElement.nextSibling) {
+            //     tBody.insertBefore(element, previousElement.nextSibling);
+            // }
+            previousElement = element;
+        }
+
         setRow(visibleNodes);
 
-        setVerticalPadding(
-            viewportState.topPadding,
-            viewportState.bottomPadding
-        );
+        setVerticalPadding(viewportState.topPadding, viewportState.bottomPadding);
 
+        _lastScrollTop = scrollTop;
         if (scrollTop !== currentScrollTop) {
             scrollContainer.scrollTop = scrollTop;
+        }
+    };
+
+    const scheduleUpdate = isFromUser => {
+        const scrollContainer = ref.current;
+
+        if (_stickToBottom && isFromUser) {
+            _stickToBottom =
+                Math.abs(scrollContainer.scrollTop + scrollContainer.clientHeight - scrollContainer.scrollHeight) <= 2;
+        }
+        _updateIsFromUser = _updateIsFromUser || isFromUser;
+        if (_updateAnimationFrameId) {
+            return;
+        }
+        _updateAnimationFrameId = document
+            .getElementsByClassName('data-grid')[0]
+            .ownerDocument.defaultView.requestAnimationFrame(_update);
+    };
+
+    const onScroll = event => {
+        const scrollContainer = ref.current;
+
+        _stickToBottom =
+            Math.abs(scrollContainer.scrollTop + scrollContainer.clientHeight - scrollContainer.scrollHeight) <= 2;
+
+        if (_lastScrollTop !== scrollContainer.scrollTop) {
+            scheduleUpdate(true);
         }
     };
 
@@ -135,12 +177,7 @@ export default ({ data, columns, scrollTop, onMouseWheel }) => {
     }, [ref, scrollTop]);
 
     return (
-        <div
-            ref={ref}
-            class="data-container"
-            onMouseWheel={onMouseWheel}
-            onScroll={onScroll}
-        >
+        <div ref={ref} class="data-container" onMouseWheel={onMouseWheel} onScroll={onScroll}>
             <table class="data">
                 <colgroup>
                     {columns.map(column => (
@@ -150,38 +187,36 @@ export default ({ data, columns, scrollTop, onMouseWheel }) => {
                     <col class="corner" />
                 </colgroup>
                 <tbody>
-                    <GridFilterRow
-                        columns={columns}
-                        type="top"
-                        height={fillerRow.top}
-                    />
+                    <tr
+                        ref={refTopFiller}
+                        class="data-grid-filler-row revealed"
+                        style={{ height: fillerRow.top + 'px' }}
+                    >
+                        {columns.map(column => (
+                            <th class="top-filler-td" scope="col">
+                                {column.title}
+                            </th>
+                        ))}
+
+                        <th class="corner top-filler-td" scope="col"></th>
+                    </tr>
 
                     {row.map((row, index) => {
                         // select
                         // style="background-color: rgb(221, 238, 255);"
                         return (
                             <tr
-                                class={`data-grid-data-grid-node revealed ${
-                                    index % 2 === 1 ? 'odd' : ''
-                                }`}
+                                class={`data-grid-data-grid-node revealed ${index % 2 === 1 ? 'odd' : ''}`}
                                 style={{
-                                    'background-color':
-                                        index % 2 === 1
-                                            ? 'rgb(245, 245, 245)'
-                                            : '',
+                                    'background-color': index % 2 === 1 ? 'rgb(245, 245, 245)' : '',
                                 }}
                             >
                                 {columns.map(column => {
                                     switch (column.id) {
                                         case 'name': {
                                             return (
-                                                <td
-                                                    class={`${column.id}-column`}
-                                                >
-                                                    <img
-                                                        class={`icon document`}
-                                                        alt="Document"
-                                                    />
+                                                <td class={`${column.id}-column`}>
+                                                    <img class={`icon document`} alt="Document" />
                                                     <span class="hidden network-badge"></span>
                                                     {row[column.id]}
                                                     <div class="network-cell-subtitle"></div>
@@ -192,31 +227,19 @@ export default ({ data, columns, scrollTop, onMouseWheel }) => {
                                         case 'status': {
                                             return (
                                                 <td
-                                                    class={`${
-                                                        column.id
-                                                    }-column ${row[
-                                                        column.id
-                                                    ] === 200 &&
+                                                    class={`${column.id}-column ${row[column.id] === 200 &&
                                                         'network-dim-cell'}`}
                                                 >
                                                     {row[column.id]}
                                                     <div class="network-cell-subtitle">
-                                                        {row[column.id] === 200
-                                                            ? 'OK'
-                                                            : 'Not Modified'}
+                                                        {row[column.id] === 200 ? 'OK' : 'Not Modified'}
                                                     </div>
                                                 </td>
                                             );
                                         }
 
                                         case 'type': {
-                                            return (
-                                                <td
-                                                    class={`${column.id}-column`}
-                                                >
-                                                    {row[column.id]}
-                                                </td>
-                                            );
+                                            return <td class={`${column.id}-column`}>{row[column.id]}</td>;
                                         }
 
                                         case 'initiator': {
@@ -231,13 +254,7 @@ export default ({ data, columns, scrollTop, onMouseWheel }) => {
                                             //         Script
                                             //     </div>
                                             // </td>;
-                                            return (
-                                                <td
-                                                    class={`${column.id}-column`}
-                                                >
-                                                    {row[column.id]}
-                                                </td>
-                                            );
+                                            return <td class={`${column.id}-column`}>{row[column.id]}</td>;
                                         }
 
                                         case 'size': {
@@ -255,9 +272,7 @@ export default ({ data, columns, scrollTop, onMouseWheel }) => {
                                             return (
                                                 <td class="size-column right">
                                                     238&nbsp;B
-                                                    <div class="network-cell-subtitle">
-                                                        626&nbsp;B
-                                                    </div>
+                                                    <div class="network-cell-subtitle">626&nbsp;B</div>
                                                 </td>
                                             );
                                         }
@@ -265,9 +280,7 @@ export default ({ data, columns, scrollTop, onMouseWheel }) => {
                                             return (
                                                 <td class="time-column right">
                                                     2&nbsp;ms
-                                                    <div class="network-cell-subtitle">
-                                                        2&nbsp;ms
-                                                    </div>
+                                                    <div class="network-cell-subtitle">2&nbsp;ms</div>
                                                 </td>
                                             );
                                         }
@@ -279,16 +292,7 @@ export default ({ data, columns, scrollTop, onMouseWheel }) => {
                         );
                     })}
 
-                    {/* <GridFilterRow
-                            columns={columns}
-                            type="bottom"
-                            height={0}
-                        /> */}
-
-                    <tr
-                        class="data-grid-filler-row revealed"
-                        style={{ height: fillerRow.bottom }}
-                    >
+                    <tr class="data-grid-filler-row revealed" style={{ height: fillerRow.bottom }}>
                         <td class="bottom-filler-td"></td>
                         <td class="bottom-filler-td"></td>
                         <td class="bottom-filler-td"></td>

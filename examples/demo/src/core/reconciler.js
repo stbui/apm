@@ -7,8 +7,9 @@ export const options = {};
 export const [HOST, SVG, HOOK, PLACE, UPDATE, DELETE] = [0, 1, 2, 3, 4, 5];
 
 let preCommit = null;
-export let currentHook = null;
+export let currentFiber = null;
 let WIP = null;
+let updateQueue = [];
 let commitQueue = [];
 
 export function render(vnode, node, done) {
@@ -23,7 +24,8 @@ export function render(vnode, node, done) {
 
 export function scheduleWork(fiber, lock) {
     fiber.lock = lock;
-    WIP = fiber;
+    updateQueue.push(fiber);
+    WIP = updateQueue.shift();
     scheduleCallback(reconcileWork);
 }
 
@@ -46,8 +48,12 @@ function reconcileWork(didout) {
         commitWork(preCommit);
         return null;
     }
-    if (!didout) {
+    if (WIP && !didout) {
         return reconcileWork.bind(null);
+    }
+    if (updateQueue.length > 0) {
+        WIP = updateQueue.shift();
+        scheduleCallback(reconcileWork);
     }
     return null;
 }
@@ -71,7 +77,7 @@ function reconcile(WIP) {
 
 function updateHOOK(WIP) {
     WIP.props = WIP.props || {};
-    currentHook = WIP;
+    currentFiber = WIP;
     resetCursor();
     let children = WIP.type(WIP.props);
     if (!children.type) {
@@ -162,11 +168,10 @@ function commitWork(fiber) {
     commitQueue.forEach(c => {
         if (c.parent) commit(c);
     });
-    commitQueue = [];
-
-    WIP = null;
-    preCommit = null;
     fiber.done && fiber.done();
+    commitQueue = [];
+    preCommit = null;
+    WIP = null;
 }
 
 function commit(fiber) {
@@ -175,14 +180,15 @@ function commit(fiber) {
     let dom = fiber.node;
     let ref = fiber.ref;
     if (op === DELETE) {
-        defer(fiber);
+        defer(fiber, (dom = null));
+        delRef(fiber.kids);
         while (fiber.tag === HOOK) fiber = fiber.child;
         parent.removeChild(fiber.node);
-        fiber.node = dom = null;
     } else if (fiber.tag === HOOK) {
         defer(fiber);
     } else if (op === UPDATE) {
         updateElement(dom, fiber.alternate.props, fiber.props);
+        refer(ref, null);
     } else {
         let point = fiber.insertPoint ? fiber.insertPoint.node : null;
         let after = point ? point.nextSibling : parent.firstChild;
@@ -190,7 +196,7 @@ function commit(fiber) {
         if (after === null && dom === parent.lastChild) return;
         parent.insertBefore(dom, after);
     }
-    if (ref) isFn(ref) ? ref(dom) : (ref.current = dom);
+    refer(ref, dom);
 }
 
 function createFiber(vnode, op) {
@@ -206,24 +212,21 @@ function hashfy(arr) {
     arrayfy(arr).forEach(item => {
         if (item.pop) {
             item.forEach(item => {
-                item.key
-                    ? (out['.' + i + '.' + item.key] = item)
-                    : (out['.' + i + '.' + j] = item) && j++;
+                item.key ? (out['.' + i + '.' + item.key] = item) : (out['.' + i + '.' + j] = item) && j++;
             });
             i++;
         } else {
-            item.key
-                ? (out['.' + item.key] = item)
-                : (out['.' + i] = item) && i++;
+            item.key ? (out['.' + item.key] = item) : (out['.' + i] = item) && i++;
         }
     });
     return out;
 }
 
 export const isFn = fn => typeof fn === 'function';
+let raf = requestAnimationFrame || setTimeout;
 
 function defer(fiber) {
-    requestAnimationFrame(() => {
+    raf(() => {
         if (fiber.hooks) {
             fiber.hooks.cleanup.forEach(c => c());
             fiber.hooks.effect.forEach((e, i) => {
@@ -231,6 +234,20 @@ function defer(fiber) {
                 if (res) fiber.hooks.cleanup[i] = res;
             });
             fiber.hooks.effect = [];
+        }
+    });
+}
+
+function refer(ref, dom) {
+    if (ref) isFn(ref) ? ref(dom) : (ref.current = dom);
+}
+
+function delRef(kids) {
+    raf(() => {
+        for (const k in kids) {
+            const kid = kids[k];
+            refer(kid.ref, null);
+            if (kid.kids) delRef(kid.kids);
         }
     });
 }

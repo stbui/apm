@@ -15,7 +15,7 @@ export default ({ children }) => {
                         aria-hidden="true"
                         style="height: 0px; color: transparent;"
                     >
-                        ﻿
+                        &#65279;
                     </div>
                     <div
                         tabindex="0"
@@ -35,7 +35,7 @@ export default ({ children }) => {
                                             tabindex="-1"
                                         >
                                             log.js?1afd:24
-                                        </span>{' '}
+                                        </span>
                                     </span>
                                     <span class="hidden console-message-badge"></span>
                                     <span class="console-message-text">
@@ -64,7 +64,7 @@ export default ({ children }) => {
                                     <span class="console-message-text">
                                         <span style="contain: paint; display: inline-block; max-width: 100%; font-weight: bold;">
                                             Download the React DevTools for a
-                                            better development experience:{' '}
+                                            better development experience:
                                             <span
                                                 class="devtools-link"
                                                 role="link"
@@ -121,7 +121,7 @@ export default ({ children }) => {
                                                     tabindex="-1"
                                                 >
                                                     VM3351:1
-                                                </span>{' '}
+                                                </span>
                                             </span>
                                             <span class="console-message-text">
                                                 <span class="object-value-number source-code">
@@ -198,10 +198,10 @@ export default ({ children }) => {
                                                     tabindex="-1"
                                                 >
                                                     VM3366:1
-                                                </span>{' '}
+                                                </span>
                                             </span>
                                             <span class="console-message-text">
-                                                Uncaught{' '}
+                                                Uncaught
                                                 <span class="object-value-error source-code">
                                                     ReferenceError: apm is not
                                                     defined at
@@ -225,7 +225,7 @@ export default ({ children }) => {
                         aria-hidden="true"
                         style="height: 0px; color: transparent;"
                     >
-                        ﻿
+                        &#65279;
                     </div>
 
                     <ConsolePrompt />

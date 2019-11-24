@@ -196,25 +196,29 @@ export default () => {
 
     let _lastWheelTime = 0;
 
-    const onScroll = event => {
-        const waterfallScroller = refWaterfallScroll.current;
-        const hasRecentWheel = Date.now() - _lastWheelTime < 80;
+    const _updateScrollerWidthIfNeeded = () => {};
 
-        waterfallScroller.scrollBy({
-            top: -event.wheelDeltaY,
-            behavior: hasRecentWheel ? 'instant' : 'smooth',
-        });
-
-        _lastWheelTime = Date.now();
-        // console.log(waterfallScroller.scrollTop);
-
-        // setWaterfallContentHeigth(scrollHeight);
+    const _syncScrollers = waterfallScroller => {
+        _updateScrollerWidthIfNeeded();
         setDataGridBodyScrollTop(waterfallScroller.scrollTop);
     };
 
-    const onWaterfallMouseWheel = event => {
-        onScroll(event);
+    const _onMouseWheel = (event, shouldConsume) => {
+        if (shouldConsume) {
+            event.stopImmediatePropagation();
+            event.preventDefault();
+        }
+
+        const waterfallScroller = refWaterfallScroll.current;
+        const hasRecentWheel = Date.now() - _lastWheelTime < 80;
+
+        waterfallScroller.scrollBy({ top: -event.wheelDeltaY, behavior: hasRecentWheel ? 'instant' : 'smooth' });
+        _syncScrollers(waterfallScroller);
+        _lastWheelTime = Date.now();
     };
+
+    const onWaterfallMouseWheel = event => _onMouseWheel(event, false);
+    const onDataGridBodyMouseWheel = event => _onMouseWheel(event, true);
 
     return (
         <div class="widget vbox" id="network-container">
@@ -227,7 +231,7 @@ export default () => {
                                     columns={columns}
                                     data={data}
                                     scrollTop={dataGridBodyScrollTop}
-                                    onMouseWheel={onWaterfallMouseWheel}
+                                    onMouseWheel={onDataGridBodyMouseWheel}
                                 ></DataGrid.Body>
                             </DataGrid>
                         </div>
@@ -239,10 +243,7 @@ export default () => {
                             height={height}
                             onMouseWheel={onWaterfallMouseWheel}
                         >
-                            <div
-                                ref={refWaterfallScroll}
-                                class="network-waterfall-v-scroll small"
-                            >
+                            <div ref={refWaterfallScroll} class="network-waterfall-v-scroll small">
                                 <div
                                     class="network-waterfall-v-scroll-content"
                                     style={{
