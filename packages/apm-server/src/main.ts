@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { Logger } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { TypeormExceptionFilter } from './common/filters/typeorm-exception.filter';
+import * as bodyParser from 'body-parser';
 
 import { Config } from './config/config';
 import { AppModule } from './app.module';
@@ -10,6 +11,8 @@ async function bootstrap() {
     const app = await NestFactory.create(AppModule);
 
     // app.setGlobalPrefix('v1');
+    app.use(bodyParser.json({ limit: '50mb' }));
+
 
     app.useGlobalFilters(new TypeormExceptionFilter());
 

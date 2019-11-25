@@ -56,7 +56,7 @@ const tablistData = [
 ];
 
 const Home = () => {
-    const [module, setModule] = useState(4);
+    const [module, setModule] = useState(0);
 
     const onTabbedPaneChange = key => {
         setModule(key);
