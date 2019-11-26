@@ -1,16 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-const renderElem = ({ tagName, attributes, childNodes, nodeType, textContent }) => {
+const renderElem = ({ tagName, attributes, childNodes, nodeType, textContent, id }) => {
     let elem = document.createElement(tagName);
     if (nodeType === 1) {
         elem = document.createElement(tagName);
+        elem.id = id;
     } else if (nodeType === 3) {
         elem = document.createTextNode(textContent);
+        elem.id = id;
     } else if (nodeType === 8) {
         elem = new Comment(textContent);
     }
 
-    if (attributes) {
+    if (attributes && tagName !== 'SCRIPT') {
         attributes.forEach(({ name, value }) => {
             elem.setAttribute(name, value);
         });
@@ -42,6 +44,7 @@ export default ({ children, nodes, ...other }) => {
     const getDocument = () => {
         // const _window = element.contentWindow;
         // const _document = element.contentDocument;
+        // ref.current.contentDocument.documentElement
         return ref.current.contentDocument;
     };
 
@@ -56,7 +59,7 @@ export default ({ children, nodes, ...other }) => {
 
         const rootApp = render(nodes);
 
-        console.log(rootApp);
+        console.log(ref.current.contentDocument.documentElement);
 
         // getDocument().body.appendChild(rootApp);
         getDocument()
@@ -74,7 +77,7 @@ export default ({ children, nodes, ...other }) => {
         if (ref.current) {
             initial();
         }
-    }, []);
+    }, [nodes]);
 
     return <iframe {...other} ref={ref} sandbox="allow-scripts allow-same-origin"></iframe>;
 };
