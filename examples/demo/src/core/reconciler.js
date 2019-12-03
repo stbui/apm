@@ -3,14 +3,15 @@ import { resetCursor } from './hooks';
 import { scheduleCallback, shouldYeild } from './scheduler';
 import { createText } from './h';
 
-export const options = {};
+export var options = {};
 export const [HOST, SVG, HOOK, PLACE, UPDATE, DELETE] = [0, 1, 2, 3, 4, 5];
 
 let preCommit = null;
-export let currentFiber = null;
+let currentFiber = options.currentFiber || null;
 let WIP = null;
 let updateQueue = [];
 let commitQueue = [];
+const EMPTY_OBJ = {};
 
 export function render(vnode, node, done) {
     let rootFiber = {
@@ -25,12 +26,14 @@ export function render(vnode, node, done) {
 export function scheduleWork(fiber, lock) {
     fiber.lock = lock;
     updateQueue.push(fiber);
-    WIP = updateQueue.shift();
     scheduleCallback(reconcileWork);
 }
 
 function reconcileWork(didout) {
     let suspend = null;
+    if (!WIP) {
+        WIP = updateQueue.shift();
+    }
     while (WIP && (!shouldYeild() || didout)) {
         try {
             WIP = reconcile(WIP);
@@ -40,6 +43,7 @@ function reconcileWork(didout) {
                 WIP = null;
                 e.then(() => {
                     WIP = suspend;
+                    reconcileWork(true);
                 });
             } else throw e;
         }
@@ -48,12 +52,8 @@ function reconcileWork(didout) {
         commitWork(preCommit);
         return null;
     }
-    if (WIP && !didout) {
+    if ((!didout && WIP) || updateQueue.length > 0) {
         return reconcileWork.bind(null);
-    }
-    if (updateQueue.length > 0) {
-        WIP = updateQueue.shift();
-        scheduleCallback(reconcileWork);
     }
     return null;
 }
@@ -76,7 +76,7 @@ function reconcile(WIP) {
 }
 
 function updateHOOK(WIP) {
-    WIP.props = WIP.props || {};
+    WIP.props = WIP.props || EMPTY_OBJ;
     currentFiber = WIP;
     resetCursor();
     let children = WIP.type(WIP.props);
@@ -84,6 +84,7 @@ function updateHOOK(WIP) {
         children = createText(children);
     }
     reconcileChildren(WIP, children);
+    return WIP;
 }
 
 function updateHost(WIP) {
@@ -97,6 +98,7 @@ function updateHost(WIP) {
     WIP.node.last = null;
     reconcileChildren(WIP, WIP.props.children);
 }
+
 function getParentNode(fiber) {
     while ((fiber = fiber.parent)) {
         if (fiber.tag < HOOK) return fiber.node;
@@ -170,6 +172,7 @@ function commitWork(fiber) {
     });
     fiber.done && fiber.done();
     commitQueue = [];
+    // updateQueue = []
     preCommit = null;
     WIP = null;
 }
@@ -223,15 +226,16 @@ function hashfy(arr) {
 }
 
 export const isFn = fn => typeof fn === 'function';
-let raf = requestAnimationFrame || setTimeout;
+let raf = typeof requestAnimationFrame === 'undefined' ? setTimeout : requestAnimationFrame;
 
 function defer(fiber) {
     raf(() => {
         if (fiber.hooks) {
-            fiber.hooks.cleanup.forEach(c => c());
+            fiber.hooks.cleanup.forEach(c => (c[1] && c[1].length === 0 ? fiber.op === DELETE && c[0]() : c[0]()));
+            fiber.hooks.cleanup = [];
             fiber.hooks.effect.forEach((e, i) => {
                 const res = e[0]();
-                if (res) fiber.hooks.cleanup[i] = res;
+                if (typeof res === 'function') fiber.hooks.cleanup[i] = [res, e[1]];
             });
             fiber.hooks.effect = [];
         }
@@ -250,4 +254,8 @@ function delRef(kids) {
             if (kid.kids) delRef(kid.kids);
         }
     });
+}
+
+export function getCurrentHook() {
+    return currentFiber || null;
 }

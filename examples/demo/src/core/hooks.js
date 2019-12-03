@@ -1,12 +1,10 @@
-import { scheduleWork, isFn, currentFiber } from './reconciler';
+import { scheduleWork, isFn, getCurrentHook } from './reconciler';
 let cursor = 0;
 
 export function resetCursor() {
     cursor = 0;
 }
-const getCurrentHook = () => {
-    return currentFiber;
-};
+
 export function useState(initState) {
     return useReducer(null, initState);
 }
@@ -15,11 +13,11 @@ export function useReducer(reducer, initState) {
     const hook = getHook(cursor++);
     const current = getCurrentHook();
 
-    function setter(value) {
+    const setter = useCallback(value => {
         let newValue = reducer ? reducer(hook[0], value) : isFn(value) ? value(hook[0]) : value;
         hook[0] = newValue;
         scheduleWork(current, true);
-    }
+    }, []);
 
     if (hook.length) {
         return [hook[0], setter];
@@ -64,6 +62,6 @@ export function getHook(cursor) {
     return hooks.list[cursor];
 }
 
-function isChanged(a, b) {
+export function isChanged(a, b) {
     return !a || b.some((arg, index) => arg !== a[index]);
 }
