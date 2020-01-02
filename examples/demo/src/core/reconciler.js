@@ -1,17 +1,24 @@
 import { createElement, updateElement } from './dom';
 import { resetCursor } from './hooks';
-import { scheduleCallback, shouldYeild } from './scheduler';
+import { scheduleCallback, shouldYeild, planWork } from './scheduler';
 import { createText } from './h';
 
-export var options = {};
-export const [HOST, SVG, HOOK, PLACE, UPDATE, DELETE] = [0, 1, 2, 3, 4, 5];
+const HOST = 0;
+const HOOK = 1;
+
+const NOWORK = 0;
+const PLACE = 1;
+const UPDATE = 2;
+const DELETE = 3;
+
+export const SVG = 4;
+export const options = {};
 
 let preCommit = null;
-let currentFiber = options.currentFiber || null;
+let currentFiber = null;
 let WIP = null;
 let updateQueue = [];
 let commitQueue = [];
-const EMPTY_OBJ = {};
 
 export function render(vnode, node, done) {
     let rootFiber = {
@@ -23,52 +30,42 @@ export function render(vnode, node, done) {
     scheduleWork(rootFiber);
 }
 
-export function scheduleWork(fiber, lock) {
-    fiber.lock = lock;
-    updateQueue.push(fiber);
+export function scheduleWork(fiber) {
+    if (!fiber.dirty && (fiber.dirty = true)) {
+        updateQueue.push(fiber);
+    }
     scheduleCallback(reconcileWork);
 }
 
 function reconcileWork(didout) {
-    let suspend = null;
-    if (!WIP) {
-        WIP = updateQueue.shift();
-    }
+    if (!WIP) WIP = updateQueue.shift();
     while (WIP && (!shouldYeild() || didout)) {
         try {
             WIP = reconcile(WIP);
         } catch (e) {
-            if (!!e && typeof e.then === 'function') {
-                suspend = WIP;
-                WIP = null;
-                e.then(() => {
-                    WIP = suspend;
-                    reconcileWork(true);
-                });
-            } else throw e;
+            throw e;
         }
     }
-    if (preCommit) {
-        commitWork(preCommit);
-        return null;
-    }
-    if ((!didout && WIP) || updateQueue.length > 0) {
+    if (!didout && WIP) {
         return reconcileWork.bind(null);
     }
+    if (preCommit) commitWork(preCommit);
     return null;
 }
 
 function reconcile(WIP) {
     WIP.parentNode = getParentNode(WIP);
     WIP.tag == HOOK ? updateHOOK(WIP) : updateHost(WIP);
+    WIP.pendingProps = WIP.props;
     commitQueue.push(WIP);
 
     if (WIP.child) return WIP.child;
     while (WIP) {
-        if (WIP.lock == false || !WIP.parent) {
+        if (!preCommit && WIP.dirty === false) {
             preCommit = WIP;
+            return null;
         }
-        if (WIP.sibling && WIP.lock == null) {
+        if (WIP.sibling) {
             return WIP.sibling;
         }
         WIP = WIP.parent;
@@ -76,15 +73,19 @@ function reconcile(WIP) {
 }
 
 function updateHOOK(WIP) {
-    WIP.props = WIP.props || EMPTY_OBJ;
+    const oldProps = WIP.pendingProps;
+    const newProps = WIP.props;
+    if ((WIP.dirty === false || WIP.dirty === null) && !shouldUpdate(oldProps, newProps)) {
+        cloneChildren(WIP);
+        return;
+    }
     currentFiber = WIP;
     resetCursor();
-    let children = WIP.type(WIP.props);
+    let children = WIP.type(newProps);
     if (!children.type) {
         children = createText(children);
     }
     reconcileChildren(WIP, children);
-    return WIP;
 }
 
 function updateHost(WIP) {
@@ -136,7 +137,7 @@ function reconcileChildren(WIP, children) {
             alternate = createFiber(oldFiber, UPDATE);
             newFiber.op = UPDATE;
             newFiber = { ...alternate, ...newFiber };
-            newFiber.alternate = alternate;
+            newFiber.lastProps = alternate.props;
             if (shouldPlace(newFiber)) {
                 newFiber.op = PLACE;
             }
@@ -157,12 +158,29 @@ function reconcileChildren(WIP, children) {
     }
 
     if (prevFiber) prevFiber.sibling = null;
-    WIP.lock = WIP.lock ? false : null;
+    WIP.dirty = WIP.dirty ? false : null;
+}
+
+function cloneChildren(fiber) {
+    if (!fiber.child) return;
+
+    let child = fiber.child;
+    let newChild = child;
+    newChild.op = NOWORK;
+    fiber.child = newChild;
+    newChild.parent = fiber;
+    newChild.sibling = null;
+}
+
+function shouldUpdate(a, b) {
+    for (let i in b) if (a[i] !== b[i]) return true;
+    for (let i in a) if (!(i in b)) return true;
+    return false;
 }
 
 function shouldPlace(fiber) {
     let p = fiber.parent;
-    if (p.tag === HOOK) return p.key && !p.lock;
+    if (p.tag === HOOK) return p.key && !p.dirty;
     return fiber.key;
 }
 
@@ -172,90 +190,77 @@ function commitWork(fiber) {
     });
     fiber.done && fiber.done();
     commitQueue = [];
-    // updateQueue = []
     preCommit = null;
     WIP = null;
 }
 
 function commit(fiber) {
-    let op = fiber.op;
-    let parent = fiber.parentNode;
-    let dom = fiber.node;
-    let ref = fiber.ref;
-    if (op === DELETE) {
-        defer(fiber, (dom = null));
-        delRef(fiber.kids);
+    const { op, parentNode, node, ref, hooks } = fiber;
+    if (op === NOWORK) {
+    } else if (op === DELETE) {
+        hooks && hooks.list.forEach(cleanup);
+        cleanupRef(fiber.kids);
         while (fiber.tag === HOOK) fiber = fiber.child;
-        parent.removeChild(fiber.node);
+        parentNode.removeChild(fiber.node);
     } else if (fiber.tag === HOOK) {
-        defer(fiber);
+        if (hooks) {
+            hooks.layout.forEach(cleanup);
+            hooks.layout.forEach(effect);
+            hooks.layout = [];
+            planWork(() => {
+                hooks.effect.forEach(cleanup);
+                hooks.effect.forEach(effect);
+                hooks.effect = [];
+            });
+        }
     } else if (op === UPDATE) {
-        updateElement(dom, fiber.alternate.props, fiber.props);
-        refer(ref, null);
+        updateElement(node, fiber.lastProps, fiber.props);
     } else {
         let point = fiber.insertPoint ? fiber.insertPoint.node : null;
-        let after = point ? point.nextSibling : parent.firstChild;
-        if (after === dom) return;
-        if (after === null && dom === parent.lastChild) return;
-        parent.insertBefore(dom, after);
+        let after = point ? point.nextSibling : parentNode.firstChild;
+        if (after === node) return;
+        if (after === null && node === parentNode.lastChild) return;
+        parentNode.insertBefore(node, after);
     }
-    refer(ref, dom);
+    refer(ref, node);
 }
 
 function createFiber(vnode, op) {
     return { ...vnode, op, tag: isFn(vnode.type) ? HOOK : HOST };
 }
 
-const arrayfy = arr => (!arr ? [] : arr.pop ? arr : [arr]);
-
-function hashfy(arr) {
-    let out = {};
-    let i = 0;
-    let j = 0;
-    arrayfy(arr).forEach(item => {
-        if (item.pop) {
-            item.forEach(item => {
-                item.key ? (out['.' + i + '.' + item.key] = item) : (out['.' + i + '.' + j] = item) && j++;
-            });
-            i++;
-        } else {
-            item.key ? (out['.' + item.key] = item) : (out['.' + i] = item) && i++;
-        }
-    });
+const hashfy = c => {
+    const out = {};
+    c.pop
+        ? c.forEach((v, i) =>
+              v.pop ? v.forEach((vi, j) => (out[hs(i, j, vi.key)] = vi)) : (out[hs(i, null, v.key)] = v)
+          )
+        : (out[hs(0, null, c.key)] = c);
     return out;
-}
-
-export const isFn = fn => typeof fn === 'function';
-let raf = typeof requestAnimationFrame === 'undefined' ? setTimeout : requestAnimationFrame;
-
-function defer(fiber) {
-    raf(() => {
-        if (fiber.hooks) {
-            fiber.hooks.cleanup.forEach(c => (c[1] && c[1].length === 0 ? fiber.op === DELETE && c[0]() : c[0]()));
-            fiber.hooks.cleanup = [];
-            fiber.hooks.effect.forEach((e, i) => {
-                const res = e[0]();
-                if (typeof res === 'function') fiber.hooks.cleanup[i] = [res, e[1]];
-            });
-            fiber.hooks.effect = [];
-        }
-    });
-}
+};
 
 function refer(ref, dom) {
     if (ref) isFn(ref) ? ref(dom) : (ref.current = dom);
 }
 
-function delRef(kids) {
-    raf(() => {
-        for (const k in kids) {
-            const kid = kids[k];
-            refer(kid.ref, null);
-            if (kid.kids) delRef(kid.kids);
-        }
-    });
+function cleanupRef(kids) {
+    for (const k in kids) {
+        const kid = kids[k];
+        refer(kid.ref, null);
+        if (kid.kids) cleanupRef(kid.kids);
+    }
 }
 
-export function getCurrentHook() {
-    return currentFiber || null;
-}
+const cleanup = e => e[2] && e[2]();
+
+const effect = e => {
+    const res = e[0]();
+    if (isFn(res)) e[2] = res;
+};
+
+export const getCurrentFiber = () => currentFiber || null;
+
+export const isFn = fn => typeof fn === 'function';
+
+const hs = (i, j, k) =>
+    k != null && j != null ? '.' + i + '.' + k : j != null ? '.' + i + '.' + j : k != null ? '.' + k : '.' + i;

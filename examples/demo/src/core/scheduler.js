@@ -1,17 +1,15 @@
 import { push, pop, peek } from './heapify';
 
 let taskQueue = [];
-let currentTask = null;
 let currentCallback = null;
-let scheduling = false;
 let frameDeadline = 0;
-let frameLength = 1000 / 60;
+const frameLength = 1000 / 60;
 
 export function scheduleCallback(callback) {
     const currentTime = getTime();
-    let startTime = currentTime;
-    let timeout = 3000;
-    let dueTime = startTime + timeout;
+    const startTime = currentTime;
+    const timeout = 3000;
+    const dueTime = startTime + timeout;
 
     let newTask = {
         callback,
@@ -20,86 +18,48 @@ export function scheduleCallback(callback) {
     };
 
     push(taskQueue, newTask);
-
-    currentCallback = flushWork;
-
-    if (!scheduling) {
-        planWork();
-        scheduling = true;
-    }
-
-    return newTask;
+    currentCallback = flush;
+    planWork();
 }
 
-function flushWork(iniTime) {
-    try {
-        return workLoop(iniTime);
-    } catch (e) {
-        throw e;
-    } finally {
-        currentTask = null;
-    }
-}
-
-function workLoop(iniTime) {
+function flush(iniTime) {
     let currentTime = iniTime;
-    currentTask = peek(taskQueue);
+    let currentTask = peek(taskQueue);
 
     while (currentTask) {
         if (currentTask.dueTime > currentTime && shouldYeild()) {
             break;
         }
         let callback = currentTask.callback;
-        if (callback) {
-            currentTask.callback = null;
-            const didout = currentTask.dueTime <= currentTime;
+        currentTask.callback = null;
+        const didout = currentTask.dueTime <= currentTime;
 
-            let next = callback(didout);
-            if (next) {
-                currentTask.callback = next;
-            } else {
-                pop(taskQueue);
-            }
-        } else {
-            pop(taskQueue);
-        }
+        let next = callback(didout);
+        next ? (currentTask.callback = next) : pop(taskQueue);
 
         currentTask = peek(taskQueue);
         currentTime = getTime();
     }
 
-    if (currentTask) {
-        return true;
-    } else {
-        return false;
-    }
+    return !!currentTask;
 }
 
-function performWork() {
+function flushWork() {
     if (currentCallback) {
         let currentTime = getTime();
         frameDeadline = currentTime + frameLength;
-        let moreWork = currentCallback(currentTime);
-
-        if (moreWork) {
-            planWork();
-        } else {
-            scheduling = false;
-            currentCallback = null;
-        }
+        let more = currentCallback(currentTime);
+        more ? planWork() : (currentCallback = null);
     }
 }
 
-const planWork = (() => {
+export const planWork = (() => {
     if (typeof MessageChannel !== 'undefined') {
-        const channel = new MessageChannel();
-        const port = channel.port2;
-        channel.port1.onmessage = performWork;
-
-        return () => port.postMessage(null);
+        const { port1, port2 } = new MessageChannel();
+        port1.onmessage = flushWork;
+        return cb => (cb ? requestAnimationFrame(cb) : port2.postMessage(null));
     }
-
-    return () => setTimeout(performWork, 0);
+    return cb => setTimeout(cb || flushWork);
 })();
 
 export function shouldYeild() {
