@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { Widget, TabbedPane, Toolbar } from '../components';
 import Frame from './Frame';
 import activities from './activities.json';
+import { Sandbox } from './sandbox';
 
 import './index.scss';
 
@@ -38,21 +39,20 @@ export default () => {
 
     useEffect(() => {
         if (ref.current) {
-            const width = ref.current.clientWidth;
-            const height = ref.current.clientHeight;
-            setState({ left: (width - state.width) / 2 });
+            // const width = ref.current.clientWidth;
+            // const height = ref.current.clientHeight;
+            // setState({ left: (width - state.width) / 2 });
 
-            window.requestAnimationFrame(beginTimer);
+            // window.requestAnimationFrame(beginTimer);
+
+            const sandbox = new Sandbox({ container: ref.current });
+            sandbox.render();
         }
     }, []);
 
     return (
         <div class="widget vbox">
-            <div class="vbox flex-auto" ref={ref}>
-                <div
-                    className="cursor"
-                    style={{ left: cursorPosition.left + 'px', top: cursorPosition.top + 'px' }}
-                ></div>
+            <div class="vbox flex-auto">
                 <div
                     style={{
                         width: state.width + 'px',
@@ -61,9 +61,8 @@ export default () => {
                         marginTop: state.top + 'px',
                         marginBottom: state.bottom + 'px',
                     }}
-                >
-                    <Frame id="viewer" nodes={nodes}></Frame>
-                </div>
+                    ref={ref}
+                ></div>
             </div>
             <div className="controll">
                 <Toolbar>开始</Toolbar>
