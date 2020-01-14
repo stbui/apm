@@ -5,26 +5,35 @@ function Node(data) {
 }
 
 function Tree(data) {
-    var node = new Node(data);
-    this._root = data;
+    let node = new Node(data);
+    this._root = node;
 }
 
 Tree.prototype.traverseDF = function(callback) {
-    (function recurse(currentNode) {
-        for (var i = 0; i < currentNode.childNodes.length; i++) {
+    const recurse = currentNode => {
+        for (let i = 0; i < currentNode.childNodes.length; i++) {
             recurse(currentNode.childNodes[i]);
         }
         callback(currentNode);
-    })(this._root);
+    };
+
+    recurse(this._root);
+
+    // (function recurse(currentNode) {
+    //     for (let i = 0; i < currentNode.childNodes.length; i++) {
+    //         recurse(currentNode.childNodes[i]);
+    //     }
+    //     callback(currentNode);
+    // })(this._root);
 };
 
 Tree.prototype.traverseBF = function(callback) {
-    var queue = [];
+    let queue = [];
     queue.push(this._root);
-    var currentNode = queue.shift();
+    let currentNode = queue.shift();
 
     while (currentNode) {
-        for (var i = 0; i < currentNode.childNodes.length; i++) {
+        for (let i = 0; i < currentNode.childNodes.length; i++) {
             queue.push(currentNode.childNodes[i]);
         }
 
@@ -38,9 +47,9 @@ Tree.prototype.contains = function(callback, traversal) {
 };
 
 Tree.prototype.add = function(data, toData, traversal) {
-    var child = new Node(data);
-    var parent = null;
-    var callback = function(node) {
+    let child = new Node(data);
+    let parent = null;
+    let callback = node => {
         if (node.data === toData) {
             parent = node;
         }
@@ -57,9 +66,9 @@ Tree.prototype.add = function(data, toData, traversal) {
 };
 
 Tree.prototype.remove = function(data, traversal) {
-    var nodeToRemove = null;
+    let nodeToRemove = null;
 
-    var callback = function(node) {
+    let callback = node => {
         if (node.id === data) {
             nodeToRemove = node;
         }
@@ -68,10 +77,10 @@ Tree.prototype.remove = function(data, traversal) {
     this.contains(callback, traversal);
 
     if (nodeToRemove) {
-        var parent = nodeToRemove.parent;
-        var index;
+        let parent = nodeToRemove.parent;
+        let index;
 
-        for (var i = 0; i < parent.childNodes.length; i++) {
+        for (let i = 0; i < parent.childNodes.length; i++) {
             if (parent.childNodes[i].data === data) {
                 index = i;
             }

@@ -1,13 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 const renderElem = ({ tagName, attributes, childNodes, nodeType, textContent, id }) => {
-    let elem = document.createElement(tagName);
+    let elem;
     if (nodeType === 1) {
         elem = document.createElement(tagName);
         elem.id = id;
     } else if (nodeType === 3) {
         elem = document.createTextNode(textContent);
-        elem.id = id;
     } else if (nodeType === 8) {
         elem = new Comment(textContent);
     }
@@ -59,14 +58,14 @@ export default ({ children, nodes, ...other }) => {
 
         const rootApp = render(nodes);
 
-        console.log(ref.current.contentDocument.documentElement);
+        // console.log(ref.current.contentDocument.documentElement);
 
         // getDocument().body.appendChild(rootApp);
         getDocument()
             .querySelector('html')
             .replaceChild(rootApp.querySelector('body'), getDocument().querySelector('body'));
 
-        console.log(rootApp.querySelector('head'));
+        // console.log(rootApp.querySelector('head'));
 
         getDocument()
             .querySelector('html')
