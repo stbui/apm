@@ -46,7 +46,7 @@ export default () => {
             // window.requestAnimationFrame(beginTimer);
 
             const sandbox = new Sandbox({ container: ref.current });
-            sandbox.render();
+            sandbox.run(activities.activities[0].data.snapshot);
         }
     }, []);
 
