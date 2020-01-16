@@ -14,6 +14,8 @@ export class UserCursor {
     // 持续时间
     during = 100;
 
+    test = [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 0 }, , { x: 1, y: 0 }];
+
     constructor(container) {
         this.container = container;
         this.render();
@@ -31,8 +33,8 @@ export class UserCursor {
     // }
 
     step() {
-        const left = this.linear(this.start, this.begin, this.end, this.during);
-        this.setPositon(left);
+        const x = this.linear(this.start, this.begin, this.end, this.during);
+        this.setPositon(x);
 
         // 时间递增
         this.start++;
@@ -61,5 +63,63 @@ export class UserCursor {
         this.node = document.createElement('div');
         this.node.setAttribute('class', 'cursor');
         this.container.appendChild(this.node);
+    }
+}
+
+class UserClick {
+    clicksQueue = [];
+    playerSpeed = 1;
+    visualizationIsEnabled = true;
+
+    userClick;
+
+    constructor(userClick) {
+        this.clicksQueue = [];
+        this.visualizationIsEnabled = false;
+
+        this.userClick = userClick;
+    }
+
+    setPlayerSpeed(speed) {
+        this.playerSpeed = speed;
+    }
+
+    startClicksAnimation() {
+        if (this.visualizationIsEnabled) {
+            this.clicksQueue.forEach(click => {
+                click.startAnimation(this.playerSpeed, () => {});
+            });
+        }
+    }
+
+    stopClicksAnimation() {
+        this.clicksQueue.forEach(click => {
+            click.stopAnimation();
+        });
+    }
+
+    registerClick(a, b) {
+        if (this.visualizationIsEnabled) {
+            const _userClick = new this.userClick(a, b);
+            _userClick.startAnimation(this.playerSpeed, () => {});
+            this.clicksQueue.push(_userClick);
+        }
+    }
+
+    setShouldVisualizeClicks(a) {
+        if (a) {
+            this.visualizationIsEnabled = true;
+        } else {
+            this.removeClicksAnimation();
+        }
+    }
+
+    removeClicksAnimation() {
+        this.visualizationIsEnabled = false;
+        this.clicksQueue.forEach(click => {
+            click.remove();
+        });
+
+        this.clicksQueue = [];
     }
 }
