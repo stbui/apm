@@ -32,7 +32,7 @@ export function buildNode(n, doc) {
         return null;
     }
 
-    if (n.childNodes) {
+    if (n.childNodes && n.childNodes.length > 0) {
         for (const child of n.childNodes) {
             const childNode = buildNode(child, doc);
             if (childNode) {
@@ -68,6 +68,16 @@ export class Sandbox {
         return node;
     }
 
+    test() {
+        let nodes = activities.activities[0].data.snapshot;
+        const n = this.run(nodes);
+        setTimeout(() => {
+            this.iframe.contentDocument.removeChild(n);
+            nodes = log.session.snapshot;
+            this.run(nodes);
+        }, 3000);
+    }
+
     renderIframe() {
         this.iframe = document.createElement('iframe');
         this.iframe.setAttribute('sandbox', 'allow-same-origin');
@@ -82,15 +92,5 @@ export class Sandbox {
 
         const documentType = this.iframe.contentDocument.implementation.createDocumentType('html', '', '');
         this.iframe.contentDocument.appendChild(documentType);
-
-        // test
-        // let nodes = activities.activities[0].data.snapshot;
-
-        // const n = this.run(nodes);
-        // setTimeout(() => {
-        //     this.iframe.contentDocument.removeChild(n);
-        //     nodes = log.session.snapshot;
-        //     this.run(nodes);
-        // }, 3000);
     }
 }

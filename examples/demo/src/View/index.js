@@ -1,8 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Widget, TabbedPane, Toolbar } from '../components';
-import Frame from './Frame';
 import activities from './activities.json';
 import { Sandbox } from './sandbox';
+import { UserCursor } from './UserCursor';
 
 import './index.scss';
 
@@ -37,6 +37,28 @@ export default () => {
         }
     };
 
+    const activitie = (data, time) => {
+        let timestamp;
+        let index;
+        let g = [];
+
+        data.forEach(item => {
+            if (item.time > time) {
+                g.push(item);
+            }
+
+            timestamp = item.timestamp;
+            index = item.index;
+        });
+
+        return {
+            activities: g,
+            lastEventTimestamp: timestamp,
+            lastEventIndex: index,
+            lastLogTimestamp: timestamp,
+        };
+    };
+
     useEffect(() => {
         if (ref.current) {
             // const width = ref.current.clientWidth;
@@ -45,8 +67,15 @@ export default () => {
 
             // window.requestAnimationFrame(beginTimer);
 
+            // 鼠标
+            const userCursor = new UserCursor(ref.current);
+            userCursor.step();
+
+            // 快照
             const sandbox = new Sandbox({ container: ref.current });
             sandbox.run(activities.activities[0].data.snapshot);
+            console.log(activities);
+            const { lastEventTimestamp, lastEventIndex } = activities;
         }
     }, []);
 
