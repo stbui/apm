@@ -25,12 +25,12 @@ export class UserCursor {
         return (c * t) / d + b;
     }
 
-    // start() {
-    //     // window.requestAnimationFrame(function(time) {
-    //     //     console.log(new Date(time).getTime());
-    //     // });
-    //     // this.step();
-    // }
+    start() {
+        // window.requestAnimationFrame(function(time) {
+        //     console.log(new Date(time).getTime());
+        // });
+        // this.step();
+    }
 
     step() {
         const x = this.linear(this.start, this.begin, this.end, this.during);
@@ -98,11 +98,11 @@ class UserClick {
         });
     }
 
-    registerClick(a, b) {
+    registerClick(x, y) {
         if (this.visualizationIsEnabled) {
-            const _userClick = new this.userClick(a, b);
-            _userClick.startAnimation(this.playerSpeed, () => {});
-            this.clicksQueue.push(_userClick);
+            const cursor = new this.userClick(x, y);
+            cursor.startAnimation(this.playerSpeed, () => {});
+            this.clicksQueue.push(cursor);
         }
     }
 
