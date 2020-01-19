@@ -13,12 +13,24 @@ export const Timelline = ({
     isLive,
     isCreated,
 }) => {
+    let pauseActivityOffset = -1;
+    let timelineProgressHandleOffset = 0;
+    let timelineProgressBarWidth = 0;
+
+    let activityBlocks = [];
+    let activityIndex = -1;
+    let percent = 0;
+
+    let isEnabled = false;
+    let isBuffering = false;
+
+    let offset;
+
     const wrapperRef = useRef();
     const handleRef = useRef();
     const clickableRef = useRef();
+    const bufferBarRef = useRef();
     const [state, setState] = useState({ value: 0 });
-
-    let offset;
 
     const getClickableWith = () => clickableRef.current.width;
 
@@ -43,12 +55,6 @@ export const Timelline = ({
         return (value / width) * 100;
     };
 
-    let activityBlocks = [];
-    let activityIndex = -1;
-    let percent = 0;
-    let timelineProgressBarWidth = 0;
-    let timelineProgressHandleOffset = 0;
-
     const filterActivityBlocks = a => {
         for (var b, c, d = [], e = offset / getClickableWith(), f = 0, g = a.length; f < g; )
             for (b = a[f], d.push(b), c = b.time + e, f++; f < g && a[f].time < c; ) f++;
@@ -61,6 +67,8 @@ export const Timelline = ({
         } else if (state) {
             percent = 100;
         }
+
+        // loadedBarWidth = percent;
     };
 
     const updatetimelineProgress = _value => {
@@ -69,7 +77,7 @@ export const Timelline = ({
 
         const _percent = timelineValueToPercentage(value);
         timelineProgressBarWidth = Math.min(_percent, percent);
-        timelineProgressHandleOffset = _value - clickableWidthToPercentage(s / 2);
+        timelineProgressHandleOffset = _value - clickableWidthToPercentage(handleRef.current.clientWidth / 2);
     };
 
     const timelineProgress = value => {
@@ -111,23 +119,66 @@ export const Timelline = ({
         updateDirtyState(false);
     };
 
+    const enable = () => {
+        isEnabled = true;
+        enableTimelineHandle();
+    };
+    const disable = () => {
+        isEnabled = false;
+        disableTimelineHandle();
+    };
+
     useEffect(() => {
         offset = max - min;
     }, [min, max]);
 
+    useEffect(() => {
+        timelineProgress(value);
+    }, [value]);
+
+    useEffect(() => {
+        onRefresh(activities.length);
+    }, [activities.length]);
+
     return (
-        <div className="progress-wrapper" ref={wrapperRef} onClick={onWrapperClick}>
-            <div className="timeline-clickable-wrapper" ref={clickableRef}>
-                <div
-                    draggable
-                    axis="x"
-                    enable-handle="enableTimelineHandle"
-                    disable-handle="disableTimelineHandle"
-                    className="timeline-progress-handle"
-                    ref={handleRef}
-                ></div>
+        <div>
+            <div className="progress-wrapper" ref={wrapperRef} onClick={onWrapperClick}>
+                <div className="timeline-clickable-wrapper" ref={clickableRef}>
+                    <div
+                        draggable
+                        axis="x"
+                        enable-handle="enableTimelineHandle"
+                        disable-handle="disableTimelineHandle"
+                        className="timeline-progress-handle"
+                        ng-style="{left: timelineProgressHandleOffset + '%', 'transform-origin': timelineProgressHandleOffset + '% 30%'}"
+                        ref={handleRef}
+                    ></div>
+                </div>
+                <div className="timeline-track">
+                    <div class="timeline-activity-wrapper">
+                        <div
+                            ng-repeat="block in activityBlocks"
+                            class="timeline-activity"
+                            ng-style="{left: timelineValueToPercentage(block.time) + '%', width: '1px'}"
+                        ></div>
+                    </div>
+
+                    <div class="timeline-pause-activity-wrapper" ng-style="{left: pauseActivityOffset + '%'}">
+                        <div class="timeline-pause-activity"></div>
+                        <i class="icon ion-android-arrow-dropdown timeline-pause-activity-marker"></i>
+                    </div>
+                    <div class="timeline-progress-background" ng-style="{width: loadedBarWidth + '%'}"></div>
+                    <div class="timeline-progress-bar" ng-style="{width: timelineProgressBarWidth + '%'}"></div>
+                    <div class="timeline-buffering-animation" ng-show="isBuffering"></div>
+                    <div class="timeline-buffering-bar" ref={bufferBarRef}></div>
+                </div>
             </div>
-            <div className="timeline-track"></div>
+
+            <div class="timeline-value" layout-align="center center" layout="column">
+                <span layout="row">
+                    <span> value | momentformat / max | momentformat </span>
+                </span>
+            </div>
         </div>
     );
 };

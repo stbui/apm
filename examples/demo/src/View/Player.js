@@ -39,37 +39,86 @@ const Player = ({
     api,
     isCatchingUpWithLive,
 }) => {
-    const da = () => {
-        s.isPlaying = false;
+    const isPlaying = false;
+    const timelineMin = 0;
+    const timelineMax = 0;
+    const arePlayerButtonsEnabled = 0;
+    const sessionScreenWidth = 0;
+    const sessionScreenHeight = 0;
+    const renderingProgress = 0;
+    const speedOptions = [
+        { label: '0.25x', value: 0.25 },
+        { label: '0.5x', value: 0.5 },
+        { label: 'Normal', value: 1 },
+        { label: '2x', value: 2 },
+        { label: '4x', value: 4 },
+    ];
+    const loadedTime = -1;
+    const steps = [];
+    const activities = [];
+    const detailsStep = 0;
+    const logStep = 0;
+    const isStreamingLive = false;
+    const shouldShowLoadingOverlay = true;
+
+    const [sessionId, setSessionId] = useState();
+
+    const stopPlay = () => {
+        isPlaying = false;
     };
+
     const isCreated = () => {
         return confg.viewerIsCreated && config.timelineIsCreated && config.stepsTimelineIsCreated && !!config.session;
     };
 
-    const astart = () => {
+    const isAutoStartAndCreated = () => {
         return autostart && isCreated();
     };
 
-    const config = {
-        togglePlaying: function() {},
-        play: function() {},
-        pause: function() {},
-        repeat: function(timelineValue, b) {
-            if (astart()) {
-                config.timelineValue = timelineValue;
-                const lastIndex = activities.findLastIndex(item => item.time <= timelineValue);
+    const togglePlaying = () => {};
+    const play = () => {};
+    const pause = () => {};
+    const repeat = (timelineValue, b) => {
+        if (isAutoStartAndCreated()) {
+            config.timelineValue = timelineValue;
+            const lastIndex = activities.findLastIndex(item => item.time <= timelineValue);
+        }
+    };
+    const showSessionDetails = () => {};
+    const onSelectedActivity = () => {};
+    const goLive = () => {};
+    const toggleConsole = () => {};
+
+    const ha = () => {
+        if (loadedTime < timelineValue) {
+        } else {
+        }
+    };
+
+    const ga = timeValue => {
+        timelineValue = timeValue;
+        ha();
+    };
+
+    const api = {
+        setSessionLength: function(max) {
+            timelineMax = max;
+            const timeValue = timelineValue || startTime;
+            if (isStreamingLive) {
+                timeValue = timelineMax;
+            }
+            ga(timeValue);
+        },
+        finishLoadingActivities: function() {
+            if (isStreamingLive) {
+                ga(timelineMax);
             }
         },
-        showSessionDetails: function() {},
-        onSelectedActivity: function() {},
-        goLive: function() {},
-        toggleConsole: function() {},
-        api: {
-            setSessionLength: function() {},
-            finishLoadingActivities: function() {},
-            addActivities: function() {},
-            startLiveStreaming: 0,
-        },
+        addActivities: function() {},
+        startLiveStreaming: function() {},
+    };
+
+    const config = {
         viewerIsCreated: false,
         timelineIsCreated: false,
         stepsTimelineIsCreated: false,
@@ -82,9 +131,9 @@ const Player = ({
 
     useEffect(() => {
         if (session) {
-            config.sessionId = session.id;
-            config.sessionScreenWidth = session.screenWidth;
-            config.sessionScreenHeight = session.screenHeight;
+            setSessionId(session.id);
+            sessionScreenWidth = session.screenWidth;
+            sessionScreenHeight = session.screenHeight;
             config.snapshotData = {
                 snapshot: session.snapshot,
                 origin: session.origin,
@@ -93,7 +142,7 @@ const Player = ({
                 left: session.left,
             };
         } else {
-            config.arePlayerButtonsEnabled = false;
+            arePlayerButtonsEnabled = false;
         }
     }, [session]);
 
@@ -158,6 +207,226 @@ const Player = ({
                 on-selected-log="onSelectedActivity"
                 update-console="updateConsole"
             ></Console>
+        </div>
+    );
+};
+
+const session = {
+    getSession: () => {},
+    getSessionLog: (sessionId, logId) => {
+        return new Promise(revolve => [], reject => {});
+    },
+    getSessionDetails: () => {},
+    getSessionLogs: () => {},
+    getSessions: () => {},
+    deleteSession: () => {},
+    deleteSessions: () => {},
+    sessionCanBeDownloaded: () => {},
+    getActivities: (sessionId, lastEvent) => {},
+    getActivitiesCount: () => {},
+    getSessionStatus: () => {},
+};
+
+class SessionDataClient {
+    ACTIVITIES_POLL_WAIT_TIME = 0;
+    SESSION_STATUS_POLL_WAIT_TIME = 3e4;
+    NO_ACTIVITIES_POLL_WAIT_TIME = 500;
+
+    constructor(sessionId, logId) {
+        this.sessionId = sessionId;
+        this.logId = logId;
+        this.lastEventTimestamp = 0;
+        this.lastEventIndex = 0;
+        this.lastLogTimestamp = 0;
+        this.timeLimit = null;
+        this.lastLoadedActivityTime = 0;
+        this.loadingActivitiesPromise;
+        this.activitiesPollerIsCanceled = true;
+    }
+
+    loadSession() {
+        if (this.logId) {
+            session.getSessionLog(this.sessionId, this.logId).then(res => {
+                this.isLive = res.session.isLive;
+            });
+        } else {
+            session.getSession(this.sessionId).then(res => {
+                this.isLive = res.session.isLive;
+            });
+        }
+    }
+    startLoadingActivities(b, c) {
+        this.stopLoadingActivities();
+        this.activitiesPollerIsCanceled = false;
+
+        // d.isFunction(b) || (b = angular.noop);
+
+        function poll(time) {
+            if (this.activitiesPollerIsCanceled && this.isLive) {
+                activitiesPoller = setTimeout(() => {
+                    this.loadActivitiesUntil(b, null, c).then(() => {
+                        poll(this.NO_ACTIVITIES_POLL_WAIT_TIME);
+                    });
+                }, time);
+            }
+        }
+
+        poll(this.ACTIVITIES_POLL_WAIT_TIME);
+    }
+    stopLoadingActivities() {
+        this.activitiesPollerIsCanceled = true;
+    }
+    startLoadingSessionStatus(b) {
+        this.stopLoadingSessionStatus();
+        this.sessionStatusPollerIsCanceled = false;
+
+        // d.isFunction(b) || (b = angular.noop)
+
+        function poll() {
+            this.sessionStatusPollerIsCanceled ||
+                setTimeout(() => {
+                    session.getSessionStatus(this.sessionId).then(res => {
+                        b(res);
+                        poll();
+                    });
+                }, this.SESSION_STATUS_POLL_WAIT_TIME);
+        }
+    }
+    stopLoadingSessionStatus() {
+        this.sessionStatusPollerIsCanceled = true;
+    }
+    getSessionStatus() {
+        return session.getSessionStatus(this.sessionId);
+    }
+    loadActivitiesUntil(a, b, c) {
+        // var d = this;
+        // d.loadingActivitiesPromise ||
+        //     (d.loadingActivitiesPromise = i.call(d, a, c).then(function(b) {
+        //         (d.loadingActivitiesPromise = null), a(b);
+        //     }));
+
+        if (!b || this.lastLoadedActivityTime < b) {
+            this.timeLimit = b;
+        }
+
+        if (!this.loadingActivitiesPromise) {
+            this.loadingActivitiesPromise = this._fetch(a, c).then(res => {
+                d.loadingActivitiesPromise = null;
+                a(b);
+            });
+        }
+
+        return this.loadingActivitiesPromise;
+    }
+
+    _fetch(a, c) {
+        const promise = Promise;
+
+        function i() {
+            if (this.timeLimit && this.lastLoadedActivityTime >= this.timeLimit) {
+                return promise.resolve({ activities: [] });
+            }
+
+            const noCache = !!this.ACTIVITIES_POLL_WAIT_TIME || !typeof this.timeLimit === 'number';
+            const lastEvent = {
+                eventsTimestamp: this.lastEventTimestamp,
+                eventsIndex: this.lastEventIndex,
+                logsTimestamp: this.lastLogTimestamp,
+                noCache: noCache,
+            };
+
+            session.getActivities(this.sessionId, lastEvent).then(res => {
+                this.isPolling = true;
+                const data = this._getActivitiesToTimeLimit(b, this.timeLimit);
+                if (0 === data.activities.length) {
+                    return promise.resolve({
+                        activities: data.activities,
+                    });
+                }
+
+                this.lastEventTimestamp = data.lastEventTimestamp || this.lastEventTimestamp;
+                this.lastEventIndex = data.lastEventIndex || this.lastEventIndex;
+                this.lastLogTimestamp = data.lastLogTimestamp || this.lastLogTimestamp;
+
+                this.lastLoadedActivityTime = this.findActivityLastTime(data.activities);
+
+                const d = {
+                    activities: data.activities,
+                    isLive: this.isLive,
+                };
+
+                a(d);
+                i();
+            });
+        }
+
+        i();
+
+        return new promise();
+    }
+
+    _getActivitiesToTimeLimit(data, timeLimit) {
+        const activities = data.activities;
+        const lastTime = this.findActivityLastTime(activities);
+
+        return lastTime && typeof timeLimit === 'number' && lastTime > timeLimit
+            ? this._findAcitvitiesToTimeLimit(activities, timeLimit)
+            : data;
+    }
+
+    findActivityLastTime(activities) {
+        const activity = loadsh.last(activities);
+        if (activity) {
+            return activity.time;
+        }
+    }
+
+    _findAcitvitiesToTimeLimit(activities, timeLimit) {
+        let lastEventTimestamp;
+        let lastEventIndex;
+        let lastLogTimestamp;
+        let newActivities = [];
+
+        activities.forEach(activity => {
+            if (!activity.time > timeLimit) {
+                newActivities.push(activity);
+            }
+
+            if (activity.id) {
+                lastLogTimestamp = activity.timestamp;
+            } else {
+                lastEventTimestamp = activity.timestamp;
+                lastEventIndex = activity.index;
+            }
+        });
+
+        return {
+            activities: newActivities,
+            lastEventTimestamp: lastEventTimestamp,
+            lastEventIndex: lastEventIndex,
+            lastLogTimestamp: lastLogTimestamp,
+        };
+    }
+}
+
+export default () => {
+    return (
+        <div>
+            <Player
+                session="session"
+                activities="activities"
+                start-time="startTime"
+                autostart="autostart"
+                selected-log-id="selectedLogId"
+                pause-activity="pauseActivity"
+                request-progress="requestProgress"
+                is-live="isLive"
+                session-was-initially-live="sessionWasInitiallyLive"
+                settings="settings"
+                errors="errors"
+                api="sessionPlayerApi"
+                is-catching-up-with-live="isCatchingUpWithLive"
+            ></Player>
         </div>
     );
 };
