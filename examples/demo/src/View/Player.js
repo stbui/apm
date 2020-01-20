@@ -7,23 +7,9 @@ import InaccessibleResourcesWarning from './Player/InaccessibleResourcesWarning'
 import StepsTimeline from './Player/StepsTimeline';
 import Timelline from './Player/Timelline';
 import Viewer from './Player/Viewer';
+import { SessionDataClient } from './Player/session';
 
-const PLAYER_CONFIG = {
-    PLAY_SPEED: 50,
-    MAX_INACTIVITY_TIME: 3e3,
-    EVENTS_BATCH_SIZE: 50,
-    EVENTS_BATCH_WAIT_TIME: 0,
-    TAB_HIDDEN_MESSAGE_TIME: 1e3,
-    GO_LIVE_DELAY_TIME: 1500,
-    LAG_TIME: 500,
-    MILLISECONDS_PER_FRAME: 33,
-};
-
-const TAB_VISIBILITY = { VISIBLE: 'visible', HIDDEN: 'hidden' };
-
-const UI_MODE = { SIMPLE: 'simple' };
-
-const Player = ({
+const SessionPlayer = ({
     session,
     isLive,
     autostart,
@@ -39,6 +25,19 @@ const Player = ({
     api,
     isCatchingUpWithLive,
 }) => {
+    const PLAYER_CONFIG = {
+        PLAY_SPEED: 50,
+        MAX_INACTIVITY_TIME: 3e3,
+        EVENTS_BATCH_SIZE: 50,
+        EVENTS_BATCH_WAIT_TIME: 0,
+        TAB_HIDDEN_MESSAGE_TIME: 1e3,
+        GO_LIVE_DELAY_TIME: 1500,
+        LAG_TIME: 500,
+        MILLISECONDS_PER_FRAME: 33,
+    };
+    const TAB_VISIBILITY = { VISIBLE: 'visible', HIDDEN: 'hidden' };
+    const UI_MODE = { SIMPLE: 'simple' };
+
     const isPlaying = false;
     const timelineMin = 0;
     const timelineMax = 0;
@@ -167,7 +166,7 @@ const Player = ({
                 select-next-step="selectNextStep"
                 enable="enableStepsTimeline"
                 disable="disableStepsTimeline"
-                selected-log-id="selectedLogId"
+                selectedLogId="selectedLogId"
                 is-created="stepsTimelineIsCreated"
                 handle-user-details-resize="handleUserDetailsResize"
                 hide-mask="hideStepsTimelineMask"
@@ -211,222 +210,123 @@ const Player = ({
     );
 };
 
-const session = {
-    getSession: () => {},
-    getSessionLog: (sessionId, logId) => {
-        return new Promise(revolve => [], reject => {});
-    },
-    getSessionDetails: () => {},
-    getSessionLogs: () => {},
-    getSessions: () => {},
-    deleteSession: () => {},
-    deleteSessions: () => {},
-    sessionCanBeDownloaded: () => {},
-    getActivities: (sessionId, lastEvent) => {},
-    getActivitiesCount: () => {},
-    getSessionStatus: () => {},
-};
-
-class SessionDataClient {
-    ACTIVITIES_POLL_WAIT_TIME = 0;
-    SESSION_STATUS_POLL_WAIT_TIME = 3e4;
-    NO_ACTIVITIES_POLL_WAIT_TIME = 500;
-
-    constructor(sessionId, logId) {
-        this.sessionId = sessionId;
-        this.logId = logId;
-        this.lastEventTimestamp = 0;
-        this.lastEventIndex = 0;
-        this.lastLogTimestamp = 0;
-        this.timeLimit = null;
-        this.lastLoadedActivityTime = 0;
-        this.loadingActivitiesPromise;
-        this.activitiesPollerIsCanceled = true;
-    }
-
-    loadSession() {
-        if (this.logId) {
-            session.getSessionLog(this.sessionId, this.logId).then(res => {
-                this.isLive = res.session.isLive;
-            });
-        } else {
-            session.getSession(this.sessionId).then(res => {
-                this.isLive = res.session.isLive;
-            });
-        }
-    }
-    startLoadingActivities(b, c) {
-        this.stopLoadingActivities();
-        this.activitiesPollerIsCanceled = false;
-
-        // d.isFunction(b) || (b = angular.noop);
-
-        function poll(time) {
-            if (this.activitiesPollerIsCanceled && this.isLive) {
-                activitiesPoller = setTimeout(() => {
-                    this.loadActivitiesUntil(b, null, c).then(() => {
-                        poll(this.NO_ACTIVITIES_POLL_WAIT_TIME);
-                    });
-                }, time);
-            }
-        }
-
-        poll(this.ACTIVITIES_POLL_WAIT_TIME);
-    }
-    stopLoadingActivities() {
-        this.activitiesPollerIsCanceled = true;
-    }
-    startLoadingSessionStatus(b) {
-        this.stopLoadingSessionStatus();
-        this.sessionStatusPollerIsCanceled = false;
-
-        // d.isFunction(b) || (b = angular.noop)
-
-        function poll() {
-            this.sessionStatusPollerIsCanceled ||
-                setTimeout(() => {
-                    session.getSessionStatus(this.sessionId).then(res => {
-                        b(res);
-                        poll();
-                    });
-                }, this.SESSION_STATUS_POLL_WAIT_TIME);
-        }
-    }
-    stopLoadingSessionStatus() {
-        this.sessionStatusPollerIsCanceled = true;
-    }
-    getSessionStatus() {
-        return session.getSessionStatus(this.sessionId);
-    }
-    loadActivitiesUntil(a, b, c) {
-        // var d = this;
-        // d.loadingActivitiesPromise ||
-        //     (d.loadingActivitiesPromise = i.call(d, a, c).then(function(b) {
-        //         (d.loadingActivitiesPromise = null), a(b);
-        //     }));
-
-        if (!b || this.lastLoadedActivityTime < b) {
-            this.timeLimit = b;
-        }
-
-        if (!this.loadingActivitiesPromise) {
-            this.loadingActivitiesPromise = this._fetch(a, c).then(res => {
-                d.loadingActivitiesPromise = null;
-                a(b);
-            });
-        }
-
-        return this.loadingActivitiesPromise;
-    }
-
-    _fetch(a, c) {
-        const promise = Promise;
-
-        function i() {
-            if (this.timeLimit && this.lastLoadedActivityTime >= this.timeLimit) {
-                return promise.resolve({ activities: [] });
-            }
-
-            const noCache = !!this.ACTIVITIES_POLL_WAIT_TIME || !typeof this.timeLimit === 'number';
-            const lastEvent = {
-                eventsTimestamp: this.lastEventTimestamp,
-                eventsIndex: this.lastEventIndex,
-                logsTimestamp: this.lastLogTimestamp,
-                noCache: noCache,
-            };
-
-            session.getActivities(this.sessionId, lastEvent).then(res => {
-                this.isPolling = true;
-                const data = this._getActivitiesToTimeLimit(b, this.timeLimit);
-                if (0 === data.activities.length) {
-                    return promise.resolve({
-                        activities: data.activities,
-                    });
-                }
-
-                this.lastEventTimestamp = data.lastEventTimestamp || this.lastEventTimestamp;
-                this.lastEventIndex = data.lastEventIndex || this.lastEventIndex;
-                this.lastLogTimestamp = data.lastLogTimestamp || this.lastLogTimestamp;
-
-                this.lastLoadedActivityTime = this.findActivityLastTime(data.activities);
-
-                const d = {
-                    activities: data.activities,
-                    isLive: this.isLive,
-                };
-
-                a(d);
-                i();
-            });
-        }
-
-        i();
-
-        return new promise();
-    }
-
-    _getActivitiesToTimeLimit(data, timeLimit) {
-        const activities = data.activities;
-        const lastTime = this.findActivityLastTime(activities);
-
-        return lastTime && typeof timeLimit === 'number' && lastTime > timeLimit
-            ? this._findAcitvitiesToTimeLimit(activities, timeLimit)
-            : data;
-    }
-
-    findActivityLastTime(activities) {
-        const activity = loadsh.last(activities);
-        if (activity) {
-            return activity.time;
-        }
-    }
-
-    _findAcitvitiesToTimeLimit(activities, timeLimit) {
-        let lastEventTimestamp;
-        let lastEventIndex;
-        let lastLogTimestamp;
-        let newActivities = [];
-
-        activities.forEach(activity => {
-            if (!activity.time > timeLimit) {
-                newActivities.push(activity);
-            }
-
-            if (activity.id) {
-                lastLogTimestamp = activity.timestamp;
-            } else {
-                lastEventTimestamp = activity.timestamp;
-                lastEventIndex = activity.index;
-            }
-        });
-
-        return {
-            activities: newActivities,
-            lastEventTimestamp: lastEventTimestamp,
-            lastEventIndex: lastEventIndex,
-            lastLogTimestamp: lastLogTimestamp,
-        };
-    }
-}
+const player = {};
 
 export default () => {
+    const PAUSE_AT_ACTIVITY_ID = 'pause_at_activity_id';
+    const USER_DETAILS_ANIMATION_TIME = 500;
+
+    const EVENT_TYPE = {
+        DOM_MUTATION: 'dom_mutation',
+        DOM_ELEMENT_VALUE_CHANGE: 'dom_element_value_change',
+        DOM_SNAPSHOT: 'dom_snapshot',
+        MOUSE_MOVE: 'mouse_move',
+        MOUSE_CLICK: 'mouse_click',
+        MOUSE_OVER: 'mouse_over',
+        MOUSE_OUT: 'mouse_out',
+        SCROLL_POSITION_CHANGE: 'scroll_position_change',
+        WINDOW_RESIZE: 'window_resize',
+        RADIO_BUTTON_CHANGE: 'radio_button_change',
+        CHECKBOX_CHANGE: 'checkbox_change',
+        VISIBILITY_CHANGE: 'visibility_change',
+        CSS_RULE_INSERT: 'css_rule_insert',
+        CSS_RULE_DELETE: 'css_rule_delete',
+    };
+
+    const SESSIONSTACK_HOVER_CLASS = '_ss-hover';
+    const PROCESS_HOVER_STYLES_CONFIG = { DELAY: 100, TIMES_TO_REPEAT: 0 };
+    const ERRORS = { SECURITY_ERROR: 'SecurityError' };
+    const VIEWER_MARGINS = { HORIZONTAL: 20, VERTICAL: 20 };
+    const SCROLL_POSITION_CHANGE = { MAX_RETRIES: 100, TIMEOUT: 50 };
+    const ELEMENTS = { HTML: 'html' };
+    // const CROSS_ORIGIN_FRAME_BACKGROUND
+
+    const LOG_OFFSET = 5000;
+    const LIVE_MODE_CONFIGS = { GO_LIVE_OFFSET_TIME: 1000, MAX_ATTEMPTS: 3 };
+    const DEMO_USER_ROLE = 'demo';
+
+    let session;
+    let isLive = false;
+    let sessionWasInitiallyLive;
+    let autostart = true;
+    let startTime = 0;
+    let errors = {};
+    let activities = [];
+    let pauseActivity;
+    let selectedLogId;
+    let requestProgress;
+    let isCatchingUpWithLive;
+
+    // 实例
+    const sessionDataClient = new SessionDataClient('sessionId', 'logId');
+    // const settings = new settings()
+    // settings.init();
+    const settings = {
+        general: { isDemo: false, playFrom: undefined, pauseAt: undefined, playLive: undefined, uiMode: undefined },
+        playback: {
+            shouldSkipProlongedInactivity: true,
+            shouldVisualizeClicks: true,
+            shouldPauseOnMarker: true,
+            speed: 1,
+        },
+    };
+
+    let pauseAt = settings.general.pauseAt;
+    let playFrom = settings.general.playFrom;
+
+    sessionDataClient.loadSession().then(res => {
+        const log = res.log;
+        session = res.session;
+        isLive = res.session.isLive;
+
+        sessionWasInitiallyLive = res.session.isLive && !settings.general.isDemo;
+
+        if (typeof pauseAt === 'number') {
+            pauseAt = Math.max(pauseAt, 0);
+            pauseAt = Math.min(pauseAt, session.length);
+            pauseActivity = { id: r, time: pauseAt };
+        } else {
+            if (log && !pauseActivity) {
+                selectedLogId = log.id;
+            }
+
+            pauseActivity = log;
+        }
+
+        if (typeof playFrom === 'number') {
+            playFrom = Math.max(playFrom, 0);
+            playFrom = Math.min(playFrom, session.length);
+            startTime = playFrom;
+        } else if (!log && pauseActivity) {
+            startTime = Math.max(0, pauseActivity.time - LOG_OFFSET);
+        } else {
+            if (log && log == pauseActivity) {
+                startTime = Math.max(0, log.time - LOG_OFFSET);
+            }
+        }
+    });
+
+    const onPlayerIsInitialized = () => {};
+    const onStartLiveStreaming = () => {};
+    const onStopLiveStreaming = () => {};
+
     return (
         <div>
-            <Player
-                session="session"
-                activities="activities"
-                start-time="startTime"
-                autostart="autostart"
-                selected-log-id="selectedLogId"
-                pause-activity="pauseActivity"
-                request-progress="requestProgress"
-                is-live="isLive"
-                session-was-initially-live="sessionWasInitiallyLive"
-                settings="settings"
-                errors="errors"
+            <SessionPlayer
+                session={session}
+                activities={activities}
+                start-time={startTime}
+                autostart={autostart}
+                selectedLogId={selectedLogId}
+                pauseActivity={pauseActivity}
+                requestProgress={requestProgress}
+                isLive={isLive}
+                sessionWasInitiallyLive={sessionWasInitiallyLive}
+                settings={settings}
+                errors={errors}
                 api="sessionPlayerApi"
-                is-catching-up-with-live="isCatchingUpWithLive"
-            ></Player>
+                isCatchingUpWithLive={isCatchingUpWithLive}
+            ></SessionPlayer>
         </div>
     );
 };
