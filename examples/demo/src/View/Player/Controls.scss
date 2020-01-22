@@ -49,6 +49,8 @@ button.button::-moz-focus-inner {
     color: #6f6f6f !important;
     z-index: 3;
     overflow: visible;
+
+    position: relative;
 }
 
 .player-controls-icon {
@@ -63,6 +65,12 @@ button.button::-moz-focus-inner {
     background-color: #363d4b;
     border-radius: 3px;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+
+    min-width: 38px !important;
+    height: 34px !important;
+    line-height: 34px !important;
+    text-transform: none !important;
+    font-size: 11px !important;
 }
 
 .player-controls-button:hover {
@@ -83,4 +91,53 @@ button.button::-moz-focus-inner {
 
 .player-aside-controls .console-button.expanded:hover {
     background-color: #00e895;
+}
+
+.icon-pause {
+    display: inline-block;
+    width: 14px;
+    height: 16px;
+    background-image: url('./pause.svg');
+}
+
+.icon-play {
+    display: inline-block;
+    width: 14px;
+    height: 16px;
+    background-image: url('./play.svg');
+}
+
+.icon-repeat {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background-image: url('./repeat.svg');
+}
+
+.icon-next {
+    display: inline-block;
+    width: 18px;
+    height: 19px;
+    background-image: url('./next.svg');
+}
+
+.icon-live {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-image: url('./live.svg');
+}
+
+.icon-live-red {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-image: url('./live-red.svg');
+}
+
+.icon-offline {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-image: url('./offline.svg');
 }
