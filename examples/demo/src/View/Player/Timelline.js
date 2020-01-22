@@ -158,7 +158,7 @@ export const Timelline = ({
     const handleRef = useRef();
     const clickableRef = useRef();
     const bufferBarRef = useRef();
-    const [state, setState] = useState({ value: 0 });
+    const [state, setState] = useState({ value });
     const [position, setPosition] = useState({
         timelineProgressBarWidth: 0,
         timelineProgressHandleOffset: 0,
@@ -175,6 +175,7 @@ export const Timelline = ({
         let value = Math.max(currentValue, min);
         value = Math.min(value, max);
         timelineProgress(value);
+        setState({ value });
     };
 
     const getCalcValue = value => {
@@ -257,6 +258,10 @@ export const Timelline = ({
         updateDirtyState(false);
     };
 
+    const onHandleDrag = e => {
+        console.log(e);
+    };
+
     // const enable = () => {
     //     isEnabled = true;
     //     enableTimelineHandle();
@@ -282,8 +287,13 @@ export const Timelline = ({
     // }, [activities.length]);
 
     return (
-        <div>
-            <div className="timeline-progress-wrapper" ref={wrapperRef} onClick={onWrapperClick}>
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <div
+                className="timeline-progress-wrapper"
+                style={{ display: 'flex', flexDirection: 'column' }}
+                ref={wrapperRef}
+                onClick={onWrapperClick}
+            >
                 <div className="timeline-clickable-wrapper" ref={clickableRef}>
                     <div
                         draggable
@@ -291,6 +301,9 @@ export const Timelline = ({
                         enable-handle="enableTimelineHandle"
                         disable-handle="disableTimelineHandle"
                         className="timeline-progress-handle"
+                        onDrag={onHandleDrag}
+                        onDragstart={onHandleDrag}
+                        onDragstop={onHandleDrag}
                         style={{
                             left: position.timelineProgressHandleOffset + '%',
                             transformOrigin: position.timelineProgressHandleOffset + '% 30%',
@@ -325,10 +338,10 @@ export const Timelline = ({
                 </div>
             </div>
 
-            <div class="timeline-value" layout-align="center center" layout="column">
+            <div class="timeline-value" style={{ display: 'flex' }} layout-align="center center" layout="column">
                 <span layout="row">
                     <span>
-                        {value} / {max}
+                        {state.value} / {max}
                     </span>
                 </span>
             </div>

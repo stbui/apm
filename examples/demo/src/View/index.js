@@ -82,7 +82,8 @@ export default () => {
     }, []);
 
     return (
-        <div>
+        <div style={{ background: '#242628' }}>
+            <div style="height: 212px;"></div>
             <Controls>
                 <Timelline min={0} max={144675} value={27451}></Timelline>
             </Controls>
