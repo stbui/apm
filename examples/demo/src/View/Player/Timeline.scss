@@ -1,0 +1,130 @@
+.timeline-clickable-wrapper {
+    position: absolute;
+    height: 13px;
+    bottom: -3px;
+    width: 100%;
+    z-index: 3;
+    transition: height 0.2s 0.5s;
+}
+
+.timeline-clickable-wrapper:hover,
+.timeline-clickable-wrapper:active {
+    height: 20px;
+    transition: height 0.2s 0s;
+}
+
+.timeline-clickable-wrapper:hover ~ .timeline-track,
+.timeline-clickable-wrapper:active ~ .timeline-track {
+    height: 10px;
+    transition-delay: 0s;
+}
+
+.timeline-clickable-wrapper:hover .timeline-progress-handle,
+.timeline-clickable-wrapper:active .timeline-progress-handle {
+    transform: scale(3.6);
+    transition-delay: 0s;
+    top: 7px !important;
+}
+
+.timeline-track {
+    overflow: hidden;
+    height: 5px;
+    z-index: 0;
+    transition: height 0.2s 0.5s;
+}
+
+.timeline-progress-wrapper {
+    position: absolute;
+    margin: 0;
+    bottom: 42px;
+    left: 0;
+    right: 2px;
+}
+
+.timeline-progress-background {
+    height: 100%;
+    background-color: #62696c;
+    position: absolute;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.timeline-progress-bar {
+    height: 100%;
+    border-radius: 3px;
+    background-color: #007afd;
+    position: absolute;
+    z-index: 2;
+    max-width: 100%;
+    transition: all 0s 0s;
+}
+
+.timeline-buffering-bar {
+    background-color: #f6f6f6;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: -2;
+    width: 100%;
+}
+
+.timeline-progress-handle {
+    position: absolute;
+    border-radius: 50%;
+    height: 5px;
+    width: 5px !important;
+    background-color: #fff;
+    box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.3);
+    box-sizing: border-box;
+    margin-top: 0px;
+    top: 5px !important;
+    left: -9px;
+    z-index: 4;
+    transition: transform 0.2s 0.5s, top 0.2s 0.5s;
+    transform-origin: 100% 30%;
+}
+
+.timeline-activity-wrapper {
+    position: relative;
+}
+
+.timeline-activity {
+    background-color: #00b46d;
+    height: 10px;
+    position: absolute;
+    z-index: 1;
+}
+
+.timeline-pause-activity-wrapper {
+    position: absolute;
+    display: none;
+    bottom: -2px;
+    height: 36px;
+    width: 0px;
+}
+
+.timeline-pause-activity {
+    background-color: #ffffff;
+    width: 2px;
+    height: 10px;
+    bottom: 0px;
+    position: absolute;
+    z-index: 4;
+}
+
+.timeline-pause-activity-marker {
+    position: relative;
+    right: 8px;
+    color: #ffffff;
+    font-size: 36px !important;
+    text-shadow: 0px 0px 5px #2e3440;
+}
+
+.timeline-value {
+    display: block;
+    margin-left: 10px;
+    margin-top: 1em;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
+}

@@ -14,7 +14,7 @@ const SessionPlayer = ({
     isLive,
     autostart,
     isTimelineDirty,
-    timelineValue,
+    // timelineValue,
     startTime,
     selectedLogId,
     requestProgress,
@@ -38,13 +38,15 @@ const SessionPlayer = ({
     const TAB_VISIBILITY = { VISIBLE: 'visible', HIDDEN: 'hidden' };
     const UI_MODE = { SIMPLE: 'simple' };
 
-    const isPlaying = false;
-    const timelineMin = 0;
-    const timelineMax = 0;
-    const arePlayerButtonsEnabled = 0;
-    const sessionScreenWidth = 0;
-    const sessionScreenHeight = 0;
-    const renderingProgress = 0;
+    let isPlaying = false;
+    let timelineMin = 0;
+    let timelineMax = 0;
+    let timelineValue = 0;
+
+    let arePlayerButtonsEnabled = 0;
+    let sessionScreenWidth = 0;
+    let sessionScreenHeight = 0;
+    let renderingProgress = 0;
     const speedOptions = [
         { label: '0.25x', value: 0.25 },
         { label: '0.5x', value: 0.5 },
@@ -52,13 +54,22 @@ const SessionPlayer = ({
         { label: '2x', value: 2 },
         { label: '4x', value: 4 },
     ];
-    const loadedTime = -1;
-    const steps = [];
-    const activities = [];
-    const detailsStep = 0;
-    const logStep = 0;
-    const isStreamingLive = false;
-    const shouldShowLoadingOverlay = true;
+    let loadedTime = -1;
+    let steps = [];
+    let activities = [];
+    let detailsStep = 0;
+    let logStep = 0;
+    let isStreamingLive = false;
+    // let isSimpleUIMode = settings.general.uiMode ===
+    let shouldShowLoadingOverlay = true;
+    // settings.playback.speedOption = function() {};
+
+    // parent
+    const viewerIsCreated = false;
+    const timelineIsCreated = false;
+    const stepsTimelineIsCreated = false;
+
+    const hasFinished = false;
 
     const [sessionId, setSessionId] = useState();
 
@@ -67,7 +78,7 @@ const SessionPlayer = ({
     };
 
     const isCreated = () => {
-        return confg.viewerIsCreated && config.timelineIsCreated && config.stepsTimelineIsCreated && !!config.session;
+        return viewerIsCreated && timelineIsCreated && stepsTimelineIsCreated && !!session;
     };
 
     const isAutoStartAndCreated = () => {
@@ -75,12 +86,13 @@ const SessionPlayer = ({
     };
 
     const togglePlaying = () => {};
+
     const play = () => {};
     const pause = () => {};
-    const repeat = (timelineValue, b) => {
+    const repeat = (value, b) => {
         if (isAutoStartAndCreated()) {
-            config.timelineValue = timelineValue;
-            const lastIndex = activities.findLastIndex(item => item.time <= timelineValue);
+            timelineValue = value;
+            const lastIndex = activities.findLastIndex(item => item.time <= value);
         }
     };
     const showSessionDetails = () => {};
@@ -117,16 +129,55 @@ const SessionPlayer = ({
         startLiveStreaming: function() {},
     };
 
-    const config = {
-        viewerIsCreated: false,
-        timelineIsCreated: false,
-        stepsTimelineIsCreated: false,
-    };
-
     const updateStepsTimeline = () => {};
 
     const refreshTimeline = () => {};
     const enableTimeline = () => {};
+
+    const poll = () => {
+        setInterval(() => {
+            const value = timelineValue + PLAYER_CONFIG.PLAY_SPEED;
+            const activitie = activities[223 + 1];
+            if (activities) {
+                timelineValue = Math.min(value, activitie.time);
+            }
+        }, PLAYER_CONFIG.PLAY_SPEED / 1);
+    };
+
+    const getMilliseconds = activityIndex => {
+        if (!isStreamingLive) {
+            return PLAYER_CONFIG.MILLISECONDS_PER_FRAME;
+        }
+
+        activityIndex = Math.min(activityIndex, activities.length - 1);
+        const time = activities[activityIndex].time;
+        const lastTime = activities[activities.length - 1].time;
+        const diff = lastTime - time;
+
+        if (diff > PLAYER_CONFIG.LAG_TIME) {
+            return 500;
+        } else {
+            return PLAYER_CONFIG.MILLISECONDS_PER_FRAME;
+        }
+    };
+
+    const compare = (activityIndex, totalIndex) => {
+        const ms = getMilliseconds(activityIndex);
+        return (
+            activityIndex < activities.length &&
+            activities[activityIndex].time >= totalIndex &&
+            activities[activityIndex].time <= totalIndex + ms
+        );
+    };
+
+    const t = (activityIndex, status) => {
+        const now = new Date();
+        const activity = activities[activityIndex].time;
+
+        for (timeValue = activity; compare(activityIndex, 1234543); ) {
+            activityIndex++;
+        }
+    };
 
     useEffect(() => {
         if (session) {
@@ -184,7 +235,7 @@ const SessionPlayer = ({
                 handleConsoleResize={handleConsoleResize}
             ></Viewer>
             <Timelline
-                min={0}
+                min={timelineMin}
                 max={timelineMax}
                 value={timelineValue}
                 isDirty={isTimelineDirty}

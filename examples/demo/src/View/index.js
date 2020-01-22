@@ -3,6 +3,8 @@ import { Widget, TabbedPane, Toolbar } from '../components';
 import activities from './activities.json';
 import { Sandbox } from './sandbox';
 import { UserCursor } from './UserCursor';
+import Timelline from './Player/Timelline';
+import Controls from './Player/Controls';
 
 import './index.scss';
 
@@ -72,37 +74,28 @@ export default () => {
             userCursor.step();
 
             // 快照
-            const sandbox = new Sandbox({ container: ref.current });
-            sandbox.run(activities.activities[0].data.snapshot);
-            console.log(activities);
-            const { lastEventTimestamp, lastEventIndex } = activities;
+            // const sandbox = new Sandbox({ container: ref.current });
+            // sandbox.run(activities.activities[0].data.snapshot);
+            // console.log(activities);
+            // const { lastEventTimestamp, lastEventIndex } = activities;
         }
     }, []);
 
     return (
-        <div class="widget vbox">
-            <div class="vbox flex-auto">
-                <div
-                    style={{
-                        width: state.width + 'px',
-                        height: state.height + 'px',
-                        marginLeft: state.left + 'px',
-                        marginTop: state.top + 'px',
-                        marginBottom: state.bottom + 'px',
-                    }}
-                    ref={ref}
-                ></div>
-            </div>
-            <div className="controll">
-                <Toolbar>开始</Toolbar>
-
-                <Toolbar>
-                    <div className="progress"></div>
-                </Toolbar>
-                <Toolbar>
-                    {duration}/{endTimer}
-                </Toolbar>
-            </div>
+        <div>
+            <Controls>
+                <Timelline min={0} max={144675} value={27451}></Timelline>
+            </Controls>
+            <div
+                style={{
+                    width: state.width + 'px',
+                    height: state.height + 'px',
+                    marginLeft: state.left + 'px',
+                    marginTop: state.top + 'px',
+                    marginBottom: state.bottom + 'px',
+                }}
+                ref={ref}
+            ></div>
         </div>
     );
 };
