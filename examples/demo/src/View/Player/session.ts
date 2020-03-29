@@ -1,7 +1,63 @@
+import { tokenManager } from './tokenManager';
+
+import mock from './mock.json';
+
+function toAccessToken(obj) {
+    var accessToken = tokenManager.getAccessToken();
+    if (accessToken && typeof obj === 'object') {
+        return Object.assign(obj, { access_token: accessToken });
+    }
+
+    return obj;
+}
 export const session = {
-    getSession: () => {},
+    getSession: sessionId => {
+        const accessToken = toAccessToken({ session_id: sessionId });
+
+        return new Promise((revolve, reject) => {
+            revolve({
+                log: null,
+                customOrigin: null,
+                askUserForStreamingPermission: false,
+                lastActivityIndex: 83,
+                session: {
+                    log: null,
+                    session: {
+                        isLive: false,
+                        isWatched: true,
+                        id: '5dda91504aea244982de72d1',
+                        browserName: 'Chrome',
+                        browserVersion: '78.0.3904.70',
+                        docType: '<!DOCTYPE html>',
+                        layoutName: 'Blink',
+                        origin: 'http://127.0.0.1:8081/test.html',
+                        os: 'OS X 10.14.6 64-bit',
+                        pageUrl: 'http://127.0.0.1:8081/test.html',
+                        screenWidth: 1623,
+                        screenHeight: 426,
+                        timestamp: 1574605136262,
+                        left: 0,
+                        top: 0,
+                        sensitiveInputFields: false,
+                        version: '61',
+                        visibilityState: 'visible',
+                        hostname: '127.0.0.1',
+                        start: 1574605136262,
+                        lastActive: 1574605145591,
+                        clientStartMilliseconds: 1574605136262,
+                        length: 9329,
+                    },
+                    customOrigin: null,
+                    askUserForStreamingPermission: false,
+                    lastActivityIndex: 83,
+                },
+            });
+        });
+    },
     getSessionLog: (sessionId, logId) => {
-        return new Promise(revolve => [], reject => {});
+        return new Promise((revolve, reject) => {
+            revolve({});
+        });
     },
     getSessionDetails: () => {},
     getSessionLogs: () => {},
@@ -9,14 +65,18 @@ export const session = {
     deleteSession: () => {},
     deleteSessions: () => {},
     sessionCanBeDownloaded: () => {},
-    getActivities: (sessionId, lastEvent) => {},
+    getActivities: (sessionId, lastEvent) => {
+        return new Promise((revolve, reject) => {
+            revolve({});
+        });
+    },
     getActivitiesCount: () => {},
     getSessionStatus: () => {},
 };
 
 export class SessionDataClient {
     ACTIVITIES_POLL_WAIT_TIME = 0;
-    SESSION_STATUS_POLL_WAIT_TIME = 3e4;
+    SESSION_STATUS_POLL_WAIT_TIME = 30000;
     NO_ACTIVITIES_POLL_WAIT_TIME = 500;
 
     constructor(sessionId, logId) {
@@ -32,20 +92,19 @@ export class SessionDataClient {
     }
 
     loadSession() {
-        const promise = Promise;
-        if (this.logId) {
-            session.getSessionLog(this.sessionId, this.logId).then(res => {
-                this.isLive = res.session.isLive;
-                promise.resolve(res);
-            });
-        } else {
-            session.getSession(this.sessionId).then(res => {
-                this.isLive = res.session.isLive;
-                promise.resolve(res);
-            });
-        }
-
-        return new Promise();
+        return new Promise((resolve, reject) => {
+            if (this.logId) {
+                session.getSessionLog(this.sessionId, this.logId).then(res => {
+                    this.isLive = res.session.isLive;
+                    resolve(res);
+                });
+            } else {
+                session.getSession(this.sessionId).then(({ session }) => {
+                    this.isLive = session.isLive;
+                    resolve(session);
+                });
+            }
+        });
     }
     startLoadingActivities(b, c) {
         this.stopLoadingActivities();
@@ -90,31 +149,32 @@ export class SessionDataClient {
     getSessionStatus() {
         return session.getSessionStatus(this.sessionId);
     }
-    loadActivitiesUntil(a, b, c) {
-        // var d = this;
-        // d.loadingActivitiesPromise ||
-        //     (d.loadingActivitiesPromise = i.call(d, a, c).then(function(b) {
-        //         (d.loadingActivitiesPromise = null), a(b);
-        //     }));
-
-        if (!b || this.lastLoadedActivityTime < b) {
-            this.timeLimit = b;
+    loadActivitiesUntil(successCallback, length, c) {
+        if (!length || this.lastLoadedActivityTime < length) {
+            this.timeLimit = length;
         }
 
-        if (!this.loadingActivitiesPromise) {
-            this.loadingActivitiesPromise = this._fetch(a, c).then(res => {
-                d.loadingActivitiesPromise = null;
-                a(b);
-            });
-        }
+        // todo
+        // if (!this.loadingActivitiesPromise) {
+        //     this.loadingActivitiesPromise = this._fetch(successCallback, c).then(res => {
+        //         this.loadingActivitiesPromise = null;
+        //         successCallback(res);
+        //     });
+        // }
 
-        return this.loadingActivitiesPromise;
+        return new Promise((resolve, reject) => {
+            const dataActivity = {
+                activities: mock,
+                isLive: this.isLive,
+            };
+            successCallback(dataActivity);
+        });
     }
 
-    _fetch(a, c) {
+    _fetch(callback, c) {
         const promise = Promise;
 
-        function i() {
+        const getActivities = () => {
             if (this.timeLimit && this.lastLoadedActivityTime >= this.timeLimit) {
                 return promise.resolve({ activities: [] });
             }
@@ -129,8 +189,8 @@ export class SessionDataClient {
 
             session.getActivities(this.sessionId, lastEvent).then(res => {
                 this.isPolling = true;
-                const data = this._getActivitiesToTimeLimit(b, this.timeLimit);
-                if (0 === data.activities.length) {
+                const data = this._getActivitiesToTimeLimit(noCache, this.timeLimit);
+                if (data.activities.length === 0) {
                     return promise.resolve({
                         activities: data.activities,
                     });
@@ -142,19 +202,19 @@ export class SessionDataClient {
 
                 this.lastLoadedActivityTime = this.findActivityLastTime(data.activities);
 
-                const d = {
+                const dataActivity = {
                     activities: data.activities,
                     isLive: this.isLive,
                 };
 
-                a(d);
-                i();
+                callback(dataActivity);
+                getActivities();
             });
-        }
+        };
 
-        i();
-
-        return new promise();
+        return new promise((resolve, reject) => {
+            resolve(mock);
+        });
     }
 
     _getActivitiesToTimeLimit(data, timeLimit) {

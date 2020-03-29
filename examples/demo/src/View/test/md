@@ -1,0 +1,34 @@
+
+
+
+pauseActivity
+shouldPauseOnMarker
+lastEventIndex
+lastEventTimestamp
+visibilityState
+lastActivityIndex
+
+hasFinished  = false
+isStreamingLive = false
+
+
+playerStarted
+playFinished
+playerStopped
+
+stopLiveStreaming
+
+isPlaying = false;
+
+activities = []
+logStep =1
+selectedLogId =
+
+
+activities[wa].time =
+
+timelineValue = activities[activities.length - 1].time;
+
+const _timelineValue = activities[timeline].time;
+const _timelineMax = activities[activities.length - 1].time;
+const lagTime = _timelineMax - _timelineValue;

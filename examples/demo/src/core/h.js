@@ -1,3 +1,7 @@
+export const isArr = Array.isArray;
+export const isStr = s => typeof s === 'string' || typeof s === 'number';
+export const MEMO = 0;
+
 export function h(type, attrs, ...args) {
     let props = attrs || {};
     let key = props.key || null;
@@ -7,9 +11,12 @@ export function h(type, attrs, ...args) {
     for (let i = 0; i < args.length; i++) {
         let vnode = args[i];
         if (vnode == null || vnode === true || vnode === false) {
-        } else if (typeof vnode === 'string' || typeof vnode === 'number') {
+        } else if (isStr(vnode)) {
             children.push(createText(vnode));
         } else {
+            while (isArr(vnode) && vnode.some(v => isArr(v))) {
+                vnode = [].concat(...vnode);
+            }
             children.push(vnode);
         }
     }
@@ -26,4 +33,13 @@ export function h(type, attrs, ...args) {
 
 export function createText(vnode) {
     return { type: 'text', props: { nodeValue: vnode } };
+}
+
+export function Fragment(props) {
+    return props.children;
+}
+
+export function memo(fn) {
+    fn.tag = MEMO;
+    return fn;
 }

@@ -7,6 +7,7 @@ const localStorageService = {
     remove: name => {},
     bind: (b, c, d, e) => {},
 };
+
 const settings = {
     get: (name, value) => {
         const currentValue = localStorageService.get(name);
@@ -27,7 +28,7 @@ const settings = {
     },
 };
 
-class playerSettings {
+class _playerSettings {
     PAGE_LOAD = 'page_load';
     LOG_LEVEL = { INFO: 'info', DEBUG: 'debug', WARN: 'warn', ERROR: 'error' };
     EVENT_TYPE = {
@@ -61,8 +62,8 @@ class playerSettings {
     constructor() {}
 
     init(config) {
-        this.settings = {};
-        this.setGeneral();
+        settings.settings = {};
+        this._setGeneral();
         this.h(config);
     }
 
@@ -76,12 +77,23 @@ class playerSettings {
             return [];
         }
 
-        var c = p(activities);
+        var c = this.p(activities);
         return o(c);
     }
 
-    p(a) {
+    o(a) {
         var c = [];
+
+        b.forEach(a, function(a) {
+            a === e ? c.push(this.EVENT_TYPE.DOM_SNAPSHOT) : c.push(a);
+        });
+
+        return c;
+    }
+
+    p(activities) {
+        var c = [];
+
         b.forEach(a.split(','), function(a) {
             c.push(a.trim());
         });
@@ -89,8 +101,8 @@ class playerSettings {
         return c;
     }
 
-    setGeneral() {
-        this.settings.general = {
+    _setGeneral() {
+        settings.settings.general = {
             playFrom: this.getQueryParameter('play_from'),
             pauseAt: this.getQueryParameter('pause_at'),
             playLive: this.getQueryParameter('play_live'),
@@ -117,7 +129,7 @@ class playerSettings {
         //     speed: 1,
         // };
         const c = j();
-        this.settings.playback = {};
+        settings.settings.playback = {};
         this.l(a, b, c);
     }
 
@@ -132,14 +144,14 @@ class playerSettings {
 
     j() {
         return {
-            shouldSkipProlongedInactivity: this.getSettingNameValue('shouldSkipProlongedInactivity', true),
-            shouldVisualizeClicks: this.getSettingNameValue('shouldVisualizeClicks', true),
-            shouldPauseOnMarker: this.getSettingNameValue('shouldPauseOnMarker', true),
-            speed: this.getSettingNameValue('speed', 1),
+            shouldSkipProlongedInactivity: this.getSettingsValue('shouldSkipProlongedInactivity', true),
+            shouldVisualizeClicks: this.getSettingsValue('shouldVisualizeClicks', true),
+            shouldPauseOnMarker: this.getSettingsValue('shouldPauseOnMarker', true),
+            speed: this.getSettingsValue('speed', 1),
         };
     }
 
-    getSettingNameValue(name, value) {
+    getSettingsValue(name, value) {
         return settings.get(name, value);
     }
 
@@ -147,10 +159,10 @@ class playerSettings {
         b.forEach(d, function(d, e) {
             var f = c[e];
             if (b.isDefined(f)) {
-                this.settings.playback[e] = f;
+                settings.settings.playback[e] = f;
             } else {
-                this.settings.playback[e] = d;
-                this.m(a, e, this.settings.playback[e]);
+                settings.settings.playback[e] = d;
+                this.m(a, e, settings.settings.playback[e]);
             }
         });
     }
@@ -161,3 +173,14 @@ class playerSettings {
         settings.bind(b, e, playback, f);
     }
 }
+
+function init() {
+    settings.settings = {};
+}
+
+function getActivitiesFilterFromUrl() {}
+
+export const playerSettings = {
+    init: init,
+    getActivitiesFilterFromUrl: getActivitiesFilterFromUrl,
+};

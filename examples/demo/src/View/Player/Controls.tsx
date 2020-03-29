@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import './Controls.scss';
 
 const Button = ({ className, onClick, children, show = true }) => {
@@ -9,7 +9,19 @@ const Button = ({ className, onClick, children, show = true }) => {
     );
 };
 
-const Controls = ({ children }) => {
+const Controls = ({
+    children,
+    hasFinished,
+    isStreamingLive,
+    isPlaying,
+    arePlayerButtonsEnabled,
+    isLive,
+    sessionWasInitiallyLive,
+    onTogglePlaying,
+    onRepeat,
+    onSelectNextStep,
+    onLive,
+}) => {
     const [state, setState] = useState({
         hasFinished: false,
         isStreamingLive: false,
@@ -21,49 +33,49 @@ const Controls = ({ children }) => {
 
     const togglePlaying = () => {
         setState(oldState => ({ ...oldState, isPlaying: !state.isPlaying }));
+        onTogglePlaying && onTogglePlaying(!state.isPlaying);
     };
-    const repeat = () => {};
-    const selectNextStep = () => {};
-    const goLive = () => {};
+
+    const repeat = () => {
+        onRepeat && onRepeat();
+    };
+    const selectNextStep = () => {
+        onSelectNextStep & onSelectNextStep();
+    };
+    const goLive = () => {
+        onLive && onLive();
+    };
 
     return (
         <div className="player-controls-container player-controls" style={{ display: 'flex', flexDirection: 'row' }}>
             <Button
                 className="player-controls-button"
                 onClick={togglePlaying}
-                disabled={!state.arePlayerButtonsEnabled}
-                show={!state.hasFinished || state.isStreamingLive}
+                disabled={!arePlayerButtonsEnabled}
+                show={!hasFinished || isStreamingLive}
             >
-                {state.isPlaying || state.isStreamingLive ? (
+                {isPlaying || isStreamingLive ? (
                     <span className="icon-pause"></span>
                 ) : (
                     <span className="icon-play"></span>
                 )}
             </Button>
-            <Button
-                show={state.hasFinished && !state.isStreamingLive}
-                className="player-controls-button"
-                onClick={repeat}
-            >
+            <Button show={hasFinished && !isStreamingLive} className="player-controls-button" onClick={repeat}>
                 <span className="icon-repeat"></span>
             </Button>
-            <Button
-                disabled={!state.arePlayerButtonsEnabled}
-                className="player-controls-button"
-                onClick={selectNextStep()}
-            >
+            <Button disabled={!arePlayerButtonsEnabled} className="player-controls-button" onClick={selectNextStep}>
                 <span className="icon-next"></span>
             </Button>
 
             <Button
-                className={`player-controls-button watch-live ${!state.isLive ? 'is-offline' : 'green'} `}
+                className={`player-controls-button watch-live ${!isLive ? 'is-offline' : 'green'} `}
                 onClick={goLive()}
-                disabled={!state.isLive}
-                show={state.sessionWasInitiallyLive && !state.isStreamingLive}
+                disabled={!isLive}
+                show={sessionWasInitiallyLive && !isStreamingLive}
             >
                 <div layout="row" layout-align="center center">
                     <div flex>
-                        {state.isLive ? (
+                        {isLive ? (
                             <span ng-switch-when="true">
                                 <span className="icon-live"></span>
                                 转直播
@@ -81,7 +93,7 @@ const Controls = ({ children }) => {
             <Button
                 className="player-controls-button watching-live"
                 disabled
-                show={state.sessionWasInitiallyLive && state.isStreamingLive}
+                show={sessionWasInitiallyLive && isStreamingLive}
             >
                 <div layout="row" layout-align="center center" style={{ display: 'flex', flexDirection: 'row' }}>
                     <div class="player-live-button-indicator live-red"></div>
