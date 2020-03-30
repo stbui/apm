@@ -4,6 +4,8 @@ import { angular } from './angular';
 import { AsyncWhile } from './AsyncWhile';
 import { timeout } from './timeout';
 
+import './Viewer.scss';
+
 const VIEWER_MARGINS = { HORIZONTAL: 20, VERTICAL: 20 };
 const SCROLL_POSITION_CHANGE = { MAX_RETRIES: 100, TIMEOUT: 50 };
 const SESSIONSTACK_HOVER_CLASS = '_ss-hover';
@@ -76,6 +78,10 @@ const Viewer = ({
     sessionId,
     handleConsoleResize,
     currentActivity,
+    snapshotData,
+    fireClear,
+    fireAttach,
+    onFireAttach,
 }) => {
     // iframe
     const viewerRef: any = useRef();
@@ -104,14 +110,15 @@ const Viewer = ({
      * @param a
      * @param callback
      */
-    function onAttach(a, callback: Function) {
+    function onAttach(callback) {
         documentNode.attach(() => {
             initialScrollPosition();
             traverseDocuments();
-            insertRule();
+            // insertRule();
 
-            if (typeof callback === 'function') {
-                callback();
+            if (typeof onFireAttach === 'function') {
+                // onFireAttach();
+                onFireAttach(callback);
             }
         });
     }
@@ -122,7 +129,7 @@ const Viewer = ({
 
         // resize && mouse_move
         for (let type in ia) {
-            const evt = getEventType(ia[type]);
+            const evt = p(ia[type]);
             evt(type);
         }
 
@@ -145,7 +152,7 @@ const Viewer = ({
      * @param position { top, left }
      */
     function executeScrollPositionChange(position: object) {
-        const setScrollPositionChange = getEventType(EVENT_TYPE.SCROLL_POSITION_CHANGE);
+        const setScrollPositionChange = p(EVENT_TYPE.SCROLL_POSITION_CHANGE);
         setScrollPositionChange(position);
     }
 
@@ -226,16 +233,16 @@ const Viewer = ({
      * @param a
      * @param c
      */
-    function onClear(a, data) {
+    function onClear(data) {
         if (data) {
             ia = {};
             ka = {};
             ja = { top: 0, left: 0 };
-            toggleVisibilityOverlay(b.initialVisibilityState);
+            toggleVisibilityOverlay(initialVisibilityState);
             G(data);
 
-            b.sessionScreenWidth = $;
-            b.sessionScreenHeight = _;
+            // b.sessionScreenWidth = $;
+            // b.sessionScreenHeight = _;
         }
     }
 
@@ -247,7 +254,7 @@ const Viewer = ({
         const type = activity.type;
         const data = activity.data;
         const eventType = p(type);
-        console.log(type, data);
+        // console.log(type, data);
         // 执行事件类型
         if (eventType && data) {
             eventType(data);
@@ -607,20 +614,23 @@ const Viewer = ({
      */
     function v(position) {
         var queue: AsyncWhile = ha[position.id];
-        const element: any = angular.element(getContentWindow(position.id));
-
+        // const element: any = angular.element(getContentWindow(position.id));
+        const element = getContentWindow(position.id);
+        console.log(1, element);
         if (queue) {
             queue.cancel();
             delete ha[position.id];
         }
 
         const condition = function() {
-            return element.scrollLeft() !== position.left || element.scrollTop() !== position.top;
+            return element.scrollLeft !== position.left || element.scrollTop !== position.top;
         };
 
         const body = function() {
-            timeout(function() {
-                element.scrollTop(position.top), element.scrollLeft(position.left);
+            timeout(() => {
+                // element.scrollTop(position.top), element.scrollLeft(position.left);
+                element.scrollTop = position.top;
+                element.scrollLeft = position.scrollLeft;
             });
         };
 
@@ -762,7 +772,6 @@ const Viewer = ({
         o(EVENT_TYPE.CSS_RULE_DELETE, deleteRule);
 
         // player
-        // c.onClear(b, onClear);
 
         // c.onAttach(b, onAttach);
         // c.onDetach(b, onDetach);
@@ -777,15 +786,29 @@ const Viewer = ({
     useEffect(() => {}, [showLoadingAnimation]);
 
     useEffect(() => {
-        // console.log(currentActivity);
         if (currentActivity) {
-            // onExecuteEvent(currentActivity);
+            onExecuteEvent(currentActivity);
         }
     }, [currentActivity]);
 
+    useEffect(() => {
+        if (fireClear) {
+            // onClear(snapshotData);
+            // onFireAttach(fireAttach);
+            // console.log(1,fireAttach)
+        }
+    }, [fireClear]);
+
+    useEffect(() => {
+        if (fireAttach) {
+            onAttach(fireAttach[0]);
+            // console.log('fireAttach', fireAttach);
+        }
+    }, [fireAttach]);
+
     if (currentActivity) {
         // console.log(currentActivity);
-        onExecuteEvent(currentActivity);
+        // onExecuteEvent(currentActivity);
     }
 
     // 组件创建状态
@@ -796,10 +819,12 @@ const Viewer = ({
     // }, [initialVisibilityState, viewerOverlay]);
 
     return (
-        <div>
-            <div className="viewer-wrapper"></div>
-            <div ref={viewerContainerRef} id="viewer-container"></div>
-            <iframe ref={viewerRef} id="viewer" sandbox="allow-scripts allow-same-origin"></iframe>
+        <div ng-style="{'margin-left': marginLeft, 'margin-top': marginTop}" style="margin-left: 20px;margin-top:50px">
+            <div className="viewer-wrapper" style={{ transform: 'scale(0.7720271102895871)' }}>
+                <div ref={viewerContainerRef} id="viewer-container" style="width: 1623px;height: 426px;">
+                    <iframe ref={viewerRef} id="viewer" sandbox="allow-scripts allow-same-origin"></iframe>
+                </div>
+            </div>
         </div>
     );
 };

@@ -163,19 +163,19 @@ function s(documentElement, element: string, attribute: string) {
     var e,
         f = this;
 
-    if (documentElement) {
-        angular
-            .element(element, documentElement)
-            .addBack(element)
-            .each(function(b, c) {
-                e = c.getAttribute(attribute);
+    // if (documentElement) {
+    //     angular
+    //         .element(element, documentElement)
+    //         .addBack(element)
+    //         .each(function(b, c) {
+    //             e = c.getAttribute(attribute);
 
-                if (e) {
-                    this.setAttribute(c, attribute, undefined);
-                    timeout(this.setAttribute.bind(this), 0, true, c, attribute, e);
-                }
-            });
-    }
+    //             if (e) {
+    //                 this.setAttribute(c, attribute, undefined);
+    //                 timeout(this.setAttribute.bind(this), 0, true, c, attribute, e);
+    //             }
+    //         });
+    // }
 }
 
 function t(data, baseUrl) {
@@ -344,9 +344,12 @@ function traverseNode(element: Element, callback: Function) {
     const elements = [element];
 
     while (elements.length > 0) {
-      console.log(elements)
         const firstElement = elements.shift();
         if (firstElement) {
+            if (firstElement === 5) {
+                // console.log(12345);
+                return;
+            }
             const result = callback(firstElement);
 
             if (result === false) {

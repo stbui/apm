@@ -65,6 +65,8 @@ export const SessionPlayer = ({
     const [sessionWasInitiallyLive, setSessionWasInitiallyLive] = useState(false);
     // viewer
     const [currentActivity, setCurrentActivity] = useState();
+    const [fireClear, setFireClear] = useState(false);
+    const [fireAttach, setFireAttach] = useState();
 
     let renderingProgress = 0;
     const speedOptions = [
@@ -532,7 +534,7 @@ export const SessionPlayer = ({
      * @param {*} time
      * @param {*} fn
      */
-    function resetPlayered(time, fn) {
+    function resetPlayered(time, callback) {
         if (isAutoStart()) {
             // timelineValue = time;
             setTimelineValue(time);
@@ -547,7 +549,7 @@ export const SessionPlayer = ({
             console.log('lastActivityIndex', lastActivityIndex, time);
 
             //
-            _(lastActivityIndex, fn);
+            _(lastActivityIndex, callback);
         }
     }
 
@@ -686,26 +688,33 @@ export const SessionPlayer = ({
 
     /**
      * G
-     * @param {*} fn time/function
+     * @param {*} callback time/function
      */
-    function G(fn) {
+    function G(callback) {
         // e.fireAttach(s, function() {
-        //
-        //
-        if (isStreamingLive && !isCatchingUpWithLive) {
-            toggleBuffering(false);
-        }
-        // e.fireHideViewerOverlay(s),
-        // s.enableStepsTimeline(),
-        // isRendering = false;
+        //     e.fireVisualizeClicks(s, s.settings.playback.shouldVisualizeClicks),
+        //         s.isStreamingLive && !s.isCatchingUpWithLive && ma(!1),
+        //         e.fireHideViewerOverlay(s),
+        //         s.enableStepsTimeline(),
+        //         (s.isRendering = !1),
+        //         (s.arePlayerButtonsEnabled = !0),
+        //         pa(wa),
+        //         angular.isFunction(a) && a();
+        // });
 
-        setArePlayerButtonsEnabled(true);
-        //
-        updateStepsTimelineAndConsole(wa);
+        setFireAttach([callback]);
 
-        if (typeof fn === 'function') {
-            fn();
-        }
+        // if (isStreamingLive && !isCatchingUpWithLive) {
+        //     toggleBuffering(false);
+        // }
+
+        // setArePlayerButtonsEnabled(true);
+        // //
+        // updateStepsTimelineAndConsole(wa);
+
+        // if (typeof callback === 'function') {
+        //     callback();
+        // }
     }
     /**
      * _
@@ -718,6 +727,7 @@ export const SessionPlayer = ({
         if (wa > time || wa === -1) {
             visibilityState = false;
             // e.fireClear(s,snapshotData);
+            setFireClear(true);
         }
 
         let newTime = 0;
@@ -752,8 +762,10 @@ export const SessionPlayer = ({
 
         asyncWhile.start(() => {
             if (wa === -1 || !isStreamingLive) {
-                return G(callback);
+                G(callback);
+                return;
             }
+
             const time = activities[wa].time;
 
             if (isStreamingLive && timelineMax - time < PLAYER_CONFIG.GO_LIVE_DELAY_TIME) {
@@ -845,6 +857,22 @@ export const SessionPlayer = ({
         onSelectedActivity(22);
     };
 
+    /// viewer event
+    const onFireAttach = callback => {
+        if (isStreamingLive && !isCatchingUpWithLive) {
+            toggleBuffering(false);
+        }
+
+        setArePlayerButtonsEnabled(true);
+        //
+        updateStepsTimelineAndConsole(wa);
+
+        if (typeof callback === 'function') {
+            callback();
+        }
+        console.log('onFireAttach', callback);
+    };
+
     // 实现不对
     const onTimelineSelect = value => {
         // console.log('onTimelineSelect', value);
@@ -885,20 +913,32 @@ export const SessionPlayer = ({
                 handle-user-details-resize="handleUserDetailsResize"
                 hide-mask="hideStepsTimelineMask"
             ></StepsTimeline>*/}
-            <Viewer
-                maxWidth={containerWidth}
-                maxHeight={containerHeight}
-                sessionScreenWidth={session.screenWidth}
-                sessionScreenHeight={session.screenHeight}
-                className="viewer-container"
-                isCreated={viewerIsCreated}
-                renderingProgress={renderingProgress}
-                initialVisibilityState={session.visibilityState}
-                sessionId={session.id}
-                handleConsoleResize={handleConsoleResize}
-                currentActivity={currentActivity}
-            ></Viewer>
-            <div style={{ marginTop: '100px' }}></div>
+            <div style="overflow: hidden;background: #242628;">
+                <Viewer
+                    maxWidth={containerWidth}
+                    maxHeight={containerHeight}
+                    sessionScreenWidth={session.screenWidth}
+                    sessionScreenHeight={session.screenHeight}
+                    className="viewer-container"
+                    isCreated={viewerIsCreated}
+                    renderingProgress={renderingProgress}
+                    initialVisibilityState={session.visibilityState}
+                    sessionId={session.id}
+                    handleConsoleResize={handleConsoleResize}
+                    currentActivity={currentActivity}
+                    snapshotData={{
+                        snapshot: session.snapshot,
+                        origin: session.origin,
+                        docType: session.docType,
+                        top: session.top,
+                        left: session.left,
+                    }}
+                    fireClear={fireClear}
+                    fireAttach={fireAttach}
+                    onFireAttach={onFireAttach}
+                ></Viewer>
+            </div>
+
             <Controls
                 hasFinished={hasFinished}
                 isStreamingLive={isStreamingLive}
