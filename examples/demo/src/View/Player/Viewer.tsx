@@ -3,31 +3,9 @@ import { DocumentNode } from './DocumentNode';
 import { angular } from './angular';
 import { AsyncWhile } from './AsyncWhile';
 import { timeout } from './timeout';
+import { VIEWER_MARGINS, SCROLL_POSITION_CHANGE, SESSIONSTACK_HOVER_CLASS, EVENT_TYPE, ELEMENTS } from './constant';
 
 import './Viewer.scss';
-
-const VIEWER_MARGINS = { HORIZONTAL: 20, VERTICAL: 20 };
-const SCROLL_POSITION_CHANGE = { MAX_RETRIES: 100, TIMEOUT: 50 };
-const SESSIONSTACK_HOVER_CLASS = '_ss-hover';
-
-const EVENT_TYPE = {
-    DOM_MUTATION: 'dom_mutation',
-    DOM_ELEMENT_VALUE_CHANGE: 'dom_element_value_change',
-    DOM_SNAPSHOT: 'dom_snapshot',
-    MOUSE_MOVE: 'mouse_move',
-    MOUSE_CLICK: 'mouse_click',
-    MOUSE_OVER: 'mouse_over',
-    MOUSE_OUT: 'mouse_out',
-    SCROLL_POSITION_CHANGE: 'scroll_position_change',
-    WINDOW_RESIZE: 'window_resize',
-    RADIO_BUTTON_CHANGE: 'radio_button_change',
-    CHECKBOX_CHANGE: 'checkbox_change',
-    VISIBILITY_CHANGE: 'visibility_change',
-    CSS_RULE_INSERT: 'css_rule_insert',
-    CSS_RULE_DELETE: 'css_rule_delete',
-};
-
-const ELEMENTS = { HTML: 'html' };
 
 // this
 let scale = 1;
@@ -691,10 +669,10 @@ const Viewer = ({
             const offsetLeft = data.x + offset.left;
 
             // setCursorPosition
-            b.viewerOverlay.setCursorPosition({
-                top: offsetTop,
-                left: offsetLeft,
-            });
+            // b.viewerOverlay.setCursorPosition({
+            //     top: offsetTop,
+            //     left: offsetLeft,
+            // });
         } else {
             ia[EVENT_TYPE.MOUSE_MOVE] = data;
         }

@@ -4,42 +4,23 @@ import { SessionDataClient } from './Player/session';
 import { playerSettings } from './Player/settings';
 import { auth } from './Player/auth';
 import { SessionPlayer } from './Player/SessionPlayer';
+import {
+    PAUSE_AT_ACTIVITY_ID,
+    USER_DETAILS_ANIMATION_TIME,
+    EVENT_TYPE,
+    SESSIONSTACK_HOVER_CLASS,
+    PROCESS_HOVER_STYLES_CONFIG,
+    ERRORS,
+    VIEWER_MARGINS,
+    SCROLL_POSITION_CHANGE,
+    ELEMENTS,
+    LIVE_MODE_CONFIGS,
+    DEMO_USER_ROLE,
+} from './Player/constant';
 
 const player = {};
 
 export default () => {
-    const PAUSE_AT_ACTIVITY_ID = 'pause_at_activity_id';
-    const USER_DETAILS_ANIMATION_TIME = 500;
-
-    const EVENT_TYPE = {
-        DOM_MUTATION: 'dom_mutation',
-        DOM_ELEMENT_VALUE_CHANGE: 'dom_element_value_change',
-        DOM_SNAPSHOT: 'dom_snapshot',
-        MOUSE_MOVE: 'mouse_move',
-        MOUSE_CLICK: 'mouse_click',
-        MOUSE_OVER: 'mouse_over',
-        MOUSE_OUT: 'mouse_out',
-        SCROLL_POSITION_CHANGE: 'scroll_position_change',
-        WINDOW_RESIZE: 'window_resize',
-        RADIO_BUTTON_CHANGE: 'radio_button_change',
-        CHECKBOX_CHANGE: 'checkbox_change',
-        VISIBILITY_CHANGE: 'visibility_change',
-        CSS_RULE_INSERT: 'css_rule_insert',
-        CSS_RULE_DELETE: 'css_rule_delete',
-    };
-
-    const SESSIONSTACK_HOVER_CLASS = '_ss-hover';
-    const PROCESS_HOVER_STYLES_CONFIG = { DELAY: 100, TIMES_TO_REPEAT: 0 };
-    const ERRORS = { SECURITY_ERROR: 'SecurityError' };
-    const VIEWER_MARGINS = { HORIZONTAL: 20, VERTICAL: 20 };
-    const SCROLL_POSITION_CHANGE = { MAX_RETRIES: 100, TIMEOUT: 50 };
-    const ELEMENTS = { HTML: 'html' };
-    // const CROSS_ORIGIN_FRAME_BACKGROUND
-
-    const LOG_OFFSET = 5000;
-    const LIVE_MODE_CONFIGS = { GO_LIVE_OFFSET_TIME: 1000, MAX_ATTEMPTS: 3 };
-    const DEMO_USER_ROLE = 'demo';
-
     let sessionWasInitiallyLive;
 
     let pauseActivity;
