@@ -101,19 +101,22 @@ const Viewer = ({
         });
     }
 
+    /**
+     * t
+     */
     function initialScrollPosition() {
         // 滚动位置
         executeScrollPositionChange({ top: ja.top, left: ja.left });
 
         // resize && mouse_move
         for (let type in ia) {
-            const evt = p(ia[type]);
+            const evt = p(type);
             evt(type);
         }
 
         Object.keys(ka).map(id => {
             // 滚动位置
-            executeScrollPositionChange(ka[id]);
+            executeScrollPositionChange(executeScrollPositionChange(ka[id]));
         });
     }
 
