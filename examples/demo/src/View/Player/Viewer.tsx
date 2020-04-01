@@ -160,7 +160,7 @@ const Viewer = ({
      */
     function z() {}
     function getContentWindow(id: number) {
-        const element = getElementById(id);
+        let element = getElementById(id);
 
         // (b && b.contentWindow) || (b = A());
 
@@ -228,14 +228,14 @@ const Viewer = ({
     }
 
     /**
-     *
+     * D
      * @param activity
      */
     function onExecuteEvent(activity) {
         const type = activity.type;
         const data = activity.data;
         const eventType = p(type);
-        // console.log(type, data);
+        // console.log(type, activity);
         // 执行事件类型
         if (eventType && data) {
             eventType(data);
@@ -362,7 +362,7 @@ const Viewer = ({
     }
 
     /**
-     *
+     * R
      * @param data
      */
     function setDomMutation(data) {
@@ -597,7 +597,7 @@ const Viewer = ({
         var queue: AsyncWhile = ha[position.id];
         // const element: any = angular.element(getContentWindow(position.id));
         const element = getContentWindow(position.id);
-        console.log(1, element);
+
         if (queue) {
             queue.cancel();
             delete ha[position.id];
@@ -769,6 +769,7 @@ const Viewer = ({
     useEffect(() => {
         if (currentActivity) {
             onExecuteEvent(currentActivity);
+            // console.log('currentActivity', currentActivity);
         }
     }, [currentActivity]);
 
@@ -782,7 +783,7 @@ const Viewer = ({
 
     useEffect(() => {
         if (fireAttach) {
-            onAttach(fireAttach[0]);
+            onAttach(fireAttach.callback);
             // console.log('fireAttach', fireAttach);
         }
     }, [fireAttach]);

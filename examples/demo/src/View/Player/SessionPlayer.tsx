@@ -15,6 +15,7 @@ import { PLAYER_CONFIG, TAB_VISIBILITY, UI_MODE, EVENT_TYPE, MOUSE_TYPE } from '
 
 // @ts-ignore
 import { activities } from './mock.json';
+console.log('activities', activities);
 
 let storeTimelineValue;
 let ra;
@@ -66,7 +67,8 @@ export const SessionPlayer = ({
     // viewer
     const [currentActivity, setCurrentActivity] = useState();
     const [fireClear, setFireClear] = useState(false);
-    const [fireAttach, setFireAttach] = useState();
+    const [fireAttach, setFireAttach]: any = useState();
+    const [fireExecuteEvent, setFireExecuteEvent]: any = useState();
 
     let renderingProgress = 0;
     const speedOptions = [
@@ -456,7 +458,12 @@ export const SessionPlayer = ({
         if (!isPasuseAtActivityId(activity)) {
             // todo: sessionViewer
             // e.fireExecuteEvent(s, activity);
-            setCurrentActivity(activity);
+            if (activity.type === 'dom_mutation') {
+                console.log('currentActivity', activity.data);
+                setCurrentActivity(activity);
+            } else {
+                setCurrentActivity(activity);
+            }
         }
 
         wa = timeline;
@@ -702,7 +709,7 @@ export const SessionPlayer = ({
         //         angular.isFunction(a) && a();
         // });
 
-        setFireAttach([callback]);
+        setFireAttach({ callback });
 
         // if (isStreamingLive && !isCatchingUpWithLive) {
         //     toggleBuffering(false);
@@ -858,6 +865,7 @@ export const SessionPlayer = ({
     };
 
     /// viewer event
+    // G
     const onFireAttach = callback => {
         if (isStreamingLive && !isCatchingUpWithLive) {
             toggleBuffering(false);
@@ -870,7 +878,6 @@ export const SessionPlayer = ({
         if (typeof callback === 'function') {
             callback();
         }
-        console.log('onFireAttach', callback);
     };
 
     // 实现不对
