@@ -1,6 +1,6 @@
 import { tokenManager } from './tokenManager';
 
-import mock from './mock.json';
+import mock from './mock';
 
 function toAccessToken(obj) {
     var accessToken = tokenManager.getAccessToken();

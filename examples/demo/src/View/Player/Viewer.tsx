@@ -496,6 +496,7 @@ const Viewer = ({
         if (data) {
             data.forEach(item => {
                 const element = documentNode.getNode(item.id);
+                console.log('removed', item, element);
                 // 删除所有节点
                 documentNode.removeNode(element);
             });
@@ -758,20 +759,17 @@ const Viewer = ({
         // c.onDetach(b, onDetach);
     }, []);
 
-    // 设置容器宽高
-    useEffect(() => {
-        setViewerContainerWidthAndHeight(maxWidth, maxHeight, sessionScreenWidth, sessionScreenHeight);
-    }, [maxWidth, maxHeight, sessionScreenWidth, sessionScreenHeight]);
-
-    useEffect(() => {}, [renderingProgress]);
-    useEffect(() => {}, [showLoadingAnimation]);
+    // // 设置容器宽高
+    // useEffect(() => {
+    //     setViewerContainerWidthAndHeight(maxWidth, maxHeight, sessionScreenWidth, sessionScreenHeight);
+    // }, [maxWidth, maxHeight, sessionScreenWidth, sessionScreenHeight]);
 
     useEffect(() => {
         if (currentActivity) {
-            onExecuteEvent(currentActivity);
             // console.log('currentActivity', currentActivity);
+            onExecuteEvent(currentActivity);
         }
-    }, [currentActivity]);
+    }, [JSON.stringify(currentActivity)]);
 
     useEffect(() => {
         if (fireClear) {
@@ -787,11 +785,6 @@ const Viewer = ({
             // console.log('fireAttach', fireAttach);
         }
     }, [fireAttach]);
-
-    if (currentActivity) {
-        // console.log(currentActivity);
-        // onExecuteEvent(currentActivity);
-    }
 
     // 组件创建状态
     // useEffect(() => {

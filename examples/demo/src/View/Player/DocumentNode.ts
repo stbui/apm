@@ -178,9 +178,15 @@ function s(documentElement, element: string, attribute: string) {
     // }
 }
 
-function t(data, baseUrl) {
-    var element,
-        d = this;
+function t() {}
+/**
+ * t
+ * 创建snapshot元素
+ * @param data
+ * @param baseUrl
+ */
+function createSnapshot(data, baseUrl): Element {
+    var element;
 
     if (data.snapshot) {
         // rootElement
@@ -192,10 +198,11 @@ function t(data, baseUrl) {
         //     e = angular.element('head', element);
         // }
 
-        if (element.tagName !== 'head') {
-            let head = document.createElement('head');
-            element.prepend(head);
-        }
+        // 在header 插入
+        // if (element.tagName !== 'head') {
+        //     let head = document.createElement('head');
+        //     element.prepend(head);
+        // }
 
         // 设置标签base 设置url
         setBaseUrl(element, baseUrl);
@@ -310,6 +317,7 @@ function z(frameElementId): Document {
 }
 
 function A(elements: Element, frameElementId) {
+    // console.log('======>', elements, frameElementId);
     traverseNode(elements, (element: Element) => {
         const property = getNodePropertyObject(element);
         const nodeId = property.nodeId;
@@ -337,19 +345,15 @@ function traverseNodeByRemoveNode(referenceNode: Element) {
 
 /**
  * C
- * @param {Element} element
+ * @param {Element | node} element
  * @param {*} callback
  */
-function traverseNode(element: Element, callback: Function) {
+function traverseNode(element, callback: Function) {
     const elements = [element];
 
     while (elements.length > 0) {
         const firstElement = elements.shift();
         if (firstElement) {
-            if (firstElement === 5) {
-                // console.log(12345);
-                return;
-            }
             const result = callback(firstElement);
 
             if (result === false) {
@@ -375,9 +379,13 @@ function getParentNode(referenceNode: Element): ParentNode | undefined {
     //     return node[0];
     // }
 
-    const parentNode = referenceNode.parentNode;
-    if (parentNode) {
-        return parentNode;
+    if (referenceNode) {
+        const parentNode = referenceNode.parentNode;
+        if (parentNode) {
+            return parentNode;
+        }
+    } else {
+        console.warn('parent:', referenceNode);
     }
 }
 
@@ -391,10 +399,16 @@ function getFrameElement(element) {
     } catch (error) {}
 }
 
-function F(arr, node, c) {
+/**
+ *
+ * @param arr
+ * @param node
+ * @param element
+ */
+function F(arr, node, element) {
     if (node.childNodes && node.childNodes.length > 0) {
-        angular.forEach(node.childNodes, b => {
-            arr.push({ parent: c, node: b });
+        angular.forEach(node.childNodes, n => {
+            arr.push({ parent: element, node: n });
         });
     }
 }
@@ -402,10 +416,11 @@ function F(arr, node, c) {
 /**
  *
  * @param node
- * @returns
+ * @returns html元素
  */
 function G(node: sessionNode): Element | object {
-    var element = {};
+    let element = {};
+
     switch (node.nodeType) {
         case Node.COMMENT_NODE:
             element = createComment.call(this, node);
@@ -419,6 +434,9 @@ function G(node: sessionNode): Element | object {
 
     // 将id添加到元素中
     getNodePropertyObject(element as Element).nodeId = node.id;
+    // test
+    // console.log(node.id);
+    element.id = node.id;
 
     return element;
 }
@@ -692,7 +710,8 @@ export class DocumentNode {
         };
 
         j.call(this, f);
-        f.documentElement = t.call(this, data, baseUrl);
+
+        f.documentElement = createSnapshot.call(this, data, baseUrl);
 
         o.call(this, f);
     }
@@ -807,23 +826,34 @@ export class DocumentNode {
         return offset;
     }
     /**
-     *
+     * 构建元素节点树
      * @param {Element | Object} node
      */
     createElement(node: sessionNode): Element {
         var b;
         var c;
-        var d;
-        var e = G.call(this, node);
-        var f = [];
+        let tagName;
+        // 创建元素，根据nodeType类型区分
+        // 创建html元素
+        let e = G.call(this, node);
+        //
+        let nodeArray = [];
 
-        if (node.childNodes && node.childNodes.length > 0)
-            for (F(f, node, e); f.length > 0; )
-                (b = f.shift()),
-                    (d = b.parent.tagName.toLowerCase()),
-                    'script' !== d &&
-                        'noscript' !== d &&
-                        ((c = G.call(this, b.node)), F(f, b.node, c), b.parent.appendChild(c));
+        if (node.childNodes && node.childNodes.length > 0) {
+            F(nodeArray, node, e);
+
+            while (nodeArray.length > 0) {
+                b = nodeArray.shift();
+                tagName = b.parent.tagName.toLowerCase();
+
+                if ('script' !== tagName && 'noscript' !== tagName) {
+                    c = G.call(this, b.node);
+                    F(nodeArray, b.node, c);
+                    b.parent.appendChild(c);
+                }
+            }
+        }
+
         return e;
     }
 

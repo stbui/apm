@@ -63,7 +63,7 @@ let containerHeight = 537;
 let handleConsoleResize = 0;
 
 let imitate;
-let LogStepOnRange = -1;
+let LogStepOnRange = 0;
 
 export const SessionPlayer = ({
     session,
@@ -79,6 +79,12 @@ export const SessionPlayer = ({
     errors,
     isCatchingUpWithLive,
 }) => {
+    ///
+
+    // let timelineMin = 0;
+    // let timelineMax = 9329;
+    // let timelineValue = 1000;
+
     const [timelineMax, setTimelineMax] = useState(9329);
     const [timelineMin, setTimelineMin] = useState(0);
     const [timelineValue, setTimelineValue] = useState(0);
@@ -91,24 +97,124 @@ export const SessionPlayer = ({
     const [isLive, setIsLive] = useState(false);
     const [sessionWasInitiallyLive, setSessionWasInitiallyLive] = useState(false);
     // viewer
-    const [currentActivity, setCurrentActivity] = useState({});
+    const [currentActivity, setCurrentActivity] = useState();
     const [fireClear, setFireClear] = useState(false);
     const [fireAttach, setFireAttach]: any = useState();
+    const [fireExecuteEvent, setFireExecuteEvent]: any = useState();
+    const [hasLogStepOnRange, setHasLogStepOnRange] = useState(false);
 
     function ja() {
+        // if (!(xa || isTimelineDirty)) {
+        //     playerStarted();
+        // }
+
         playerStarted();
     }
 
     function ia() {
-        resetPlayered(storeTimelineValue, ja);
+        if (Ba) {
+            Ba = false;
+            // fixed
+            resetPlayered(storeTimelineValue, ja);
+        } else {
+            // var a = !isStreamingLive && isRendering;
+            // isPlaying || a || isPaused || E(timelineValue, ja);
+
+            // var screenSmallerThanEditor = !isStreamingLive;
+            // if (!(isPlaying || screenSmallerThanEditor || isPaused)) {
+            //     resetPlayered(storeTimelineValue, ja);
+            // }
+
+            resetPlayered(storeTimelineValue, ja);
+        }
     }
 
     /**
      * ha
      */
     function ha() {
-        ia();
+        // test:
+        let _looadedTime = 9329;
+        if (_looadedTime < timelineValue) {
+            toggleBuffering(true);
+            setArePlayerButtonsEnabled(false);
+            // 取消计时器
+            cancelActivites();
+        } else if (_looadedTime >= timelineValue) {
+            toggleBuffering(false);
+            setArePlayerButtonsEnabled(true);
+
+            ia();
+        }
     }
+
+    /**
+     *
+     * 跳转
+     * @param {*} value
+     */
+    function goTimelineValue(value) {
+        // timelineValue = a;
+        setTimelineValue(value);
+        ha();
+    }
+
+    function la() {
+        if (!isStreamingLive) {
+            setIsStreamingLive(true);
+        }
+
+        // e.fireStartLiveStreaming(s);
+
+        goTimelineValue(timelineMax);
+    }
+
+    const goLive = () => {
+        Ba = true;
+
+        cancelActivites();
+
+        // e.firePlayerStopped(s);
+        la();
+    };
+
+    /**
+     * v
+     */
+    function isReady() {
+        return (
+            isCreated() &&
+            !isPlaying &&
+            wa >= 0 &&
+            activities[activities.length - 1].time - activities[wa].time < PLAYER_CONFIG.GO_LIVE_DELAY_TIME
+        );
+    }
+
+    /**
+     * ka
+     * 停止直播流
+     */
+    const stopLiveStreaming = () => {
+        if (isStreamingLive) {
+            // isStreamingLive = false;
+            setIsStreamingLive(false);
+            // e.fireStopLiveStreaming(s);
+        }
+    };
+
+    /**
+     * L
+     * 停止播放
+     */
+    const playerStopped = () => {
+        // 停止直播
+        stopLiveStreaming();
+        // 取消计时器
+        cancelActivites();
+
+        // todo: sessionViewer
+        // e.firePlayerStopped(s);
+    };
 
     /**
      * K
@@ -118,6 +224,28 @@ export const SessionPlayer = ({
         setHasFinished(false);
 
         ea(status);
+        // todo sessionViewer
+        // e.firePlayerStarted(s);
+    };
+
+    // this.function
+    /**
+     * 播放开始/停止
+     */
+    const togglePlaying = () => {
+        if (isReady()) {
+            isPaused = true;
+            stopLiveStreaming();
+        } else {
+            if (isPlaying || isStreamingLive) {
+                isPaused = true;
+
+                playerStopped();
+            } else {
+                isPaused = false;
+                playerStarted(true);
+            }
+        }
     };
 
     /**
@@ -129,6 +257,32 @@ export const SessionPlayer = ({
         resetPlayered(startTime, playerStarted);
     };
 
+    const play = () => {
+        isPaused = false;
+        playerStarted(true);
+    };
+
+    const pause = () => {
+        isPaused = true;
+        playerStopped();
+    };
+
+    // 指定播放
+    const onSelectedActivity = index => {
+        // 设置播放没有结束
+        setHasFinished(false);
+
+        const activity = activities[index];
+        // timelineValue = activity.time;
+        setTimelineValue(activity.time);
+
+        if (wa + 1 !== index) {
+            pause();
+            _(index - 1);
+        }
+    };
+
+    /////////////////
     const shouldSkipProlongedInactivity = (_timelineValue, _timelineMax) => {
         let lagTime = _timelineMax - _timelineValue;
 
@@ -138,7 +292,6 @@ export const SessionPlayer = ({
 
         return lagTime;
     };
-
     const calcRate = (timeLimit, timeLimitNext, c) => {
         const lagTime = shouldSkipProlongedInactivity(timeLimit, timeLimitNext);
         const rate = lagTime / settings.playback.speed;
@@ -280,6 +433,24 @@ export const SessionPlayer = ({
     };
 
     /**
+     * pa
+     * 更新子组件
+     * @param {*} timeline
+     */
+    const updateStepsTimelineAndConsole = timeline => {
+        if (typeof updateStepsTimeline === 'function') {
+            // component callback: stepstimelinne
+            updateStepsTimeline(timeline);
+        }
+
+        if (typeof updateConsole === 'function') {
+            // component callback: console
+            updateConsole(timeline);
+        }
+    };
+
+    const aa = () => {};
+    /**
      * aa
      * @param {*} timeline
      */
@@ -289,11 +460,76 @@ export const SessionPlayer = ({
         if (!isPasuseAtActivityId(activity)) {
             // todo: sessionViewer
             // e.fireExecuteEvent(s, activity);
-            // console.log(activity);
-            // setCurrentActivity(activity);
+            setCurrentActivity(activity);
         }
 
         wa = index;
+        updateStepsTimelineAndConsole(index);
+
+        if (activity.type === EVENT_TYPE.VISIBILITY_CHANGE) {
+            visibilityState = activity.data.visibilityState === TAB_VISIBILITY.HIDDEN;
+        }
+    };
+
+    /**
+     * U
+     * 停留
+     */
+    const findActivitiesVisibleIndex = () => {
+        for (let index = wa; index < activities.length; index++) {
+            const activity = activities[index];
+
+            if (
+                activity.type === EVENT_TYPE.VISIBILITY_CHANGE &&
+                activity.data.visibilityState === TAB_VISIBILITY.VISIBLE
+            ) {
+                return index;
+            }
+        }
+
+        return activities.length - 1;
+    };
+
+    /**
+     * P
+     * TabOverlay
+     * TAB_VISIBILITY类型
+     */
+    const isTabVisibility = () => {
+        let visibleIndex = findActivitiesVisibleIndex();
+
+        for (let b = wa; b < visibleIndex; b++) {
+            const type = activities[b].type;
+
+            if (Array.includes(MOUSE_TYPE, type)) {
+                return true;
+            }
+        }
+
+        return false;
+    };
+
+    // Q
+    const isPauseActivity = () => {
+        if (pauseActivity) {
+            return timelineValue >= pauseActivity.time;
+        }
+    };
+
+    /**
+     * J
+     * 组件是否已经创建
+     */
+    const isCreated = () => {
+        return viewerIsCreated && timelineIsCreated && stepsTimelineIsCreated && !!session;
+    };
+
+    /**
+     * I
+     * 自动播放
+     */
+    const isAutoStart = () => {
+        return autostart && isCreated();
     };
 
     /**
@@ -303,21 +539,50 @@ export const SessionPlayer = ({
      * @param {*} fn
      */
     function resetPlayered(time, callback) {
-        setTimelineValue(time);
+        if (isAutoStart()) {
+            // timelineValue = time;
+            setTimelineValue(time);
 
-        // 取消计时器
-        cancelActivites();
+            // 取消计时器
+            cancelActivites();
 
-        const lastActivityIndex = findLastIndex(activities, activity => {
-            return activity.time <= time;
-        });
+            const lastActivityIndex = findLastIndex(activities, activity => {
+                return activity.time <= time;
+            });
 
-        console.log('resetPlayered', lastActivityIndex, time);
+            console.log('resetPlayered', lastActivityIndex, time);
 
-        //
-        _(lastActivityIndex, callback);
+            //
+            _(lastActivityIndex, callback);
+        }
     }
 
+    /**
+     * O
+     *
+     */
+    function toggleHideHiddenTabOverlay() {
+        if (isTabVisibility()) {
+            visibilityState = false;
+            // e.fireHideHiddenTabOverlay(s);
+            // 循环播放
+            R();
+        } else {
+            if (pauseActivity && !isPauseActivity()) {
+                setTimeout(() => {
+                    E(pauseActivity.time, cancelActivites);
+                }, PLAYER_CONFIG.TAB_HIDDEN_MESSAGE_TIME);
+            } else {
+                let visibleIndex = findActivitiesVisibleIndex();
+
+                setTimeout(() => {
+                    _(visibleIndex, R);
+                }, PLAYER_CONFIG.TAB_HIDDEN_MESSAGE_TIME);
+            }
+        }
+    }
+
+    function N() {}
     /**
      *
      * @param {*} timeline activityIndex
@@ -345,7 +610,11 @@ export const SessionPlayer = ({
             timeline++;
         }
 
-        R(activities[timeline - 1].time - time, now);
+        if (settings.playback.shouldSkipProlongedInactivity && visibilityState && !isStreamingLive) {
+            toggleHideHiddenTabOverlay();
+        } else {
+            R(activities[timeline - 1].time - time, now);
+        }
     }
 
     // R
@@ -378,14 +647,64 @@ export const SessionPlayer = ({
         if (asyncWhile) {
             asyncWhile.cancel();
         }
+
+        // 直播状态
+        if (isStreamingLive) {
+            // e.fireShowBuffering(s);
+        } else {
+            // e.fireShowViewerOverlay(s);
+        }
+
+        // s.disableStepsTimeline();
+        // arePlayerButtonsEnabled = false;
+        // isRendering = true;
+        // e.fireVisualizeClicks(s, false);
+        // e.fireDetach(s);
+
+        setArePlayerButtonsEnabled(false);
     }
+
+    /**
+     * ma
+     * 缓冲开关
+     * @param {*} status true/false
+     */
+    const toggleBuffering = status => {
+        xa = status;
+        buffering = status;
+
+        // status ? e.fireShowBuffering(s) : e.fireHideBuffering(s);
+    };
 
     /**
      * G
      * @param {*} callback time/function
      */
     function loadSyncStorage(callback) {
+        // e.fireAttach(s, function() {
+        //     e.fireVisualizeClicks(s, s.settings.playback.shouldVisualizeClicks),
+        //         s.isStreamingLive && !s.isCatchingUpWithLive && ma(!1),
+        //         e.fireHideViewerOverlay(s),
+        //         s.enableStepsTimeline(),
+        //         (s.isRendering = !1),
+        //         (s.arePlayerButtonsEnabled = !0),
+        //         pa(wa),
+        //         angular.isFunction(a) && a();
+        // });
+
         setFireAttach({ callback });
+
+        // if (isStreamingLive && !isCatchingUpWithLive) {
+        //     toggleBuffering(false);
+        // }
+
+        // setArePlayerButtonsEnabled(true);
+        // //
+        // updateStepsTimelineAndConsole(wa);
+
+        // if (typeof callback === 'function') {
+        //     callback();
+        // }
     }
     /**
      * _
@@ -423,6 +742,11 @@ export const SessionPlayer = ({
             for (; i <= endIndex; i++) {
                 updateActivity(i);
             }
+
+            // s.renderingProgress = {
+            //     current: i - newTime - 1,
+            //     total: time - newTime,
+            // };
         };
 
         const waitTime = { waitTime: PLAYER_CONFIG.EVENTS_BATCH_WAIT_TIME };
@@ -452,6 +776,7 @@ export const SessionPlayer = ({
 
             if (activityIndex < activities.length)
                 if (settings.playback.shouldSkipProlongedInactivity && visibilityState && !isStreamingLive) {
+                    toggleHideHiddenTabOverlay();
                 } else {
                     const inActivity = shouldSkipProlongedInactivity(timelineValue, activities[activityIndex].time);
 
@@ -487,6 +812,15 @@ export const SessionPlayer = ({
     };
 
     /**
+     *
+     * @param {*} time
+     */
+    function ga(time) {
+        setTimelineValue(time);
+        ha();
+    }
+
+    /**
      * ea
      * @param {*} a
      */
@@ -506,6 +840,7 @@ export const SessionPlayer = ({
      */
     const onTogglePlaying = status => {
         console.log('onTogglePlaying', status);
+        togglePlaying();
     };
 
     const onRepeat = () => {
@@ -515,20 +850,39 @@ export const SessionPlayer = ({
 
     const onSelectNextStep = index => {
         console.log('onSelectNextStep');
+        onSelectedActivity(22);
     };
 
     /// viewer event
     // G
     const onFireAttach = callback => {
+        if (isStreamingLive && !isCatchingUpWithLive) {
+            toggleBuffering(false);
+        }
+
+        setArePlayerButtonsEnabled(true);
+        //
+        updateStepsTimelineAndConsole(wa);
+
         if (typeof callback === 'function') {
             callback();
         }
     };
 
-    const update = () => {
-        if (LogStepOnRange < activities.length) {
-            LogStepOnRange++;
-            setCurrentActivity(activities[LogStepOnRange]);
+    // 实现不对
+    const onTimelineSelect = value => {
+        // console.log('onTimelineSelect', value);
+        if (isTimelineDirty) {
+            playerStopped();
+        } else if (!isTimelineDirty) {
+            Ba = true;
+            // 取消所有计时器
+            cancelActivites();
+            stopLiveStreaming();
+            //
+            // e.firePlayerStopped(s);
+            // fixed: timelineValue
+            ga(storeTimelineValue);
         }
     };
 
@@ -541,10 +895,6 @@ export const SessionPlayer = ({
     useEffect(() => {
         // 自动播放开始
         addActivities(session);
-
-        setInterval(() => {
-            update();
-        }, 50);
     }, [session]);
 
     return (
@@ -610,6 +960,7 @@ export const SessionPlayer = ({
                     // refresh={refreshTimeline}
                     // pauseActivity={pauseActivity}
                     // isCreated={timelineIsCreated}
+                    onSelect={onTimelineSelect}
                 ></Timelline>
             </Controls>
 

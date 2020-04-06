@@ -32,7 +32,9 @@ export const angular = {
             return obj.forEach(iterator);
         } else {
             for (let key in obj) {
-                iterator.call(context, obj[key], key, obj);
+                if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                    iterator.call(context, obj[key], key, obj);
+                }
             }
         }
     },
