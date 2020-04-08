@@ -95,31 +95,6 @@ export const SessionPlayer = ({
     const [fireClear, setFireClear] = useState(false);
     const [fireAttach, setFireAttach]: any = useState();
 
-    function ja() {
-        playerStarted();
-    }
-
-    function ia() {
-        resetPlayered(storeTimelineValue, ja);
-    }
-
-    /**
-     * ha
-     */
-    function ha() {
-        ia();
-    }
-
-    /**
-     * K
-     * @param {*} status
-     */
-    const playerStarted = (status?) => {
-        setHasFinished(false);
-
-        ea(status);
-    };
-
     /**
      * 重复播放
      */
@@ -297,28 +272,6 @@ export const SessionPlayer = ({
     };
 
     /**
-     * E
-     * 重置
-     * @param {*} time
-     * @param {*} fn
-     */
-    function resetPlayered(time, callback) {
-        setTimelineValue(time);
-
-        // 取消计时器
-        cancelActivites();
-
-        const lastActivityIndex = findLastIndex(activities, activity => {
-            return activity.time <= time;
-        });
-
-        console.log('resetPlayered', lastActivityIndex, time);
-
-        //
-        _(lastActivityIndex, callback);
-    }
-
-    /**
      *
      * @param {*} timeline activityIndex
      * @param {*} status
@@ -381,18 +334,77 @@ export const SessionPlayer = ({
     }
 
     /**
+     * ba
+     * 更新循环 timelineValue 值
+     */
+    const whileActivites = () => {
+        // sa;
+        if (!time) {
+            time = setInterval(() => {
+                // fixed: timelineValue 异步没有得到最新值
+                // const value = timelineValue + PLAYER_CONFIG.PLAY_SPEED;
+                const value = storeTimelineValue + PLAYER_CONFIG.PLAY_SPEED;
+                const activitie = activities[wa + 1];
+                if (activitie) {
+                    // console.log('=======>', value);
+                    // timelineValue = Math.min(value, activitie.time);
+                    setTimelineValue(Math.min(value, activitie.time));
+                }
+            }, PLAYER_CONFIG.PLAY_SPEED / settings.playback.speed);
+        }
+    };
+
+    /**
+     *
+     * @param {*} isPlaying
+     */
+    const onTogglePlaying = status => {
+        console.log('onTogglePlaying', status);
+    };
+
+    const onRepeat = () => {
+        console.log('onRepeat');
+        repeat();
+    };
+
+    const onSelectNextStep = index => {
+        console.log('onSelectNextStep');
+    };
+
+    /// viewer event
+    // G
+    const onFireAttach = callback => {
+        if (typeof callback === 'function') {
+            callback();
+        }
+    };
+
+    const update = () => {
+        if (LogStepOnRange < activities.length) {
+            LogStepOnRange++;
+            setCurrentActivity(activities[LogStepOnRange]);
+        }
+    };
+
+    function addActivities(session) {
+        ha();
+    }
+
+    // ===========================
+    /**
      * G
      * @param {*} callback time/function
      */
     function loadSyncStorage(callback) {
         setFireAttach({ callback });
     }
+
     /**
      * _
      * @param {*} a time
      * @param {*} b callback
      */
-    function _(time, callback?) {
+    function queuedLoop(time, callback?) {
         // 取消计时器;
         reset();
 
@@ -430,69 +442,35 @@ export const SessionPlayer = ({
         asyncWhile = new AsyncWhile(condition, body, waitTime);
 
         asyncWhile.start(() => {
-            if (wa === -1 || !isStreamingLive) {
+            if (wa === -1) {
                 loadSyncStorage(callback);
                 return;
-            }
-
-            const time = activities[wa].time;
-
-            if (isStreamingLive && timelineMax - time < PLAYER_CONFIG.GO_LIVE_DELAY_TIME) {
-                loadSyncStorage(callback);
             }
         });
     }
 
-    ///
     // status undefined
     function M(status) {
         if (!ra) {
-            timeoutExecutionError = 0;
             const activityIndex = wa + 1;
 
-            if (activityIndex < activities.length)
-                if (settings.playback.shouldSkipProlongedInactivity && visibilityState && !isStreamingLive) {
-                } else {
-                    const inActivity = shouldSkipProlongedInactivity(timelineValue, activities[activityIndex].time);
+            if (activityIndex < activities.length) {
+                const inActivity = shouldSkipProlongedInactivity(timelineValue, activities[activityIndex].time);
 
-                    ra = setTimeout(() => {
-                        refreshCurrentActivity(activityIndex, status);
-                    }, inActivity / settings.playback.speed);
-                }
-            else {
+                ra = setTimeout(() => {
+                    refreshCurrentActivity(activityIndex, status);
+                }, inActivity / settings.playback.speed);
+            } else {
                 playFinished();
             }
         }
     }
 
     /**
-     * ba
-     * 更新循环 timelineValue 值
-     */
-    const whileActivites = () => {
-        // sa;
-        if (!time) {
-            time = setInterval(() => {
-                // fixed: timelineValue 异步没有得到最新值
-                // const value = timelineValue + PLAYER_CONFIG.PLAY_SPEED;
-                const value = storeTimelineValue + PLAYER_CONFIG.PLAY_SPEED;
-                const activitie = activities[wa + 1];
-                if (activitie) {
-                    // console.log('=======>', value);
-                    // timelineValue = Math.min(value, activitie.time);
-                    setTimelineValue(Math.min(value, activitie.time));
-                }
-            }, PLAYER_CONFIG.PLAY_SPEED / settings.playback.speed);
-        }
-    };
-
-    /**
      * ea
      * @param {*} a
      */
     function ea(status) {
-        setIsPlaying(true);
-        // isPlaying = true;
         console.log('started');
         M(status);
 
@@ -501,50 +479,44 @@ export const SessionPlayer = ({
     }
 
     /**
-     *
-     * @param {*} isPlaying
+     * K
+     * @param {*} status
      */
-    const onTogglePlaying = status => {
-        console.log('onTogglePlaying', status);
+    const playerStarted = (status?) => {
+        ea(status);
     };
 
-    const onRepeat = () => {
-        console.log('onRepeat');
-        repeat();
-    };
+    function playerStartedCallback() {
+        playerStarted();
+    }
 
-    const onSelectNextStep = index => {
-        console.log('onSelectNextStep');
-    };
+    /**
+     * E
+     * 重置
+     * @param {*} time
+     * @param {*} fn
+     */
+    function resetPlayered(time, callback) {
+        // 取消计时器
+        cancelActivites();
 
-    /// viewer event
-    // G
-    const onFireAttach = callback => {
-        if (typeof callback === 'function') {
-            callback();
-        }
-    };
+        const lastActivityIndex = findLastIndex(activities, activity => {
+            return activity.time <= time;
+        });
 
-    const update = () => {
-        if (LogStepOnRange < activities.length) {
-            LogStepOnRange++;
-            setCurrentActivity(activities[LogStepOnRange]);
-        }
-    };
+        console.log('resetPlayered', lastActivityIndex, time);
 
-    // ===========================
-
-    function addActivities(session) {
-        ha();
+        //
+        queuedLoop(lastActivityIndex, callback);
     }
 
     useEffect(() => {
         // 自动播放开始
-        addActivities(session);
+        resetPlayered(storeTimelineValue, playerStartedCallback);
 
         setInterval(() => {
             update();
-        }, 50);
+        }, 48);
     }, [session]);
 
     return (
