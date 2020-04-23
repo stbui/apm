@@ -1,10 +1,7 @@
 import { createElement, updateElement } from './dom';
 import { resetCursor } from './hooks';
 import { scheduleCallback, shouldYeild, planWork } from './scheduler';
-import { createText } from './h';
-
-const HOST = 0;
-const HOOK = 1;
+import { createText, isArr, isStr, MEMO } from './h';
 
 const NOWORK = 0;
 const PLACE = 1;
@@ -12,7 +9,6 @@ const UPDATE = 2;
 const DELETE = 3;
 
 export const SVG = 4;
-export const options = {};
 
 let preCommit = null;
 let currentFiber = null;
@@ -22,7 +18,6 @@ let commitQueue = [];
 
 export function render(vnode, node, done) {
     let rootFiber = {
-        tag: HOST,
         node,
         props: { children: vnode },
         done,
@@ -40,11 +35,7 @@ export function scheduleWork(fiber) {
 function reconcileWork(didout) {
     if (!WIP) WIP = updateQueue.shift();
     while (WIP && (!shouldYeild() || didout)) {
-        try {
-            WIP = reconcile(WIP);
-        } catch (e) {
-            throw e;
-        }
+        WIP = reconcile(WIP);
     }
     if (!didout && WIP) {
         return reconcileWork.bind(null);
@@ -55,8 +46,9 @@ function reconcileWork(didout) {
 
 function reconcile(WIP) {
     WIP.parentNode = getParentNode(WIP);
-    WIP.tag == HOOK ? updateHOOK(WIP) : updateHost(WIP);
-    WIP.pendingProps = WIP.props;
+    isFn(WIP.type) ? updateHOOK(WIP) : updateHost(WIP);
+    WIP.dirty = WIP.dirty ? false : 0;
+    WIP.oldProps = WIP.props;
     commitQueue.push(WIP);
 
     if (WIP.child) return WIP.child;
@@ -73,16 +65,14 @@ function reconcile(WIP) {
 }
 
 function updateHOOK(WIP) {
-    const oldProps = WIP.pendingProps;
-    const newProps = WIP.props;
-    if ((WIP.dirty === false || WIP.dirty === null) && !shouldUpdate(oldProps, newProps)) {
+    if (WIP.type.tag === MEMO && WIP.dirty == 0 && !shouldUpdate(WIP.oldProps, WIP.props)) {
         cloneChildren(WIP);
         return;
     }
     currentFiber = WIP;
     resetCursor();
-    let children = WIP.type(newProps);
-    if (!children.type) {
+    let children = WIP.type(WIP.props);
+    if (isStr(children)) {
         children = createText(children);
     }
     reconcileChildren(WIP, children);
@@ -102,7 +92,7 @@ function updateHost(WIP) {
 
 function getParentNode(fiber) {
     while ((fiber = fiber.parent)) {
-        if (fiber.tag < HOOK) return fiber.node;
+        if (!isFn(fiber.type)) return fiber.node;
     }
 }
 
@@ -158,7 +148,6 @@ function reconcileChildren(WIP, children) {
     }
 
     if (prevFiber) prevFiber.sibling = null;
-    WIP.dirty = WIP.dirty ? false : null;
 }
 
 function cloneChildren(fiber) {
@@ -179,7 +168,7 @@ function shouldUpdate(a, b) {
 
 function shouldPlace(fiber) {
     let p = fiber.parent;
-    if (p.tag === HOOK) return p.key && !p.dirty;
+    if (isFn(p.type)) return p.key && !p.dirty;
     return fiber.key;
 }
 
@@ -197,9 +186,9 @@ function commit(fiber) {
     } else if (op === DELETE) {
         hooks && hooks.list.forEach(cleanup);
         cleanupRef(fiber.kids);
-        while (fiber.tag === HOOK) fiber = fiber.child;
+        while (isFn(fiber.type)) fiber = fiber.child;
         parentNode.removeChild(fiber.node);
-    } else if (fiber.tag === HOOK) {
+    } else if (isFn(fiber.type)) {
         if (hooks) {
             hooks.layout.forEach(cleanup);
             hooks.layout.forEach(effect);
@@ -223,14 +212,14 @@ function commit(fiber) {
 }
 
 function createFiber(vnode, op) {
-    return { ...vnode, op, tag: isFn(vnode.type) ? HOOK : HOST };
+    return { ...vnode, op };
 }
 
 const hashfy = c => {
     const out = {};
-    c.pop
+    isArr(c)
         ? c.forEach((v, i) =>
-              v.pop ? v.forEach((vi, j) => (out[hs(i, j, vi.key)] = vi)) : (out[hs(i, null, v.key)] = v)
+              isArr(v) ? v.forEach((vi, j) => (out[hs(i, j, vi.key)] = vi)) : (out[hs(i, null, v.key)] = v)
           )
         : (out[hs(0, null, c.key)] = c);
     return out;
