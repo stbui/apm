@@ -25,11 +25,11 @@
         "packages/*"
     ],
     "devDependencies": {
-        "gh-pages": "^2.1.1",
+        "gh-pages": "^2.2.0",
         "gitbook-cli": "^2.3.2",
-        "lerna": "^3.18.3",
-        "prettier": "^1.18.2",
-        "typescript": "^3.6.4",
-        "conventional-changelog-cli": "^2.0.25"
+        "lerna": "^3.20.2",
+        "prettier": "^2.0.5",
+        "typescript": "^3.8.3",
+        "conventional-changelog-cli": "^2.0.31"
     }
 }
