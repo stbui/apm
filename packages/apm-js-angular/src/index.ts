@@ -1,30 +1,44 @@
-export class Reactjs {
-    private instance: any;
+import { ErrorHandler, Injectable } from '@angular/core';
 
-    constructor(client) {
-        this.instance = client;
+@Injectable()
+export class ApmErrorHandler extends ErrorHandler {
+  public Client;
 
-        this.catch();
+  constructor(client?) {
+    super()
+
+    this.Client = client
+  }
+
+  public handleError(error: any): void {
+    const handledState = {
+      severity: 'error',
+      severityReason: { type: 'unhandledException' },
+      unhandled: true
     }
 
-    catch() {
-        // @ts-ignore
-        if (!window.React) {
-            throw new Error('Error');
-        }
+    const event = this.Client.Event.create(
+      error,
+      true,
+      handledState,
+      'angular error handler',
+      1
+    )
 
-        // // @ts-ignore
-        // class Boundary extends React.Component {
-        //     constructor(props) {
-        //         super(props);
-        //         this.state = {
-        //             error: null,
-        //             info: null,
-        //         };
-        //     }
-
-        //     componentDidCatch(error, info) {}
-        //     render() {}
-        // }
+    if (error.ngDebugContext) {
+      event.addMetadata('angular', {
+        component: error.ngDebugContext.component,
+        context: error.ngDebugContext.context
+      })
     }
+
+    this.Client._notify(event)
+    ErrorHandler.prototype.handleError.call(this, error)
+  }
+}
+
+export default class AngularPlugin {
+  apply(client) {
+    new ApmErrorHandler(client)
+  }
 }

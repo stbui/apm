@@ -1,18 +1,13 @@
 export class Breadcrumb {
     private type: string;
     private name: string;
-    private metaData: any;
-    private timestamp: string;
+    private metadata: any;
+    private timestamp: Date;
 
-    constructor(
-        name = '[anonymous]',
-        metaData = {},
-        type = 'manual',
-        timestamp = new Date().toJSON()
-    ) {
-        this.type = type;
+    constructor(type?, name?, metadata?, timestamp = new Date()) {
         this.name = name;
-        this.metaData = metaData;
+        this.metadata = metadata;
+        this.type = type;
         this.timestamp = timestamp;
     }
 
@@ -21,7 +16,7 @@ export class Breadcrumb {
             type: this.type,
             name: this.name,
             timestamp: this.timestamp,
-            metaData: this.metaData,
+            metadata: this.metadata,
         };
     }
 }

@@ -1,13 +1,4 @@
-import {
-    BaseEntity,
-    Entity,
-    Column,
-    ObjectID,
-    ObjectIdColumn,
-    Generated,
-    JoinColumn,
-    OneToMany,
-} from 'typeorm';
+import { BaseEntity, Entity, Column, ObjectID, ObjectIdColumn, Generated, JoinColumn, OneToMany } from 'typeorm';
 import { SessionEntity } from '../session/session.entity';
 
 @Entity('apm_setting')

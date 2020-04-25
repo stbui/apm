@@ -6,9 +6,9 @@ import { SettingService } from './setting.service';
 import { SettingProviders } from './setting.providers';
 
 @Module({
-  imports: [DatabaseModule],
-  controllers: [SettingController],
-  providers: [SettingService, ...SettingProviders],
-  exports: [SettingService],
+    imports: [DatabaseModule],
+    controllers: [SettingController],
+    providers: [SettingService, ...SettingProviders],
+    exports: [SettingService],
 })
 export class SettingModule {}

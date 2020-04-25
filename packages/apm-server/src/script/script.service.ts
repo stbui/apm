@@ -7,14 +7,14 @@ import { ScriptDb } from './script.db';
 
 @Injectable()
 export class ScriptService extends CrudService<ScriptEntity> {
-  constructor(
-    @Inject(SCRIPT_TOKEN)
-    protected readonly repository: Repository<ScriptEntity>,
-  ) {
-    super();
-  }
+    constructor(
+        @Inject(SCRIPT_TOKEN)
+        protected readonly repository: Repository<ScriptEntity>
+    ) {
+        super();
+    }
 
-  findAll(): any {
-    return ScriptDb.index;
-  }
+    findAll(): any {
+        return ScriptDb.index;
+    }
 }

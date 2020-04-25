@@ -10,7 +10,7 @@ export class WebsiteService extends CrudService<WebsiteEntity> {
     constructor(
         @Inject(WEBSITE_TOKEN)
         protected readonly repository: Repository<WebsiteEntity>,
-        protected readonly sessionService: SessionService,
+        protected readonly sessionService: SessionService
     ) {
         super();
     }
@@ -48,8 +48,7 @@ export class WebsiteService extends CrudService<WebsiteEntity> {
             logs: [
                 {
                     timestamp: 1457956476.163,
-                    message:
-                        'Uncaught ReferenceError: functionName3 is not defined',
+                    message: 'Uncaught ReferenceError: functionName3 is not defined',
                 },
             ],
         };

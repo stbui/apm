@@ -7,7 +7,7 @@ import { ScriptEntity } from './script.entity';
 @ApiUseTags('script')
 @Controller('script')
 export class ScriptController extends CrudController<ScriptEntity> {
-  constructor(protected service: ScriptService) {
-    super();
-  }
+    constructor(protected service: ScriptService) {
+        super();
+    }
 }

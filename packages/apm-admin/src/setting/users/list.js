@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-    Datagrid,
-    List,
-    Column,
-    EditButton,
-    ShowButton,
-    DeleteButton,
-} from 'prophet-antd';
+import { Datagrid, List, Column, EditButton, ShowButton, DeleteButton } from 'prophet-antd';
 import { Divider } from 'antd';
 
 export default props => (
@@ -23,26 +16,11 @@ export default props => (
             <Column
                 render={record => (
                     <React.Fragment>
-                        <EditButton
-                            label="编辑"
-                            id={record.id}
-                            resource={props.resource}
-                            basePath={props.basePath}
-                        />
+                        <EditButton label="编辑" id={record.id} resource={props.resource} basePath={props.basePath} />
                         <Divider type="vertical" />
-                        <ShowButton
-                            label="详情"
-                            id={record.id}
-                            resource={props.resource}
-                            basePath={props.basePath}
-                        />
+                        <ShowButton label="详情" id={record.id} resource={props.resource} basePath={props.basePath} />
                         <Divider type="vertical" />
-                        <DeleteButton
-                            label="删除"
-                            id={record.id}
-                            resource={props.resource}
-                            basePath={props.basePath}
-                        />
+                        <DeleteButton label="删除" id={record.id} resource={props.resource} basePath={props.basePath} />
                     </React.Fragment>
                 )}
             >

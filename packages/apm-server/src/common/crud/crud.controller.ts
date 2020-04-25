@@ -3,26 +3,9 @@
  * @author Stbui <https://github.com/stbui>
  */
 
-import {
-    Get,
-    Post,
-    Body,
-    Put,
-    Patch,
-    Param,
-    Delete,
-    ParseIntPipe,
-    UseInterceptors,
-    Query,
-} from '@nestjs/common';
+import { Get, Post, Body, Put, Patch, Param, Delete, ParseIntPipe, UseInterceptors, Query } from '@nestjs/common';
 import { BaseEntity, DeleteResult, DeepPartial } from 'typeorm';
-import {
-    ApiUseTags,
-    ApiBearerAuth,
-    ApiOperation,
-    ApiImplicitQuery,
-    ApiResponse,
-} from '@nestjs/swagger';
+import { ApiUseTags, ApiBearerAuth, ApiOperation, ApiImplicitQuery, ApiResponse } from '@nestjs/swagger';
 import { CrudService } from './crud.service';
 import { TransformInterceptor } from '../interceptors/transform.interceptor';
 
@@ -53,8 +36,7 @@ export class CrudController<T extends BaseEntity> {
         name: 'cur_page',
         required: false,
         type: Number,
-        description:
-            'A page number within the paginated result set. (default: 1)',
+        description: 'A page number within the paginated result set. (default: 1)',
     })
     @ApiImplicitQuery({
         name: 'group',
@@ -100,20 +82,14 @@ export class CrudController<T extends BaseEntity> {
     @Put(':id')
     @ApiResponse({ status: 400, description: 'Bad Request.' })
     @ApiResponse({ status: 200, description: 'Entity deleted successfully.' })
-    public async update(
-        @Param('id', new ParseIntPipe()) id: number,
-        @Body() data: DeepPartial<T>,
-    ): Promise<T> {
+    public async update(@Param('id', new ParseIntPipe()) id: number, @Body() data: DeepPartial<T>): Promise<T> {
         return this.service.patch(id, data);
     }
 
     @Patch('/:id')
     @ApiResponse({ status: 400, description: 'Bad Request.' })
     @ApiResponse({ status: 200, description: 'Entity deleted successfully.' })
-    public async patch(
-        @Param('id', new ParseIntPipe()) id: number,
-        @Body() data: DeepPartial<T>,
-    ): Promise<T> {
+    public async patch(@Param('id', new ParseIntPipe()) id: number, @Body() data: DeepPartial<T>): Promise<T> {
         return this.service.patch(id, data);
     }
 

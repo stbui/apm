@@ -1,14 +1,6 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { validate } from 'class-validator';
-import {
-    BaseEntity,
-    UpdateResult,
-    DeleteResult,
-    Repository,
-    DeepPartial,
-    FindManyOptions,
-    ObjectID,
-} from 'typeorm';
+import { BaseEntity, UpdateResult, DeleteResult, Repository, DeepPartial, FindManyOptions, ObjectID } from 'typeorm';
 import { FindOneOptions } from 'typeorm/find-options/FindOneOptions';
 import { FindConditions } from 'typeorm/find-options/FindConditions';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
@@ -26,17 +18,11 @@ export class CrudService<T extends BaseEntity> {
         return await this.repository.findAndCount(options);
     }
 
-    public async findOneById(
-        id?: string | number | Date | ObjectID,
-        options?: FindOneOptions<T>,
-    ): Promise<T> {
+    public async findOneById(id?: string | number | Date | ObjectID, options?: FindOneOptions<T>): Promise<T> {
         return this.repository.findOneOrFail(id, options);
     }
 
-    public async findOne(
-        conditions?: FindConditions<T>,
-        options?: FindOneOptions<T>,
-    ): Promise<T> {
+    public async findOne(conditions?: FindConditions<T>, options?: FindOneOptions<T>): Promise<T> {
         return this.repository.findOne(conditions, options);
     }
 
@@ -51,17 +37,8 @@ export class CrudService<T extends BaseEntity> {
     }
 
     public async update(
-        criteria:
-            | string
-            | string[]
-            | number
-            | number[]
-            | Date
-            | Date[]
-            | ObjectID
-            | ObjectID[]
-            | FindConditions<T>,
-        partialEntity: QueryDeepPartialEntity<T>,
+        criteria: string | string[] | number | number[] | Date | Date[] | ObjectID | ObjectID[] | FindConditions<T>,
+        partialEntity: QueryDeepPartialEntity<T>
     ): Promise<UpdateResult> {
         return this.repository.update(criteria, partialEntity);
     }
@@ -75,16 +52,7 @@ export class CrudService<T extends BaseEntity> {
     }
 
     public async delete(
-        criteria:
-            | string
-            | string[]
-            | number
-            | number[]
-            | Date
-            | Date[]
-            | ObjectID
-            | ObjectID[]
-            | FindConditions<T>,
+        criteria: string | string[] | number | number[] | Date | Date[] | ObjectID | ObjectID[] | FindConditions<T>
     ): Promise<DeleteResult> {
         return this.repository.delete(criteria);
     }

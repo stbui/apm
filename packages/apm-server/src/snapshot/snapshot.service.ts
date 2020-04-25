@@ -8,7 +8,7 @@ import { SNAPSHOT_TOKEN } from './snapshot.constants';
 export class SnapshotService extends CrudService<SnapshotEntity> {
     constructor(
         @Inject(SNAPSHOT_TOKEN)
-        protected readonly repository: Repository<SnapshotEntity>,
+        protected readonly repository: Repository<SnapshotEntity>
     ) {
         super();
     }

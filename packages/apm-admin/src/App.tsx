@@ -9,7 +9,6 @@ import settingSite from './setting/site';
 
 import './App.scss';
 
-
 export default () => (
     <Prophet
         dataProvider={dataProvider}

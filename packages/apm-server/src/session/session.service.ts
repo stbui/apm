@@ -6,10 +6,10 @@ import { TOKEN } from './session.constants';
 
 @Injectable()
 export class SessionService extends CrudService<SessionEntity> {
-  constructor(
-    @Inject(TOKEN)
-    protected readonly repository: Repository<SessionEntity>,
-  ) {
-    super();
-  }
+    constructor(
+        @Inject(TOKEN)
+        protected readonly repository: Repository<SessionEntity>
+    ) {
+        super();
+    }
 }

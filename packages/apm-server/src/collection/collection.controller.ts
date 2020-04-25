@@ -7,7 +7,7 @@ import { CollectionEntity } from './collection.entity';
 @ApiUseTags('collection')
 @Controller('collection')
 export class CollectionController extends CrudController<CollectionEntity> {
-  constructor(protected service: CollectionService) {
-    super();
-  }
+    constructor(protected service: CollectionService) {
+        super();
+    }
 }

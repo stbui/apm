@@ -4,9 +4,9 @@ import { API_TOKEN } from './api.constants';
 import { ApiEntity } from './api.entity';
 
 export const ApiProviders = [
-  {
-    provide: API_TOKEN,
-    useFactory: (connection: Connection) => connection.getRepository(ApiEntity),
-    inject: [DB_CON_TOKEN],
-  },
+    {
+        provide: API_TOKEN,
+        useFactory: (connection: Connection) => connection.getRepository(ApiEntity),
+        inject: [DB_CON_TOKEN],
+    },
 ];

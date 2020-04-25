@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-    Datagrid,
-    List,
-    Column,
-} from 'prophet-antd';
+import { Datagrid, List, Column } from 'prophet-antd';
 
 export default props => (
     <List {...props}>

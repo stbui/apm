@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 export default class Show extends Component {
-  static propTypes = {};
+    static propTypes = {};
 
-  render() {
-    return <div>Show</div>;
-  }
+    render() {
+        return <div>Show</div>;
+    }
 }

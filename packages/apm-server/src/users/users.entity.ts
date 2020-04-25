@@ -8,14 +8,7 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import {
-    IsArray,
-    IsEmail,
-    IsString,
-    MinLength,
-    Validate,
-    IsEmpty,
-} from 'class-validator';
+import { IsArray, IsEmail, IsString, MinLength, Validate, IsEmpty } from 'class-validator';
 import * as crypto from 'crypto';
 import { IsUserAlreadyExist } from './users.validator';
 import { USER_ROLE } from './users.constants';
@@ -38,9 +31,7 @@ export class UsersEntity extends BaseEntity {
 
     @BeforeInsert()
     hashPassword() {
-        this.password = crypto
-            .createHmac('sha256', this.password)
-            .digest('hex');
+        this.password = crypto.createHmac('sha256', this.password).digest('hex');
     }
 
     @Column() pricingPlan: string = 'free';

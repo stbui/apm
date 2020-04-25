@@ -13,7 +13,6 @@ async function bootstrap() {
     // app.setGlobalPrefix('v1');
     app.use(bodyParser.json({ limit: '50mb' }));
 
-
     app.useGlobalFilters(new TypeormExceptionFilter());
 
     app.enableCors({

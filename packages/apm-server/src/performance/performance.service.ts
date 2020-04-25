@@ -7,14 +7,14 @@ import { PerformanceDb } from './performance.db';
 
 @Injectable()
 export class PerformanceService extends CrudService<PerformanceEntity> {
-  constructor(
-    @Inject(PERFORMANCE_TOKEN)
-    protected readonly repository: Repository<PerformanceEntity>,
-  ) {
-    super();
-  }
+    constructor(
+        @Inject(PERFORMANCE_TOKEN)
+        protected readonly repository: Repository<PerformanceEntity>
+    ) {
+        super();
+    }
 
-  findAll(): any {
-    return PerformanceDb.index;
-  }
+    findAll(): any {
+        return PerformanceDb.index;
+    }
 }

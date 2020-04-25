@@ -1,7 +1,6 @@
-
 import { Injectable } from '@nestjs/common';
 import nodemailer from 'nodemailer';
-import { Config } from '../../config/config'
+import { Config } from '../../config/config';
 
 export interface IEmailOptions {
     to: string;
@@ -12,12 +11,11 @@ export interface IEmailOptions {
 
 @Injectable()
 export class EmailService {
-
     private transporter: nodemailer;
     private clientIsValid: boolean;
 
     constructor() {
-        this.transporter = nodemailer.createTransport(Config.email)
+        this.transporter = nodemailer.createTransport(Config.email);
     }
 
     // 验证有效性

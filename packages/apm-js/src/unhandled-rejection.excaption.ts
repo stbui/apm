@@ -1,46 +1,29 @@
-export class UnnHanndledRejectionExcaption {
-    private instance: any;
+import { Plugin } from './plugin';
 
-    constructor(client) {
-        this.instance = client;
+/**
+ * Promise 错误拦截
+ * 当Promise 被 reject 且没有 reject 处理器的时候，会触发 unhandledrejection 事件；这可能发生在 window 下，但也可能发生在 Worker 中。 这对于调试回退错误处理非常有用。
+ */
+export class UnnHanndledRejectionExcaption extends Plugin {
+    pluginName: string = 'UnnHanndledRejectionExcaption';
 
-        this.catch();
+    constructor(kernel) {
+        super(kernel);
     }
 
-    catch() {
-        window.addEventListener('unhandledrejection', event => {
-            let error = event.reason;
-
-            const handledState = {
+    apply(instance) {
+        window.addEventListener('unhandledrejection', ({ reason }) => {
+            const event = {
+                errorClass: reason ? reason.name : 'UnhandledRejection',
+                errorMessage: reason
+                    ? reason.message
+                    : 'Rejection reason was not an Error. See "Promise" tab for more detail.',
                 severity: 'error',
                 unhandled: true,
                 severityReason: { type: 'unhandledPromiseRejection' },
             };
 
-            let report;
-            if (error) {
-                report = this.instance.report.create(
-                    error.name,
-                    error.message,
-                    [],
-                    handledState,
-                    error
-                );
-            } else {
-                const msg =
-                    'Rejection reason was not an Error. See "Promise" tab for more detail.';
-                report = this.instance.report.create(
-                    error && error.name ? error.name : 'UnhandledRejection',
-                    error && error.message ? error.message : msg,
-                    [],
-                    handledState,
-                    error
-                );
-
-                // report.updateMetaData('promise', 'rejection reason', )
-            }
-
-            this.instance.notify(report);
+            this.dispatcher.dispatch('notify', event);
         });
     }
 }

@@ -6,8 +6,8 @@ import { PerformanceService } from './performance.service';
 import { PerformanceProviders } from './performance.providers';
 
 @Module({
-  imports: [DatabaseModule],
-  controllers: [PerformanceController],
-  providers: [PerformanceService, ...PerformanceProviders],
+    imports: [DatabaseModule],
+    controllers: [PerformanceController],
+    providers: [PerformanceService, ...PerformanceProviders],
 })
 export class PerformanceModule {}

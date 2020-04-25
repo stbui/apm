@@ -5,8 +5,8 @@ import { ScriptService } from './script.service';
 import { ScriptProviders } from './script.providers';
 
 @Module({
-  imports: [DatabaseModule],
-  controllers: [ScriptController],
-  providers: [ScriptService, ...ScriptProviders],
+    imports: [DatabaseModule],
+    controllers: [ScriptController],
+    providers: [ScriptService, ...ScriptProviders],
 })
 export class ScriptModule {}

@@ -8,34 +8,34 @@ import { HttpHander } from './backend';
 import { HttpXhrBackend } from './xhr';
 
 export class HttpInterceptingHandle implements HttpHander {
-  protected backend;
+    protected backend;
 
-  constructor(parameters) {}
+    constructor(parameters) {}
 
-  handle(req) {}
+    handle(req) {}
 }
 
 export class Http {
-  post(url: string, params) {
-    const req = {
-      method: 'POST',
-      urlWithParams: url,
-      body: params
-    };
-    this.request(req);
-  }
-  get(url: string, params) {
-    const req = {
-      method: 'GET',
-      urlWithParams: url,
-      body: params
-    };
-    this.request(req);
-  }
-  put(url: string, params) {}
-  delete(url: string, params) {}
-  request(req) {
-    const xhr = new HttpXhrBackend();
-    xhr.handle(req);
-  }
+    post(url: string, params) {
+        const req = {
+            method: 'POST',
+            urlWithParams: url,
+            body: params,
+        };
+        this.request(req);
+    }
+    get(url: string, params) {
+        const req = {
+            method: 'GET',
+            urlWithParams: url,
+            body: params,
+        };
+        this.request(req);
+    }
+    put(url: string, params) {}
+    delete(url: string, params) {}
+    request(req) {
+        const xhr = new HttpXhrBackend();
+        xhr.handle(req);
+    }
 }

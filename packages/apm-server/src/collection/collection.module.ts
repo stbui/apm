@@ -6,8 +6,8 @@ import { CollectionService } from './collection.service';
 import { CollectionProviders } from './collection.providers';
 
 @Module({
-  imports: [DatabaseModule],
-  controllers: [CollectionController],
-  providers: [CollectionService, ...CollectionProviders],
+    imports: [DatabaseModule],
+    controllers: [CollectionController],
+    providers: [CollectionService, ...CollectionProviders],
 })
 export class CollectionModule {}

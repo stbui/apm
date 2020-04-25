@@ -6,8 +6,7 @@ import { WEBSITE_TOKEN } from './website.constants';
 export const WebsiteProviders = [
     {
         provide: WEBSITE_TOKEN,
-        useFactory: (connection: Connection) =>
-            connection.getRepository(WebsiteEntity),
+        useFactory: (connection: Connection) => connection.getRepository(WebsiteEntity),
         inject: [DB_CON_TOKEN],
     },
 ];

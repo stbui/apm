@@ -7,7 +7,7 @@ import { PerformanceEntity } from './performance.entity';
 @ApiUseTags('performance')
 @Controller('performance')
 export class PerformanceController extends CrudController<PerformanceEntity> {
-  constructor(protected service: PerformanceService) {
-    super();
-  }
+    constructor(protected service: PerformanceService) {
+        super();
+    }
 }

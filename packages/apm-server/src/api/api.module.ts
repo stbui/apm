@@ -9,13 +9,7 @@ import { WebsiteModule } from '../website/website.module';
 import { SessionModule } from '../session/session.module';
 
 @Module({
-    imports: [
-        DatabaseModule,
-        SnapshotModule,
-        SettingModule,
-        WebsiteModule,
-        SessionModule,
-    ],
+    imports: [DatabaseModule, SnapshotModule, SettingModule, WebsiteModule, SessionModule],
     controllers: [ApiController],
     providers: [ApiService, ...ApiProviders],
 })

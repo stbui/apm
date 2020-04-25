@@ -6,10 +6,10 @@ import { COLLECTION_TOKEN } from './collection.constants';
 
 @Injectable()
 export class CollectionService extends CrudService<CollectionEntity> {
-  constructor(
-    @Inject(COLLECTION_TOKEN)
-    protected readonly repository: Repository<CollectionEntity>,
-  ) {
-    super();
-  }
+    constructor(
+        @Inject(COLLECTION_TOKEN)
+        protected readonly repository: Repository<CollectionEntity>
+    ) {
+        super();
+    }
 }

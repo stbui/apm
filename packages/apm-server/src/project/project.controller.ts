@@ -7,7 +7,7 @@ import { ProjectEntity } from './project.entity';
 @ApiUseTags('collection')
 @Controller('collection')
 export class ProjectController extends CrudController<ProjectEntity> {
-  constructor(protected service: ProjectService) {
-    super();
-  }
+    constructor(protected service: ProjectService) {
+        super();
+    }
 }

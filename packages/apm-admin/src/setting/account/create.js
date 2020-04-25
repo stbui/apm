@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 export default class Create extends Component {
-  static propTypes = {};
+    static propTypes = {};
 
-  render() {
-    return <div>Create</div>;
-  }
+    render() {
+        return <div>Create</div>;
+    }
 }

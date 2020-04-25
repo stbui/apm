@@ -1,57 +1,80 @@
 import { Breadcrumb } from './breadcrumb';
-import { Report } from './report';
-import { Config } from './config';
+import { Event } from './event';
+import { Kernal } from './kernel';
+import { Queue } from './queue'
 
-export abstract class ClientAbstract {
-    abstract register(plugin);
-    abstract notify(error, options, cb);
-}
-
-export class Client implements ClientAbstract {
+export class Client extends Kernal {
     private _delivery: any;
+    private _queue: Queue = new Queue();
 
     public device: any = undefined;
     public user: any = {};
     public breadcrumbs = [];
-    public report: Report;
-    public breadcrumb: Breadcrumb;
-    public config;
+    public event: Event = new Event();
+    public breadcrumb: any;
+
 
     constructor(options?) {
-        this.breadcrumb = new Breadcrumb();
-        this.report = new Report();
-        this.config = Config;
+        super(options);
+
+        this.breadcrumb = Breadcrumb;
+
+        this.dispatcher.on('session', event => {
+            this.device = event;
+        });
+
+        this.onNotify()
     }
 
-    register(plugin) {
-        new plugin(this);
-        return this;
+    onNotify() {
+        this.dispatcher.on('notify', data => {
+            this.notify(data);
+        });
     }
 
     delivery(request) {
-        this._delivery = new request(this.config.url, this.config.apiKey);
+        this._delivery = new request(this.config.endpoint, this.config.apiKey);
         return this;
     }
 
-    notify(error, options = {}, cb) {
-        const report: any = this.report.create(
-            error.errorClass,
-            error.errorMessage,
-            error.stacktrace,
-            error.severity,
-            error.originalError
-        );
+    captureException() { }
+    captureMessage() { }
+    captureBreadcrumb() { }
 
-        report.device = this.device;
-        report.user = { name: 'stbui' };
-        report.breadcrumbs = this.breadcrumbs;
+    getUser() {
+        return this.config.user;
+    }
 
-        report.exceptions = {};
+    setUser(id: string | number, email: string, name: string) {
+        return (this.config.user = { id, email, name });
+    }
 
-        this._delivery.sendReport({
-            apiKey: 'stbui',
-            notifier: {},
-            events: report,
+    send(data) {
+        this._delivery.send(data);
+        this._queue.clear()
+    }
+
+    notify(event) {
+        const events = {
+            exceptions: event,
+            device: this.device,
+            user: this.getUser(),
+            breadcrumbs: this.breadcrumbs,
+            releaseStage: this.appVersion(),
+        };
+
+        this.send({
+            apiKey: this.config.apiKey,
+            events: events,
+            notifier: {
+                name: this.config.sdk_name,
+                version: this.config.sdk_version,
+                url: 'https://github.com/stbui/apm',
+            },
         });
+    }
+
+    appVersion() {
+        return this.config.releaseStage;
     }
 }

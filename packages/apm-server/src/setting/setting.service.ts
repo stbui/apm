@@ -6,10 +6,10 @@ import { TOKEN } from './setting.constants';
 
 @Injectable()
 export class SettingService extends CrudService<SettingEntity> {
-  constructor(
-    @Inject(TOKEN)
-    protected readonly repository: Repository<SettingEntity>,
-  ) {
-    super();
-  }
+    constructor(
+        @Inject(TOKEN)
+        protected readonly repository: Repository<SettingEntity>
+    ) {
+        super();
+    }
 }

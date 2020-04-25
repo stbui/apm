@@ -1,30 +1,37 @@
-export class Reactjs {
-    private instance: any;
 
-    constructor(client) {
-        this.instance = client;
+// @ts-ignore
+class ErrorBoundary extends window.React.Component {
+  constructor(props) {
+    super(props);
 
-        this.catch();
+    this.state = {
+      error: null,
+      info: null,
+    };
+  }
+
+  componentDidCatch(error, info) { }
+
+  render() {
+    const { error }: any = this.state
+    if (error) {
+      const { FallbackComponent }: any = this.props
+      if (FallbackComponent) return window.React.createElement(FallbackComponent, this.state)
+      return null
     }
 
-    catch() {
-        // @ts-ignore
-        if (!window.React) {
-            throw new Error('Error');
-        }
+    return this.props.children
+  }
+}
 
-        // // @ts-ignore
-        // class Boundary extends React.Component {
-        //     constructor(props) {
-        //         super(props);
-        //         this.state = {
-        //             error: null,
-        //             info: null,
-        //         };
-        //     }
+export class ReactjsPlugin {
 
-        //     componentDidCatch(error, info) {}
-        //     render() {}
-        // }
+  apply() {
+    // @ts-ignore
+    if (!window.React) {
+      throw new Error('Error');
     }
+
+
+  }
 }

@@ -1,14 +1,4 @@
-import {
-    Controller,
-    Get,
-    Query,
-    Post,
-    Body,
-    Param,
-    Put,
-    Headers,
-    ParseIntPipe,
-} from '@nestjs/common';
+import { Controller, Get, Query, Post, Body, Param, Put, Headers, ParseIntPipe } from '@nestjs/common';
 import { ApiService } from './api.service';
 
 @Controller('api')
@@ -45,10 +35,7 @@ export class ApiController {
      * ?events_index=2&events_timestamp=1495539033675&logs_timestamp=1495539033246
      */
     @Get('/sessions/:session_id/activities')
-    async activities(
-        @Param('session_id') sessionId,
-        @Query('events_index', new ParseIntPipe()) eventsIndex,
-    ) {
+    async activities(@Param('session_id') sessionId, @Query('events_index', new ParseIntPipe()) eventsIndex) {
         const activities = await this.service.getEvents(sessionId, eventsIndex);
         const session = await this.service.getSession(sessionId);
 
@@ -148,11 +135,7 @@ export class ApiController {
      * @param serverSessionId
      */
     @Post('/session/:sessionn_id/data')
-    async data(
-        @Param('sessionn_id') sessionnId,
-        @Body() body,
-        @Query('server_session_id') serverSessionId,
-    ) {
+    async data(@Param('sessionn_id') sessionnId, @Body() body, @Query('server_session_id') serverSessionId) {
         let { lastActive, sessions } = this.service.convertMappings(body);
         const se = await this.service.getSession(sessionnId);
 

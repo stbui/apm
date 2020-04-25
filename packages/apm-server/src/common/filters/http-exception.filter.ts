@@ -4,7 +4,7 @@ import { httpResponse } from './http-response';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
-  catch(exception: HttpException, host: ArgumentsHost) {
-    httpResponse(exception, host);
-  }
+    catch(exception: HttpException, host: ArgumentsHost) {
+        httpResponse(exception, host);
+    }
 }

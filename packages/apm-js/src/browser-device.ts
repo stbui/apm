@@ -1,19 +1,19 @@
-export class BrowserDevice {
-    private instance: any;
+import { Plugin } from './plugin';
+export class BrowserDevice extends Plugin {
+    pluginName: string = 'BrowserDevice';
 
-    constructor(client) {
-        this.instance = client;
-
-        this.getDevice();
+    constructor(kernel) {
+        super(kernel);
     }
 
-    getDevice() {
+    apply() {
         const navigator: Navigator = window.navigator;
         const device = {
             local: navigator.language,
             userAgent: navigator.userAgent,
+            time: new Date().toISOString(),
         };
 
-        this.instance.device = { ...device, ...this.instance.device };
+        this.dispatcher.dispatch('session', device);
     }
 }

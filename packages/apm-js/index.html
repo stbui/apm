@@ -7,7 +7,11 @@
         <title>apm debug</title>
         <script src="./build/apm.js"></script>
         <script>
-            Apm('1dw43f34232424');
+            var apm = Apm({
+                apiKey: '1dw43f34232424',
+                endpoint: 'http://127.0.0.1:8080',
+                user: { name: 'stbui' },
+            });
         </script>
     </head>
 
@@ -57,10 +61,7 @@
                 xhr.withCredentials = true;
                 xhr.timeout = 3000;
                 xhr.open('get', '/stbui', true);
-                xhr.setRequestHeader(
-                    'content-type',
-                    'application/json;charset=utf-8'
-                );
+                xhr.setRequestHeader('content-type', 'application/json;charset=utf-8');
                 xhr.setRequestHeader('Accept', 'application/json');
                 xhr.send();
             }
@@ -69,10 +70,7 @@
                 xhr.withCredentials = true;
                 xhr.timeout = 3000;
                 xhr.open('get', '/stbui', true);
-                xhr.setRequestHeader(
-                    'content-type',
-                    'application/json;charset=utf-8'
-                );
+                xhr.setRequestHeader('content-type', 'application/json;charset=utf-8');
                 xhr.setRequestHeader('Accept', 'application/json');
                 xhr.send();
             }
@@ -81,10 +79,7 @@
                 xhr.withCredentials = true;
                 xhr.timeout = 3000;
                 xhr.open('get', '/servererr', true);
-                xhr.setRequestHeader(
-                    'content-type',
-                    'application/json;charset=utf-8'
-                );
+                xhr.setRequestHeader('content-type', 'application/json;charset=utf-8');
                 xhr.setRequestHeader('Accept', 'application/json');
                 xhr.send();
             }

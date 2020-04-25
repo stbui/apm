@@ -1,7 +1,7 @@
 export const USER_TOKEN = 'UsersRepositoryToken';
 
 export enum USER_ROLE {
-  DEFAULT = 'DEFAULT',
-  ADMIN = 'ADMIN',
-  GHOST = 'ghost',
+    DEFAULT = 'DEFAULT',
+    ADMIN = 'ADMIN',
+    GHOST = 'ghost',
 }

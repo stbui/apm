@@ -1,27 +1,31 @@
-export class Interceptor {
-    // @ts-ignore
-    private instance: any;
+import { Plugin } from './plugin';
 
-    constructor(client) {
-        this.instance = client;
+/**
+ * ajax请求拦截
+ */
+export class Interceptor extends Plugin {
+    pluginName: string = 'Interceptor';
 
-        this.catch();
+    constructor(kernel) {
+        super(kernel);
     }
 
-    catch() {
+    apply() {
+        let self = this;
         let open = XMLHttpRequest.prototype.open;
         // send = XMLHttpRequest.prototype.send;
 
-        // @ts-ignore
-        console.log(this.instance);
-
         XMLHttpRequest.prototype.open = function(method, url) {
-            console.log({
-                type: 'xhr',
-                url: joinUrl(url),
-                method,
-                status: 200,
-            });
+            if (url !== self.config.endpoint) {
+                const event = {
+                    type: 'xhr',
+                    url: joinUrl(url),
+                    method,
+                    status: 200,
+                };
+
+                self.dispatcher.dispatch('notify', event);
+            }
 
             return open.apply(this, arguments);
         };
