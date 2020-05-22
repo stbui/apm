@@ -1,7 +1,7 @@
 import { Plugin } from './plugin';
 
 export class OnErroExcaption extends Plugin {
-    pluginName: string = 'OnErroExcaption';
+    static pluginName: string = 'OnErroExcaption';
 
     constructor(kernel) {
         super(kernel);

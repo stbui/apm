@@ -25,7 +25,7 @@ import { Dispatcher } from './dispatcher';
 // })
 
 export class Plugin {
-    public pluginName: string | number = Math.random();
+    public static pluginName: string | number = Math.random();
 
     public dispatcher: Dispatcher;
     public kernel;

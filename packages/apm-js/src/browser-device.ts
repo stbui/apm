@@ -1,6 +1,6 @@
 import { Plugin } from './plugin';
 export class BrowserDevice extends Plugin {
-    pluginName: string = 'BrowserDevice';
+    static pluginName: string = 'BrowserDevice';
 
     constructor(kernel) {
         super(kernel);

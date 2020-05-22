@@ -46,7 +46,7 @@ export class Kernal {
         const instance = new plugin(this);
         instance.runInitedHook();
 
-        this.plugins.set(instance.pluginName, instance);
+        this.plugins.set(plugin.pluginName, instance);
 
         return this;
     }

@@ -13,16 +13,12 @@ export class Client extends Kernal {
     public event: Event = new Event();
     public breadcrumb: any;
 
-
     constructor(options?) {
         super(options);
 
         this.breadcrumb = Breadcrumb;
 
-        this.dispatcher.on('session', event => {
-            this.device = event;
-        });
-
+        this.onSession();
         this.onNotify()
     }
 
@@ -32,14 +28,36 @@ export class Client extends Kernal {
         });
     }
 
+    onSession() {
+        this.dispatcher.on('session', event => {
+            this.device = event;
+        });
+    }
+
     delivery(request) {
         this._delivery = new request(this.config.endpoint, this.config.apiKey);
         return this;
     }
 
-    captureException() { }
-    captureMessage() { }
-    captureBreadcrumb() { }
+    captureException(error) {
+        const event = {
+            errorClass: error,
+            errorMessage: error,
+            severity: 'customEvent',
+            unhandled: true,
+            severityReason: { type: 'customEvent' },
+        };
+
+        this.dispatcher.dispatch('notify', event);
+    }
+
+    captureMessage(event) {
+        this.dispatcher.dispatch('notify', event);
+    }
+
+    captureBreadcrumb() {
+
+    }
 
     getUser() {
         return this.config.user;

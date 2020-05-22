@@ -1,7 +1,7 @@
 import { Plugin } from './plugin';
 
 export class WindowPerformance extends Plugin {
-    pluginName: string = 'WindowPerformance';
+    static pluginName: string = 'WindowPerformance';
 
     constructor(kernel) {
         super(kernel);
