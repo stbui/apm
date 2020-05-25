@@ -44,29 +44,28 @@ export class WindowPerformance extends Plugin {
         };
 
         const event = {
-            errorClass: payload,
-            errorMessage: '',
-            severity: 'performance',
-            unhandled: true,
-            severityReason: { type: 'performance' },
+            performance: payload,
+            resources: this.getResource(),
+            type: 'performance',
         };
 
-        this.dispatcher.dispatch('notify', event);
         this.dispatcher.dispatch('notify', event);
     }
 
     getResource() {
         let resource: PerformanceEntryList = performance.getEntriesByType('resource');
 
-        resource.forEach((item: any) => {
-            // let json = {
-            //     name: item.name,
-            //     method: 'GET',
-            //     type: item.initiatorType,
-            //     duration: item.duration.toFixed(2) || 0,
-            //     decodedBodySize: item.decodedBodySize || 0,
-            //     nextHopProtocol: item.nextHopProtocol,
-            // };
+        return resource.map((item: any) => {
+            let json = {
+                name: item.name,
+                method: 'GET',
+                type: item.initiatorType,
+                duration: item.duration.toFixed(2) || 0,
+                decodedBodySize: item.decodedBodySize || 0,
+                nextHopProtocol: item.nextHopProtocol,
+            };
+
+            return json;
         });
     }
 }

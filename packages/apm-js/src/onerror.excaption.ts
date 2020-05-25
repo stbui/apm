@@ -23,7 +23,7 @@ export class OnErroExcaption extends Plugin {
                     errorMessage: error ? error.message : '',
                     severity: 'error',
                     unhandled: true,
-                    severityReason: { type: 'unhandledException' },
+                    type: 'unhandledException',
                 };
 
                 this.dispatcher.dispatch('notify', event);

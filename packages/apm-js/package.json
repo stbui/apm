@@ -6,8 +6,8 @@
     "homepage": "https://github.com/stbui/apm#readme",
     "license": "ISC",
     "main": "lib/index",
-    "module": "esm/index.js",
-    "types": "esm/index.d.ts",
+    "module": "esm/public_api.js",
+    "types": "esm/public_api.d.ts",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/stbui/apm.git"

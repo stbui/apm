@@ -4,7 +4,7 @@ import { Plugin } from './plugin';
  * ajax请求拦截
  */
 export class Interceptor extends Plugin {
-    pluginName: string = 'Interceptor';
+    static pluginName: string = 'Interceptor';
 
     constructor(kernel) {
         super(kernel);

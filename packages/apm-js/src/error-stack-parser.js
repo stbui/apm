@@ -1,4 +1,4 @@
-(function (root, factory) {
+(function(root, factory) {
     'use strict';
     // Universal Module Definition (UMD) to support AMD, CommonJS/Node.js, Rhino, and browsers.
 
@@ -49,11 +49,11 @@
         },
 
         parseV8OrIE: function ErrorStackParser$$parseV8OrIE(error) {
-            var filtered = error.stack.split('\n').filter(function (line) {
+            var filtered = error.stack.split('\n').filter(function(line) {
                 return !!line.match(CHROME_IE_STACK_REGEXP);
             }, this);
 
-            return filtered.map(function (line) {
+            return filtered.map(function(line) {
                 if (line.indexOf('(eval ') > -1) {
                     // Throw away eval information until we implement stacktrace.js/stackframe#8
                     line = line.replace(/eval code/g, 'eval').replace(/(\(eval at [^\()]*)|(\)\,.*$)/g, '');
@@ -84,11 +84,11 @@
         },
 
         parseFFOrSafari: function ErrorStackParser$$parseFFOrSafari(error) {
-            var filtered = error.stack.split('\n').filter(function (line) {
+            var filtered = error.stack.split('\n').filter(function(line) {
                 return !line.match(SAFARI_NATIVE_CODE_REGEXP);
             }, this);
 
-            return filtered.map(function (line) {
+            return filtered.map(function(line) {
                 // Throw away eval information until we implement stacktrace.js/stackframe#8
                 if (line.indexOf(' > eval') > -1) {
                     line = line.replace(/ line (\d+)(?: > eval line \d+)* > eval\:\d+\:\d+/g, ':$1');
@@ -174,11 +174,11 @@
 
         // Opera 10.65+ Error.stack very similar to FF/Safari
         parseOpera11: function ErrorStackParser$$parseOpera11(error) {
-            var filtered = error.stack.split('\n').filter(function (line) {
+            var filtered = error.stack.split('\n').filter(function(line) {
                 return !!line.match(FIREFOX_SAFARI_STACK_REGEXP) && !line.match(/^Error created at/);
             }, this);
 
-            return filtered.map(function (line) {
+            return filtered.map(function(line) {
                 var tokens = line.split('@');
                 var locationParts = this.extractLocation(tokens.pop());
                 var functionCall = tokens.shift() || '';

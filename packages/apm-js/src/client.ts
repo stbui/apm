@@ -1,7 +1,7 @@
 import { Breadcrumb } from './breadcrumb';
 import { Event } from './event';
 import { Kernal } from './kernel';
-import { Queue } from './queue'
+import { Queue } from './queue';
 
 export class Client extends Kernal {
     private _delivery: any;
@@ -19,7 +19,7 @@ export class Client extends Kernal {
         this.breadcrumb = Breadcrumb;
 
         this.onSession();
-        this.onNotify()
+        this.onNotify();
     }
 
     onNotify() {
@@ -55,9 +55,7 @@ export class Client extends Kernal {
         this.dispatcher.dispatch('notify', event);
     }
 
-    captureBreadcrumb() {
-
-    }
+    captureBreadcrumb() {}
 
     getUser() {
         return this.config.user;
@@ -69,7 +67,7 @@ export class Client extends Kernal {
 
     send(data) {
         this._delivery.send(data);
-        this._queue.clear()
+        this._queue.clear();
     }
 
     notify(event) {

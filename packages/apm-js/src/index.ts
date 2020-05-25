@@ -8,10 +8,6 @@ import { Interceptor } from './interceptor';
 import { mergeConfig } from './util';
 import { defaultConfig } from './config';
 
-// export * from './plugin'
-// export * from './dispatcher'
-// export * from './kernel'
-
 export default options => {
     const config = mergeConfig(defaultConfig, options);
     const client = new Client(config);

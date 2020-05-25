@@ -35,6 +35,6 @@ export class Queue {
     }
 
     toString() {
-        return this.store
+        return this.store;
     }
 }

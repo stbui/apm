@@ -24,6 +24,10 @@ export class Kernal {
         return this.plugins;
     }
 
+    getPlugin(name) {
+        return this.plugins[name];
+    }
+
     hasPlugin(plugin) {
         return this.plugins.has(plugin);
     }
@@ -45,6 +49,10 @@ export class Kernal {
     use(plugin) {
         const instance = new plugin(this);
         instance.runInitedHook();
+
+        if (typeof plugin.pluginName === 'string' || typeof plugin.pluginName === 'number') {
+            this[plugin.pluginName] = instance;
+        }
 
         this.plugins.set(plugin.pluginName, instance);
 

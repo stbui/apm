@@ -20,7 +20,7 @@ export class UnnHanndledRejectionExcaption extends Plugin {
                     : 'Rejection reason was not an Error. See "Promise" tab for more detail.',
                 severity: 'error',
                 unhandled: true,
-                severityReason: { type: 'unhandledPromiseRejection' },
+                type: 'unhandledPromiseRejection',
             };
 
             this.dispatcher.dispatch('notify', event);
