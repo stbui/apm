@@ -11,7 +11,7 @@ export class UnnHanndledRejectionExcaption extends Plugin {
         super(kernel);
     }
 
-    apply(instance) {
+    apply() {
         window.addEventListener('unhandledrejection', ({ reason }) => {
             const event = {
                 errorClass: reason ? reason.name : 'UnhandledRejection',

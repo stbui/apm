@@ -1,20 +1,30 @@
-export class NavigationBreadcrumbs {
+import { Plugin } from './plugin';
+
+export class NavigationBreadcrumbs extends Plugin {
+
+    static pluginName: string = 'NavigationBreadcrumbs';
+
+    constructor(kernel) {
+        super(kernel);
+    }
+
+
     relativeLocation(url) {
         const a = window.document.createElement('a');
         a.href = url;
         return `${a.pathname}${a.search}${a.hash}`;
     }
 
-    apply(instance) {
+    apply() {
         if (!('addEventListener' in window)) {
             return;
         }
 
         const drop = name => () => {
-            instance.hook.publish('onBreadcumb', breadcumb => {
-                const b = new breadcumb('navigation', name);
-                return b;
-            });
+            // instance.hook.publish('onBreadcumb', breadcumb => {
+            //     const b = new breadcumb('navigation', name);
+            //     return b;
+            // });
         };
 
         window.addEventListener('pagehide', drop('Page hidden'), true);

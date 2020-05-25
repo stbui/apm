@@ -21,6 +21,9 @@
     "bugs": {
         "url": "https://github.com/stbui/apm/issues"
     },
+    "dependencies": {
+        "@angular/core": "^9.1.9"
+    },
     "devDependencies": {
         "@angular/cli": "^9.1.4",
         "@angular/compiler": "^9.1.4",

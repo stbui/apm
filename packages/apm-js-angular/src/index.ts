@@ -1,38 +1,37 @@
 import { ErrorHandler, Injectable } from '@angular/core';
+import { Plugin } from '@apm/js';
 
 @Injectable()
-export class ApmErrorHandler extends ErrorHandler {
-    public Client;
+export class AngularErrorHandler extends ErrorHandler {
+    public client;
 
     constructor(client?) {
         super();
 
-        this.Client = client;
+        this.client = client;
     }
 
     public handleError(error: any): void {
-        const handledState = {
-            severity: 'error',
-            severityReason: { type: 'unhandledException' },
-            unhandled: true,
+        const event = {
+            errorClass: error.name,
+            errorMessage: error.message,
+            type: 'unhandledException',
         };
 
-        const event = this.Client.Event.create(error, true, handledState, 'angular error handler', 1);
+        this.client.dispatcher.dispatch('notify', event);
 
-        if (error.ngDebugContext) {
-            event.addMetadata('angular', {
-                component: error.ngDebugContext.component,
-                context: error.ngDebugContext.context,
-            });
-        }
-
-        this.Client._notify(event);
         ErrorHandler.prototype.handleError.call(this, error);
     }
 }
 
-export default class AngularPlugin {
-    apply(client) {
-        new ApmErrorHandler(client);
+export class AngularPlugin extends Plugin {
+    static pluginName: string = 'AngularPlugin';
+
+    constructor(kernel) {
+        super(kernel);
+    }
+
+    apply() {
+        new AngularErrorHandler(this);
     }
 }
