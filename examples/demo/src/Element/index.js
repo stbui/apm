@@ -3,6 +3,7 @@ import StylesSidebarPane from './StylesSidebarPane';
 import './ElementPanel.scss';
 
 import ElementsTreeOutline from './ElementsTreeOutline';
+import ElementsBreadcrumbs from './ElementsBreadcrumbs';
 
 export default () => {
     return (
@@ -19,7 +20,9 @@ export default () => {
                                     </div>
                                 </div>
                                 <div id="elements-crumbs">
-                                    <div class="vbox flex-auto" aria-hidden="true"></div>
+                                    <div class="vbox flex-auto" aria-hidden="true">
+                                        <ElementsBreadcrumbs />
+                                    </div>
                                 </div>
 
                                 <div class="search-bar hidden" style="order: 100;">

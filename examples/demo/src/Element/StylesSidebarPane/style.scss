@@ -7,7 +7,7 @@
 .styles-section {
     min-height: 18px;
     white-space: nowrap;
-    -webkit-user-select: text;
+    user-select: text;
     border-bottom: 1px solid var(--divider-color);
     position: relative;
     overflow: hidden;
@@ -31,17 +31,15 @@
 }
 
 .styles-section.read-only[data-keyboard-focus='true']:focus {
-    background-color: hsl(215, 25%, 87%);
+    background-color: hsl(215deg, 25%, 87%);
 }
 
 .styles-section .simple-selector.filter-match {
-    background-color: rgba(255, 255, 0, 0.5);
+    background-color: rgb(255, 255, 0 / 50%);
 }
 
-:host-context(.-theme-with-dark-background)
-    .styles-section
-    .simple-selector.filter-match {
-    background-color: hsla(133, 100%, 30%, 0.5);
+:host-context(.-theme-with-dark-background) .styles-section .simple-selector.filter-match {
+    background-color: hsl(133deg, 100%, 30% / 50%);
 }
 
 .sidebar-pane-closing-brace {
@@ -56,7 +54,7 @@
 }
 
 .styles-section-title .media-list {
-    color: hsl(0, 0%, 46%);
+    color: hsl(0deg, 0%, 46%);
 }
 
 .styles-section-title .media-list.media-matches .media.editable-media {
@@ -70,11 +68,11 @@
 
 .styles-section-title .media .subtitle {
     float: right;
-    color: hsl(0, 0%, 34%);
+    color: hsl(0deg, 0%, 34%);
 }
 
 .styles-section-subtitle {
-    color: hsl(0, 0%, 44%);
+    color: hsl(0deg, 0%, 44%);
     float: right;
     padding-left: 15px;
     max-width: 100%;
@@ -87,16 +85,16 @@
 
 .sidebar-pane-open-brace,
 .sidebar-pane-closing-brace {
-    color: hsl(0, 0%, 46%);
+    color: hsl(0deg, 0%, 46%);
 }
 
 .styles-section .styles-section-subtitle .devtools-link {
-    color: hsl(0, 0%, 44%);
-    text-decoration-color: hsl(0, 0%, 60%);
+    color: hsl(0deg, 0%, 44%);
+    text-decoration-color: hsl(0deg, 0%, 60%);
 }
 
 .styles-section .selector {
-    color: hsl(0, 0%, 46%);
+    color: hsl(0deg, 0%, 46%);
 }
 
 .styles-section .simple-selector.selector-matches,
@@ -124,15 +122,17 @@
     from {
         margin-top: -60px;
     }
+
     to {
-        margin-top: 0px;
+        margin-top: 0;
     }
 }
 
 @keyframes styles-element-state-pane-slideout {
     from {
-        margin-top: 0px;
+        margin-top: 0;
     }
+
     to {
         margin-top: -60px;
     }
@@ -192,7 +192,7 @@
 }
 
 .styles-sidebar-pane-filter-box > input::placeholder {
-    color: rgba(0, 0, 0, 0.54);
+    color: rgb(0, 0, 0 / 54%);
 }
 
 .styles-section.styles-panel-hovered:not(.read-only) span.simple-selector:hover,
@@ -205,7 +205,7 @@
     background-color: var(--toolbar-bg-color);
     padding: 0 5px;
     border-bottom: 1px solid var(--divider-color);
-    color: hsla(0, 0%, 32%, 1);
+    color: hsl(0deg, 0%, 32% / 100%);
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -226,18 +226,15 @@
     right: 0;
     bottom: 0;
     visibility: hidden;
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: rgb(255, 255, 255 / 90%);
     z-index: 0;
 }
 
-.styles-section[data-keyboard-focus='true']:focus
-    .sidebar-pane-section-toolbar {
-    background-color: hsla(214, 67%, 95%, 0.9);
+.styles-section[data-keyboard-focus='true']:focus .sidebar-pane-section-toolbar {
+    background-color: hsl(214deg, 67%, 95% / 90%);
 }
 
-.styles-pane:not(.is-editing-style)
-    .styles-section.matched-styles:not(.read-only):hover
-    .sidebar-pane-section-toolbar {
+.styles-pane:not(.is-editing-style) .styles-section.matched-styles:not(.read-only):hover .sidebar-pane-section-toolbar {
     visibility: visible;
 }
 
@@ -246,4 +243,39 @@
     text-overflow: ellipsis;
     overflow: hidden;
     max-width: -webkit-fill-available;
+}
+
+@media (forced-colors: active) {
+    .styles-sidebar-pane-filter-box > input {
+        border: 1px solid ButtonText;
+        background: ButtonFace;
+    }
+
+    .styles-section[data-keyboard-focus='true']:focus,
+    .styles-section.read-only[data-keyboard-focus='true']:focus {
+        forced-color-adjust: none;
+        background-color: Highlight;
+    }
+
+    .styles-section[data-keyboard-focus='true']:focus *,
+    .styles-section.read-only[data-keyboard-focus='true']:focus *,
+    .styles-section[data-keyboard-focus='true']:focus .styles-section-subtitle .devtools-link {
+        color: HighlightText;
+        text-decoration-color: HighlightText;
+    }
+
+    .styles-section[data-keyboard-focus='true']:focus .sidebar-pane-section-toolbar {
+        background-color: ButtonFace;
+    }
+
+    .sidebar-pane-section-toolbar {
+        forced-color-adjust: none;
+        border-color: 1px solid ButtonText;
+        background-color: ButtonFace;
+    }
+
+    .styles-section .styles-section-subtitle .devtools-link {
+        color: linktext;
+        text-decoration-color: linktext;
+    }
 }

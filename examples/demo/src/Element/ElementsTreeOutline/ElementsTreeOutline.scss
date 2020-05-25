@@ -336,3 +336,61 @@ li.hovered:not(.always-parent) + ol.children:not(.shadow-root) {
 li.selected:not(.always-parent) + ol.children {
     border-color: hsla(216, 68%, 80%, 1) !important;
 }
+
+////////////////////////////////////////////////////////////////
+:root {
+    --dom-tag-name-color: rgb(136, 18, 128);
+    --dom-attribute-name-color: rgb(153, 69, 0);
+}
+
+.webkit-html-comment {
+    /* Keep this in sync with view-source.css (.webkit-html-comment) */
+    color: rgb(35, 110, 37);
+}
+
+.webkit-html-tag {
+    color: rgb(168, 148, 166);
+}
+
+.webkit-html-tag-name,
+.webkit-html-close-tag-name {
+    /* Keep this in sync with view-source.css (.webkit-html-tag) */
+    color: var(--dom-tag-name-color);
+}
+
+.webkit-html-pseudo-element {
+    /* This one is non-standard. */
+    color: brown;
+}
+
+.webkit-html-js-node,
+.webkit-html-css-node {
+    white-space: pre-wrap;
+}
+
+.webkit-html-text-node {
+    unicode-bidi: -webkit-isolate;
+}
+
+.webkit-html-entity-value {
+    /* This one is non-standard. */
+    background-color: rgb(0, 0, 0 / 15%);
+    unicode-bidi: -webkit-isolate;
+}
+
+.webkit-html-doctype {
+    /* Keep this in sync with view-source.css (.webkit-html-doctype) */
+    color: rgb(192, 192, 192);
+}
+
+.webkit-html-attribute-name {
+    /* Keep this in sync with view-source.css (.webkit-html-attribute-name) */
+    color: var(--dom-attribute-name-color);
+    unicode-bidi: -webkit-isolate;
+}
+
+.webkit-html-attribute-value {
+    /* Keep this in sync with view-source.css (.webkit-html-attribute-value) */
+    color: rgb(26, 26, 166);
+    unicode-bidi: -webkit-isolate;
+}
