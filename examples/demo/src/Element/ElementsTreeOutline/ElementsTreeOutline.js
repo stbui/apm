@@ -1,5 +1,14 @@
 import React from 'react';
 
+export const treeOutline = ({ children }) => {
+    return (
+        <li role="treeitem" draggable="true" class="">
+            <div class="selection fill" style="margin-left: 0px;"></div>
+            {children}
+        </li>
+    );
+};
+
 export default () => {
     return (
         <div class="elements-disclosure">
