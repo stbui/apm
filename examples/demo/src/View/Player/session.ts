@@ -59,25 +59,38 @@ export const session = {
             revolve({});
         });
     },
-    getSessionDetails: () => {},
-    getSessionLogs: () => {},
-    getSessions: () => {},
-    deleteSession: () => {},
-    deleteSessions: () => {},
-    sessionCanBeDownloaded: () => {},
+    getSessionDetails: () => { },
+    getSessionLogs: () => { },
+    getSessions: () => { },
+    deleteSession: () => { },
+    deleteSessions: () => { },
+    sessionCanBeDownloaded: () => { },
     getActivities: (sessionId, lastEvent) => {
         return new Promise((revolve, reject) => {
             revolve({});
         });
     },
-    getActivitiesCount: () => {},
-    getSessionStatus: () => {},
+    getActivitiesCount: () => { },
+    getSessionStatus: () => { },
 };
 
 export class SessionDataClient {
-    ACTIVITIES_POLL_WAIT_TIME = 0;
-    SESSION_STATUS_POLL_WAIT_TIME = 30000;
-    NO_ACTIVITIES_POLL_WAIT_TIME = 500;
+
+    sessionId: string | number
+    logId: string | number
+    lastEventTimestamp: number
+    lastEventIndex: number
+    lastLogTimestamp: number
+    timeLimit
+    lastLoadedActivityTime: number
+    loadingActivitiesPromise
+    activitiesPollerIsCanceled: boolean
+
+    ACTIVITIES_POLL_WAIT_TIME: number = 0;
+    SESSION_STATUS_POLL_WAIT_TIME: number = 30000;
+    NO_ACTIVITIES_POLL_WAIT_TIME: number = 500;
+
+    isLive
 
     constructor(sessionId, logId) {
         this.sessionId = sessionId;
@@ -87,7 +100,6 @@ export class SessionDataClient {
         this.lastLogTimestamp = 0;
         this.timeLimit = null;
         this.lastLoadedActivityTime = 0;
-        this.loadingActivitiesPromise;
         this.activitiesPollerIsCanceled = true;
     }
 

@@ -13,7 +13,7 @@ export class ReactjsPlugin extends Plugin {
             throw new Error('Error');
         }
 
-        const dispatcher = this.dispatcher
+        const dispatcher = this.dispatcher;
 
         // @ts-ignore
         class ErrorBoundary extends window.React.Component {
@@ -47,7 +47,5 @@ export class ReactjsPlugin extends Plugin {
                 return this.props.children;
             }
         }
-
-
     }
 }

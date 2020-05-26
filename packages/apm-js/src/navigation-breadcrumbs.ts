@@ -1,13 +1,11 @@
 import { Plugin } from './plugin';
 
 export class NavigationBreadcrumbs extends Plugin {
-
     static pluginName: string = 'NavigationBreadcrumbs';
 
     constructor(kernel) {
         super(kernel);
     }
-
 
     relativeLocation(url) {
         const a = window.document.createElement('a');

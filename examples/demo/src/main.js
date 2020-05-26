@@ -113,7 +113,7 @@ const Home = () => {
 };
 
 window.onload = function() {
-    const ws = new WebSocket('ws://localhost:9222/devtools/page/6F1DFF456B28EC7C246772266758CAAE');
+    const ws = new WebSocket('ws://localhost:9222/devtools/page/AADAA25366AC49AF0785BE403D7583A2');
 
     ws.onopen = function() {
         console.log('client：打开连接');

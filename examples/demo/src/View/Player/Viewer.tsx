@@ -199,7 +199,7 @@ const Viewer = ({
 
         if (documentNode.isAttached) {
             v(position);
-            angular.isUndefined(id) && b.viewerOverlay && b.viewerOverlay.setScrollPosition(top, left);
+            angular.isUndefined(id) && viewerOverlay && viewerOverlay.setScrollPosition(top, left);
         }
 
         if (angular.isUndefined(id)) {
@@ -231,7 +231,7 @@ const Viewer = ({
      * D
      * @param activity
      */
-    function onExecuteEvent(activity) {
+    function onExecuteEvent(activity: { type: string; data: any }) {
         const type = activity.type;
         const data = activity.data;
         const eventType = p(type);
@@ -248,11 +248,11 @@ const Viewer = ({
      * @param {*} visibilityState
      */
     function toggleVisibilityOverlay(visibilityState: 'visible' | 'hidden' | 'prerender') {
-        if (b.viewerOverlay) {
+        if (viewerOverlay) {
             if ('prerender' === visibilityState || 'hidden' === visibilityState) {
-                b.viewerOverlay.showVisibilityOverlay(visibilityState);
+                viewerOverlay.showVisibilityOverlay(visibilityState);
             } else {
-                b.viewerOverlay.hideVisibilityOverlay();
+                viewerOverlay.hideVisibilityOverlay();
             }
             b.visibilityState = visibilityState;
         }
@@ -264,7 +264,7 @@ const Viewer = ({
      * @param data
      */
     function domSnapshot(data) {
-        if (angular.isDefined(data.visibilityState) && b.visibilityState !== data.visibilityState) {
+        if (angular.isDefined(data.visibilityState) && visibilityState !== data.visibilityState) {
             // 更新visibilityState
             toggleVisibilityOverlay(data.visibilityState);
             // 渲染snapshot
@@ -496,7 +496,6 @@ const Viewer = ({
         if (data) {
             data.forEach(item => {
                 const element = documentNode.getNode(item.id);
-                console.log('removed', item, element);
                 // 删除所有节点
                 documentNode.removeNode(element);
             });
@@ -667,7 +666,7 @@ const Viewer = ({
      * @param data activities
      */
     function setCursorPosition(data) {
-        if (documentNode.isAttached && b.viewerOverlay) {
+        if (documentNode.isAttached && viewerOverlay) {
             const offset: any = getNodeOffset(data.frameElementId);
             const offsetTop = data.y + offset.top;
             const offsetLeft = data.x + offset.left;
@@ -689,7 +688,7 @@ const Viewer = ({
     function registerClick(data) {
         setCursorPosition(data);
 
-        if (documentNode.isAttached && b.viewerOverlay) {
+        if (documentNode.isAttached && viewerOverlay) {
             const offset: any = getNodeOffset(data.frameElementId);
             const offsetTop = ja.top + data.y + offset.top;
             const offsetLeft = ja.left + data.x + offset.left;
@@ -766,7 +765,7 @@ const Viewer = ({
 
     useEffect(() => {
         if (currentActivity) {
-            // console.log('currentActivity', currentActivity);
+            console.log('currentActivity', currentActivity);
             onExecuteEvent(currentActivity);
         }
     }, [JSON.stringify(currentActivity)]);

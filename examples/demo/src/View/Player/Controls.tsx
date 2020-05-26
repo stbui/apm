@@ -40,7 +40,7 @@ const Controls = ({
         onRepeat && onRepeat();
     };
     const selectNextStep = () => {
-        onSelectNextStep & onSelectNextStep();
+        onSelectNextStep && onSelectNextStep();
     };
     const goLive = () => {
         onLive && onLive();

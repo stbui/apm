@@ -153,12 +153,12 @@ export default () => {
         });
     }, []);
 
-    useEffect(() => {
-        if (session) {
-            //
-            onPlayerIsInitialized();
-        }
-    }, [session]);
+    // useEffect(() => {
+    //     if (session) {
+    //         //
+    //         onPlayerIsInitialized();
+    //     }
+    // }, [session]);
 
     return (
         <div>
