@@ -10,14 +10,7 @@ angular
         function(a, b, c) {
             function d(b, c) {
                 var d = document.createElement('div');
-                return (
-                    $(d).css({
-                        top: b - a / 2 + 'px',
-                        left: c - a / 2 + 'px',
-                    }),
-                    $(d).css(g),
-                    d
-                );
+                return $(d).css({ top: b - a / 2 + 'px', left: c - a / 2 + 'px' }), $(d).css(g), d;
             }
             function e(a) {
                 var c = a.totalPlayingTime;
@@ -33,7 +26,7 @@ angular
                     width: a + 'px',
                     height: a + 'px',
                     position: 'absolute',
-                    'z-index': 2147483645,
+                    'z-index': 20,
                     '-moz-border-radius': '10px',
                     '-webkit-border-radius': '10px',
                 },

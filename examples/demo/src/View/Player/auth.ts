@@ -1,6 +1,5 @@
 import { tokenManager } from './tokenManager';
-
-export const SERVER_URL = 'http://127.0.0.1:3000/api/';
+import { SERVER_URL } from './constant'
 
 export function restSettings() {
     function buildUrl(path) {
@@ -17,7 +16,7 @@ export function restSettings() {
 }
 
 export function auth() {
-    const D = null;
+    let D = null;
     const loggedIn = 'loggedIn';
     const loggedOut = 'loggedOut';
     const loginUrl = restSettings().buildUrl('login');
@@ -53,23 +52,23 @@ export function auth() {
     return {
         login,
         logout,
-        isCurrentUserLoaded: () => {},
-        isLoggedIn: () => {},
+        isCurrentUserLoaded: () => { },
+        isLoggedIn: () => { },
         loadCurrentUser,
-        getCurrentUser: () => {},
-        clearCurrentUser: () => {},
-        getAuthToken: () => {},
-        hasAuthToken: () => {},
-        getAccessToken: () => {},
-        onLoggedIn: () => {},
-        onLoggedOut: () => {},
-        resetPassword: () => {},
-        getPasswordResetEmail: () => {},
-        setNewPassword: () => {},
-        updateProfile: () => {},
-        onAuthenticate: () => {},
-        acceptInvitation: () => {},
-        register: () => {},
-        validateUser: () => {},
+        getCurrentUser: () => { },
+        clearCurrentUser: () => { },
+        getAuthToken: () => { },
+        hasAuthToken: () => { },
+        getAccessToken: () => { },
+        onLoggedIn: () => { },
+        onLoggedOut: () => { },
+        resetPassword: () => { },
+        getPasswordResetEmail: () => { },
+        setNewPassword: () => { },
+        updateProfile: () => { },
+        onAuthenticate: () => { },
+        acceptInvitation: () => { },
+        register: () => { },
+        validateUser: () => { },
     };
 }

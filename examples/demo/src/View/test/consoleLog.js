@@ -44,10 +44,7 @@ angular
                                 formattedMessage: angular.toJson(b, e),
                             };
                         } catch (c) {
-                            return {
-                                isMultiLine: f.exec(a),
-                                formattedMessage: a,
-                            };
+                            return { isMultiLine: f.exec(a), formattedMessage: a };
                         }
                     }
                     function k(a) {

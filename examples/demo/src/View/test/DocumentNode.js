@@ -11,68 +11,109 @@ angular
         '$timeout',
         'lodash',
         'utils',
+        'sessionstackManager',
         'URLTransformer',
         'PROPERTY_OBJECT_KEY',
         'NAMESPACES',
         'ALLOWED_SRC_PROTOCOLS',
         'CROSS_ORIGIN_FRAME_BACKGROUND',
         'STYLE_ELEMENT_NAMES',
-        function(a, b, c, d, e, f, g, h, i) {
-            function j(a) {
+        'FULL_SCREEN_CLASS',
+        function(a, b, c, d, e, f, g, h, i, j, k) {
+            function l(a) {
+                var b = this;
                 a = a || {};
-                var b = a.frameElementId;
-                if (((this.documentsCollection[b] = a), (a.childDocuments = {}), angular.isDefined(b))) {
-                    var c = k.call(this, b);
-                    if (!c) return;
-                    c.childDocuments[b] = !0;
+                var d = a.frameElementId || a.hostElementId;
+                if (((b.documentsCollection[d] = a), (a.childDocuments = {}), !c.isUndefined(d))) {
+                    var e = m.call(b, d);
+                    e && (e.childDocuments[d] = !0);
                 }
             }
-            function k(a) {
+            function m(a) {
                 var b = this,
                     c = b.getNode(a),
-                    d = E(c);
+                    d = K.call(b, c);
                 if (d) {
-                    var e = Q(d).nodeId;
+                    var e = Y(d).nodeId;
                     return b.documentsCollection[e];
                 }
             }
-            function l(a, b) {
+            function n(a, b) {
                 for (var c, d = this, e = [a]; e.length > 0; )
-                    (c = d.documentsCollection[e.shift()]),
-                        c &&
-                            (b.call(d, c),
-                            angular.forEach(c.childDocuments, function(a, b) {
-                                e.push(b);
-                            }));
-            }
-            function m(a) {
-                l.call(this, a, o);
-            }
-            function n(a) {
-                l.call(this, a, function(a) {
-                    angular.element(a.documentElement).remove();
-                });
+                    if ((c = d.documentsCollection[e.shift()])) {
+                        b.call(d, c);
+                        for (var f in c.childDocuments) e.push(f);
+                    }
             }
             function o(a) {
                 var b = this;
+                n.call(b, a, t);
+            }
+            function p(a) {
+                n.call(this, a, function(a) {
+                    angular.element(a.documentElement).remove();
+                });
+            }
+            function q(a) {
+                var b = this;
                 if (b.isAttached) {
-                    var c = z.call(b, a.frameElementId);
-                    c && (p(c, a.docType), q(c, a.documentElement), r.call(b, c.documentElement));
+                    var d = b.getNode(a.hostElementId);
+                    if (d) {
+                        var e = r(d, a);
+                        if (e) {
+                            c.addAdoptedStyleSheets(e, a.adoptedStyleSheets),
+                                s.call(b, e, a),
+                                e.append(a.documentElement);
+                            var f = Y(a.documentElement),
+                                g = Y(e);
+                            Object.assign(g, f), g.adoptedStyleSheets && (b.adoptedStyleSheetNodes[g.nodeId] = e);
+                        }
+                    }
                 }
             }
-            function p(a, b) {
-                a.open(), a.write(b || ''), a.close(), u(a);
+            function r(a, b) {
+                if (a.shadowRoot) return a.shadowRoot;
+                if (b.hasContentElements && a.createShadowRoot) return a.createShadowRoot();
+                if (!b.hasContentElements && a.attachShadow)
+                    try {
+                        return a.attachShadow({ mode: 'open' });
+                    } catch (c) {
+                        d.warn(c);
+                    }
             }
-            function q(a, b) {
+            function s(a, b) {
+                var c = this,
+                    d = Y(b.documentElement);
+                c.documentElementIndex[d.nodeId] = a;
+            }
+            function t(a) {
+                var b = this;
+                if (b.isAttached)
+                    if (a.hostElementId) q.call(b, a);
+                    else {
+                        var d = F.call(b, a.frameElementId);
+                        d &&
+                            (u(d, a.docType),
+                            v(d, a.documentElement),
+                            c.addAdoptedStyleSheets(d, a.adoptedStyleSheets),
+                            w.call(b, d.documentElement));
+                    }
+            }
+            function u(a, b) {
+                a.open(), a.write(b || ''), a.close(), B(a);
+            }
+            function v(a, b) {
                 b && (a.adoptNode(b), a.appendChild(b));
             }
-            function r(a) {
+            function w(a) {
                 this.isAttached &&
-                    (s.call(this, a, '[style]', 'style'),
-                    s.call(this, a, 'link[rel="stylesheet"]', 'href'),
-                    s.call(this, a, '[src]', 'src'));
+                    (x.call(this, a, '[style]', 'style'),
+                    x.call(this, a, 'link[rel="stylesheet"]', 'href'),
+                    x.call(this, a, '[src]', 'src'),
+                    x.call(this, a, 'img, input, iframe, canvas, embed, object, video', 'width'),
+                    x.call(this, a, 'img, input, iframe, canvas, embed, object, video', 'height'));
             }
-            function s(b, c, d) {
+            function x(b, c, d) {
                 var e,
                     f = this;
                 b &&
@@ -84,345 +125,413 @@ angular
                                 e && (f.setAttribute(c, d, void 0), a(f.setAttribute.bind(f), 0, !0, c, d, e));
                         });
             }
-            function t(a, b) {
+            function y(a, b) {
                 var c,
                     d = this;
                 if (a.snapshot) {
-                    c = d.createElement(a.snapshot);
+                    c = d.createElement(a.snapshot, a.hostElementId, a.frameElementId);
                     var e = angular.element('head', c);
-                    e.length <= 0 && (angular.element(c).prepend('<head></head>'), (e = angular.element('head', c))),
-                        v(c, b),
-                        y.call(d, c, a.frameElementId),
-                        A.call(d, c, a.frameElementId);
+                    return (
+                        e.length <= 0 &&
+                            (angular.element(c).prepend('<head></head>'), (e = angular.element('head', c))),
+                        z(e),
+                        C(c, b),
+                        G.call(d, c, a.frameElementId),
+                        A.call(d, a.fullScreenNodeId),
+                        c
+                    );
                 }
-                return c;
             }
-            function u(a) {
+            function z(a) {
+                a.append(
+                    '<style>#_ss-cto-frame, #_ss-cto-close-btn { display: none }#_ss-cursor-overlay { display: none }@keyframes _ss-pulse-ring { 0% {transform: scale(.33);} 100% {opacity: 0;} }</style>'
+                ),
+                    a.append(
+                        '<style>.' +
+                            k +
+                            ' {    object-fit: contain;   object-fit: contain;   position: fixed !important;   top: 0px !important;   right: 0px !important;   bottom: 0px !important;   left: 0px !important;   box-sizing: border-box !important;   min-width: 0px !important;   max-width: none !important;   min-height: 0px !important;   max-height: none !important;   width: 100% !important;   height: 100% !important;   transform: none !important;   z-index: 2147483647;   background: black;}</style>'
+                    );
+            }
+            function A(a) {
+                if (a) {
+                    var b = this.getNode(a);
+                    angular.element(b).addClass(k), this.addFullScreenNode(a);
+                }
+            }
+            function B(a) {
                 var b = a.documentElement;
                 b && a.removeChild(b);
             }
-            function v(a, b) {
+            function C(a, b) {
                 var c = angular.element('base', a);
                 c.length <= 0 && ((c = angular.element('<base>')), angular.element('head', a).prepend(c)),
                     c.attr('href', b);
             }
-            function w(a) {
-                var b;
+            function D(a, b) {
+                if (b) return b;
+                var d = a.baseUrl;
                 return (
-                    C(a.snapshot, function(a) {
-                        if (a && 'BASE' === a.tagName && a.attributes) return (b = x(a, 'href')), !1;
+                    I(a.snapshot, function(a) {
+                        if (a && 'BASE' === a.tagName && a.attributes) return (d = E(a, 'href')), !1;
                     }),
-                    b ? c.evaluateAbsoluteUrl(a.origin, b) : a.origin
+                    d ? c.evaluateAbsoluteUrl(a.origin, d) : a.origin
                 );
             }
-            function x(a, b) {
+            function E(a, b) {
                 var c;
                 return (
-                    angular.forEach(a.attributes, function(a) {
+                    a.attributes.forEach(function(a) {
                         a.name === b && (c = a.value);
                     }),
                     c
                 );
             }
-            function y(a, b) {
-                var c = this,
-                    d = c.documentsCollection[b].urlTransformer;
-                angular.element('link[rel="stylesheet"]', a).each(function(a, b) {
-                    var c = angular.element(b),
-                        e = c.attr('href');
-                    (e = d.transform(e)), c.attr('href', e);
-                });
-            }
-            function z(a) {
+            function F(a) {
                 if (!angular.isDefined(a)) return this.documentContainer.contentWindow.document;
                 var b = this.documentElementIndex[a];
-                return b ? b.contentDocument : void 0;
+                return b ? b.contentDocument || b.shadowRoot : void 0;
             }
-            function A(a, b) {
+            function G(a, b) {
                 var c,
                     d,
                     e = this;
-                C(a, function(a) {
-                    (d = Q(a)),
+                I(a, function(a) {
+                    (d = Y(a)),
                         (c = d.nodeId),
                         (d.frameElementId = b),
                         (e.documentElementIndex[c] = a),
                         d.styleRules && (e.styleRuleNodes[c] = a);
                 });
             }
-            function B(a) {
+            function H(a) {
                 var b,
                     c = this;
-                C(a, function(a) {
-                    (b = Q(a).nodeId), delete c.documentElementIndex[b];
+                I(a, function(a) {
+                    (b = Y(a)),
+                        delete c.documentElementIndex[b.nodeId],
+                        a.shadowRoot && ((b = Y(a.shadowRoot)), delete c.adoptedStyleSheetNodes[b.nodeId]);
                 });
             }
-            function C(a, b) {
+            function I(a, b) {
                 for (var c, d, e = [a]; e.length > 0; )
-                    if ((c = e.shift())) {
+                    if ((c = e.pop())) {
                         if (((d = b(c)), d === !1)) return;
-                        angular.forEach(c.childNodes, function(a) {
-                            e.push(a);
-                        });
+                        if (c.childNodes) for (var f = c.childNodes.length - 1; f >= 0; f--) e.push(c.childNodes[f]);
                     }
             }
-            function D(a) {
-                var b = angular.element(a).parent();
-                if (b.length > 0) return b[0];
-            }
-            function E(a) {
-                try {
-                    return a.ownerDocument.defaultView.frameElement;
-                } catch (b) {}
-            }
-            function F(a, b, c) {
-                b.childNodes &&
-                    b.childNodes.length > 0 &&
-                    angular.forEach(b.childNodes, function(b) {
-                        a.push({ parent: c, node: b });
-                    });
-            }
-            function G(a) {
-                var b = {};
-                switch (a.nodeType) {
-                    case Node.COMMENT_NODE:
-                        b = H.call(this, a);
-                        break;
-                    case Node.TEXT_NODE:
-                        b = I.call(this, a);
-                        break;
-                    case Node.ELEMENT_NODE:
-                        b = J.call(this, a);
-                }
-                return (Q(b).nodeId = a.id), b;
-            }
-            function H(a) {
-                var b = z.call(this);
-                return b.createComment(a.textContent);
-            }
-            function I(a) {
-                var b = z.call(this);
-                return b.createTextNode(a.textContent);
-            }
             function J(a) {
-                var b = (N(a.isSvg), K.call(this, a));
-                return O.call(this, b, a), b;
+                var b = angular.element(a).parent();
+                return b.length > 0 ? b[0] : a ? a.parentNode : void 0;
             }
             function K(a) {
                 try {
-                    return L.call(this, a);
-                } catch (b) {
-                    return M.call(this, a);
-                }
+                    var b = Y(a);
+                    return b && b.hostElementId
+                        ? this.getNode(b.hostElementId)
+                        : a.ownerDocument.defaultView.frameElement;
+                } catch (c) {}
             }
-            function L(a) {
-                var b = this,
-                    c = z.call(b),
-                    d = N(a.isSvg),
-                    e = a.tagName.toLowerCase(),
-                    f = c.createElementNS(d, e);
-                if (a.styleRules) {
-                    var g = Q(f);
-                    g.styleRules = a.styleRules;
-                }
-                return (
-                    a.attributes &&
-                        angular.forEach(a.attributes, function(a) {
-                            b.setAttribute(f, a.name, a.value);
-                        }),
-                    f
-                );
+            function L(a, b, c) {
+                if (b.childNodes && b.childNodes.length > 0)
+                    for (var d = b.childNodes.length - 1; d >= 0; d--) a.push({ parent: c, node: b.childNodes[d] });
             }
-            function M(a) {
-                var b = z.call(this),
-                    d = a.tagName.toLowerCase(),
-                    e = (a.attributes, c.buildHtmlString(d, a.attributes)),
-                    f = b.createElement('div');
-                return (f.innerHTML = e), f.firstChild;
+            function M(a, b, c) {
+                var d = {};
+                switch (a.nodeType) {
+                    case Node.COMMENT_NODE:
+                        d = N.call(this, a);
+                        break;
+                    case Node.TEXT_NODE:
+                        d = O.call(this, a);
+                        break;
+                    case Node.DOCUMENT_FRAGMENT_NODE:
+                        d = P.call(this);
+                        break;
+                    case Node.ELEMENT_NODE:
+                        d = Q.call(this, a, c);
+                }
+                return (Y(d).nodeId = a.id), (Y(d).hostElementId = b), d;
             }
             function N(a) {
-                return a ? f.SVG : f.HTML;
+                var b = F.call(this);
+                return b.createComment(a.textContent);
             }
-            function O(a, d) {
+            function O(a) {
+                var b = F.call(this);
+                return b.createTextNode(a.textContent);
+            }
+            function P() {
+                var a = F.call(this);
+                return a.createDocumentFragment();
+            }
+            function Q(a, b) {
+                var c = (U(a.isSvg), R.call(this, a, b));
+                return V.call(this, c, a), W.call(this, c), c;
+            }
+            function R(a, b) {
+                try {
+                    return S.call(this, a, b);
+                } catch (c) {
+                    return T.call(this, a, b);
+                }
+            }
+            function S(a, b) {
+                var c = this,
+                    d = F.call(c),
+                    e = U(a.isSvg),
+                    f = a.tagName.toLowerCase(),
+                    g = d.createElementNS(e, f),
+                    h = Y(g);
+                return (
+                    (h.frameElementId = b),
+                    a.styleRules && (h.styleRules = a.styleRules.slice()),
+                    a.attributes &&
+                        a.attributes.forEach(function(a) {
+                            c.setAttribute(g, a.name, a.value);
+                        }),
+                    g
+                );
+            }
+            function T(a, b) {
+                var d = F.call(this),
+                    e = a.tagName.toLowerCase(),
+                    f = (a.attributes, c.buildHtmlString(e, a.attributes)),
+                    g = d.createElement('div');
+                g.innerHTML = f;
+                var h = g.firstChild;
+                return (Y(h).frameElementId = b), h;
+            }
+            function U(a) {
+                return a ? g.SVG : g.HTML;
+            }
+            function V(a, d) {
                 if (d.top || d.left) {
-                    var e = Q(a);
+                    var e = Y(a);
                     (e.top = d.top), (e.left = d.left);
                 }
                 var f = d.isCrossOriginFrame,
-                    i = angular.element(a);
-                i.is('script')
-                    ? i.removeAttr('src')
-                    : i.is('iframe')
-                    ? (i.removeAttr('sandbox'),
-                      i.removeAttr('src'),
-                      f && i.css({ 'background-image': 'url(' + h + ')' }))
-                    : i.is('a')
-                    ? i.attr('href', 'javascript:void(0);')
-                    : (i.is('meta[http-equiv="X-Frame-Options"]') ||
-                          i.is('meta[http-equiv="Content-Security-Policy"]')) &&
-                      i.removeAttr('content');
+                    g = angular.element(a);
+                c.matchesSelector(a, 'script')
+                    ? g.removeAttr('src')
+                    : c.matchesSelector(a, 'iframe')
+                    ? (g.removeAttr('sandbox'),
+                      g.removeAttr('src'),
+                      f && g.css({ 'background-image': 'url(' + i + ')' }))
+                    : c.matchesSelector(a, 'a')
+                    ? g.attr('href', 'javascript:void(0);')
+                    : c.matchesSelector(a, 'meta[http-equiv="X-Frame-Options"]') ||
+                      c.matchesSelector(a, 'meta[http-equiv="Content-Security-Policy"]')
+                    ? g.removeAttr('content')
+                    : c.matchesSelector(a, 'link[rel="import"]') && g.attr('href', 'javascript:void(0);');
                 var j = [];
-                if (i.is('[src]')) {
-                    var k = c.getUrlProtocol(i.attr('src'));
-                    k && g.indexOf(k) < 0 && j.push('src');
+                if (c.matchesSelector(a, '[src]')) {
+                    var k = c.getUrlProtocol(g.attr('src'));
+                    k && h.indexOf(k) < 0 && j.push('src');
                 }
-                angular.forEach(a.attributes, function(a) {
-                    b.startsWith(a.name, 'on') && j.push(a.name);
-                }),
-                    angular.forEach(j, function(a) {
-                        i.removeAttr(a);
-                    });
+                for (var l = 0; l < a.attributes.length; l++) {
+                    var m = a.attributes[l];
+                    b.startsWith(m.name, 'on') && j.push(m.name);
+                }
+                j.forEach(function(a) {
+                    g.removeAttr(a);
+                });
             }
-            function P(a, b, c) {
-                var d = angular.element(a);
+            function W(a) {
+                this.settings.ignoreFormsAutofill() &&
+                    c.matchesSelector(a, 'input') &&
+                    ((a.readOnly = !0),
+                    (a.onfocus = function() {
+                        a.readOnly = !1;
+                    }),
+                    (a.onblur = function() {
+                        a.readOnly = !0;
+                    }));
+            }
+            function X(a, b, d) {
+                angular.element(a);
                 return (
-                    (d.is('script') && 'src' === b) ||
-                    (d.is('iframe') && 'src' === b) ||
-                    (d.is('meta[http-equiv="X-Frame-Options"]') && 'content' === b) ||
+                    (c.matchesSelector(a, 'script') && 'src' === b) ||
+                    (c.matchesSelector(a, 'iframe') && 'src' === b) ||
+                    (c.matchesSelector(a, 'meta[http-equiv="X-Frame-Options"]') && 'content' === b) ||
                     'integrity' === b ||
-                    (d.is('meta[content]') &&
+                    (c.matchesSelector(a, 'meta[content]') &&
                         'http-equiv' === b &&
-                        ('X-Frame-Options' === c || 'Content-Security-Policy' === c))
+                        ('X-Frame-Options' === d || 'Content-Security-Policy' === d))
                 );
             }
-            function Q(a) {
-                var b = a[e];
-                return b || ((b = {}), (a[e] = b)), b;
+            function Y(a) {
+                var b = a[f];
+                return b || ((b = {}), (a[f] = b)), b;
             }
-            function R(a) {
-                return angular.isNumber(Q(a).nodeId);
-            }
-            var S = function(a) {
+            var Z = function(a) {
                 (this.isAttached = !0),
                     (this.documentContainer = a),
                     (this.documentElementIndex = []),
                     (this.documentsCollection = {}),
                     (this.afterAttachCallbacks = []),
-                    (this.styleRuleNodes = {});
+                    (this.styleRuleNodes = {}),
+                    (this.adoptedStyleSheetNodes = {}),
+                    (this.fullScreenNodes = []),
+                    (this.settings = {});
             };
             return (
-                (S.prototype.detach = function() {
+                (Z.getNodePropertyObject = function(a) {
+                    return Y(a);
+                }),
+                (Z.prototype.attach = function(b) {
+                    var c = this;
+                    (c.isAttached = !0), o.call(c, void 0), c.afterAttachCallbacks.push(a(b));
+                }),
+                (Z.prototype.detach = function() {
                     var b = this;
                     angular.forEach(b.afterAttachCallbacks, function(b) {
                         a.cancel(b);
                     }),
                         (b.afterAttachCallbacks = []),
-                        b.isAttached && ((b.isAttached = !1), n.call(b, void 0));
+                        b.isAttached && ((b.isAttached = !1), p.call(b, void 0));
                 }),
-                (S.prototype.attach = function(b) {
-                    var c = this;
-                    (c.isAttached = !0), m.call(c, void 0), c.afterAttachCallbacks.push(a(b));
-                }),
-                (S.prototype.write = function(a, b) {
-                    var c = this;
-                    angular.isUndefined(a.frameElementId) && p(z.call(c), a.docType),
-                        angular.isUndefined(a.frameElementId) &&
-                            ((c.documentElementIndex = []), (c.documentsCollection = {}));
-                    var e = w(a),
-                        f = {
-                            urlTransformer: new d(e, b),
-                            docType: a.docType,
-                            frameElementId: a.frameElementId,
-                        };
-                    j.call(c, f), (f.documentElement = t.call(c, a, e)), o.call(c, f);
-                }),
-                (S.prototype.getDocumentElement = function(a) {
-                    var b = z.call(this, a);
-                    if (b) return b.documentElement;
-                }),
-                (S.prototype.getNode = function(a) {
+                (Z.prototype.getNode = function(a) {
                     return this.documentElementIndex[a];
                 }),
-                (S.prototype.prepend = function(a, b) {
+                (Z.prototype.write = function(a, b, c) {
+                    var d = this;
+                    angular.isUndefined(a.frameElementId) &&
+                        angular.isUndefined(a.hostElementId) &&
+                        (u(F.call(d), a.docType),
+                        (d.documentElementIndex = []),
+                        (d.documentsCollection = {}),
+                        (d.styleRuleNodes = {}),
+                        (d.adoptedStyleSheetNodes = {}));
+                    var f = D(a, b),
+                        g = {
+                            urlTransformer: new e(f, c),
+                            docType: a.docType,
+                            frameElementId: a.frameElementId,
+                            hostElementId: a.hostElementId,
+                            hasContentElements: a.hasContentElements,
+                            adoptedStyleSheets: a.adoptedStyleSheets,
+                        };
+                    if ((l.call(d, g), (g.documentElement = y.call(d, a, f)), a.adoptedStyleSheets)) {
+                        var h = Y(g.documentElement);
+                        h.adoptedStyleSheets = a.adoptedStyleSheets;
+                    }
+                    t.call(d, g);
+                }),
+                (Z.prototype.getDocumentElement = function(a) {
+                    var b = F.call(this, a);
+                    if (b) return b.documentElement;
+                }),
+                (Z.prototype.prepend = function(a, b) {
                     if (
-                        (!angular.element(a).is('script') || b.nodeType !== Node.TEXT_NODE) &&
+                        (!c.matchesSelector(a, 'script') || b.nodeType !== Node.TEXT_NODE) &&
                         a &&
                         b &&
-                        a.nodeType === Node.ELEMENT_NODE
+                        (a.nodeType === Node.ELEMENT_NODE || a.nodeType === Node.DOCUMENT_FRAGMENT_NODE)
                     ) {
                         a.insertBefore(b, a.firstChild);
-                        var c = Q(a).frameElementId;
-                        y.call(this, b, c), A.call(this, b, c);
+                        var d = Y(a).frameElementId;
+                        G.call(this, b, d);
                     }
                 }),
-                (S.prototype.replaceDocumentElement = function(a, b) {
+                (Z.prototype.replaceDocumentElement = function(a, b) {
+                    var d = this,
+                        e = d.documentsCollection[b];
+                    c.matchesSelector(a, 'html') && e && ((e.documentElement = a), G.call(d, a, b), t.call(d, e));
+                }),
+                (Z.prototype.replaceDocType = function(a, b) {
                     var c = this,
                         d = c.documentsCollection[b];
-                    angular.element(a).is('html') &&
-                        d &&
-                        ((d.documentElement = a), y.call(this, a, b), A.call(c, a, b), o.call(c, d));
+                    a && d && (p.call(c, b), (d.docType = a), o.call(c, b));
                 }),
-                (S.prototype.replaceDocType = function(a, b) {
-                    var c = this,
-                        d = c.documentsCollection[b];
-                    a && d && (n.call(c, b), (d.docType = a), m.call(c, b));
-                }),
-                (S.prototype.insertAfter = function(a, b) {
-                    var c = D(a);
+                (Z.prototype.insertAfter = function(a, b) {
+                    var d = J(a);
                     if (
-                        (!angular.element(c).is('script') || b.nodeType !== Node.TEXT_NODE) &&
-                        c &&
+                        (!c.matchesSelector(d, 'script') || b.nodeType !== Node.TEXT_NODE) &&
+                        d &&
                         b &&
-                        c.nodeType === Node.ELEMENT_NODE
+                        (d.nodeType === Node.ELEMENT_NODE || d.nodeType === Node.DOCUMENT_FRAGMENT_NODE)
                     ) {
-                        c.insertBefore(b, a.nextSibling);
-                        var d = Q(c).frameElementId;
-                        y.call(this, b, d), A.call(this, b, d);
+                        d.insertBefore(b, a.nextSibling);
+                        var e = Y(d).frameElementId;
+                        G.call(this, b, e);
                     }
                 }),
-                (S.prototype.removeNode = function(a) {
-                    var b = D(a);
-                    b && (b.removeChild(a), B.call(this, a));
+                (Z.prototype.removeNode = function(a) {
+                    var b = J(a);
+                    b && (b.removeChild(a), H.call(this, a));
                 }),
-                (S.prototype.traverseNode = function(a, b) {
-                    C(a, b);
+                (Z.prototype.traverseNode = function(a, b) {
+                    I(a, b);
                 }),
-                (S.prototype.traverseDocuments = function(a, b) {
-                    l.call(this, a, b);
+                (Z.prototype.traverseDocuments = function(a, b) {
+                    n.call(this, a, b);
                 }),
-                (S.prototype.getNodeOffset = function(a) {
+                (Z.prototype.getNodeOffset = function(a) {
                     for (var b = { top: 0, left: 0 }; a && a !== this.documentContainer; ) {
                         var c = a.getBoundingClientRect();
-                        (b.top += c.top), (b.left += c.left), (a = E(a));
+                        (b.top += c.top), (b.left += c.left), (a = K(a));
                     }
                     return b;
                 }),
-                (S.prototype.createElement = function(a) {
-                    var b,
-                        c,
-                        d,
-                        e = G.call(this, a),
-                        f = [];
+                (Z.prototype.createElement = function(a, b, c) {
+                    var d,
+                        e,
+                        f,
+                        g = M.call(this, a, b, c),
+                        h = [];
                     if (a.childNodes && a.childNodes.length > 0)
-                        for (F(f, a, e); f.length > 0; )
-                            (b = f.shift()),
-                                (d = b.parent.tagName.toLowerCase()),
-                                'script' !== d &&
-                                    'noscript' !== d &&
-                                    ((c = G.call(this, b.node)), F(f, b.node, c), b.parent.appendChild(c));
-                    return e;
+                        for (L(h, a, g); h.length > 0; )
+                            (d = h.pop()),
+                                (f = void 0),
+                                d.parent.nodeType !== Node.DOCUMENT_FRAGMENT_NODE &&
+                                    (f = d.parent.tagName.toLowerCase()),
+                                'script' !== f &&
+                                    'noscript' !== f &&
+                                    ((e = M.call(this, d.node, b, c)), L(h, d.node, e), d.parent.appendChild(e));
+                    return g;
                 }),
-                (S.prototype.setAttribute = function(a, b, c) {
-                    if (!P(a, b, c)) {
-                        if (angular.element(a).is('link[rel="stylesheet"]') && R(a) && 'href' === b) {
-                            var d = Q(a).frameElementId,
-                                e = this.documentsCollection[d].urlTransformer;
-                            c = e.transform(c);
+                (Z.prototype.setAttribute = function(a, b, d) {
+                    if (!X(a, b, d)) {
+                        if (c.matchesSelector(a, 'link[rel="stylesheet"],img') && ('href' === b || 'src' === b)) {
+                            var e = Y(a).frameElementId,
+                                f = this.documentsCollection[e].urlTransformer;
+                            d = f.transform(d);
                         }
                         try {
-                            angular.isUndefined(c) || null === c ? a.removeAttribute(b) : a.setAttribute(b, c);
-                        } catch (f) {}
+                            angular.isUndefined(d) || null === d ? a.removeAttribute(b) : a.setAttribute(b, d);
+                        } catch (g) {}
                     }
                 }),
-                (S.prototype.getNodePropertyObject = function(a) {
-                    return Q(a);
+                (Z.prototype.getNodePropertyObject = function(a) {
+                    return Z.getNodePropertyObject(a);
                 }),
-                (S.prototype.getFrameElementIds = function() {
+                (Z.prototype.getFrameElementIds = function() {
                     return b.map(this.documentsCollection, function(a) {
                         return a.frameElementId;
                     });
                 }),
-                S
+                (Z.prototype.getNodeId = function(a) {
+                    if (a) {
+                        var b = Y(a);
+                        return b.nodeId;
+                    }
+                }),
+                (Z.prototype.addFullScreenNode = function(a) {
+                    this.fullScreenNodes.push(a);
+                }),
+                (Z.prototype.traverseFullScreenNodes = function(a) {
+                    for (; this.fullScreenNodes.length > 0; ) {
+                        var b = this.fullScreenNodes.pop();
+                        if (b) {
+                            var c = this.getNode(b);
+                            a(c);
+                        }
+                    }
+                }),
+                (Z.prototype.setSettings = function(a) {
+                    this.settings = a;
+                }),
+                Z
             );
         },
     ]);

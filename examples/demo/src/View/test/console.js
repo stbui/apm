@@ -11,9 +11,12 @@ angular
         'sessionstackManager',
         'utils',
         'lodash',
+        'auth',
+        'analytics',
         'CONSOLE_CONSTANTS',
-        'LOG_LEVEL',
-        function(a, b, c, d, e, f, g) {
+        'EVENT_TYPE',
+        'ANALYTICS_EVENT_TYPES',
+        function(a, b, c, d, e, f, g, h, i, j) {
             return {
                 restrict: 'E',
                 replace: !0,
@@ -23,118 +26,172 @@ angular
                     closeConsole: '=',
                     isExpanded: '=',
                     addNewLogs: '=',
+                    addNewNetworkRequests: '=',
                     updateConsole: '=',
                     onSelectedLog: '=',
+                    selectActivity: '=',
                 },
-                link: function(h, i, j) {
-                    function k() {
-                        r && (a.cancel(r), (r = null)),
-                            (r = a(function() {
+                link: function(k, l, m) {
+                    function n() {
+                        v && (a.cancel(v), (v = null)),
+                            (v = a(function() {
                                 c.log('Console search used');
                             }, 2e3));
                     }
-                    function l(a) {
-                        if (!t.is(':hover') && h.isExpanded) {
-                            var b = e.findIndex(h.filteredLogs, ['activityIndex', a]);
+                    function o(a) {
+                        if (!x.is(':hover') && k.isExpanded) {
+                            var b = e.findIndex(k.filteredLogs, ['activityIndex', a]);
                             if (!(b < 0)) {
-                                var c = (t.outerHeight(), m(a)),
-                                    d = 2 * f.STEP_HEIGHT,
-                                    g = c - d;
-                                u.stop().animate({ scrollTop: g }, 300);
+                                var c = q(a),
+                                    d = 2 * h.STEP_HEIGHT,
+                                    f = c - d;
+                                z.stop().animate({ scrollTop: f }, 300);
                             }
                         }
                     }
-                    function m(a) {
+                    function p(a) {
+                        if (!y.is(':hover') && k.isExpanded) {
+                            var b = e.findIndex(k.filteredNetworkRequests, ['activityIndex', a]);
+                            if (!(b < 0)) {
+                                var c = r(a),
+                                    d = 2 * h.STEP_HEIGHT,
+                                    f = c - d;
+                                A.stop().animate({ scrollTop: f }, 300);
+                            }
+                        }
+                    }
+                    function q(a) {
                         if (isNaN(a)) return 0;
                         var b = 0;
                         return (
-                            h.filteredLogs.forEach(function(c) {
+                            k.filteredLogs.forEach(function(c) {
                                 if (c.activityIndex < a) {
-                                    var d = s[c.activityIndex] || 0;
+                                    var d = w[c.activityIndex] || 0;
                                     b += d;
                                 }
                             }),
                             b
                         );
                     }
-                    function n() {
-                        i.animate({ height: 0 }, f.ANIMATION_TIME),
-                            (h.isExpanded = !1),
+                    function r(a) {
+                        if (isNaN(a)) return 0;
+                        var b = 0;
+                        return (
+                            k.filteredNetworkRequests.forEach(function(c) {
+                                c.activityIndex < a && (b += h.STEP_HEIGHT);
+                            }),
+                            b
+                        );
+                    }
+                    function s() {
+                        l.animate({ height: 0 }, h.ANIMATION_TIME),
+                            (k.isExpanded = !1),
                             a(function() {
-                                b.fireConsoleResize(h, 0);
-                            }, f.ANIMATION_TIME);
+                                b.fireConsoleResize(k, 0);
+                            }, h.ANIMATION_TIME);
                     }
-                    function o() {
-                        i.animate({ height: f.HEIGHT }, f.ANIMATION_TIME),
-                            b.fireConsoleResize(h, f.HEIGHT),
-                            (h.isExpanded = !0),
-                            h.$broadcast('$md-resize'),
-                            l(h.lastPlayedActivityIndex);
+                    function t() {
+                        l.animate({ height: h.HEIGHT }, h.ANIMATION_TIME),
+                            b.fireConsoleResize(k, h.HEIGHT),
+                            (k.isExpanded = !0),
+                            k.$broadcast('$md-resize'),
+                            o(k.lastPlayedActivityIndex);
                     }
-                    function p() {
-                        d.forEach(g, function(a) {
-                            h.logTypes[a] = !0;
-                        });
-                    }
-                    (h.isExpanded = !1),
-                        (h.selectedTab = 0),
-                        (h.transformedLogs = []),
-                        (h.logTypes = {}),
-                        (h.lastPlayedActivityIndex = 0),
-                        (h.selectedLogIndex = null);
-                    var q,
-                        r,
-                        s = {},
-                        t = i.find('.logs-container'),
-                        u = i
-                            .find('.md-virtual-repeat-container')
-                            .children()
-                            .eq(0);
-                    p(),
-                        (h.openConsole = function(a) {
-                            h.isExpanded || o(), d.isNumber(a) && h.selectLog(a);
+                    (k.EVENT_TYPE = i),
+                        (k.TAB_INDEX = { CONSOLE: 0, NETWORK: 1 }),
+                        (k.isExpanded = !1),
+                        (k.selectedTab = 0),
+                        (k.transformedLogs = []),
+                        (k.logTypes = {}),
+                        (k.logTypes[i.CONSOLE_LOG] = !0),
+                        (k.logTypes[i.CONSOLE_DEBUG] = !0),
+                        (k.logTypes[i.CONSOLE_WARN] = !0),
+                        (k.logTypes[i.CONSOLE_ERROR] = !0),
+                        (k.networkTypes = { xhr: !0 }),
+                        (k.networkRequests = []),
+                        k.networkRequestDetails,
+                        (k.lastPlayedActivityIndex = 0),
+                        (k.selectedLogIndex = null),
+                        (k.areGeneralDetailsExpanded = !0),
+                        (k.areResponseHeadersExpanded = !0),
+                        (k.areRequestHeadersExpanded = !0);
+                    var u,
+                        v,
+                        w = {},
+                        x = l.find('.logs-container'),
+                        y = l.find('.network-requests-container'),
+                        z = x.children().eq(0),
+                        A = y.children().eq(0);
+                    (k.openConsole = function(a) {
+                        k.isExpanded || t(), a && k.selectLog(a);
+                    }),
+                        (k.closeConsole = function() {
+                            s();
                         }),
-                        (h.closeConsole = function() {
+                        (k.selectTab = function(a) {
+                            if (((k.selectedTab = a), a === k.TAB_INDEX.NETWORK)) {
+                                var b = f.getCurrentUser();
+                                g.trackEvent(b.id, j.NETWORK_TAB_OPENED);
+                            }
+                        }),
+                        (k.toggleFilter = function(a) {
+                            (k.logTypes[a] = !k.logTypes[a]), o(k.lastPlayedActivityIndex), n();
+                        }),
+                        (k.searchChanged = function() {
                             n();
                         }),
-                        (h.selectTab = function(a) {
-                            h.selectedTab = a;
+                        (k.addNewLogs = function(a) {
+                            a.forEach(function(a) {
+                                if (
+                                    (k.transformedLogs.length > 0 &&
+                                        (u = k.transformedLogs[k.transformedLogs.length - 1]),
+                                    d.isDifferentActivity(a, u))
+                                )
+                                    k.transformedLogs.push(a);
+                                else {
+                                    var b = k.transformedLogs[k.transformedLogs.length - 1];
+                                    (b.activityIndex = a.activityIndex), b.count++;
+                                }
+                                w[a.activityIndex] = h.STEP_HEIGHT;
+                            });
                         }),
-                        (h.toggleFilter = function(a) {
-                            (h.logTypes[a] = !h.logTypes[a]), l(h.lastPlayedActivityIndex), k();
+                        (k.addNewNetworkRequests = function(a) {
+                            d.forEach(a, function(a) {
+                                k.networkRequests.push(a);
+                            });
                         }),
-                        (h.searchChanged = function() {
-                            k();
+                        (k.updateConsole = function(a) {
+                            (k.lastPlayedActivityIndex = a),
+                                k.selectedLogIndex || (o(a), p(a)),
+                                k.selectedLogIndex < a && (o(a), p(a)),
+                                a >= k.selectedLogIndex && (k.selectedLogIndex = null);
                         }),
-                        (h.addNewLogs = function(a) {
-                            d.isArray(a) &&
-                                a.forEach(function(a) {
-                                    if (a) {
-                                        if (
-                                            (h.transformedLogs.length > 0 &&
-                                                (q = h.transformedLogs[h.transformedLogs.length - 1]),
-                                            d.isDifferentActivity(a, q))
-                                        )
-                                            h.transformedLogs.push(a);
-                                        else {
-                                            var b = h.transformedLogs[h.transformedLogs.length - 1];
-                                            (b.activityIndex = a.activityIndex), b.count++;
-                                        }
-                                        s[a.activityIndex] = f.STEP_HEIGHT;
-                                    }
-                                });
+                        (k.selectLog = function(a) {
+                            (k.selectedLogIndex = a.activityIndex), k.onSelectedLog(a), o(a.activityIndex);
                         }),
-                        (h.updateConsole = function(a) {
-                            (h.lastPlayedActivityIndex = a),
-                                h.selectedLogIndex || l(a),
-                                h.selectedLogIndex < a && l(a),
-                                a >= h.selectedLogIndex && (h.selectedLogIndex = null);
+                        (k.selectNetworkRequest = function(a) {
+                            (k.selectedLogIndex = a.activityIndex), k.onSelectedLog(a), p(a.activityIndex);
                         }),
-                        (h.selectLog = function(a) {
-                            (h.selectedLogIndex = a), h.onSelectedLog(a), l(a);
+                        (k.selectActivity = function(a) {
+                            (k.selectedLogIndex = a.activityIndex), o(a.activityIndex), p(a.activityIndex);
                         }),
-                        (h.onLogToggle = function(a, b) {
-                            (s[a] = s[a] || 0), (s[a] += b);
+                        (k.onLogToggle = function(a, b) {
+                            (w[a] = w[a] || 0), (w[a] += b);
+                        }),
+                        (k.showNetworkRequestDetails = function(a) {
+                            k.networkRequestDetails = a.details.request;
+                        }),
+                        (k.closeExpandedNetworkRequest = function() {
+                            k.networkRequestDetails = null;
+                        }),
+                        (k.toggleGeneralDetails = function() {
+                            k.areGeneralDetailsExpanded = !k.areGeneralDetailsExpanded;
+                        }),
+                        (k.toggleResponseHeaders = function() {
+                            k.areResponseHeadersExpanded = !k.areResponseHeadersExpanded;
+                        }),
+                        (k.toggleRequestHeaders = function() {
+                            k.areRequestHeadersExpanded = !k.areRequestHeadersExpanded;
                         });
                 },
             };

@@ -1,15 +1,11 @@
 angular.module('playerApp').directive('step', [
-    'utils',
-    'EVENT_TYPE',
-    'LOG_LEVEL',
-    function(a, b, c) {
+    function() {
         return {
             restrict: 'E',
             replace: !0,
             templateUrl: 'templates/step.html',
             scope: {
                 data: '=',
-                selectedLogId: '=',
                 isSelected: '=',
                 isExecuted: '=',
                 isExpanded: '=',

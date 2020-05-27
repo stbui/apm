@@ -1,27 +1,26 @@
 angular.module('playerApp').factory('AsyncWhile', [
-    '$timeout',
-    function(a) {
-        function b(c, d) {
-            var e = this;
-            if (!(e.config.maxIterations && c >= e.config.maxIterations)) {
-                if (!e.condition()) return void (angular.isFunction(d) && d());
-                e.body(),
-                    (e.queuedLoop = a(function() {
-                        b.call(e, c + 1, d);
-                    }, e.config.waitTime));
+    function() {
+        function a(b, c) {
+            var d = this;
+            if (!(d.config.maxIterations && b >= d.config.maxIterations)) {
+                if (!d.condition()) return void (angular.isFunction(c) && c());
+                d.body(),
+                    (d.queuedLoop = setTimeout(function() {
+                        a.call(d, b + 1, c);
+                    }, d.config.waitTime));
             }
         }
-        var c = function(a, b, c) {
+        var b = function(a, b, c) {
             (this.condition = a), (this.body = b), (this.config = c);
         };
         return (
-            (c.prototype.start = function(a) {
-                b.call(this, 0, a);
+            (b.prototype.start = function(b) {
+                a.call(this, 0, b);
             }),
-            (c.prototype.cancel = function() {
-                return a.cancel(this.queuedLoop);
+            (b.prototype.cancel = function() {
+                return clearTimeout(this.queuedLoop);
             }),
-            c
+            b
         );
     },
 ]);

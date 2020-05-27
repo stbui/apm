@@ -1,8 +1,8 @@
 export const tokenManager = {
-    setAuthToken: () => {},
-    getAuthToken: () => {},
-    getAccessToken: () => {},
-    hasAuthToken: () => {},
-    clearAuthToken: () => {},
-    generateBasicToken: () => {},
+    setAuthToken: () => { },
+    getAuthToken: () => { },
+    getAccessToken: () => { return {} },
+    hasAuthToken: () => { },
+    clearAuthToken: () => { },
+    generateBasicToken: (token) => { return '' },
 };

@@ -1,16 +1,14 @@
 angular
     .module('playerApp')
     .constant('PLAYER_CONFIG', {
-        PLAY_SPEED: 50,
         MAX_INACTIVITY_TIME: 3e3,
-        EVENTS_BATCH_SIZE: 50,
+        EVENTS_BATCH_SIZE: 250,
         EVENTS_BATCH_WAIT_TIME: 0,
         TAB_HIDDEN_MESSAGE_TIME: 1e3,
         GO_LIVE_DELAY_TIME: 1500,
         LAG_TIME: 500,
         MILLISECONDS_PER_FRAME: 33,
     })
-    .constant('TAB_VISIBILITY', { VISIBLE: 'visible', HIDDEN: 'hidden' })
     .constant('UI_MODE', { SIMPLE: 'simple' })
     .directive('sessionPlayer', [
         '$interval',
@@ -22,96 +20,128 @@ angular
         'analytics',
         'auth',
         'utils',
-        'AsyncWhile',
+        'Player',
+        'Activity',
+        'Activities',
         'PLAYER_CONFIG',
         'ANALYTICS_EVENT_TYPES',
         'BUILD_ENV',
         'EVENT_TYPE',
         'TAB_VISIBILITY',
-        'PAUSE_AT_ACTIVITY_ID',
         'UI_MODE',
-        'LOG_LEVEL',
-        function(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r) {
+        'SUPPORT_TOOLS',
+        function(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s) {
             return {
                 restrict: 'E',
                 replace: !0,
                 templateUrl: 'templates/player.html',
                 scope: {
                     session: '=',
+                    initialSettings: '=',
                     isLive: '=',
-                    autostart: '=',
-                    isTimelineDirty: '=?',
+                    isTimelineSelectionInProgress: '=?',
                     timelineValue: '=?',
                     startTime: '=',
-                    selectedLogId: '=',
-                    requestProgress: '=',
                     pauseActivity: '=',
                     settings: '=',
-                    sessionWasInitiallyLive: '=',
                     errors: '=',
                     api: '=',
-                    isCatchingUpWithLive: '=',
+                    playRecordedSession: '=',
                 },
-                link: function(s, t, u) {
+                link: function(a, b, t) {
+                    function u(b) {
+                        a.$apply(function() {
+                            a.timelineValue = b;
+                        });
+                    }
                     function v() {
-                        return (
-                            J() &&
-                            !s.isPlaying &&
-                            wa >= 0 &&
-                            s.activities[s.activities.length - 1].time - s.activities[wa].time < k.GO_LIVE_DELAY_TIME
-                        );
+                        window.ss_debug && console.log('show buffering'),
+                            (a.arePlayerButtonsEnabled = !1),
+                            a.disableStepsTimeline(),
+                            e.fireHideViewerOverlay(a),
+                            e.fireShowBuffering(a);
                     }
-                    function w(a) {
-                        return !!a.id && a.id !== p;
+                    function w() {
+                        window.ss_debug && console.log('show rendering'), e.fireDetach(a), v();
                     }
-                    function x(a) {
-                        var b = [],
-                            d = [];
-                        return (
-                            angular.forEach(a, function(e, f) {
-                                var g, h, i;
-                                if (y(e)) {
-                                    (h = A(e)), (g = D(e)), (i = s.activities.length - a.length + f);
-                                    var j = {
-                                        time: e.time,
-                                        activityIndex: i,
-                                        type: g,
-                                        isLog: w(e),
-                                        details: h,
-                                    };
-                                    j.isLog
-                                        ? (d.push(c.cloneDeep(j)), j.details.level === r.ERROR && b.push(j))
-                                        : b.push(j);
-                                }
-                            }),
-                            { steps: b, logs: d }
-                        );
+                    function x() {
+                        window.ss_debug && console.log('hide overlays'),
+                            (a.arePlayerButtonsEnabled = !0),
+                            a.enableStepsTimeline(),
+                            e.fireHideViewerOverlay(a),
+                            e.fireHideBuffering(a),
+                            e.fireAttach(a);
                     }
-                    function y(a) {
-                        return w(a) || z(a);
+                    function y() {
+                        window.ss_debug && console.log('paused'),
+                            (a.hasFinished = !1),
+                            (a.isPlaying = !1),
+                            (a.arePlayerButtonsEnabled = !0),
+                            a.enableStepsTimeline(),
+                            e.fireHideViewerOverlay(a),
+                            e.fireHideBuffering(a),
+                            e.fireAttach(a);
                     }
-                    function z(a) {
-                        return (
-                            !!a.data &&
-                            (a.type === n.MOUSE_CLICK || (ua.indexOf(a.type) >= 0 && !a.data.frameElementId))
-                        );
+                    function z() {
+                        window.ss_debug && console.log('finished'),
+                            (a.hasFinished = !0),
+                            (a.isPlaying = !1),
+                            (a.arePlayerButtonsEnabled = !0),
+                            a.enableStepsTimeline(),
+                            e.fireHideViewerOverlay(a),
+                            e.fireHideBuffering(a),
+                            e.fireAttach(a);
                     }
                     function A(a) {
-                        return w(a) ? B(a) : C(a);
+                        return [p.CONSOLE_ERROR, p.CONSOLE_WARN, p.CONSOLE_DEBUG, p.CONSOLE_LOG].indexOf(a.type) > -1;
                     }
                     function B(a) {
-                        return {
-                            id: a.id,
-                            message: a.message,
-                            isMessageTrimmed: a.isMessageTrimmed,
-                            stackFrames: a.stackFrames,
-                            level: a.level,
-                        };
+                        return a.type === p.NETWORK_REQUEST;
                     }
                     function C(a) {
+                        if (!a.data) return !1;
+                        var b = 0 === a.time && 0 === a.index && a.type === p.DOM_SNAPSHOT;
+                        if (b) return !1;
+                        var c = a.type === p.MOUSE_CLICK,
+                            d = !!a.data.frameElementId,
+                            e = !!a.data.hostElementId,
+                            f = !d && !e,
+                            g = f && U.indexOf(a.type) >= 0;
+                        return (c && !e) || g;
+                    }
+                    function D(a) {
+                        var b = {};
+                        (b[p.CONSOLE_LOG] = 'info'),
+                            (b[p.CONSOLE_ERROR] = 'error'),
+                            (b[p.CONSOLE_WARN] = 'warn'),
+                            (b[p.CONSOLE_DEBUG] = 'debug');
+                        var c = { id: a.id, level: b[a.type] };
+                        if ('exception' === a.data.type) {
+                            var d = a.data.exception;
+                            (c.message = d.type ? d.type + ': ' : ''),
+                                (c.message += d.message),
+                                (c.isMessageTrimmed = !1),
+                                (c.stackFrames = (d.stackFrames || []).map(function(a) {
+                                    return a.source || '';
+                                }));
+                        } else {
+                            var e = a.data;
+                            (c.message = e.message), (c.isMessageTrimmed = e.isMessageTrimmed), (c.stackFrames = null);
+                        }
+                        return c;
+                    }
+                    function E(a) {
                         var b = a.data;
                         switch (a.type) {
-                            case n.MOUSE_CLICK:
+                            case p.CONSOLE_LOG:
+                                return D(a);
+                            case p.CONSOLE_ERROR:
+                                return D(a);
+                            case p.CONSOLE_WARN:
+                                return D(a);
+                            case p.CONSOLE_DEBUG:
+                                return D(a);
+                            case p.MOUSE_CLICK:
                                 return {
                                     top: b.y,
                                     left: b.x,
@@ -119,458 +149,418 @@ angular
                                     absoluteLeft: b.pageX,
                                     selector: b.selector,
                                 };
-                            case n.DOM_SNAPSHOT:
+                            case p.DOM_SNAPSHOT:
                                 return { pageUrl: b.pageUrl };
-                            case n.WINDOW_RESIZE:
+                            case p.WINDOW_RESIZE:
                                 return { width: b.width, height: b.height };
-                            case n.VISIBILITY_CHANGE:
-                                return {
-                                    visibilityState: b.visibilityState,
-                                };
+                            case p.VISIBILITY_CHANGE:
+                                return { visibilityState: b.visibilityState };
                         }
                     }
-                    function D(a) {
-                        return w(a) ? a.level : a.type;
+                    function F(a) {
+                        return {
+                            message: a.data.message,
+                            level: a.data.level,
+                            request: a.data,
+                        };
                     }
-                    function E(a, b) {
-                        if (I()) {
-                            (s.timelineValue = a), da();
-                            var d = c.findLastIndex(s.activities, function(b) {
-                                return b.time <= a;
-                            });
-                            _(d, b);
-                        }
-                    }
-                    function F() {
-                        ta && ta.cancel(),
-                            s.isStreamingLive ? e.fireShowBuffering(s) : e.fireShowViewerOverlay(s),
-                            s.disableStepsTimeline(),
-                            (s.arePlayerButtonsEnabled = !1),
-                            (s.isRendering = !0),
-                            e.fireVisualizeClicks(s, !1),
-                            e.fireDetach(s);
-                    }
-                    function G(a) {
-                        e.fireAttach(s, function() {
-                            e.fireVisualizeClicks(s, s.settings.playback.shouldVisualizeClicks),
-                                s.isStreamingLive && !s.isCatchingUpWithLive && ma(!1),
-                                e.fireHideViewerOverlay(s),
-                                s.enableStepsTimeline(),
-                                (s.isRendering = !1),
-                                (s.arePlayerButtonsEnabled = !0),
-                                pa(wa),
-                                angular.isFunction(a) && a();
-                        });
+                    function G() {
+                        a.isStreamingLive && ((a.isStreamingLive = !1), Q(), e.fireStopLiveStreaming(a));
                     }
                     function H() {
-                        ka(), da(), ea();
+                        return a.viewerIsCreated && a.timelineIsCreated && a.stepsTimelineIsCreated && !!a.session;
                     }
-                    function I() {
-                        return s.autostart && J();
+                    function I(b) {
+                        a.activities.push(b);
+                        var c = [],
+                            d = [],
+                            e = [];
+                        b.forEach(function(a) {
+                            var b = {
+                                time: a.time,
+                                activityIndex: a.playerIndex,
+                                playerIndex: a.playerIndex,
+                                type: a.type,
+                                isLog: A(a),
+                            };
+                            C(a) && ((b.details = E(a)), c.push(b)),
+                                A(a) && ((b.details = D(a)), d.push(b)),
+                                B(a) && ((b.details = F(a)), e.push(b));
+                        }),
+                            a.addNewSteps(c),
+                            a.addNewLogs(d),
+                            a.addNewNetworkRequests(e);
                     }
-                    function J() {
-                        return s.viewerIsCreated && s.timelineIsCreated && s.stepsTimelineIsCreated && !!s.session;
+                    function J(a) {
+                        return 'about:blank' === a || a.indexOf('undefined') > -1;
                     }
-                    function K(a) {
-                        (s.hasFinished = !1), ea(a), e.firePlayerStarted(s);
-                    }
-                    function L() {
-                        ka(), da(), e.firePlayerStopped(s);
-                    }
-                    function M(a) {
-                        if (!ra) {
-                            s.timeoutExecutionError = 0;
-                            var c = wa + 1;
-                            if (c < s.activities.length)
-                                if (s.settings.playback.shouldSkipProlongedInactivity && ya && !s.isStreamingLive) O();
-                                else {
-                                    var d = $(s.timelineValue, s.activities[c].time);
-                                    ra = b(function() {
-                                        N(c, a);
-                                    }, d / s.settings.playback.speed);
-                                }
-                            else V();
+                    function K() {
+                        if (h.isCurrentUserLoaded()) {
+                            var a = h.getCurrentUser(),
+                                b = { opened_from: 'timeline_controls' };
+                            g.trackEvent(a.id, n.CONSOLE_OPENED, b), f.log('Console opened from time line controls');
                         }
                     }
-                    function N(a, b) {
-                        var c = new Date(),
-                            d = s.activities[a].time,
-                            e = d;
-                        for (s.timelineValue = d; Y(a, e); ) {
-                            if (W(a, b))
-                                return (
-                                    s.pause(), void (s.settings.general.isDemo && s.selectedLogId && (s.logStep = 1))
-                                );
-                            aa(a), a++;
+                    function L(b, c) {
+                        if (c && ((a.activeTool = b), h.isCurrentUserLoaded())) {
+                            var d = h.getCurrentUser();
+                            g.trackEvent(d.id, n.SUPPORT_TOOLKIT_ENABLED, {
+                                active_tool: b,
+                            });
                         }
-                        s.settings.playback.shouldSkipProlongedInactivity && ya && !s.isStreamingLive
-                            ? O()
-                            : R(s.activities[a - 1].time - d, c);
+                        a.setToolIsActive(b, c);
                     }
-                    function O() {
-                        if (P()) (ya = !1), e.fireHideHiddenTabOverlay(s), R();
-                        else {
-                            var a;
-                            s.pauseActivity && !Q()
-                                ? b(function() {
-                                      E(s.pauseActivity.time, da);
-                                  }, k.TAB_HIDDEN_MESSAGE_TIME)
-                                : ((a = U()),
-                                  b(function() {
-                                      _(a, R);
-                                  }, k.TAB_HIDDEN_MESSAGE_TIME));
-                        }
+                    function M() {
+                        L(a.CURSOR, !1), L(a.PEN, !1), L(a.CONTROL_TAKEOVER, !1), (a.activeTool = null), (X = null);
+                    }
+                    function N() {
+                        T.sendControlTakeOverRequest(),
+                            (a.endUserPermissionAwaiting = !0),
+                            (a.endUserDeniedControlTakeOver = !1);
+                    }
+                    function O(b) {
+                        (a.isCollaborativeMode = b), a.setIsCollaborativeMode(a.isCollaborativeMode);
                     }
                     function P() {
-                        for (var a = U(), b = wa; b < a; b++) {
-                            var d = s.activities[b].type;
-                            if (c.includes(va, d)) return !0;
+                        if (S && S.isToolkitEnabled) {
+                            a.enableToolkit(T),
+                                (a.isToolkitEnabled = !0),
+                                (a.isControlTakeoverEnabled = S.isControlTakeoverEnabled);
+                            var b = R();
+                            a.handleResize(b);
                         }
-                        return !1;
                     }
                     function Q() {
-                        if (s.pauseActivity) return s.timelineValue >= s.pauseActivity.time;
-                    }
-                    function R(a, c) {
-                        a = a || 0;
-                        var d = wa + 1;
-                        if (d < s.activities.length) {
-                            var e = s.activities[wa].time,
-                                f = s.activities[d].time,
-                                g = T(e, f, a);
-                            (g = S(g, c)),
-                                (ra = b(function() {
-                                    N(d);
-                                }, g));
-                        } else V();
-                    }
-                    function S(a, b) {
-                        if (!b) return 0;
-                        var c = new Date();
-                        return (
-                            (s.timeoutExecutionError += c.getTime() - b.getTime()),
-                            s.timeoutExecutionError > 0 &&
-                                (s.timeoutExecutionError > a
-                                    ? ((s.timeoutExecutionError = s.timeoutExecutionError - a), (a = 0))
-                                    : ((a -= s.timeoutExecutionError), (s.timeoutExecutionError = 0))),
-                            a
-                        );
-                    }
-                    function T(a, b, c) {
-                        var d = $(a, b),
-                            e = d / s.settings.playback.speed;
-                        if (s.isStreamingLive) {
-                            var f = s.activities[s.activities.length - 1].time,
-                                g = f - b;
-                            if (g > k.LAG_TIME) return 0;
+                        if (S && S.isToolkitEnabled) {
+                            (a.isToolkitEnabled = !1), a.exitCollaborativeMode();
+                            var b = R();
+                            a.handleResize(-b);
                         }
-                        return e + c;
                     }
-                    function U() {
-                        for (var a = wa; a < s.activities.length; a++) {
-                            var b = s.activities[a];
-                            if (b.type === n.VISIBILITY_CHANGE && b.data.visibilityState === o.VISIBLE) return a;
-                        }
-                        return s.activities.length - 1;
+                    function R() {
+                        return b.find('.support-toolkit').height();
                     }
-                    function V() {
-                        s.activities.length > 0 && (s.timelineValue = s.activities[s.activities.length - 1].time),
-                            da(),
-                            s.isStreamingLive || (s.hasFinished = !0);
-                    }
-                    function W(a, b) {
-                        return (
-                            !b &&
-                            s.settings.playback.shouldPauseOnMarker &&
-                            s.pauseActivity &&
-                            s.pauseActivity.id === s.activities[a].id
-                        );
-                    }
-                    function X() {
-                        ra && (b.cancel(ra), (ra = null));
-                    }
-                    function Y(a, b) {
-                        var c = Z(a);
-                        return a < s.activities.length && s.activities[a].time >= b && s.activities[a].time <= b + c;
-                    }
-                    function Z(a) {
-                        if (!s.isStreamingLive) return k.MILLISECONDS_PER_FRAME;
-                        a = Math.min(a, s.activities.length - 1);
-                        var b = s.activities[a].time,
-                            c = s.activities[s.activities.length - 1].time,
-                            d = c - b;
-                        return d > k.LAG_TIME ? 500 : k.MILLISECONDS_PER_FRAME;
-                    }
-                    function $(a, b) {
-                        var c = b - a;
-                        return (
-                            s.settings.playback.shouldSkipProlongedInactivity &&
-                                (c = Math.min(c, k.MAX_INACTIVITY_TIME)),
-                            c
-                        );
-                    }
-                    function _(a, b) {
-                        F(), (wa > a || wa === -1) && ((ya = !1), e.fireClear(s, s.snapshotData));
-                        var c = 0;
-                        wa <= a ? (c = wa + 1) : (wa = -1), (a = Math.min(a, s.activities.length - 1));
-                        var d = c,
-                            f = function() {
-                                return d <= a;
-                            },
-                            g = function() {
-                                for (var b = Math.min(a, d + k.EVENTS_BATCH_SIZE); d <= b; d++) aa(d);
-                                s.renderingProgress = {
-                                    current: d - c - 1,
-                                    total: a - c,
-                                };
-                            },
-                            h = { waitTime: k.EVENTS_BATCH_WAIT_TIME };
-                        (ta = new j(f, g, h)),
-                            ta.start(function() {
-                                if (wa === -1 || !s.isStreamingLive) return void G(b);
-                                var a = s.activities[wa].time;
-                                s.isStreamingLive && s.timelineMax - a < k.GO_LIVE_DELAY_TIME && G(b);
+                    if (!i.isBrowserNotSupported()) {
+                        var S,
+                            T,
+                            U = [p.DOM_SNAPSHOT, p.WINDOW_RESIZE, p.VISIBILITY_CHANGE, p.CONSOLE_ERROR];
+                        (a.PLAYER_ONLINE_MODE = o.PLAYER_ONLINE_MODE),
+                            (a.isPlaying = !1),
+                            (a.timelineValue = 0),
+                            (a.arePlayerButtonsEnabled = !0),
+                            (a.renderingProgress = 0),
+                            (a.url = null),
+                            (a.speedOptions = [
+                                { label: '0.25x', value: 0.25 },
+                                { label: '0.5x', value: 0.5 },
+                                { label: 'Normal', value: 1 },
+                                { label: '2x', value: 2 },
+                                { label: '4x', value: 4 },
+                            ]),
+                            (a.steps = []);
+                        var V = { playerIndex: -1, time: 0 },
+                            W = {
+                                _onTabHiddenCallback: c.noop,
+                                isTabHidden: !1,
+                                lastRenderedActivity: V,
+                                reset: function() {
+                                    (this.isTabHidden = !1), (this.lastRenderedActivity = V);
+                                },
+                                render: function(b, d) {
+                                    var f = this;
+                                    b.forEach(function(b) {
+                                        window.ss_debug && console.log(d, b),
+                                            A(b) || e.fireExecuteEvent(a, b),
+                                            (k.isTabVisibilityChange(b) || (k.isTopLevel(b) && k.isSnapshot(b))) &&
+                                                (f.isTabHidden = b.data.visibilityState == q.HIDDEN);
+                                    }),
+                                        (f.lastRenderedActivity = c.last(b)),
+                                        a.updateStepsTimeline(f.lastRenderedActivity.playerIndex),
+                                        a.updateConsole(f.lastRenderedActivity.playerIndex),
+                                        f.isTabHidden && setTimeout(f._onTabHiddenCallback, 0);
+                                },
+                                onTabHidden: function(a) {
+                                    this._onTabHiddenCallback = a;
+                                },
+                            };
+                        W.onTabHidden(function() {
+                            W.isTabHidden && a.player.skipToTabShown(a.timelineValue);
+                        }),
+                            (a.activities = new l()),
+                            (a.player = new j(a.activities, W, m)),
+                            a.player.onTimeChanged(u),
+                            a.player.onBuffering(v),
+                            a.player.onRendering(w),
+                            a.player.onPlaying(x),
+                            a.player.onPaused(y),
+                            a.player.onFinished(z),
+                            (a.detailsStep = 0),
+                            (a.logStep = 0),
+                            (a.isStreamingLive = !1),
+                            (a.isSimpleUIMode = a.settings.general.uiMode === r.SIMPLE),
+                            (a.shouldShowLoadingOverlay = !0),
+                            (a.isUserOffline = !1);
+                        var X;
+                        a.activeTool,
+                            (a.endUserPermissionAwaiting = !1),
+                            (a.endUserDeniedControlTakeOver = !1),
+                            (a.isCollaborativeMode = !1),
+                            (a.isConfirmationVisible = !1),
+                            (a.CURSOR = s.CURSOR),
+                            (a.PEN = s.PEN),
+                            (a.CONTROL_TAKEOVER = s.CONTROL_TAKEOVER),
+                            (a.settings.playback.speedOption = function(b) {
+                                return arguments.length > 0
+                                    ? (a.settings.playback.speed = b.value)
+                                    : c.find(a.speedOptions, function(b) {
+                                          return b.value === a.settings.playback.speed;
+                                      });
+                            }),
+                            a.$watch('initialSettings', function(b) {
+                                b && a.api.loadSession(b);
+                            }),
+                            a.$watch(H, function(b) {
+                                b &&
+                                    (e.firePlayerIsInitialized(a),
+                                    a.hideUserDetailsMask(),
+                                    a.hideStepsTimelineMask(),
+                                    (a.shouldShowLoadingOverlay = !1),
+                                    a.enableTimeline());
+                            }),
+                            a.$watch(
+                                function() {
+                                    return a.viewerIsCreated && !!a.session;
+                                },
+                                function(b) {
+                                    b &&
+                                        (a.viewerApi.setSessionScreenWidth(a.session.screenWidth),
+                                        a.viewerApi.setSessionScreenHeight(a.session.screenHeight),
+                                        a.viewerApi.setInitialSettings(a.initialSettings),
+                                        e.fireVisualizeClicks(a, a.settings.playback.shouldVisualizeClicks));
+                                }
+                            ),
+                            a.$watch('isTimelineSelectionInProgress', function(b) {
+                                H() && b && a.pause();
+                            }),
+                            a.$watch('timelineSelectedValue', function(b) {
+                                H() &&
+                                    (window.ss_debug && console.log('jump to', b),
+                                    a.player.jumpToTime(b),
+                                    G(),
+                                    (a.isPlaying = !0),
+                                    (a.hasFinished = !1),
+                                    a.api.setUserHasGoneOffline(!1));
+                            }),
+                            a.$watch('settings.playback.shouldSkipProlongedInactivity', function(b) {
+                                a.player.changeProlongedInactivitySetting(b, a.timelineValue);
+                            }),
+                            a.$watch('settings.playback.speed', function(b) {
+                                a.player.changeSpeedSetting(b, a.timelineValue);
+                            }),
+                            a.$watch('settings.playback.shouldPauseOnMarker', function(b) {
+                                b && a.pauseActivity
+                                    ? a.player.changePauseMarker(a.pauseActivity.time, a.timelineValue)
+                                    : a.player.changePauseMarker(null, a.timelineValue);
+                            }),
+                            a.$watch('settings.playback.shouldVisualizeClicks', function(b) {
+                                e.fireVisualizeClicks(a, b);
+                            }),
+                            (a.togglePlaying = function() {
+                                a.isPlaying ? a.pause() : a.play();
+                            }),
+                            (a.start = function() {
+                                window.ss_debug && console.log('firststart activities'),
+                                    a.player.jumpToTime(a.startTime),
+                                    (a.isStreamingLive = !1),
+                                    (a.isPlaying = !0),
+                                    (a.hasFinished = !1),
+                                    (a.timelineValue = a.startTime),
+                                    a.api.setUserHasGoneOffline(!1);
+                            }),
+                            (a.play = function() {
+                                window.ss_debug && console.log('play activities'),
+                                    a.player.play(a.timelineValue),
+                                    (a.isStreamingLive = !1),
+                                    (a.isPlaying = !0),
+                                    (a.hasFinished = !1);
+                            }),
+                            (a.pause = function() {
+                                window.ss_debug && console.log('pause activities');
+                                var b = a.isStreamingLive;
+                                a.player.pause(), G(), (a.isPlaying = !1), (a.hasFinished = b);
+                            }),
+                            (a.repeat = function() {
+                                a.start();
+                            }),
+                            (a.goLive = function() {
+                                window.ss_debug && console.log('go live'),
+                                    a.activities.resetLoading(),
+                                    a.player.goLive(a.timelineValue),
+                                    (a.isStreamingLive = !0),
+                                    (a.isPlaying = !0),
+                                    (a.hasFinished = !1),
+                                    (a.timelineValue = a.timelineMax),
+                                    a.stepsTimelineLoaded(),
+                                    e.fireStartLiveStreaming(a, c.noop),
+                                    P();
+                            }),
+                            (a.showSessionDetails = function(b) {
+                                f.log("Clicked on 'Details'"), a.pause(), d.open(b);
+                            }),
+                            (a.onSelectedActivity = function(b) {
+                                window.ss_debug && console.log('selected activitiy', b),
+                                    a.player.jumpToActivity(b),
+                                    G(),
+                                    (a.isPlaying = !1),
+                                    (a.hasFinished = !1),
+                                    (a.timelineValue = b.time),
+                                    a.updateStepsTimeline(b.playerIndex, !0),
+                                    a.selectActivity(b),
+                                    a.api.setUserHasGoneOffline(!1);
+                            }),
+                            (a.userPermissionRequest = {
+                                ignore: !0,
+                                state: null,
+                                isApproved: function() {
+                                    return this.ignore || 'approved' === this.state;
+                                },
+                                send: function() {
+                                    'awaiting-response' != this.state &&
+                                        ((this.state = 'awaiting-response'), e.fireUserPermissionRequestSend(a));
+                                },
+                                cancel: function() {
+                                    'canceled' != this.state &&
+                                        ((this.state = 'canceled'), e.fireUserPermissionRequestCanceled(a));
+                                },
+                                deny: function() {
+                                    'denied-request' != this.state && (this.state = 'denied-request');
+                                },
+                                approve: function() {
+                                    'approved' != this.state && (this.state = 'approved');
+                                },
+                                interrupt: function() {
+                                    'interrupted-request' != this.state && (this.state = 'interrupted-request');
+                                },
+                                reset: function() {
+                                    this.state && (this.state = null);
+                                },
+                            }),
+                            (a.getLiveState = function() {
+                                return a.showGoLiveButton
+                                    ? a.isStreamingLive
+                                        ? 'streaming'
+                                        : a.isUserOffline
+                                        ? 'offline'
+                                        : 'online'
+                                    : 'none';
+                            }),
+                            (a.playUserRecordedSession = function() {
+                                a.playRecordedSession();
+                            }),
+                            (a.api = {
+                                loadSession: function(b) {
+                                    (a.userPermissionRequest.ignore = !b.shouldWaitUserConfirmation()),
+                                        (a.session = b.getSession()),
+                                        (a.isLive = b.isLive()),
+                                        (a.showGoLiveButton = b.shouldShowGoLiveButton()),
+                                        (a.startTime = b.getStartTime()),
+                                        (a.pauseActivity = b.getPauseActivity()),
+                                        (a.initialSettings = b),
+                                        (a.sessionId = a.session.id),
+                                        a.pauseActivity &&
+                                            a.settings.playback.shouldPauseOnMarker &&
+                                            a.player.changePauseMarker(a.pauseActivity.time);
+                                },
+                                setSessionLength: function(b) {
+                                    (a.timelineMax = b), a.activities.setSessionLength(b);
+                                },
+                                finishLoadingActivities: function() {
+                                    a.activities.finishLoading(), a.refreshTimeline(!0, []), a.stepsTimelineLoaded();
+                                },
+                                addActivities: function(b) {
+                                    I(b), a.refreshTimeline(!1, b);
+                                },
+                                denyStreamingRequest: function() {
+                                    a.userPermissionRequest.deny();
+                                },
+                                interruptStreamingRequest: function() {
+                                    a.userPermissionRequest.interrupt();
+                                },
+                                resetStreamingRequest: function() {
+                                    a.userPermissionRequest.reset();
+                                },
+                                approveStreamingRequest: function() {
+                                    a.userPermissionRequest.approve(), this.startLiveStreaming();
+                                },
+                                startPlayback: function() {
+                                    a.start();
+                                },
+                                startLiveStreaming: function() {
+                                    a.isStreamingLive || a.goLive();
+                                },
+                                stopLiveStreaming: function() {
+                                    a.isStreamingLive && a.pause();
+                                },
+                                setFeatureFlags: function(a) {
+                                    S = a;
+                                },
+                                setBrokerClient: function(b) {
+                                    (T = b),
+                                        T.onControlTakeOverRequestApproved(function() {
+                                            L(X, !0), O(!0), (a.endUserPermissionAwaiting = !1);
+                                        }),
+                                        T.onControlTakeOverRequestDenied(function() {
+                                            (a.endUserPermissionAwaiting = !1), (a.endUserDeniedControlTakeOver = !0);
+                                        }),
+                                        T.onControlTakeOverRequestStopped(function() {
+                                            a.exitCollaborativeMode();
+                                        });
+                                },
+                                setUserHasGoneOffline: function(b) {
+                                    b && (a.isUserOffline = !0), a.setIsOffline(b);
+                                },
+                            }),
+                            e.onUserDetailsResize(a, function(b, c) {
+                                a.handleUserDetailsResize(c);
+                            }),
+                            e.onConsoleResize(a, function(b, c) {
+                                a.handleResize(c);
+                            }),
+                            e.onOpenConsole(a, function(b, c) {
+                                a.openConsole(c);
+                            }),
+                            (a.toggleConsole = function() {
+                                a.isConsoleExpanded ? a.closeConsole() : (K(), a.openConsole(null));
+                            }),
+                            (a.updateUrl = function(b) {
+                                J(b) || (a.url = b);
+                            }),
+                            (a.toggleTool = function(b) {
+                                if (
+                                    b !== a.CONTROL_TAKEOVER ||
+                                    X !== a.CONTROL_TAKEOVER ||
+                                    !a.endUserPermissionAwaiting
+                                ) {
+                                    if (a.isCollaborativeMode) {
+                                        var c = b !== a.activeTool;
+                                        if ((M(), !c)) return;
+                                        b !== a.CONTROL_TAKEOVER
+                                            ? (L(b, !0), (a.endUserPermissionAwaiting = !1))
+                                            : ((X = b), N());
+                                    } else (X = b), (a.isConfirmationVisible = !0), (a.endUserPermissionAwaiting = !1);
+                                    a.endUserDeniedControlTakeOver = !1;
+                                }
+                            }),
+                            (a.exitCollaborativeMode = function() {
+                                M(), O(!1), (a.isConfirmationVisible = !1);
+                            }),
+                            (a.goToCollaborativeMode = function() {
+                                (a.isConfirmationVisible = !1), X !== a.CONTROL_TAKEOVER ? (L(X, !0), O(!0)) : N();
+                            }),
+                            (a.cancelCollaborativeConfirmation = function() {
+                                (a.isConfirmationVisible = !1), (X = null);
                             });
                     }
-                    function aa(a) {
-                        var b = s.activities[a];
-                        w(b) || e.fireExecuteEvent(s, b),
-                            (wa = a),
-                            pa(a),
-                            b.type === n.VISIBILITY_CHANGE && (ya = b.data.visibilityState === o.HIDDEN);
-                    }
-                    function ba() {
-                        sa ||
-                            (sa = a(function() {
-                                var a = s.timelineValue + k.PLAY_SPEED,
-                                    b = s.activities[wa + 1];
-                                b && (s.timelineValue = Math.min(a, b.time));
-                            }, k.PLAY_SPEED / s.settings.playback.speed));
-                    }
-                    function ca() {
-                        sa && (a.cancel(sa), (sa = null));
-                    }
-                    function da() {
-                        X(), ca(), (s.isPlaying = !1);
-                    }
-                    function ea(a) {
-                        (s.isPlaying = !0), M(a), ba();
-                    }
-                    function fa() {
-                        if (s.isStreamingLive && s.isRendering) {
-                            var a = s.activities[s.activities.length - 1].time;
-                            (s.timelineValue = Math.max(s.timelineValue, a)), _(s.activities.length, ja);
-                        } else if (xa && s.timelineValue > 0) {
-                            var b = c.findLastIndex(s.activities, function(a) {
-                                return a.time <= s.timelineValue;
-                            });
-                            _(b, ja);
-                        }
-                    }
-                    function ga(a) {
-                        (s.timelineValue = a), ha();
-                    }
-                    function ha() {
-                        s.loadedTime < s.timelineValue
-                            ? (ma(!0), (s.arePlayerButtonsEnabled = !1), da())
-                            : s.loadedTime >= s.timelineValue && (ma(!1), (s.arePlayerButtonsEnabled = !0), ia());
-                    }
-                    function ia() {
-                        if (Ba) (Ba = !1), E(s.timelineValue, ja);
-                        else {
-                            var a = !s.isStreamingLive && s.isRendering;
-                            s.isPlaying || a || Aa || E(s.timelineValue, ja);
-                        }
-                    }
-                    function ja() {
-                        xa || s.isTimelineDirty || K();
-                    }
-                    function ka() {
-                        s.isStreamingLive && ((s.isStreamingLive = !1), e.fireStopLiveStreaming(s));
-                    }
-                    function la() {
-                        s.isStreamingLive || ((s.isStreamingLive = !0), e.fireStartLiveStreaming(s), ga(s.timelineMax));
-                    }
-                    function ma(a) {
-                        (xa = a), a ? e.fireShowBuffering(s) : e.fireHideBuffering(s);
-                    }
-                    function na(a) {
-                        if (i.isArray(a)) {
-                            a.length > 0 &&
-                                !za &&
-                                s.pauseActivity &&
-                                s.pauseActivity.id === p &&
-                                s.pauseActivity.time < a[a.length - 1].time &&
-                                ((a = i.mergeSortedArrays(a, [s.pauseActivity], 'time')), (za = !0)),
-                                (s.activities = i.concatenateArrays(s.activities, a));
-                            var b = x(a),
-                                c = b.steps,
-                                d = b.logs;
-                            i.isArray(c) && c.length > 0 && s.addNewSteps(c),
-                                i.isArray(d) && d.length > 0 && s.addNewLogs(d),
-                                s.activities.length > 0
-                                    ? (s.loadedTime = s.activities[s.activities.length - 1].time)
-                                    : (s.loadedTime = s.timelineMax),
-                                s.loadedTime > s.timelineMax && (s.timelineMax = s.loadedTime);
-                            var f = s.loadedTime === s.timelineMax;
-                            f && e.fireHideStepsBuffering(s), i.isFunction(s.refreshTimeline) && s.refreshTimeline(f);
-                        }
-                    }
-                    function oa() {
-                        i.isFunction(s.enableTimeline) && s.enableTimeline();
-                    }
-                    function pa(a) {
-                        i.isFunction(s.updateStepsTimeline) && s.updateStepsTimeline(a),
-                            i.isFunction(s.updateConsole) && s.updateConsole(a);
-                    }
-                    function qa() {
-                        var a = h.getCurrentUser(),
-                            b = { opened_from: 'timeline_controls' };
-                        g.trackEvent(a.id, l.CONSOLE_OPENED, b), f.log('Console opened from time line controls');
-                    }
-                    var ra,
-                        sa,
-                        ta,
-                        ua = [n.DOM_SNAPSHOT, n.WINDOW_RESIZE, n.VISIBILITY_CHANGE],
-                        va = [n.MOUSE_CLICK, n.MOUSE_MOVE, n.WINDOW_RESIZE],
-                        wa = -1,
-                        xa = !1,
-                        ya = !1,
-                        za = !1,
-                        Aa = !1,
-                        Ba = !1;
-                    (s.PLAYER_ONLINE_MODE = m.PLAYER_ONLINE_MODE),
-                        (s.isPlaying = !1),
-                        (s.timelineMin = 0),
-                        (s.timelineMax = 0),
-                        (s.timelineValue = 0),
-                        (s.arePlayerButtonsEnabled = !0),
-                        (s.sessionScreenWidth = 0),
-                        (s.sessionScreenHeight = 0),
-                        (s.renderingProgress = 0),
-                        (s.speedOptions = [
-                            { label: '0.25x', value: 0.25 },
-                            { label: '0.5x', value: 0.5 },
-                            { label: 'Normal', value: 1 },
-                            { label: '2x', value: 2 },
-                            { label: '4x', value: 4 },
-                        ]),
-                        (s.loadedTime = -1),
-                        (s.steps = []),
-                        (s.activities = []),
-                        (s.detailsStep = 0),
-                        (s.logStep = 0),
-                        (s.isStreamingLive = !1),
-                        (s.isSimpleUIMode = s.settings.general.uiMode === q.SIMPLE),
-                        (s.shouldShowLoadingOverlay = !0),
-                        (s.settings.playback.speedOption = function(a) {
-                            return arguments.length > 0
-                                ? (s.settings.playback.speed = a.value)
-                                : c.find(s.speedOptions, function(a) {
-                                      return a.value === s.settings.playback.speed;
-                                  });
-                        }),
-                        s.$watch('session', function(a) {
-                            a
-                                ? ((wa = -1),
-                                  (s.sessionId = a.id),
-                                  (s.sessionScreenWidth = a.screenWidth),
-                                  (s.sessionScreenHeight = a.screenHeight),
-                                  (s.snapshotData = {
-                                      snapshot: a.snapshot,
-                                      origin: a.origin,
-                                      docType: a.docType,
-                                      top: a.top,
-                                      left: a.left,
-                                  }),
-                                  s.settings.general.isDemo && !s.selectedLogId && (s.detailsStep = 1),
-                                  (ya = a.visibilityState === o.HIDDEN))
-                                : (s.arePlayerButtonsEnabled = !1);
-                        }),
-                        s.$watch(J, function(a) {
-                            a &&
-                                (oa(),
-                                e.firePlayerIsInitialized(s),
-                                s.hideUserDetailsMask(),
-                                s.hideStepsTimelineMask(),
-                                (s.shouldShowLoadingOverlay = !1));
-                        }),
-                        s.$watch('isTimelineDirty', function(a) {
-                            a === !0
-                                ? L()
-                                : a === !1 && ((Ba = !0), da(), ka(), e.firePlayerStopped(s), ga(s.timelineValue));
-                        }),
-                        s.$on('$destroy', function() {
-                            da();
-                        }),
-                        s.$watch('settings.playback.shouldSkipProlongedInactivity', function() {
-                            J() && s.isPlaying && H();
-                        }),
-                        s.$watch('settings.playback.shouldVisualizeClicks', function(a) {
-                            e.fireVisualizeClicks(s, a);
-                        }),
-                        s.$watch('settings.playback.speed', function(a) {
-                            J() && s.isPlaying && (H(), e.firePlayerSpeedChange(s, a));
-                        }),
-                        (s.togglePlaying = function() {
-                            v()
-                                ? ((Aa = !0), ka())
-                                : s.isPlaying || s.isStreamingLive
-                                ? ((Aa = !0), L())
-                                : ((Aa = !1), K(!0));
-                        }),
-                        (s.play = function() {
-                            (Aa = !1), K(!0);
-                        }),
-                        (s.pause = function() {
-                            (Aa = !0), L();
-                        }),
-                        (s.repeat = function() {
-                            (wa = -1), E(s.startTime, K);
-                        }),
-                        (s.showSessionDetails = function(a) {
-                            f.log("Clicked on 'Details'"), s.pause(), d.open(a);
-                        }),
-                        (s.onSelectedActivity = function(a) {
-                            s.hasFinished = !1;
-                            var b = s.activities[a];
-                            (s.timelineValue = b.time), wa + 1 !== a && (s.pause(), _(a - 1));
-                        }),
-                        s.$watch('isLive', function(a) {
-                            a || ka();
-                        }),
-                        (s.goLive = function() {
-                            (Ba = !0), da(), e.firePlayerStopped(s), la();
-                        }),
-                        (s.api = {
-                            setSessionLength: function(a) {
-                                s.timelineMax = a;
-                                var b = s.timelineValue || s.startTime;
-                                s.isStreamingLive && (b = s.timelineMax), ga(b);
-                            },
-                            finishLoadingActivities: function() {
-                                s.isStreamingLive && ga(s.timelineMax);
-                            },
-                            addActivities: function(a) {
-                                var b = v() && !s.isRendering && s.isStreamingLive && !xa && a && a.length > 0;
-                                na(a),
-                                    (s.pauseActivity && s.pauseActivity.time === s.timelineValue) ||
-                                        (fa(), b && ((s.timelineValue = a[0].time), K()), s.isStreamingLive || ha());
-                            },
-                            startLiveStreaming: la,
-                        }),
-                        e.onUserDetailsResize(s, function(a, b) {
-                            s.handleUserDetailsResize(b);
-                        }),
-                        e.onConsoleResize(s, function(a, b) {
-                            s.handleConsoleResize(b);
-                        }),
-                        e.onOpenConsole(s, function(a, b) {
-                            s.openConsole(b);
-                        }),
-                        (s.toggleConsole = function() {
-                            s.isConsoleExpanded ? s.closeConsole() : (qa(), s.openConsole());
-                        });
                 },
             };
         },

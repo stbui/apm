@@ -4,21 +4,27 @@ angular
     .factory('playerSettings', [
         'settings',
         'utils',
-        'LOG_LEVEL',
         'EVENT_TYPE',
         'PAGE_LOAD',
-        function(a, b, c, d, e) {
-            function f(a) {
-                (a.settings = {}), g(a), h(a);
+        function(a, b, c, d) {
+            function e(a) {
+                (a.settings = {}), f(a), g(a), h(a);
             }
-            function g(a) {
+            function f(a) {
                 a.settings.general = {
                     playFrom: b.getQueryParameter('play_from'),
                     pauseAt: b.getQueryParameter('pause_at'),
                     playLive: b.getQueryParameter('play_live'),
                     uiMode: b.getQueryParameter('ui_mode'),
+                    accessToken: b.getQueryParameter('access_token'),
                     isDemo: b.getQueryParameter('is_demo') === !0,
+                    domSnapshotsEnabled: b.getQueryParameter('dom_snapshots') === !0,
+                    liveSeparatePipeline: b.getQueryParameter('live_separate_pipeline') === !0,
+                    isAssureCoWorkaroundEnabled: b.getQueryParameter('assure_co_workaround') === !0,
                 };
+            }
+            function g(a) {
+                a.settings.analytics = { source: b.getQueryParameter('source') };
             }
             function h(a) {
                 var b = i(),
@@ -65,12 +71,12 @@ angular
                 return o(c);
             }
             function o(a) {
-                var c = [];
+                var e = [];
                 return (
                     b.forEach(a, function(a) {
-                        a === e ? c.push(d.DOM_SNAPSHOT) : c.push(a);
+                        a === d ? e.push(c.DOM_SNAPSHOT) : e.push(a);
                     }),
-                    c
+                    e
                 );
             }
             function p(a) {
@@ -82,16 +88,7 @@ angular
                     c
                 );
             }
-            var q = [
-                c.ERROR,
-                c.WARN,
-                c.INFO,
-                c.DEBUG,
-                d.MOUSE_CLICK,
-                d.WINDOW_RESIZE,
-                d.DOM_SNAPSHOT,
-                d.VISIBILITY_CHANGE,
-            ];
-            return { init: f, getActivitiesFilterFromUrl: n };
+            var q = [c.CONSOLE_ERROR, c.MOUSE_CLICK, c.WINDOW_RESIZE, c.DOM_SNAPSHOT, c.VISIBILITY_CHANGE];
+            return { init: e, getActivitiesFilterFromUrl: n };
         },
     ]);

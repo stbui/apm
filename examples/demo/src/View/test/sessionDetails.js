@@ -7,15 +7,18 @@ angular
         function(a, b) {
             return {
                 restrict: 'E',
-                templateUrl: '../templates/sections.html',
+                templateUrl: function(a, b) {
+                    var c = 'common/templates/sections.html';
+                    return b.templateRoot ? b.templateRoot + c : c;
+                },
                 replace: !0,
                 scope: { sessionData: '=' },
                 link: function(c) {
                     function d(d) {
                         var e, f;
-                        angular.isDefined(d.browserName) &&
-                            angular.isDefined(d.browserVersion) &&
-                            (e = d.browserName + ' ' + d.browserVersion),
+                        d.device.browserName &&
+                            d.device.browserVersion &&
+                            (e = d.device.browserName + ' ' + d.device.browserVersion),
                             angular.isDefined(d.screenWidth) &&
                                 angular.isDefined(d.screenHeight) &&
                                 (f = d.screenWidth + ' x ' + d.screenHeight),
@@ -23,10 +26,7 @@ angular
                                 {
                                     name: 'Session',
                                     items: [
-                                        {
-                                            label: 'Length',
-                                            value: a('lengthformat')(d.length),
-                                        },
+                                        { label: 'Length', value: a('lengthformat')(d.length) },
                                         {
                                             label: 'Start',
                                             value: a('detaileddateformat')(d.start),
@@ -53,16 +53,13 @@ angular
                                         { label: 'Browser', value: e || b },
                                         {
                                             label: 'Layout engine',
-                                            value: d.layoutName || b,
+                                            value: d.device.layoutName || b,
                                         },
-                                        { label: 'OS', value: d.os || b },
-                                        {
-                                            label: 'Product',
-                                            value: d.product || b,
-                                        },
+                                        { label: 'OS', value: d.device.os || b },
+                                        { label: 'Product', value: d.device.product || b },
                                         {
                                             label: 'Manufacturer',
-                                            value: d.manufacturer || b,
+                                            value: d.device.manufacturer || b,
                                         },
                                         { label: 'Screen', value: f || b },
                                     ],
@@ -70,15 +67,9 @@ angular
                                 {
                                     name: 'Location',
                                     items: [
-                                        { label: 'IP', value: d.ip || b },
-                                        {
-                                            label: 'Country',
-                                            value: d.country || b,
-                                        },
-                                        {
-                                            label: 'City',
-                                            value: d.city || b,
-                                        },
+                                        { label: 'IP', value: d.location.ip || b },
+                                        { label: 'Country', value: d.location.country || b },
+                                        { label: 'City', value: d.location.city || b },
                                     ],
                                 },
                             ]);

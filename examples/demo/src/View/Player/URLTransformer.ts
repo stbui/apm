@@ -1,7 +1,8 @@
-const SERVER_URL = '';
+import { SERVER_URL } from './constant'
+
 const resources_url = SERVER_URL + 'resources';
 
-function getQueryString(name) {}
+function getQueryString(name) { }
 
 function wasUrl(baseUrl) {
     return baseUrl && SERVER_URL && isLocalUrl(baseUrl) && !isServerUrl(baseUrl);
@@ -16,17 +17,20 @@ function isServerUrl(baseUrl) {
 }
 
 export class URLTransformer {
-    constructor(baseUrl, sessionId) {
+    encodedBaseUrl: string
+    sessionId: string
+
+    constructor(baseUrl: string, sessionId: string) {
         this.encodedBaseUrl = encodeURIComponent(baseUrl);
         this.sessionId = sessionId;
     }
 
-    transform(baseUrl) {
+    transform(baseUrl: string) {
         if (!wasUrl(baseUrl)) {
             return baseUrl;
         }
 
-        const url = resources_url;
+        let url = resources_url;
 
         const queryObject = {
             url: encodeURIComponent(baseUrl),

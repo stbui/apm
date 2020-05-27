@@ -2,6 +2,7 @@ import { URLTransformer } from './URLTransformer';
 import { angular } from './angular';
 import { timeout } from './timeout';
 import utils from './utils';
+import { NAMESPACES, CROSS_ORIGIN_FRAME_BACKGROUND, PROPERTY_OBJECT_KEY, ALLOWED_SRC_PROTOCOLS } from './constant'
 
 interface attributes {
     name: string;
@@ -27,22 +28,14 @@ interface sessionNode {
 //     interface Element {
 //         __sessionstack_player__: any;
 //     }
+// // }
+// interface customElement extends Element {
+//     __sessionstack_player__: any;
 // }
-interface customElement extends Element {
-    __sessionstack_player__: any;
-}
 
-const NAMESPACES = {
-    HTML: 'http://www.w3.org/1999/xhtml',
-    SVG: 'http://www.w3.org/2000/svg',
-};
 
-const CROSS_ORIGIN_FRAME_BACKGROUND =
-    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACMAAAAjCAIAAACRuyQOAAAApElEQVRIib3Vyw2EMBADULNdTP+9JWVkL0gIFMh87Phs6cknH601ZGNm/vJvD9N7T0pRBrlNCSYj5ZiwlGZiUoUJSEXGK9UZl0Rh1hKLWUhE5kviMq8SnZlLCmYiiZinpGNukpS5JDVzShsYAMcYYwOD0GtUGDPzSkUGzk11xiVRmLXEYhYSkfmSuMyrRGfmkoKZSCLmKemYmyRlLknNnNIGBsAflNtr9IJvuy8AAAAASUVORK5CYII=';
 
-const PROPERTY_OBJECT_KEY = '__sessionstack_player__';
 
-const ALLOWED_SRC_PROTOCOLS = ['http', 'https', 'ftp', 'data'];
 
 function j(obj: any = {}) {
     const frameElementId = obj.frameElementId;
@@ -80,10 +73,10 @@ function getDocumentsCollectionById(frameElementId: number) {
  * @param {*} b
  */
 function traverseDocuments(frameElementId, callback: Function) {
-    for (var c, e = [frameElementId]; e.length > 0; )
+    for (var c, e = [frameElementId]; e.length > 0;)
         (c = this.documentsCollection[e.shift()]),
             c &&
-                (callback.call(this, c),
+            (callback.call(this, c),
                 angular.forEach(c.childDocuments, (a, b) => {
                     e.push(b);
                 }));
@@ -160,8 +153,8 @@ function r(documentElement) {
  * @param {*} attribute
  */
 function s(documentElement, element: string, attribute: string) {
-    var e,
-        f = this;
+    // var e,
+    //     f = this;
 
     // if (documentElement) {
     //     angular
@@ -178,7 +171,7 @@ function s(documentElement, element: string, attribute: string) {
     // }
 }
 
-function t() {}
+function t() { }
 /**
  * t
  * 创建snapshot元素
@@ -396,7 +389,7 @@ function getParentNode(referenceNode: Element): ParentNode | undefined {
 function getFrameElement(element) {
     try {
         return element.ownerDocument.defaultView.frameElement;
-    } catch (error) {}
+    } catch (error) { }
 }
 
 /**
@@ -419,7 +412,7 @@ function F(arr, node, element) {
  * @returns html元素
  */
 function G(node: sessionNode): Element | object {
-    let element = {};
+    let element: any = {};
 
     switch (node.nodeType) {
         case Node.COMMENT_NODE:
@@ -881,7 +874,7 @@ export class DocumentNode {
                 } else {
                     element.setAttribute(name, value);
                 }
-            } catch (error) {}
+            } catch (error) { }
         }
     }
     /**

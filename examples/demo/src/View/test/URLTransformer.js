@@ -4,32 +4,32 @@ angular.module('playerApp').factory('URLTransformer', [
     'SERVER_URL',
     function(a, b, c) {
         function d(a) {
-            return a && c && e(a) && !f(a);
+            return encodeURIComponent(encodeURIComponent(a));
         }
-        function e(b) {
-            return !a.startsWith(b, 'data:') && !a.startsWith(b, 'file:');
+        function e(a) {
+            return a && c && f(a) && !g(a);
         }
         function f(b) {
-            return a.startsWith(b, g);
+            return !a.startsWith(b, 'data:') && !a.startsWith(b, 'file:');
         }
-        var g = c + 'resources',
-            h = function(a, b) {
+        function g(b) {
+            return a.startsWith(b, h);
+        }
+        var h = c + 'resources',
+            i = function(a, b) {
                 var c = this;
-                (c.encodedBaseUrl = encodeURIComponent(a)), (c.sessionId = b);
+                (c.encodedBaseUrl = d(a)), (c.sessionId = b), (c.timestamp = 0);
             };
         return (
-            (h.prototype.transform = function(a) {
-                if (!d(a)) return a;
-                var c = this,
-                    e = g,
-                    f = {
-                        url: encodeURIComponent(a),
-                        base: c.encodedBaseUrl,
-                        session_id: c.sessionId,
-                    };
-                return (e += b.getQueryString(f));
+            (i.prototype.transform = function(a) {
+                if (!e(a)) return a;
+                var b = this,
+                    c = h;
+                return (
+                    (c += '/' + b.sessionId), (c += '/' + b.timestamp), (c += '/' + b.encodedBaseUrl), (c += '/' + d(a))
+                );
             }),
-            h
+            i
         );
     },
 ]);

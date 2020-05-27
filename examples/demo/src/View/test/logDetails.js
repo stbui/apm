@@ -21,7 +21,7 @@ angular.module('playerApp').directive('logDetails', [
                         f.message = (a && a.details.message) || '';
                     }),
                     (f.openConsole = function() {
-                        g(), a.fireOpenConsole(f, f.log.activityIndex);
+                        g(), a.fireOpenConsole(f, f.log);
                     });
             },
         };

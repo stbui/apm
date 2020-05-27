@@ -12,10 +12,7 @@ angular.module('playerApp').directive('userIdentityDetails', [
                 function h(a) {
                     a = a || {};
                     var d = b.formatCustomFields(a.customFields);
-                    d.unshift({
-                        label: 'User ID',
-                        value: a.identifier || c,
-                    }),
+                    d.unshift({ label: 'User ID', value: a.identifier || c }),
                         (e.displayName = a.displayName || c),
                         (e.email = a.email),
                         (e.expandableItems = d);

@@ -1,11 +1,11 @@
 angular
     .module('playerApp')
-    .constant('LOG_OFFSET', 5e3)
     .constant('LIVE_MODE_CONFIGS', {
         GO_LIVE_OFFSET_TIME: 1e3,
         MAX_ATTEMPTS: 3,
     })
     .constant('DEMO_USER_ROLE', 'demo')
+    .constant('PLAN_EXPIRED', 'PLAN_EXPIRED')
     .controller('PlayerController', [
         '$scope',
         '$stateParams',
@@ -13,108 +13,170 @@ angular
         'player',
         'playerSettings',
         'auth',
-        '$timeout',
-        'utils',
+        'analytics',
         'sessionstackManager',
         'pendoManager',
         'intercomManager',
-        'requestProgressHandlersManager',
-        'LOG_OFFSET',
+        'utils',
+        'navigation',
+        'BrokerWebSocketClient',
+        'BrokerClient',
+        'InitialSettings',
+        'LiveConnectionMonitor',
         'FRONTEND_URL',
         'SERVER_URL',
         'HTTP_STATUS',
         'DEMO_USER_ROLE',
-        'PAUSE_AT_ACTIVITY_ID',
         'LIVE_MODE_CONFIGS',
-        function(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s) {
-            function t(b) {
-                y.loadActivitiesUntil(u, b, C).then(function() {
-                    y.getSessionStatus().then(function(b) {
-                        var c = b.length;
-                        a.sessionPlayerApi.setSessionLength(c),
-                            D < s.MAX_ATTEMPTS && c - s.GO_LIVE_OFFSET_TIME > w
-                                ? (t(c), D++)
-                                : B &&
-                                  y.activitiesPollerIsCanceled &&
-                                  ((a.isCatchingUpWithLive = !1), y.startLoadingActivities(u, C), (D = 0), (C = !0));
-                    });
+        'CONNECTION_STATUSES',
+        'ANALYTICS_EVENT_TYPES',
+        'PLAN_EXPIRED',
+        function(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x) {
+            function y(b) {
+                J.loadActivitiesUntil(z, b).then(function(b) {
+                    z(b), a.sessionPlayerApi.finishLoadingActivities();
+                }, B);
+            }
+            function z(b) {
+                b &&
+                    0 !== b.length &&
+                    ((H = H || b[0].timestamp), A(b), (O = b[b.length - 1].time), a.sessionPlayerApi.addActivities(b));
+            }
+            function A(a) {
+                angular.forEach(a, function(a) {
+                    a.time = a.timestamp - H;
                 });
             }
-            function u(b) {
-                if (b) {
-                    var c = b.activities;
-                    c.length > 0 && (w = c[c.length - 1].time), a.sessionPlayerApi.addActivities(c);
-                }
-            }
-            function v(b) {
+            function B(b) {
                 if (b)
                     switch (b.status) {
-                        case p.FORBIDDEN:
-                        case p.UNAUTHORIZED:
-                            window.location = n + '#/login';
+                        case s.FORBIDDEN:
+                            F(b) || (window.location = q + '#/login');
                             break;
-                        case p.BAD_REQUEST:
+                        case s.UNAUTHORIZED:
+                            window.location = q + '#/login';
+                            break;
+                        case s.BAD_REQUEST:
                             a.errors.invalidSessionId = !0;
                             break;
-                        case p.NOT_FOUND:
+                        case s.NOT_FOUND:
                             a.errors.sessionNotFound = !0;
                     }
             }
-            e.init(a), (a.sessionId = b.sessionId);
-            var w,
-                x = b.logId,
-                y = new c(a.sessionId, x),
-                z = a.settings.general.playFrom,
-                A = a.settings.general.pauseAt,
-                B = !1,
-                C = !1,
-                D = 0;
-            (a.autostart = !0),
-                (a.startTime = 0),
-                (a.errors = {}),
-                (a.activities = []),
-                f.loadCurrentUser().then(function(a) {
-                    i.identify(a), j.initialize(a), a.role !== q && k.update(a);
-                }, v),
-                y.loadSession().then(function(b) {
-                    var c = b.log;
-                    (a.session = b.session),
-                        (a.isLive = b.session.isLive),
-                        (a.sessionWasInitiallyLive = b.session.isLive && !a.settings.general.isDemo),
-                        angular.isNumber(A)
-                            ? ((A = Math.max(A, 0)),
-                              (A = Math.min(A, a.session.length)),
-                              (a.pauseActivity = { id: r, time: A }))
-                            : c && !a.pauseActivity && ((a.selectedLogId = c.id), (a.pauseActivity = c)),
-                        angular.isNumber(z)
-                            ? ((z = Math.max(z, 0)), (z = Math.min(z, a.session.length)), (a.startTime = z))
-                            : !c && a.pauseActivity
-                            ? (a.startTime = Math.max(0, a.pauseActivity.time - m))
-                            : c && c == a.pauseActivity && (a.startTime = Math.max(0, c.time - m));
-                }, v),
-                d.onPlayerIsInitialized(a, function() {
-                    if (a.isLive && a.settings.general.playLive) a.sessionPlayerApi.startLiveStreaming();
-                    else {
-                        var b = a.session.length;
-                        a.sessionPlayerApi.setSessionLength(b), y.loadActivitiesUntil(u, b).then(u, v);
-                    }
-                }),
-                d.onStartLiveStreaming(a, function() {
-                    (B = !0),
-                        (a.isCatchingUpWithLive = !0),
-                        y.getSessionStatus().then(function(b) {
-                            var c = b.length;
-                            a.sessionPlayerApi.setSessionLength(c), t(c);
-                        });
-                }),
-                d.onStopLiveStreaming(a, function() {
-                    (B = !1), y.stopLoadingActivities();
-                }),
-                y.startLoadingSessionStatus(function(b) {
-                    (a.isLive = b.isLive), a.isLive || y.stopLoadingSessionStatus();
-                }),
-                l.registerProgressHandler(new RegExp(o + 'sessions/*'), function(b) {
-                    a.requestProgress = b;
+            function C() {
+                var b,
+                    c = G.getAccessToken(),
+                    d = G.getSource();
+                f.loadCurrentUser()
+                    .then(function(a) {
+                        b = a.id;
+                    })
+                    ['finally'](function() {
+                        g.trackSessionOpened(b, a.sessionId, c, d);
+                    });
+            }
+            function D() {
+                f.loadCurrentUser().then(function(b) {
+                    g.trackLiveSessionOpened(b.id, a.sessionId);
                 });
+            }
+            function E() {
+                f.loadCurrentUser().then(function(b) {
+                    g.trackLiveSessionStopped(b.id, a.sessionId);
+                });
+            }
+            function F(a) {
+                return a.data && a.data.message === x;
+            }
+            if (((a.isBrowserNotSupported = k.isBrowserNotSupported()), !a.isBrowserNotSupported)) {
+                e.init(a),
+                    (a.sessionId = b.sessionId),
+                    (a.errors = {}),
+                    (a.activities = []),
+                    (a.playRecordedSession = function() {
+                        var b = a.initialSettings.getSession();
+                        l.openSessionInNewWindow(b.id, b.hasInaccessibleResources, 'player_offline_button');
+                    });
+                var G,
+                    H,
+                    I = b.logId,
+                    J = new c(a.sessionId, I, a.settings.general.playLive),
+                    K = new n(m.createStreamingClient(a.sessionId)),
+                    L = new n(m.createChatClient(a.sessionId)),
+                    M = new p(K),
+                    N = new p(L),
+                    O = -1;
+                f.loadCurrentUser().then(function(b) {
+                    (a.user = b), h.identify(b), i.initialize(b), b.role !== t && j.update(b);
+                }, B),
+                    J.loadSession().then(function(b) {
+                        (G = new o(
+                            b.sessionData.session,
+                            b.sessionData.log,
+                            b.sessionData.askUserForStreamingPermission,
+                            b.sessionData.customOrigin,
+                            a.settings.general,
+                            a.settings.analytics,
+                            b.featureFlags
+                        )),
+                            (a.initialSettings = G),
+                            C(),
+                            G.shouldStartStreaming() && D();
+                    }, B),
+                    M.onStatusChange(function(b) {
+                        var c = b === v.OFFLINE;
+                        a.sessionPlayerApi.setUserHasGoneOffline(c),
+                            c ? a.sessionPlayerApi.stopLiveStreaming() : a.sessionPlayerApi.startLiveStreaming();
+                    }),
+                    N.onStatusChange(function(b) {
+                        var c = b === v.OFFLINE;
+                        a.sessionPlayerApi.setUserHasGoneOffline(c),
+                            c && (L.discardPendingRequests(), a.sessionPlayerApi.resetStreamingRequest(c));
+                    }),
+                    d.onUserPermissionRequestSend(a, function() {
+                        N.start(),
+                            L.onStreamingRequestDenied(function() {
+                                N.stop(), L.disconnect(), a.sessionPlayerApi.denyStreamingRequest();
+                            }),
+                            L.onStreamingRequestApproved(function() {
+                                N.stop(), L.disconnect(), a.sessionPlayerApi.approveStreamingRequest();
+                            }),
+                            L.onRecorderDisconnected(function() {
+                                N.stop(), L.disconnect(), a.sessionPlayerApi.interruptStreamingRequest();
+                            }),
+                            L.connect(function() {
+                                L.sendStreamingRequest();
+                            });
+                    }),
+                    d.onUserPermissionRequestCanceled(a, function() {
+                        N.stop(), L.sendStreamingRequestCanceled(), L.disconnect();
+                    }),
+                    d.onPlayerIsInitialized(a, function() {
+                        if (
+                            (a.sessionPlayerApi.setFeatureFlags(G.featureFlags),
+                            a.sessionPlayerApi.setBrokerClient(K),
+                            !G.shouldWaitUserConfirmation())
+                        )
+                            if (G.shouldStartStreaming()) a.sessionPlayerApi.startLiveStreaming();
+                            else {
+                                var b = G.getSession();
+                                a.sessionPlayerApi.setSessionLength(b.length),
+                                    a.sessionPlayerApi.startPlayback(),
+                                    y(b.clientStartMilliseconds + b.length);
+                            }
+                    }),
+                    d.onStartLiveStreaming(a, function(b, c) {
+                        M.start(),
+                            K.onAddData(function(b) {
+                                z(b), a.sessionPlayerApi.setSessionLength(O);
+                            }),
+                            K.connect(function() {
+                                c();
+                            });
+                    }),
+                    d.onStopLiveStreaming(a, function() {
+                        K.disconnect(), M.stop(), a.sessionPlayerApi.finishLoadingActivities(), E();
+                    });
+            }
         },
     ]);

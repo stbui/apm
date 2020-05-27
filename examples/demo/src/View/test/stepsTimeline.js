@@ -4,8 +4,8 @@ angular.module('playerApp').directive('stepsTimeline', [
     'playerSettings',
     'utils',
     'sessionstackManager',
+    'lodash',
     'EVENT_TYPE',
-    'LOG_LEVEL',
     'USER_DETAILS_ANIMATION_TIME',
     function(a, b, c, d, e, f, g, h) {
         return {
@@ -19,106 +19,103 @@ angular.module('playerApp').directive('stepsTimeline', [
                 selectNextStep: '=',
                 disable: '=',
                 enable: '=',
-                selectedLogId: '=',
                 isCreated: '=',
                 handleUserDetailsResize: '=',
                 hideMask: '=',
+                loaded: '=',
             },
-            link: function(i, j, k) {
-                function l(a, b) {
-                    return d.isDifferentActivity(a, b, m);
-                }
-                function m(a) {
-                    return Math.floor(d.millisecondsToSeconds(a));
-                }
-                function n(a) {
-                    if (((C = a), i.isEnabled)) {
-                        for (var b, c = 0; c < i.filteredSteps.length && i.filteredSteps[c].activityIndex <= C; ) c++;
-                        (b = i.selectedStep !== c), b && ((i.selectedStep = c), o());
+            link: function(b, i, j) {
+                function k(a, c) {
+                    if (((A = a), c || b.isEnabled)) {
+                        for (var d, e = 0; e < b.filteredSteps.length && b.filteredSteps[e].activityIndex < A; ) e++;
+                        (d = b.selectedStep !== e), d && ((b.selectedStep = e), l());
                     }
                 }
-                function o() {
-                    if (!y.is(':hover')) {
-                        var a = j.find('.steps-section .step').outerHeight();
+                function l() {
+                    if (!v.is(':hover')) {
+                        var a = i.find('.steps-section .step').outerHeight();
                         if (a) {
-                            var b = i.selectedStep * a,
-                                c = (y.height() - y.offset().top + z.height()) / 3;
-                            y.stop().animate({ scrollTop: b - c }, 300);
+                            var c = b.selectedStep * a,
+                                d = (v.height() - v.offset().top + w.height()) / 3;
+                            v.stop().animate({ scrollTop: c - d }, 300);
                         }
                     }
                 }
-                function p(a, b) {
-                    d.forEach(a, function(a, c) {
-                        i.activityTypeStatuses[a] = b;
+                function m(a, c) {
+                    d.forEach(a, function(a, d) {
+                        b.activityTypeStatuses[a] = c;
                     });
                 }
-                function q(a, b) {
-                    b = b || 0;
-                    var c = z.outerHeight();
-                    void 0 === a && (a = B.outerHeight());
-                    var d = i.containerHeight - c - a;
-                    A.stop().animate({ height: d }, b), o(), i.$broadcast('$md-resize');
+                function n(a, c) {
+                    c = c || 0;
+                    var d = w.outerHeight();
+                    void 0 === a && (a = y.outerHeight());
+                    var e = b.containerHeight - d - a;
+                    x.stop().animate({ height: e }, c), l(), b.$broadcast('$md-resize');
                 }
-                function r(a) {
+                function o(a) {
                     switch (a) {
-                        case f.MOUSE_CLICK:
-                        case f.WINDOW_RESIZE:
-                        case f.VISIBILITY_CHANGE:
+                        case g.MOUSE_CLICK:
+                        case g.WINDOW_RESIZE:
+                        case g.VISIBILITY_CHANGE:
                             return 'sm';
                         default:
                             return 'lg';
                     }
                 }
-                function s(a) {
-                    var b = r(a.type),
-                        c = t(a.type, a.details, a.isLog);
-                    c.summary = u(a.type, a.details);
+                function p(a) {
+                    var b = o(a.type),
+                        c = q(a.type, a.details, a.isLog);
+                    c.summary = r(a.type, a.details);
                     var d = c.title + ' ' + (c.summary || '');
                     return (a.modalSize = b), (a.stepStyle = c), (a.searchLabel = d), (a.count = 1), a;
                 }
-                function t(a, b, c) {
+                function q(a, b, c) {
                     switch (a) {
-                        case f.MOUSE_CLICK:
-                            return v('Click', 'ion-mouse', 'black', c);
-                        case f.DOM_SNAPSHOT:
-                            return v('Visit', 'ion-navigate', 'black', c);
-                        case f.WINDOW_RESIZE:
-                            return v('Resize', 'ion-arrow-expand', 'black', c);
-                        case g.INFO:
-                            return v('Info', 'ion-information-circled', '#2a6ce7', c);
-                        case g.ERROR:
-                            return v('Error', 'ion-android-alert', '#ff0944', c);
-                        case g.WARN:
-                            return v('Warn', 'ion-alert-circled', '#f0ad4e', c);
-                        case g.DEBUG:
-                            return v('Debug', 'ion-bug', '#2a6ce7', c);
-                        case f.VISIBILITY_CHANGE:
+                        case g.MOUSE_CLICK:
+                            return s('Click', 'ion-mouse', 'black', c);
+                        case g.DOM_SNAPSHOT:
+                            return s('Visit', 'ion-navigate', 'black', c);
+                        case g.WINDOW_RESIZE:
+                            return s('Resize', 'ion-arrow-expand', 'black', c);
+                        case g.CONSOLE_LOG:
+                            return s('Info', 'ion-information-circled', '#2a6ce7', c);
+                        case g.CONSOLE_ERROR:
+                            return s('Error', 'ion-android-alert', '#ff0944', c);
+                        case g.CONSOLE_WARN:
+                            return s('Warn', 'ion-alert-circled', '#f0ad4e', c);
+                        case g.CONSOLE_DEBUG:
+                            return s('Debug', 'ion-bug', '#2a6ce7', c);
+                        case g.VISIBILITY_CHANGE:
                             return 'visible' === b.visibilityState
-                                ? v('Tab displayed', 'ion-ios-albums', 'black', c)
-                                : v('Tab hidden', 'ion-ios-albums-outline', 'black', c);
+                                ? s('Tab displayed', 'ion-ios-albums', 'black', c)
+                                : s('Tab hidden', 'ion-ios-albums-outline', 'black', c);
                     }
                 }
-                function u(a, b) {
+                function r(a, b) {
                     switch (a) {
-                        case f.MOUSE_CLICK:
-                            return w(b.selector);
-                        case f.WINDOW_RESIZE:
+                        case g.MOUSE_CLICK:
+                            return t(b.selector);
+                        case g.WINDOW_RESIZE:
                             return b.width + ' x ' + b.height;
-                        case f.DOM_SNAPSHOT:
+                        case g.DOM_SNAPSHOT:
                             return b.pageUrl;
-                        case g.INFO:
-                        case g.ERROR:
-                        case g.WARN:
-                        case g.DEBUG:
+                        case g.CONSOLE_LOG:
                             return b.message;
-                        case f.VISIBILITY_CHANGE:
+                        case g.CONSOLE_ERROR:
+                            return b.message;
+                        case g.CONSOLE_WARN:
+                            return b.message;
+                        case g.CONSOLE_DEBUG:
+                            return b.message;
+                        case g.VISIBILITY_CHANGE:
                             return '';
                     }
                 }
-                function v(a, b, c, d) {
+                function s(a, b, c, d) {
                     return { title: a, showTitle: !d, icon: b, color: c };
                 }
-                function w(a) {
+                function t(a) {
                     var b = '';
                     return (
                         d.isArray(a) &&
@@ -136,125 +133,151 @@ angular.module('playerApp').directive('stepsTimeline', [
                         b
                     );
                 }
-                function x() {
-                    i.hideFilters(), p(E, !0);
+                function u() {
+                    b.hideFilters(), m(C, !0);
                 }
-                var y = j
+                var v = i
                         .find('.md-virtual-repeat-container')
                         .children()
                         .eq(0),
-                    z = j.find('.filter-sections'),
-                    A = j.find('.steps-section'),
-                    B = j.parent().find('user-identity-details');
-                q(),
-                    (i.isEnabled = !0),
-                    (i.shouldShowMask = !0),
-                    (i.isBuffering = !0),
-                    (i.transformedSteps = []),
-                    (i.filteredSteps = []),
-                    (i.activityTypeStatuses = {}),
-                    (i.LOG_LEVEL = g),
-                    (i.EVENT_TYPE = f),
-                    (i.expandedStepIndex = null),
-                    (i.scrollbarConfig = {
+                    w = i.find('.filter-sections'),
+                    x = i.find('.steps-section'),
+                    y = i.parent().find('user-identity-details');
+                n(),
+                    (b.isEnabled = !0),
+                    (b.isLoaded = !1),
+                    (b.shouldShowMask = !0),
+                    (b.transformedSteps = []),
+                    (b.filteredSteps = []),
+                    (b.activityTypeStatuses = {}),
+                    (b.EVENT_TYPE = g),
+                    (b.expandedStepIndex = null),
+                    (b.scrollbarConfig = {
                         autoHideScrollbar: !1,
                         theme: 'light',
                         advanced: { updateOnContentResize: !0 },
                         callbacks: {
                             onBeforeUpdate: function() {
                                 $('.step.is-open').is(':nth-last-of-type(-n+4)') &&
-                                    i.updateScrollbar('scrollTo', 'bottom');
+                                    b.updateScrollbar('scrollTo', 'bottom');
                             },
                         },
                         mouseWheel: { scrollAmount: 100 },
                         setHeight: 200,
                         scrollInertia: 0,
                     });
-                var C = -1,
-                    D = [f.MOUSE_CLICK, f.WINDOW_RESIZE, f.DOM_SNAPSHOT, f.VISIBILITY_CHANGE, g.ERROR],
-                    E = c.getActivitiesFilterFromUrl();
-                (i.updateStepsTimeline = function(a) {
-                    n(a);
-                }),
-                    (i.setLastPlayedActivity = function(a) {
-                        n(a);
-                    }),
-                    (i.addNewSteps = function(a) {
-                        if (d.isArray(a)) {
-                            var b;
-                            a.forEach(function(a) {
-                                if (a)
-                                    if (
-                                        (i.transformedSteps.length > 0 &&
-                                            (b = i.transformedSteps[i.transformedSteps.length - 1]),
-                                        a.isLog && !l(a, b))
-                                    ) {
-                                        var c = i.transformedSteps[i.transformedSteps.length - 1];
-                                        (c.activityIndex = a.activityIndex), c.count++;
-                                    } else {
-                                        var d = s(a);
-                                        i.transformedSteps.push(d);
-                                    }
-                            });
+                var z = (function(a, b) {
+                        function c(a) {
+                            return !i[a.activityIndex];
                         }
+                        function e(a) {
+                            if (a.isLog) {
+                                var b = g(a),
+                                    c = j[b] || [];
+                                c.push(a), (j[b] = c);
+                            }
+                            i[a.activityIndex] = !0;
+                        }
+                        function g(a) {
+                            return Math.floor(d.millisecondsToSeconds(a.time));
+                        }
+                        function h(a) {
+                            if (a.isLog) {
+                                var b = g(a),
+                                    c = j[b] || [];
+                                return f.find(c, function(b) {
+                                    return (
+                                        b.details.message === a.details.message &&
+                                        b.details.level === a.details.level &&
+                                        b.details.stackFrames === a.details.stackFrames
+                                    );
+                                });
+                            }
+                        }
+                        var i = {},
+                            j = {},
+                            k = a;
+                        return {
+                            addNewStep: function(a) {
+                                if (a && c(a)) {
+                                    var d = h(a);
+                                    if (d) (d.activityIndex = a.activityIndex), d.count++;
+                                    else {
+                                        var f = b(a);
+                                        k.push(f);
+                                    }
+                                    e(a);
+                                }
+                            },
+                        };
+                    })(b.transformedSteps, p),
+                    A = -1,
+                    B = [g.MOUSE_CLICK, g.WINDOW_RESIZE, g.DOM_SNAPSHOT, g.VISIBILITY_CHANGE, g.CONSOLE_ERROR],
+                    C = c.getActivitiesFilterFromUrl();
+                (b.updateStepsTimeline = function(a, b) {
+                    k(a, b);
+                }),
+                    (b.setLastPlayedActivity = function(a) {
+                        k(a);
                     }),
-                    (i.updateSelectedStep = function() {
+                    (b.addNewSteps = function(a) {
+                        d.isArray(a) && f.forEach(a, z.addNewStep);
+                    }),
+                    (b.updateSelectedStep = function() {
                         a(function() {
-                            n(C);
+                            k(A);
                         }, 0);
                     }),
-                    (i.selectStep = function(a) {
-                        if (!(i.selectedStep === a || a < 0 || a >= i.filteredSteps.length)) {
-                            var b = i.filteredSteps[a];
-                            angular.isFunction(i.onSelectedStep) && i.onSelectedStep(b.activityIndex),
-                                (i.selectedStep = a),
-                                o();
+                    (b.selectStep = function(a) {
+                        if (!(b.selectedStep === a || a < 0 || a >= b.filteredSteps.length)) {
+                            var c = b.filteredSteps[a];
+                            b.onSelectedStep(c), (b.selectedStep = a), l();
                         }
                     }),
-                    (i.selectNextStep = function() {
-                        i.selectStep(i.selectedStep + 1);
+                    (b.selectNextStep = function() {
+                        b.selectStep(b.selectedStep + 1);
                     }),
-                    (i.enable = function() {
-                        i.isEnabled = !0;
+                    (b.enable = function() {
+                        b.isEnabled = !0;
                     }),
-                    (i.disable = function() {
-                        i.isEnabled = !1;
+                    (b.disable = function() {
+                        b.isEnabled = !1;
                     }),
-                    b.onHideStepsBuffering(i, function() {
-                        i.isBuffering = !1;
+                    (b.loaded = function() {
+                        b.isLoaded = !0;
                     }),
-                    (i.hasInactiveFilters = function() {
+                    (b.hasInactiveFilters = function() {
                         var a = !1;
                         return (
-                            d.forEach(i.activityTypeStatuses, function(b, c) {
+                            d.forEach(b.activityTypeStatuses, function(b, c) {
                                 b || (a = !0);
                             }),
                             a
                         );
                     }),
-                    (i.toggleFilter = function(a) {
-                        (i.activityTypeStatuses[a] = !i.activityTypeStatuses[a]), i.updateSelectedStep();
+                    (b.toggleFilter = function(a) {
+                        (b.activityTypeStatuses[a] = !b.activityTypeStatuses[a]), b.updateSelectedStep();
                     }),
-                    (i.showFilters = function() {
-                        p(D, !0), i.updateSelectedStep();
+                    (b.showFilters = function() {
+                        m(B, !0), b.updateSelectedStep();
                     }),
-                    (i.hideFilters = function() {
-                        p(D, !1), i.updateSelectedStep();
+                    (b.hideFilters = function() {
+                        m(B, !1), b.updateSelectedStep();
                     }),
-                    i.$watch('containerHeight', function(a) {
-                        a && q();
+                    b.$watch('containerHeight', function(a) {
+                        a && n();
                     }),
-                    (i.handleUserDetailsResize = function(a) {
-                        q(a, h);
+                    (b.handleUserDetailsResize = function(a) {
+                        n(a, h);
                     }),
-                    (i.onStepExpand = function(a) {
-                        i.expandedStepIndex === a ? (i.expandedStepIndex = null) : (i.expandedStepIndex = a);
+                    (b.onStepExpand = function(a) {
+                        b.expandedStepIndex === a ? (b.expandedStepIndex = null) : (b.expandedStepIndex = a);
                     }),
-                    (i.hideMask = function() {
-                        i.shouldShowMask = !1;
+                    (b.hideMask = function() {
+                        b.shouldShowMask = !1;
                     }),
-                    x(),
-                    (i.isCreated = !0);
+                    u(),
+                    (b.isCreated = !0);
             },
         };
     },

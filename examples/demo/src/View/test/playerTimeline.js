@@ -3,17 +3,18 @@ angular
     .constant('MIN_ACTIVITY_BLOCK_WIDTH', 2)
     .directive('playerTimeline', [
         'MIN_ACTIVITY_BLOCK_WIDTH',
-        'player',
-        function(a, b) {
+        'PLAYER_CONFIG',
+        'lodash',
+        '$timeout',
+        function(a, b, c, d) {
             return {
                 templateUrl: 'templates/timeline.html',
                 replace: !0,
                 scope: {
-                    min: '=',
-                    max: '=',
                     value: '=',
-                    isDirty: '=',
-                    activities: '=',
+                    selectedValue: '=',
+                    valueSelectionInProgress: '=',
+                    max: '=',
                     enable: '=',
                     disable: '=',
                     pauseActivity: '=',
@@ -22,126 +23,128 @@ angular
                     isCreated: '=',
                 },
                 restrict: 'E',
-                link: function(a, c, d) {
-                    function e(b) {
-                        var c = p.offset(),
-                            d = Math.max(b.pageX - c.left, a.min + 1),
-                            e = k(d);
-                        j(e);
+                link: function(a, b, d) {
+                    function e() {
+                        if (!a.isTimelineSelectionInProgress) {
+                            var b = Math.min(a.value, a.loadedTime);
+                            a.renderedTimePercentage = a.timelineValueToPercentage(b);
+                        }
                     }
-                    function f(b) {
-                        var c = a.timelineValueToPercentage(b);
-                        l(c);
+                    function f() {
+                        return a.max - a.min;
                     }
                     function g(b) {
-                        a.activities[u] ? (w = a.timelineValueToPercentage(a.activities[u].time)) : b && (w = 100);
-                        a.loadedBarWidth = w;
+                        var c = j.offset(),
+                            d = Math.max(b.pageX - c.left, a.min + 1);
+                        return i(d);
                     }
                     function h(a) {
-                        for (var b, c, d = [], e = o / m(), f = 0, g = a.length; f < g; )
-                            for (b = a[f], d.push(b), c = b.time + e, f++; f < g && a[f].time < c; ) f++;
-                        return d;
+                        var b = [],
+                            c = f() / j.width(),
+                            d = { time: 0 },
+                            e = 0;
+                        return (
+                            a.forEach(function(a) {
+                                if (a.isFirstLiveActivity) {
+                                    var f = {
+                                        unknown: !0,
+                                        time: d.time,
+                                        duration: a.time - d.time,
+                                    };
+                                    b.push(f);
+                                }
+                                a.time >= e && (b.push(a), (e = a.time + c)), (d = a);
+                            }),
+                            b
+                        );
                     }
                     function i(b) {
-                        (a.isDirty = b), a.$apply();
+                        var c = b / j.width();
+                        return a.min + c * f();
                     }
-                    function j(b) {
-                        var c = Math.max(b, a.min);
-                        (c = Math.min(c, a.max)), (a.value = c), a.$apply();
-                    }
-                    function k(b) {
-                        var c = m(),
-                            d = b / c;
-                        return a.min + d * o;
-                    }
-                    function l(b) {
-                        (b = Math.max(b, 0)), (b = Math.min(b, 100));
-                        var c = a.timelineValueToPercentage(a.value);
-                        a.timelineProgressBarWidth = Math.min(c, w);
-                        var d = n(s / 2),
-                            e = b - d;
-                        a.timelineProgressHandleOffset = e;
-                    }
-                    function m() {
-                        return p.width();
-                    }
-                    function n(a) {
-                        var b = m();
-                        return (a / b) * 100;
-                    }
-                    var o,
-                        p = c.find('.timeline-clickable-wrapper'),
-                        q = c.find('.timeline-progress-handle'),
-                        r = c.find('.timeline-pause-activity-wrapper'),
-                        s = (c.find('.timeline-buffering-bar'), q.width()),
-                        t = !1,
-                        u = -1,
-                        v = !1,
-                        w = 0;
-                    (a.pauseActivityOffset = -1),
-                        (a.timelineProgressHandleOffset = 0),
-                        (a.timelineProgressBarWidth = 0),
+                    var j = b.find('.timeline-track'),
+                        k = b.find('.timeline-progress-handle'),
+                        l = b.find('.timeline-pause-activity-wrapper'),
+                        m = (b.find('.timeline-buffering-bar'), k.width(), !1);
+                    (a.value = 0),
+                        (a.min = 0),
+                        (a.max = 0),
+                        (a.pauseActivityOffset = -1),
+                        (a.loadedTime = 0),
+                        (a.handleOffset = 0),
+                        (a.renderedTimePercentage = 0),
+                        (a.loadedTimePercentage = 0),
                         (a.enable = function() {
-                            (v = !0), a.enableTimelineHandle();
+                            (m = !0), a.enableTimelineHandle();
                         }),
                         (a.disable = function() {
-                            (v = !1), a.disableTimelineHandle();
+                            (m = !1), a.disableTimelineHandle();
                         }),
-                        a.$watch('[max, min]', function() {
-                            angular.isUndefined(a.min) ||
-                                angular.isUndefined(a.max) ||
-                                ((o = a.max - a.min), a.refresh());
-                        }),
-                        q.on('drag', function(b, c) {
-                            if (v) {
-                                var d = Math.max(c.position.left, a.min + 1),
-                                    e = k(d);
-                                (t = !0), j(e), (t = !1);
-                            }
-                        }),
-                        q.on('dragstart', function() {
-                            v && i(!0);
-                        }),
-                        q.on('dragstop', function(a) {
-                            e(a), i(!1);
-                        }),
-                        p.on('click', function(a) {
-                            v && (i(!0), e(a), i(!1));
-                        }),
-                        a.$watch('value', function(a) {
-                            t || f(a);
-                        }),
-                        a.$watch('pauseActivity', function() {
-                            a.pauseActivity && a.refresh();
-                        }),
-                        (a.refresh = function(b) {
-                            if (angular.isArray(a.activities)) {
-                                var c = a.activities.slice(u + 1),
-                                    d = a.activityBlocks || [];
-                                angular.forEach(c, function(a) {
-                                    d.push({ time: a.time });
-                                }),
-                                    (a.activityBlocks = h(d)),
-                                    (u = a.activities.length - 1),
-                                    g(b),
-                                    f(a.value),
-                                    a.pauseActivity
-                                        ? (r.show(),
-                                          (a.pauseActivityOffset = a.timelineValueToPercentage(
-                                              Math.max(0, a.pauseActivity.time)
-                                          )))
-                                        : r.hide();
-                            }
-                        }),
-                        a.$watch('activities.length', a.refresh),
                         (a.timelineValueToPercentage = function(a) {
-                            return (a / o) * 100;
+                            return (a / f()) * 100;
                         }),
-                        b.onShowBuffering(a, function() {
-                            a.isBuffering = !0;
+                        a.$watch('value', function() {
+                            var b = (k.width() / j.width()) * 100,
+                                c = a.timelineValueToPercentage(a.value);
+                            (a.handleOffset = c - b / 2), e();
                         }),
-                        b.onHideBuffering(a, function() {
-                            a.isBuffering = !1;
+                        (a.activityWidthInPercents = function(a) {
+                            var b = a.duration || 1;
+                            return (b / f()) * 100;
+                        }),
+                        (a.refresh = function(b, d) {
+                            var f = a.activityBlocks || [];
+                            if (
+                                (d.forEach(function(a) {
+                                    var b = { time: a.time };
+                                    a.isFirstLiveActivity && (b.isFirstLiveActivity = !0), f.push(b);
+                                }),
+                                (a.activityBlocks = h(f)),
+                                b)
+                            )
+                                a.loadedTime = a.max;
+                            else if (d.length > 0) {
+                                var g = c.last(d);
+                                (a.max = Math.max(a.max, g.time)), (a.loadedTime = g.time);
+                            }
+                            (a.loadedTimePercentage = a.timelineValueToPercentage(a.loadedTime)),
+                                e(),
+                                a.pauseActivity
+                                    ? (l.show(),
+                                      (a.pauseActivityOffset = a.timelineValueToPercentage(
+                                          Math.max(0, a.pauseActivity.time)
+                                      )))
+                                    : l.hide();
+                        }),
+                        k.on('dragstart', function(b) {
+                            a.$apply(function() {
+                                (a.valueSelectionInProgress = !0), (a.draggedValue = null);
+                            });
+                        }),
+                        k.on('drag', function(b) {
+                            a.$apply(function() {
+                                var c = j.offset(),
+                                    d = Math.max(b.pageX - c.left, a.min + 1);
+                                a.draggedValue = i(d);
+                            });
+                        }),
+                        k.on('dragstop', function(b) {
+                            a.$apply(function() {
+                                (a.valueSelectionInProgress = !1),
+                                    (a.draggedValue = null),
+                                    (a.value = g(b)),
+                                    (a.selectedValue = a.value);
+                            });
+                        }),
+                        j.on('click', function(b) {
+                            if (m) {
+                                var c = angular.element(b.target),
+                                    d = c.hasClass('timeline-unknown-activity');
+                                d ||
+                                    a.$apply(function() {
+                                        (a.value = g(b)), (a.selectedValue = a.value);
+                                    });
+                            }
                         }),
                         (a.isCreated = !0);
                 },
