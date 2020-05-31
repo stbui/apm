@@ -1,0 +1,23 @@
+<div layout="row" layout-align="start center" class="content-row network-row no-outline"
+    ng-click="showNetworkRequestDetails()" layout-wrap
+    ng-class="{'executed': isExecuted || isSelected, 'expanded': isExpanded }">
+    <div layout="row" flex="80">
+        <div class="selected-row-marker">
+            <svg ng-show="isSelected" xmlns="http://www.w3.org/2000/svg" width="8" height="6" viewBox="0 0 8 6">
+                <path fill="#0060C8" fill-rule="evenodd" d="M0 0h6l2 3-2 2.7H0z" />
+            </svg>
+        </div>
+        <div class="time no-outline" ng-click="selectRequest($event)">
+            {{ networkRequest.time | date: 'HH:mm:ss:sss' : 'UTC' }}
+        </div>
+        <div class="url" flex>
+            {{ networkRequest.details.request.url }}
+        </div>
+    </div>
+    <div flex="10" class="status-code">
+        {{ networkRequest.details.request.statusCode }}
+    </div>
+    <div flex="10" class="total-time">
+        {{ networkRequest.details.request.endTime - networkRequest.details.request.timestamp }}ms
+    </div>
+</div>

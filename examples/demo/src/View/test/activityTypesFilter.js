@@ -1,15 +1,15 @@
 angular.module('playerApp').filter('activityTypesFilter', [
     'utils',
-    function(a) {
-        return function(b, c) {
+    function (utils) {
+        return function (b, c) {
             if (!c) return b;
             var d = [];
-            return (
-                a.forEach(b, function(a) {
-                    c[a.type] && d.push(a);
-                }),
-                d
-            );
+
+            utils.forEach(b, function (a) {
+                c[a.type] && d.push(a);
+            });
+
+            return d;
         };
     },
 ]);

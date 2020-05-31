@@ -1,0 +1,18 @@
+<div ng-style="{'margin-left': marginLeft, 'margin-top': marginTop}">
+    <div class="viewer-wrapper" ng-class="{'collaborative-mode' : isCollaborativeMode}" style="
+             -webkit-transform: scale({{scale}});
+             -ms-transform: scale({{scale}});
+             transform: scale({{scale}});
+         ">
+        <div id="viewer-container">
+            <viewer-overlay width="sessionScreenWidth" height="sessionScreenHeight" scale="scale"
+                get-node="getNodeFromPoint" get-scrollable-node="getScrollableNodeFromPoint"
+                update-last-typing="updateLastTypingTime" get-frame-element-offset="getFrameElementOffset"
+                focus-node="focusNodeByNodeId" api="viewerOverlay" is-created="viewerOverlayIsCreated"
+                play-recorded-session="playRecordedSession()">
+            </viewer-overlay>
+            <iframe id="viewer" sandbox="allow-scripts allow-same-origin">
+            </iframe>
+        </div>
+    </div>
+</div>

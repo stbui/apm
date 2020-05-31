@@ -1,0 +1,14 @@
+<md-content class="card section-card" flex ng-show="hasMessage">
+    <md-content class="card-content log-details-container">
+        <md-content>
+            <div class="alert log-details" ng-class="logType.class">
+                <span class="grid-log-label" ng-style="{'background-color': logType.color}"> {{ level }} </span>
+                <div class="log-details-message">{{ message }}</div>
+                <span class="ng-hide" ng-show="isMessageTrimmed">...</span>
+                <div>
+                    <div class="stack-frame" ng-repeat="stackFrame in stackFrames"> {{ stackFrame }} </div>
+                </div>
+            </div>
+        </md-content>
+    </md-content>
+</md-content>

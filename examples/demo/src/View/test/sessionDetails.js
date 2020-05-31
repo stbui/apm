@@ -4,16 +4,16 @@ angular
     .directive('sessionDetails', [
         '$filter',
         'NOT_AVAILABLE',
-        function(a, b) {
+        function (a, b) {
             return {
                 restrict: 'E',
-                templateUrl: function(a, b) {
+                templateUrl: function (a, b) {
                     var c = 'common/templates/sections.html';
                     return b.templateRoot ? b.templateRoot + c : c;
                 },
                 replace: !0,
                 scope: { sessionData: '=' },
-                link: function(c) {
+                link: function (c) {
                     function d(d) {
                         var e, f;
                         d.device.browserName &&
@@ -74,7 +74,7 @@ angular
                                 },
                             ]);
                     }
-                    c.$watch('sessionData', function(a) {
+                    c.$watch('sessionData', function (a) {
                         a && d(a);
                     });
                 },

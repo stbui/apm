@@ -1,0 +1,34 @@
+<div layout="row" layout-align="start start" class="content-row" layout-wrap
+    ng-class="{'executed': isExecuted || isSelected }">
+    <div class="selected-row-marker">
+        <img ng-show="isSelected" src="images/rectangle.svg">
+    </div>
+    <div class="time no-outline" ng-click="selectLog()">
+        {{ log.time | date: 'HH:mm:ss:sss' : 'UTC' }}
+    </div>
+    <div ng-hide="log.count > 1" class="type-icon">
+        <img ng-src="images/{{log.type}}.svg">
+    </div>
+    <div ng-show="log.count > 1" ng-class="log.type" class="logs-count">
+        {{ log.count }}
+    </div>
+    <div class="message-container no-outline" layout="row" layout-align="start start" ng-click="toggleMessage($event)"
+        flex>
+        <i ng-class="log.isExpanded ? 'ion-ios-arrow-down' : 'ion-ios-arrow-right'" class="ion-icon"
+            ng-show="log.isExpandable">
+        </i>
+        <div class="message" ng-class="log.type" ng-hide="log.isExpanded && !log.details.stackFrames">
+            {{ log.details.message }}
+
+            <div class="stack-frames" ng-show="log.isExpanded && log.details.stackFrames">
+                <div class="stack-frame" ng-repeat="stackFrame in log.details.stackFrames">
+                    {{ stackFrame }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Do not format the tag below -->
+        <div class="message expanded" ng-class="[log.type, {'multiline': log.isMultiLine}]"
+            ng-show="log.isExpanded && !log.details.stackFrames" flex>{{ log.details.formattedMessage }}</div>
+    </div>
+</div>

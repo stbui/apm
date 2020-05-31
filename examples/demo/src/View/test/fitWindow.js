@@ -1,15 +1,20 @@
 angular.module('playerApp').directive('fitWindow', [
     '$window',
     '$timeout',
-    function(a, b) {
-        return function(c, d) {
+    function ($window, $timeout) {
+        return function (c, d) {
             function e() {
-                b(function() {
-                    d.height(f.height()), d.width(f.width());
+                $timeout(function () {
+                    d.height(f.height());
+                    d.width(f.width());
                 });
             }
-            var f = angular.element(a);
-            e(), f.on('resize', e);
+
+            var f = angular.element($window);
+
+            e();
+
+            f.on('resize', e);
         };
     },
 ]);
