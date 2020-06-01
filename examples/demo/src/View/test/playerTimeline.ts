@@ -1,3 +1,29 @@
+const MIN_ACTIVITY_BLOCK_WIDTH = 2;
+
+interface IScope {
+    value: number;
+    selectedValue: number;
+    valueSelectionInProgress: boolean;
+    max: number;
+    min: number;
+    enable: boolean;
+    disable: boolean;
+    pauseActivity: any;
+    isLive: boolean;
+    isCreated: boolean;
+    isTimelineSelectionInProgress: boolean;
+    loadedTime: number;
+    renderedTimePercentage: any;
+    pauseActivityOffset: number;
+    handleOffset: number;
+    loadedTimePercentage: number;
+    duration: number;
+    activityBlocks: any[];
+    time: number;
+    draggedValue: any;
+    [key: string]: any;
+}
+
 angular
     .module('playerApp')
     .constant('MIN_ACTIVITY_BLOCK_WIDTH', 2)
@@ -6,10 +32,10 @@ angular
         'PLAYER_CONFIG',
         'lodash',
         '$timeout',
-        function (MIN_ACTIVITY_BLOCK_WIDTH, PLAYER_CONFIG, lodash, $timeout) {
+        function(MIN_ACTIVITY_BLOCK_WIDTH, PLAYER_CONFIG, lodash, $timeout) {
             return {
                 templateUrl: 'templates/timeline.html',
-                replace: !0,
+                replace: true,
                 scope: {
                     value: '=',
                     selectedValue: '=',
@@ -23,138 +49,140 @@ angular
                     isCreated: '=',
                 },
                 restrict: 'E',
-                link: function (a, b, d) {
+                link: function($scope: IScope, $element, d) {
                     function e() {
-                        if (!a.isTimelineSelectionInProgress) {
-                            var b = Math.min(a.value, a.loadedTime);
-                            a.renderedTimePercentage = a.timelineValueToPercentage(b);
+                        if (!$scope.isTimelineSelectionInProgress) {
+                            var b = Math.min($scope.value, $scope.loadedTime);
+                            $scope.renderedTimePercentage = $scope.timelineValueToPercentage(b);
                         }
                     }
                     function f() {
-                        return a.max - a.min;
+                        return $scope.max - $scope.min;
                     }
                     function g(b) {
                         var c = j.offset(),
-                            d = Math.max(b.pageX - c.left, a.min + 1);
+                            d = Math.max(b.pageX - c.left, $scope.min + 1);
                         return i(d);
                     }
-                    function h(a) {
+                    function h(activityBlocks) {
                         var b: any = [],
                             c = f() / j.width(),
                             d = { time: 0 },
                             e = 0;
-                        return (
-                            a.forEach(function (a) {
-                                if (a.isFirstLiveActivity) {
-                                    var f: any = {
-                                        unknown: !0,
-                                        time: d.time,
-                                        duration: a.time - d.time,
-                                    };
-                                    b.push(f);
-                                }
-                                a.time >= e && (b.push(a), (e = a.time + c));
-                                d = a;
-                            }),
-                            b
-                        );
+
+                        activityBlocks.forEach(function(a) {
+                            if (a.isFirstLiveActivity) {
+                                var f: any = {
+                                    unknown: true,
+                                    time: d.time,
+                                    duration: a.time - d.time,
+                                };
+                                b.push(f);
+                            }
+                            a.time >= e && (b.push(a), (e = a.time + c));
+                            d = a;
+                        });
+
+                        return b;
                     }
                     function i(b) {
                         var c = b / j.width();
-                        return a.min + c * f();
+                        return $scope.min + c * f();
                     }
-                    var j = b.find('.timeline-track'),
-                        k = b.find('.timeline-progress-handle'),
-                        l = b.find('.timeline-pause-activity-wrapper'),
-                        m = (b.find('.timeline-buffering-bar'), k.width(), !1);
+                    var j = $element.find('.timeline-track'),
+                        k = $element.find('.timeline-progress-handle'),
+                        l = $element.find('.timeline-pause-activity-wrapper'),
+                        m = ($element.find('.timeline-buffering-bar'), k.width(), false);
 
-                    a.value = 0;
-                    a.min = 0;
-                    a.max = 0;
-                    a.pauseActivityOffset = -1;
-                    a.loadedTime = 0;
-                    a.handleOffset = 0;
-                    a.renderedTimePercentage = 0;
-                    a.loadedTimePercentage = 0;
+                    $scope.value = 0;
+                    $scope.min = 0;
+                    $scope.max = 0;
+                    $scope.pauseActivityOffset = -1;
+                    $scope.loadedTime = 0;
+                    $scope.handleOffset = 0;
+                    $scope.renderedTimePercentage = 0;
+                    $scope.loadedTimePercentage = 0;
 
-                    a.enable = function () {
-                        m = !0;
-                        a.enableTimelineHandle();
+                    $scope.enable = function() {
+                        m = true;
+                        $scope.enableTimelineHandle();
                     };
-                    a.disable = function () {
-                        m = !1;
-                        a.disableTimelineHandle();
+                    $scope.disable = function() {
+                        m = false;
+                        $scope.disableTimelineHandle();
                     };
-                    a.timelineValueToPercentage = function (a) {
-                        return (a / f()) * 100;
+                    $scope.timelineValueToPercentage = function(value) {
+                        return (value / f()) * 100;
                     };
-                    a.$watch('value', function () {
+                    $scope.$watch('value', function() {
                         var b = (k.width() / j.width()) * 100,
-                            c = a.timelineValueToPercentage(a.value);
-                        a.handleOffset = c - b / 2;
+                            c = $scope.timelineValueToPercentage($scope.value);
+                        $scope.handleOffset = c - b / 2;
                         e();
                     });
-                    a.activityWidthInPercents = function (a) {
-                        var b = a.duration || 1;
-                        return (b / f()) * 100;
+                    $scope.activityWidthInPercents = function(a) {
+                        var duration = $scope.duration || 1;
+                        return (duration / f()) * 100;
                     };
-                    a.refresh = function (b, d) {
-                        var f = a.activityBlocks || [];
+                    $scope.refresh = function(b, d) {
+                        var activityBlocks = $scope.activityBlocks || [];
 
-                        d.forEach(function (a) {
-                            var b: any = { time: a.time };
-                            a.isFirstLiveActivity && (b.isFirstLiveActivity = !0);
-                            f.push(b);
+                        d.forEach(function(a) {
+                            var b: any = { time: $scope.time };
+                            $scope.isFirstLiveActivity && (b.isFirstLiveActivity = true);
+                            activityBlocks.push(b);
                         });
 
-                        a.activityBlocks = h(f);
+                        $scope.activityBlocks = h(activityBlocks);
 
-                        if (b) a.loadedTime = a.max;
+                        if (b) $scope.loadedTime = $scope.max;
                         else if (d.length > 0) {
                             var g = lodash.last(d);
-                            a.max = Math.max(a.max, g.time);
-                            a.loadedTime = g.time;
+                            $scope.max = Math.max($scope.max, g.time);
+                            $scope.loadedTime = g.time;
                         }
-                        a.loadedTimePercentage = a.timelineValueToPercentage(a.loadedTime);
+                        $scope.loadedTimePercentage = $scope.timelineValueToPercentage($scope.loadedTime);
                         e();
-                        a.pauseActivity
+                        $scope.pauseActivity
                             ? (l.show(),
-                              (a.pauseActivityOffset = a.timelineValueToPercentage(Math.max(0, a.pauseActivity.time))))
+                              ($scope.pauseActivityOffset = $scope.timelineValueToPercentage(
+                                  Math.max(0, $scope.pauseActivity.time)
+                              )))
                             : l.hide();
                     };
-                    k.on('dragstart', function (b) {
-                        a.$apply(function () {
-                            a.valueSelectionInProgress = !0;
-                            a.draggedValue = null;
+                    k.on('dragstart', function(b) {
+                        $scope.$apply(function() {
+                            $scope.valueSelectionInProgress = true;
+                            $scope.draggedValue = null;
                         });
                     });
-                    k.on('drag', function (b) {
-                        a.$apply(function () {
+                    k.on('drag', function(b) {
+                        $scope.$apply(function() {
                             var c = j.offset(),
-                                d = Math.max(b.pageX - c.left, a.min + 1);
-                            a.draggedValue = i(d);
+                                d = Math.max(b.pageX - c.left, $scope.min + 1);
+                            $scope.draggedValue = i(d);
                         });
                     });
-                    k.on('dragstop', function (b) {
-                        a.$apply(function () {
-                            a.valueSelectionInProgress = !1;
-                            a.draggedValue = null;
-                            a.value = g(b);
-                            a.selectedValue = a.value;
+                    k.on('dragstop', function(b) {
+                        $scope.$apply(function() {
+                            $scope.valueSelectionInProgress = false;
+                            $scope.draggedValue = null;
+                            $scope.value = g(b);
+                            $scope.selectedValue = $scope.value;
                         });
                     });
-                    j.on('click', function (b) {
+                    j.on('click', function(b) {
                         if (m) {
                             var c = angular.element(b.target),
                                 d = c.hasClass('timeline-unknown-activity');
                             d ||
-                                a.$apply(function () {
-                                    a.value = g(b);
-                                    a.selectedValue = a.value;
+                                $scope.$apply(function() {
+                                    $scope.value = g(b);
+                                    $scope.selectedValue = $scope.value;
                                 });
                         }
                     });
-                    a.isCreated = !0;
+                    $scope.isCreated = true;
                 },
             };
         },

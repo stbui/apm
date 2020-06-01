@@ -1,3 +1,73 @@
+import lodash from 'lodash';
+import {
+    utils,
+    auth,
+    sessionstackManager,
+    analytics,
+    BUILD_ENV,
+    ANALYTICS_EVENT_TYPES,
+    sessionDetailsModal,
+} from './common';
+import { SUPPORT_TOOLS, TAB_VISIBILITY, EVENT_TYPE } from './constant';
+import { Activities } from './Activities';
+import { Player, player } from './player';
+import { Activity } from './Activity';
+
+const PLAYER_CONFIG = {
+    MAX_INACTIVITY_TIME: 3e3,
+    EVENTS_BATCH_SIZE: 250,
+    EVENTS_BATCH_WAIT_TIME: 0,
+    TAB_HIDDEN_MESSAGE_TIME: 1e3,
+    GO_LIVE_DELAY_TIME: 1500,
+    LAG_TIME: 500,
+    MILLISECONDS_PER_FRAME: 33,
+};
+
+const UI_MODE = { SIMPLE: 'simple' };
+
+interface IScope {
+    activities: Activities;
+    player: Player;
+    hasFinished: boolean;
+    isPlaying: boolean;
+    arePlayerButtonsEnabled: boolean;
+    timelineValue: number;
+    renderingProgress: number;
+    endUserPermissionAwaiting: boolean;
+    endUserDeniedControlTakeOver: boolean;
+    isCollaborativeMode: boolean;
+    isToolkitEnabled: boolean;
+    isControlTakeoverEnabled: boolean;
+    steps: any[];
+    detailsStep: number;
+    logStep: number;
+    isStreamingLive: boolean;
+    viewerIsCreated: boolean;
+    timelineIsCreated: boolean;
+    stepsTimelineIsCreated: boolean;
+    shouldShowLoadingOverlay: boolean;
+    isUserOffline: boolean;
+    isConfirmationVisible: boolean;
+    timelineMax: number;
+    showGoLiveButton: boolean;
+    userPermissionRequest: object;
+    settings: object;
+    viewerApi: object;
+    api: object;
+    speedOptions: object;
+    isLive: boolean;
+    startTime: number;
+    pauseActivity: any;
+    initialSettings: any;
+    sessionId: number;
+    url: string | null;
+    session: any;
+    isSimpleUIMode: any;
+    activeTool: any;
+    PLAYER_ONLINE_MODE: any;
+    [key: string]: any;
+}
+
 angular
     .module('playerApp')
     .constant('PLAYER_CONFIG', {
@@ -16,41 +86,15 @@ angular
         'lodash',
         'sessionDetailsModal',
         'player',
-        'sessionstackManager',
-        'analytics',
         'auth',
         'utils',
         'Player',
         'Activity',
         'Activities',
-        'PLAYER_CONFIG',
         'ANALYTICS_EVENT_TYPES',
         'BUILD_ENV',
         'EVENT_TYPE',
-        'TAB_VISIBILITY',
-        'UI_MODE',
-        'SUPPORT_TOOLS',
-        function (
-            $interval,
-            $timeout,
-            lodash,
-            sessionDetailsModal,
-            player,
-            sessionstackManager,
-            analytics,
-            auth,
-            utils,
-            Player,
-            Activity,
-            Activities,
-            PLAYER_CONFIG,
-            ANALYTICS_EVENT_TYPES,
-            BUILD_ENV,
-            EVENT_TYPE,
-            TAB_VISIBILITY,
-            UI_MODE,
-            SUPPORT_TOOLS
-        ) {
+        function($interval, $timeout) {
             return {
                 restrict: 'E',
                 replace: true,
@@ -68,51 +112,51 @@ angular
                     api: '=',
                     playRecordedSession: '=',
                 },
-                link: function (a, b, t) {
+                link: function($scope: IScope, $element, t) {
                     function onTimeChanged(timelineValue) {
-                        a.$apply(function () {
-                            a.timelineValue = timelineValue;
+                        $scope.$apply(function() {
+                            $scope.timelineValue = timelineValue;
                         });
                     }
                     function onBuffering() {
                         // window.ss_debug && console.log('show buffering');
-                        a.arePlayerButtonsEnabled = false;
-                        a.disableStepsTimeline();
-                        player.fireHideViewerOverlay(a);
-                        player.fireShowBuffering(a);
+                        $scope.arePlayerButtonsEnabled = false;
+                        $scope.disableStepsTimeline();
+                        player.fireHideViewerOverlay($scope);
+                        player.fireShowBuffering($scope);
                     }
                     function onRendering() {
                         // window.ss_debug && console.log('show rendering');
-                        player.fireDetach(a);
+                        player.fireDetach($scope);
                         onBuffering();
                     }
                     function onPlaying() {
                         // window.ss_debug && console.log('hide overlays');
-                        a.arePlayerButtonsEnabled = true;
-                        a.enableStepsTimeline();
-                        player.fireHideViewerOverlay(a);
-                        player.fireHideBuffering(a);
-                        player.fireAttach(a);
+                        $scope.arePlayerButtonsEnabled = true;
+                        $scope.enableStepsTimeline();
+                        player.fireHideViewerOverlay($scope);
+                        player.fireHideBuffering($scope);
+                        player.fireAttach($scope);
                     }
                     function onPaused() {
                         // window.ss_debug && console.log('paused');
-                        a.hasFinished = false;
-                        a.isPlaying = false;
-                        a.arePlayerButtonsEnabled = true;
-                        a.enableStepsTimeline();
-                        player.fireHideViewerOverlay(a);
-                        player.fireHideBuffering(a);
-                        player.fireAttach(a);
+                        $scope.hasFinished = false;
+                        $scope.isPlaying = false;
+                        $scope.arePlayerButtonsEnabled = true;
+                        $scope.enableStepsTimeline();
+                        player.fireHideViewerOverlay($scope);
+                        player.fireHideBuffering($scope);
+                        player.fireAttach($scope);
                     }
                     function onFinished() {
                         // window.ss_debug && console.log('finished');
-                        a.hasFinished = true;
-                        a.isPlaying = false;
-                        a.arePlayerButtonsEnabled = true;
-                        a.enableStepsTimeline();
-                        player.fireHideViewerOverlay(a);
-                        player.fireHideBuffering(a);
-                        player.fireAttach(a);
+                        $scope.hasFinished = true;
+                        $scope.isPlaying = false;
+                        $scope.arePlayerButtonsEnabled = true;
+                        $scope.enableStepsTimeline();
+                        player.fireHideViewerOverlay($scope);
+                        player.fireHideBuffering($scope);
+                        player.fireAttach($scope);
                     }
                     function A(a) {
                         return (
@@ -150,7 +194,7 @@ angular
                             c.message = d.type ? d.type + ': ' : '';
                             c.message += d.message;
                             c.isMessageTrimmed = false;
-                            c.stackFrames = (d.stackFrames || []).map(function (a) {
+                            c.stackFrames = (d.stackFrames || []).map(function(a) {
                                 return a.source || '';
                             });
                         } else {
@@ -196,17 +240,27 @@ angular
                         };
                     }
                     function G() {
-                        a.isStreamingLive && ((a.isStreamingLive = false), Q(), player.fireStopLiveStreaming(a));
+                        if ($scope.isStreamingLive) {
+                            $scope.isStreamingLive = false;
+                            Q();
+                            player.fireStopLiveStreaming($scope);
+                        }
                     }
                     function H() {
-                        return a.viewerIsCreated && a.timelineIsCreated && a.stepsTimelineIsCreated && !!a.session;
+                        return (
+                            $scope.viewerIsCreated &&
+                            $scope.timelineIsCreated &&
+                            $scope.stepsTimelineIsCreated &&
+                            !!$scope.session
+                        );
                     }
                     function I(b) {
-                        a.activities.push(b);
-                        var c = [],
-                            d = [],
-                            e = [];
-                        b.forEach(function (a) {
+                        $scope.activities.push(b);
+                        var c: any = [],
+                            d: any = [],
+                            e: any = [];
+
+                        b.forEach(function(a) {
                             var b: any = {
                                 time: a.time,
                                 activityIndex: a.playerIndex,
@@ -214,69 +268,85 @@ angular
                                 type: a.type,
                                 isLog: A(a),
                             };
-                            C(a) && ((b.details = E(a)), c.push(b));
-                            A(a) && ((b.details = D(a)), d.push(b));
-                            B(a) && ((b.details = F(a)), e.push(b));
+
+                            if (C(a)) {
+                                b.details = E(a);
+                                c.push(b);
+                            }
+
+                            if (A(a)) {
+                                b.details = D(a);
+                                d.push(b);
+                            }
+
+                            if (B(a)) {
+                                b.details = F(a);
+                                e.push(b);
+                            }
                         });
-                        a.addNewSteps(c);
-                        a.addNewLogs(d);
-                        a.addNewNetworkRequests(e);
+
+                        $scope.addNewSteps(c);
+                        $scope.addNewLogs(d);
+                        $scope.addNewNetworkRequests(e);
                     }
                     function J(url) {
                         return 'about:blank' === url || url.indexOf('undefined') > -1;
                     }
                     function K() {
                         if (auth.isCurrentUserLoaded()) {
-                            var a = auth.getCurrentUser(),
+                            var currentUser = auth.getCurrentUser(),
                                 b = { opened_from: 'timeline_controls' };
-                            analytics.trackEvent(a.id, ANALYTICS_EVENT_TYPES.CONSOLE_OPENED, b);
+
+                            analytics.trackEvent(currentUser.id, ANALYTICS_EVENT_TYPES.CONSOLE_OPENED, b);
                             sessionstackManager.log('Console opened from time line controls');
                         }
                     }
-                    function L(b, c) {
-                        if (c && ((a.activeTool = b), auth.isCurrentUserLoaded())) {
-                            var d = auth.getCurrentUser();
-                            analytics.trackEvent(d.id, ANALYTICS_EVENT_TYPES.SUPPORT_TOOLKIT_ENABLED, {
-                                active_tool: b,
+                    function L(activeTool: string, status: boolean) {
+                        if (status && (($scope.activeTool = activeTool), auth.isCurrentUserLoaded())) {
+                            var currentUser = auth.getCurrentUser();
+
+                            analytics.trackEvent(currentUser.id, ANALYTICS_EVENT_TYPES.SUPPORT_TOOLKIT_ENABLED, {
+                                active_tool: activeTool,
                             });
                         }
-                        a.setToolIsActive(b, c);
+
+                        $scope.setToolIsActive(activeTool, status);
                     }
                     function M() {
-                        L(a.CURSOR, false);
-                        L(a.PEN, false);
-                        L(a.CONTROL_TAKEOVER, false);
-                        a.activeTool = null;
+                        L($scope.CURSOR, false);
+                        L($scope.PEN, false);
+                        L($scope.CONTROL_TAKEOVER, false);
+                        $scope.activeTool = null;
                         X = null;
                     }
                     function N() {
                         brokerClient.sendControlTakeOverRequest();
-                        a.endUserPermissionAwaiting = true;
-                        a.endUserDeniedControlTakeOver = false;
+                        $scope.endUserPermissionAwaiting = true;
+                        $scope.endUserDeniedControlTakeOver = false;
                     }
                     function O(isCollaborativeMode: boolean) {
-                        a.isCollaborativeMode = isCollaborativeMode;
-                        a.setIsCollaborativeMode(a.isCollaborativeMode);
+                        $scope.isCollaborativeMode = isCollaborativeMode;
+                        $scope.setIsCollaborativeMode($scope.isCollaborativeMode);
                     }
                     function P() {
                         if (S && S.isToolkitEnabled) {
-                            a.enableToolkit(brokerClient);
-                            a.isToolkitEnabled = true;
-                            a.isControlTakeoverEnabled = S.isControlTakeoverEnabled;
-                            var b = R();
-                            a.handleResize(b);
+                            $scope.enableToolkit(brokerClient);
+                            $scope.isToolkitEnabled = true;
+                            $scope.isControlTakeoverEnabled = S.isControlTakeoverEnabled;
+                            var height = toolkitFromHeight();
+                            $scope.handleResize(height);
                         }
                     }
                     function Q() {
                         if (S && S.isToolkitEnabled) {
-                            a.isToolkitEnabled = false;
-                            a.exitCollaborativeMode();
-                            var b = R();
-                            a.handleResize(-b);
+                            $scope.isToolkitEnabled = false;
+                            $scope.exitCollaborativeMode();
+                            var height = toolkitFromHeight();
+                            $scope.handleResize(-height);
                         }
                     }
-                    function R() {
-                        return b.find('.support-toolkit').height();
+                    function toolkitFromHeight() {
+                        return $element.find('.support-toolkit').height();
                     }
                     if (!utils.isBrowserNotSupported()) {
                         var S,
@@ -287,346 +357,353 @@ angular
                                 EVENT_TYPE.VISIBILITY_CHANGE,
                                 EVENT_TYPE.CONSOLE_ERROR,
                             ];
-                        a.PLAYER_ONLINE_MODE = BUILD_ENV.PLAYER_ONLINE_MODE;
-                        a.isPlaying = false;
-                        a.timelineValue = 0;
-                        a.arePlayerButtonsEnabled = true;
-                        a.renderingProgress = 0;
-                        a.url = null;
-                        a.speedOptions = [
+                        $scope.PLAYER_ONLINE_MODE = BUILD_ENV.PLAYER_ONLINE_MODE;
+                        $scope.isPlaying = false;
+                        $scope.timelineValue = 0;
+                        $scope.arePlayerButtonsEnabled = true;
+                        $scope.renderingProgress = 0;
+                        $scope.url = null;
+                        $scope.speedOptions = [
                             { label: '0.25x', value: 0.25 },
                             { label: '0.5x', value: 0.5 },
                             { label: 'Normal', value: 1 },
                             { label: '2x', value: 2 },
                             { label: '4x', value: 4 },
                         ];
-                        a.steps = [];
+                        $scope.steps = [];
                         var lastRenderedActivity = { playerIndex: -1, time: 0 },
                             render = {
                                 _onTabHiddenCallback: lodash.noop,
                                 isTabHidden: false,
                                 lastRenderedActivity: lastRenderedActivity,
-                                reset: function () {
+                                reset: function() {
                                     this.isTabHidden = false;
                                     this.lastRenderedActivity = lastRenderedActivity;
                                 },
-                                render: function (b, d) {
+                                render: function(b, d) {
                                     var f = this;
-                                    b.forEach(function (b) {
+                                    b.forEach(function(b) {
                                         // window.ss_debug && console.log(d, b);
-                                        A(b) || player.fireExecuteEvent(a, b);
-                                        (Activity.isTabVisibilityChange(b) ||
-                                            (Activity.isTopLevel(b) && Activity.isSnapshot(b))) &&
-                                            (f.isTabHidden = b.data.visibilityState == TAB_VISIBILITY.HIDDEN);
+                                        A(b) || player.fireExecuteEvent($scope, b);
+
+                                        if (
+                                            Activity.isTabVisibilityChange(b) ||
+                                            (Activity.isTopLevel(b) && Activity.isSnapshot(b))
+                                        ) {
+                                            f.isTabHidden = b.data.visibilityState == TAB_VISIBILITY.HIDDEN;
+                                        }
                                     });
                                     this.lastRenderedActivity = lodash.last(b);
-                                    a.updateStepsTimeline(f.lastRenderedActivity.playerIndex);
-                                    a.updateConsole(f.lastRenderedActivity.playerIndex);
+                                    $scope.updateStepsTimeline(f.lastRenderedActivity.playerIndex);
+                                    $scope.updateConsole(f.lastRenderedActivity.playerIndex);
                                     this.isTabHidden && setTimeout(f._onTabHiddenCallback, 0);
                                 },
-                                onTabHidden: function (callback) {
+                                onTabHidden: function(callback) {
                                     this._onTabHiddenCallback = callback;
                                 },
                             };
-                        render.onTabHidden(function () {
-                            render.isTabHidden && a.player.skipToTabShown(a.timelineValue);
+                        render.onTabHidden(function() {
+                            render.isTabHidden && $scope.player.skipToTabShown($scope.timelineValue);
                         });
-                        a.activities = new Activities();
-                        a.player = new Player(a.activities, render, PLAYER_CONFIG);
-                        a.player.onTimeChanged(onTimeChanged);
-                        a.player.onBuffering(onBuffering);
-                        a.player.onRendering(onRendering);
-                        a.player.onPlaying(onPlaying);
-                        a.player.onPaused(onPaused);
-                        a.player.onFinished(onFinished);
-                        a.detailsStep = 0;
-                        a.logStep = 0;
-                        a.isStreamingLive = false;
-                        a.isSimpleUIMode = a.settings.general.uiMode === UI_MODE.SIMPLE;
-                        a.shouldShowLoadingOverlay = true;
-                        a.isUserOffline = false;
+                        $scope.activities = new Activities();
+                        $scope.player = new Player($scope.activities, render, PLAYER_CONFIG);
+                        $scope.player.onTimeChanged(onTimeChanged);
+                        $scope.player.onBuffering(onBuffering);
+                        $scope.player.onRendering(onRendering);
+                        $scope.player.onPlaying(onPlaying);
+                        $scope.player.onPaused(onPaused);
+                        $scope.player.onFinished(onFinished);
+                        $scope.detailsStep = 0;
+                        $scope.logStep = 0;
+                        $scope.isStreamingLive = false;
+                        $scope.isSimpleUIMode = $scope.settings.general.uiMode === UI_MODE.SIMPLE;
+                        $scope.shouldShowLoadingOverlay = true;
+                        $scope.isUserOffline = false;
                         var X;
-                        a.activeTool;
-                        a.endUserPermissionAwaiting = false;
-                        a.endUserDeniedControlTakeOver = false;
-                        a.isCollaborativeMode = false;
-                        a.isConfirmationVisible = false;
-                        a.CURSOR = SUPPORT_TOOLS.CURSOR;
-                        a.PEN = SUPPORT_TOOLS.PEN;
-                        a.CONTROL_TAKEOVER = SUPPORT_TOOLS.CONTROL_TAKEOVER;
-                        a.settings.playback.speedOption = function (b) {
+                        $scope.activeTool;
+                        $scope.endUserPermissionAwaiting = false;
+                        $scope.endUserDeniedControlTakeOver = false;
+                        $scope.isCollaborativeMode = false;
+                        $scope.isConfirmationVisible = false;
+                        $scope.CURSOR = SUPPORT_TOOLS.CURSOR;
+                        $scope.PEN = SUPPORT_TOOLS.PEN;
+                        $scope.CONTROL_TAKEOVER = SUPPORT_TOOLS.CONTROL_TAKEOVER;
+                        $scope.settings.playback.speedOption = function(b) {
                             return arguments.length > 0
-                                ? (a.settings.playback.speed = b.value)
-                                : lodash.find(a.speedOptions, function (b) {
-                                      return b.value === a.settings.playback.speed;
+                                ? ($scope.settings.playback.speed = b.value)
+                                : lodash.find($scope.speedOptions, function(b) {
+                                      return b.value === $scope.settings.playback.speed;
                                   });
                         };
-                        a.$watch('initialSettings', function (b) {
-                            b && a.api.loadSession(b);
+                        $scope.$watch('initialSettings', function(b) {
+                            b && $scope.api.loadSession(b);
                         });
-                        a.$watch(H, function (b) {
+                        $scope.$watch(H, function(b) {
                             b &&
-                                (player.firePlayerIsInitialized(a),
-                                a.hideUserDetailsMask(),
-                                a.hideStepsTimelineMask(),
-                                (a.shouldShowLoadingOverlay = false),
-                                a.enableTimeline());
+                                (player.firePlayerIsInitialized($scope),
+                                $scope.hideUserDetailsMask(),
+                                $scope.hideStepsTimelineMask(),
+                                ($scope.shouldShowLoadingOverlay = false),
+                                $scope.enableTimeline());
                         });
-                        a.$watch(
-                            function () {
-                                return a.viewerIsCreated && !!a.session;
+                        $scope.$watch(
+                            function() {
+                                return $scope.viewerIsCreated && !!$scope.session;
                             },
-                            function (b) {
+                            function(b) {
                                 b &&
-                                    (a.viewerApi.setSessionScreenWidth(a.session.screenWidth),
-                                    a.viewerApi.setSessionScreenHeight(a.session.screenHeight),
-                                    a.viewerApi.setInitialSettings(a.initialSettings),
-                                    player.fireVisualizeClicks(a, a.settings.playback.shouldVisualizeClicks));
+                                    ($scope.viewerApi.setSessionScreenWidth($scope.session.screenWidth),
+                                    $scope.viewerApi.setSessionScreenHeight($scope.session.screenHeight),
+                                    $scope.viewerApi.setInitialSettings($scope.initialSettings),
+                                    player.fireVisualizeClicks($scope, $scope.settings.playback.shouldVisualizeClicks));
                             }
                         );
-                        a.$watch('isTimelineSelectionInProgress', function (b) {
-                            H() && b && a.pause();
+                        $scope.$watch('isTimelineSelectionInProgress', function(b) {
+                            H() && b && $scope.pause();
                         });
-                        a.$watch('timelineSelectedValue', function (timelineSelectedValue) {
+                        $scope.$watch('timelineSelectedValue', function(timelineSelectedValue) {
                             if (H()) {
                                 // window.ss_debug && console.log('jump to', b);
-                                a.player.jumpToTime(timelineSelectedValue);
+                                $scope.player.jumpToTime(timelineSelectedValue);
                                 G();
-                                a.isPlaying = true;
-                                a.hasFinished = false;
-                                a.api.setUserHasGoneOffline(false);
+                                $scope.isPlaying = true;
+                                $scope.hasFinished = false;
+                                $scope.api.setUserHasGoneOffline(false);
                             }
-
-                            // H() &&
-                            //     (window.ss_debug && console.log('jump to', b),
-                            //     a.player.jumpToTime(b),
-                            //     G(),
-                            //     (a.isPlaying = true),
-                            //     (a.hasFinished = false),
-                            //     a.api.setUserHasGoneOffline(false));
                         });
-                        a.$watch('settings.playback.shouldSkipProlongedInactivity', function (
+                        $scope.$watch('settings.playback.shouldSkipProlongedInactivity', function(
                             shouldSkipProlongedInactivity: boolean
                         ) {
-                            a.player.changeProlongedInactivitySetting(shouldSkipProlongedInactivity, a.timelineValue);
+                            $scope.player.changeProlongedInactivitySetting(
+                                shouldSkipProlongedInactivity,
+                                $scope.timelineValue
+                            );
                         });
-                        a.$watch('settings.playback.speed', function (speed: number) {
-                            a.player.changeSpeedSetting(speed, a.timelineValue);
+                        $scope.$watch('settings.playback.speed', function(speed: number) {
+                            $scope.player.changeSpeedSetting(speed, $scope.timelineValue);
                         });
-                        a.$watch('settings.playback.shouldPauseOnMarker', function (shouldPauseOnMarker) {
-                            shouldPauseOnMarker && a.pauseActivity
-                                ? a.player.changePauseMarker(a.pauseActivity.time, a.timelineValue)
-                                : a.player.changePauseMarker(null, a.timelineValue);
+                        $scope.$watch('settings.playback.shouldPauseOnMarker', function(shouldPauseOnMarker) {
+                            shouldPauseOnMarker && $scope.pauseActivity
+                                ? $scope.player.changePauseMarker($scope.pauseActivity.time, $scope.timelineValue)
+                                : $scope.player.changePauseMarker(null, $scope.timelineValue);
                         });
-                        a.$watch('settings.playback.shouldVisualizeClicks', function (shouldVisualizeClicks) {
-                            player.fireVisualizeClicks(a, shouldVisualizeClicks);
+                        $scope.$watch('settings.playback.shouldVisualizeClicks', function(shouldVisualizeClicks) {
+                            player.fireVisualizeClicks($scope, shouldVisualizeClicks);
                         });
-                        a.togglePlaying = function () {
-                            a.isPlaying ? a.pause() : a.play();
+                        $scope.togglePlaying = function() {
+                            $scope.isPlaying ? $scope.pause() : $scope.play();
                         };
-                        a.start = function () {
+                        $scope.start = function() {
                             // window.ss_debug && console.log('firststart activities');
-                            a.player.jumpToTime(a.startTime);
-                            a.isStreamingLive = false;
-                            a.isPlaying = true;
-                            a.hasFinished = false;
-                            a.timelineValue = a.startTime;
-                            a.api.setUserHasGoneOffline(false);
+                            $scope.player.jumpToTime($scope.startTime);
+                            $scope.isStreamingLive = false;
+                            $scope.isPlaying = true;
+                            $scope.hasFinished = false;
+                            $scope.timelineValue = $scope.startTime;
+                            $scope.api.setUserHasGoneOffline(false);
                         };
-                        a.play = function () {
+                        $scope.play = function() {
                             // window.ss_debug && console.log('play activities');
-                            a.player.play(a.timelineValue);
-                            a.isStreamingLive = false;
-                            a.isPlaying = true;
-                            a.hasFinished = false;
+                            $scope.player.play($scope.timelineValue);
+                            $scope.isStreamingLive = false;
+                            $scope.isPlaying = true;
+                            $scope.hasFinished = false;
                         };
-                        a.pause = function () {
+                        $scope.pause = function() {
                             // window.ss_debug && console.log('pause activities');
-                            var isStreamingLive = a.isStreamingLive;
-                            a.player.pause();
+                            var isStreamingLive = $scope.isStreamingLive;
+                            $scope.player.pause();
                             G();
-                            a.isPlaying = false;
-                            a.hasFinished = isStreamingLive;
+                            $scope.isPlaying = false;
+                            $scope.hasFinished = isStreamingLive;
                         };
-                        a.repeat = function () {
-                            a.start();
+                        $scope.repeat = function() {
+                            $scope.start();
                         };
-                        a.goLive = function () {
+                        $scope.goLive = function() {
                             // window.ss_debug && console.log('go live');
-                            a.activities.resetLoading();
-                            a.player.goLive(a.timelineValue);
-                            a.isStreamingLive = true;
-                            a.isPlaying = true;
-                            a.hasFinished = false;
-                            a.timelineValue = a.timelineMax;
-                            a.stepsTimelineLoaded();
-                            player.fireStartLiveStreaming(a, lodash.noop);
+                            $scope.activities.resetLoading();
+                            $scope.player.goLive($scope.timelineValue);
+                            $scope.isStreamingLive = true;
+                            $scope.isPlaying = true;
+                            $scope.hasFinished = false;
+                            $scope.timelineValue = $scope.timelineMax;
+                            $scope.stepsTimelineLoaded();
+                            player.fireStartLiveStreaming($scope, lodash.noop);
                             P();
                         };
-                        a.showSessionDetails = function (b) {
+                        $scope.showSessionDetails = function(b) {
                             sessionstackManager.log("Clicked on 'Details'");
-                            a.pause();
+                            $scope.pause();
                             sessionDetailsModal.open(b);
                         };
-                        a.onSelectedActivity = function (b) {
+                        $scope.onSelectedActivity = function(b) {
                             // window.ss_debug && console.log('selected activitiy', b);
-                            a.player.jumpToActivity(b);
+                            $scope.player.jumpToActivity(b);
                             G();
-                            a.isPlaying = false;
-                            a.hasFinished = false;
-                            a.timelineValue = b.time;
-                            a.updateStepsTimeline(b.playerIndex, true);
-                            a.selectActivity(b);
-                            a.api.setUserHasGoneOffline(false);
+                            $scope.isPlaying = false;
+                            $scope.hasFinished = false;
+                            $scope.timelineValue = b.time;
+                            $scope.updateStepsTimeline(b.playerIndex, true);
+                            $scope.selectActivity(b);
+                            $scope.api.setUserHasGoneOffline(false);
                         };
-                        a.userPermissionRequest = {
+                        $scope.userPermissionRequest = {
                             ignore: true,
                             state: null,
-                            isApproved: function () {
+                            isApproved: function() {
                                 return this.ignore || 'approved' === this.state;
                             },
-                            send: function () {
+                            send: function() {
                                 'awaiting-response' != this.state &&
-                                    ((this.state = 'awaiting-response'), player.fireUserPermissionRequestSend(a));
+                                    ((this.state = 'awaiting-response'), player.fireUserPermissionRequestSend($scope));
                             },
-                            cancel: function () {
+                            cancel: function() {
                                 'canceled' != this.state &&
-                                    ((this.state = 'canceled'), player.fireUserPermissionRequestCanceled(a));
+                                    ((this.state = 'canceled'), player.fireUserPermissionRequestCanceled($scope));
                             },
-                            deny: function () {
+                            deny: function() {
                                 'denied-request' != this.state && (this.state = 'denied-request');
                             },
-                            approve: function () {
+                            approve: function() {
                                 'approved' != this.state && (this.state = 'approved');
                             },
-                            interrupt: function () {
+                            interrupt: function() {
                                 'interrupted-request' != this.state && (this.state = 'interrupted-request');
                             },
-                            reset: function () {
+                            reset: function() {
                                 this.state && (this.state = null);
                             },
                         };
-                        a.getLiveState = function () {
-                            return a.showGoLiveButton
-                                ? a.isStreamingLive
+                        $scope.getLiveState = function() {
+                            return $scope.showGoLiveButton
+                                ? $scope.isStreamingLive
                                     ? 'streaming'
-                                    : a.isUserOffline
+                                    : $scope.isUserOffline
                                     ? 'offline'
                                     : 'online'
                                 : 'none';
                         };
-                        a.playUserRecordedSession = function () {
-                            a.playRecordedSession();
+                        $scope.playUserRecordedSession = function() {
+                            $scope.playRecordedSession();
                         };
-                        a.api = {
-                            loadSession: function (b) {
-                                a.userPermissionRequest.ignore = !b.shouldWaitUserConfirmation();
-                                a.session = b.getSession();
-                                a.isLive = b.isLive();
-                                a.showGoLiveButton = b.shouldShowGoLiveButton();
-                                a.startTime = b.getStartTime();
-                                a.pauseActivity = b.getPauseActivity();
-                                a.initialSettings = b;
-                                a.sessionId = a.session.id;
-                                a.pauseActivity &&
-                                    a.settings.playback.shouldPauseOnMarker &&
-                                    a.player.changePauseMarker(a.pauseActivity.time);
+                        $scope.api = {
+                            loadSession: function(b) {
+                                $scope.userPermissionRequest.ignore = !b.shouldWaitUserConfirmation();
+                                $scope.session = b.getSession();
+                                $scope.isLive = b.isLive();
+                                $scope.showGoLiveButton = b.shouldShowGoLiveButton();
+                                $scope.startTime = b.getStartTime();
+                                $scope.pauseActivity = b.getPauseActivity();
+                                $scope.initialSettings = b;
+                                $scope.sessionId = $scope.session.id;
+                                $scope.pauseActivity &&
+                                    $scope.settings.playback.shouldPauseOnMarker &&
+                                    $scope.player.changePauseMarker($scope.pauseActivity.time);
                             },
-                            setSessionLength: function (timelineMax) {
-                                a.timelineMax = timelineMax;
-                                a.activities.setSessionLength(timelineMax);
+                            setSessionLength: function(timelineMax) {
+                                $scope.timelineMax = timelineMax;
+                                $scope.activities.setSessionLength(timelineMax);
                             },
-                            finishLoadingActivities: function () {
-                                a.activities.finishLoading();
-                                a.refreshTimeline(true, []);
-                                a.stepsTimelineLoaded();
+                            finishLoadingActivities: function() {
+                                $scope.activities.finishLoading();
+                                $scope.refreshTimeline(true, []);
+                                $scope.stepsTimelineLoaded();
                             },
-                            addActivities: function (b) {
+                            addActivities: function(b) {
                                 I(b);
-                                a.refreshTimeline(false, b);
+                                $scope.refreshTimeline(false, b);
                             },
-                            denyStreamingRequest: function () {
-                                a.userPermissionRequest.deny();
+                            denyStreamingRequest: function() {
+                                $scope.userPermissionRequest.deny();
                             },
-                            interruptStreamingRequest: function () {
-                                a.userPermissionRequest.interrupt();
+                            interruptStreamingRequest: function() {
+                                $scope.userPermissionRequest.interrupt();
                             },
-                            resetStreamingRequest: function () {
-                                a.userPermissionRequest.reset();
+                            resetStreamingRequest: function() {
+                                $scope.userPermissionRequest.reset();
                             },
-                            approveStreamingRequest: function () {
-                                a.userPermissionRequest.approve();
+                            approveStreamingRequest: function() {
+                                $scope.userPermissionRequest.approve();
                                 this.startLiveStreaming();
                             },
-                            startPlayback: function () {
-                                a.start();
+                            startPlayback: function() {
+                                $scope.start();
                             },
-                            startLiveStreaming: function () {
-                                a.isStreamingLive || a.goLive();
+                            startLiveStreaming: function() {
+                                $scope.isStreamingLive || $scope.goLive();
                             },
-                            stopLiveStreaming: function () {
-                                a.isStreamingLive && a.pause();
+                            stopLiveStreaming: function() {
+                                $scope.isStreamingLive && $scope.pause();
                             },
-                            setFeatureFlags: function (a) {
-                                S = a;
+                            setFeatureFlags: function(featureFlags) {
+                                S = featureFlags;
                             },
-                            setBrokerClient: function (client) {
+                            setBrokerClient: function(client) {
                                 brokerClient = client;
-                                brokerClient.onControlTakeOverRequestApproved(function () {
+                                brokerClient.onControlTakeOverRequestApproved(function() {
                                     L(X, true);
                                     O(true);
-                                    a.endUserPermissionAwaiting = false;
+                                    $scope.endUserPermissionAwaiting = false;
                                 });
-                                brokerClient.onControlTakeOverRequestDenied(function () {
-                                    a.endUserPermissionAwaiting = false;
-                                    a.endUserDeniedControlTakeOver = true;
+                                brokerClient.onControlTakeOverRequestDenied(function() {
+                                    $scope.endUserPermissionAwaiting = false;
+                                    $scope.endUserDeniedControlTakeOver = true;
                                 });
-                                brokerClient.onControlTakeOverRequestStopped(function () {
-                                    a.exitCollaborativeMode();
+                                brokerClient.onControlTakeOverRequestStopped(function() {
+                                    $scope.exitCollaborativeMode();
                                 });
                             },
-                            setUserHasGoneOffline: function (b) {
-                                b && (a.isUserOffline = true), a.setIsOffline(b);
+                            setUserHasGoneOffline: function(status) {
+                                status && ($scope.isUserOffline = true);
+                                $scope.setIsOffline(status);
                             },
                         };
-                        player.onUserDetailsResize(a, function (b, c) {
-                            a.handleUserDetailsResize(c);
+                        player.onUserDetailsResize($scope, function(b, c) {
+                            $scope.handleUserDetailsResize(c);
                         });
-                        player.onConsoleResize(a, function (b, c) {
-                            a.handleResize(c);
+                        player.onConsoleResize($scope, function(b, c) {
+                            $scope.handleResize(c);
                         });
-                        player.onOpenConsole(a, function (b, c) {
-                            a.openConsole(c);
+                        player.onOpenConsole($scope, function(b, c) {
+                            $scope.openConsole(c);
                         });
-                        a.toggleConsole = function () {
-                            a.isConsoleExpanded ? a.closeConsole() : (K(), a.openConsole(null));
+                        $scope.toggleConsole = function() {
+                            $scope.isConsoleExpanded ? $scope.closeConsole() : (K(), $scope.openConsole(null));
                         };
-                        a.updateUrl = function (url) {
-                            J(url) || (a.url = url);
+                        $scope.updateUrl = function(url) {
+                            J(url) || ($scope.url = url);
                         };
-                        a.toggleTool = function (b) {
-                            if (b !== a.CONTROL_TAKEOVER || X !== a.CONTROL_TAKEOVER || !a.endUserPermissionAwaiting) {
-                                if (a.isCollaborativeMode) {
-                                    var c = b !== a.activeTool;
+                        $scope.toggleTool = function(b) {
+                            if (
+                                b !== $scope.CONTROL_TAKEOVER ||
+                                X !== $scope.CONTROL_TAKEOVER ||
+                                !$scope.endUserPermissionAwaiting
+                            ) {
+                                if ($scope.isCollaborativeMode) {
+                                    var c = b !== $scope.activeTool;
                                     if ((M(), !c)) return;
-                                    b !== a.CONTROL_TAKEOVER
-                                        ? (L(b, true), (a.endUserPermissionAwaiting = false))
+                                    b !== $scope.CONTROL_TAKEOVER
+                                        ? (L(b, true), ($scope.endUserPermissionAwaiting = false))
                                         : ((X = b), N());
-                                } else (X = b), (a.isConfirmationVisible = true), (a.endUserPermissionAwaiting = false);
-                                a.endUserDeniedControlTakeOver = false;
+                                } else
+                                    (X = b),
+                                        ($scope.isConfirmationVisible = true),
+                                        ($scope.endUserPermissionAwaiting = false);
+                                $scope.endUserDeniedControlTakeOver = false;
                             }
                         };
-                        a.exitCollaborativeMode = function () {
+                        $scope.exitCollaborativeMode = function() {
                             M();
                             O(false);
-                            a.isConfirmationVisible = false;
+                            $scope.isConfirmationVisible = false;
                         };
-                        a.goToCollaborativeMode = function () {
-                            a.isConfirmationVisible = false;
-                            X !== a.CONTROL_TAKEOVER ? (L(X, true), O(true)) : N();
+                        $scope.goToCollaborativeMode = function() {
+                            $scope.isConfirmationVisible = false;
+                            X !== $scope.CONTROL_TAKEOVER ? (L(X, true), O(true)) : N();
                         };
-                        a.cancelCollaborativeConfirmation = function () {
-                            a.isConfirmationVisible = false;
+                        $scope.cancelCollaborativeConfirmation = function() {
+                            $scope.isConfirmationVisible = false;
                             X = null;
                         };
                     }

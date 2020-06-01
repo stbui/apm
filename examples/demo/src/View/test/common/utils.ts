@@ -12,7 +12,7 @@ export const $window = window;
 function mergeObjects(aaa?, bbb?) {
     var a = [{}];
     return (
-        angular.forEach(arguments, function (b) {
+        angular.forEach(arguments, function(b) {
             angular.isObject(b) && a.push(b);
         }),
         angular.extend.apply(null, a)
@@ -28,7 +28,7 @@ function l() {
     var a = lodash([]),
         b: any = [];
     return (
-        angular.forEach(arguments, function (a) {
+        angular.forEach(arguments, function(a) {
             x(a) && b.push(a);
         }),
         a.concat.apply(a, b).value()
@@ -56,7 +56,7 @@ function p(a, b, c) {
     var d = '<' + a;
     return (
         x(b) &&
-            angular.forEach(b, function (a) {
+            angular.forEach(b, function(a) {
                 d += ' ' + a.name + '="' + a.value + '"';
             }),
         (d += c ? '/>' : '></' + a + '>')
@@ -68,7 +68,7 @@ function q(a, b) {
 function r(a) {
     var b = '?';
     return (
-        angular.forEach(a, function (a, c) {
+        angular.forEach(a, function(a, c) {
             b += c + '=' + a + '&';
         }),
         lodash.trimEnd(b, '&')
@@ -103,8 +103,9 @@ function z(a) {
         return c;
     }
 }
-function A() {
-    angular.forEach.apply(angular, arguments);
+function forEach() {
+    return angular.forEach;
+    // angular.forEach.apply(angular, arguments);
 }
 function B(a, b) {
     return !!x(b) && b.indexOf(a) >= 0;
@@ -225,7 +226,7 @@ export const utils = {
     isString: v,
     isFunction: w,
     isArray: x,
-    forEach: A,
+    forEach: angular.forEach,
     inArray: B,
     isNumber: y,
     getQueryParameter: z,

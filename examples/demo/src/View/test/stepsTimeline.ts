@@ -1,3 +1,21 @@
+import lodash from 'lodash';
+import { utils, sessionstackManager } from './common';
+import { EVENT_TYPE, USER_DETAILS_ANIMATION_TIME } from './constant';
+import { playerSettings } from './playerSettings';
+
+interface IScope {
+    addNewSteps: any;
+    updateStepsTimeline: any;
+    onSelectedStep: boolean;
+    selectNextStep: any;
+
+    isCreated: boolean;
+    handleUserDetailsResize: boolean;
+    hideMask: boolean;
+    loaded: boolean;
+    [key: string]: any;
+}
+
 angular.module('playerApp').directive('stepsTimeline', [
     '$timeout',
     'player',
@@ -7,16 +25,7 @@ angular.module('playerApp').directive('stepsTimeline', [
     'lodash',
     'EVENT_TYPE',
     'USER_DETAILS_ANIMATION_TIME',
-    function (
-        $timeout,
-        player,
-        playerSettings,
-        utils,
-        sessionstackManager,
-        lodash,
-        EVENT_TYPE,
-        USER_DETAILS_ANIMATION_TIME
-    ) {
+    function($timeout) {
         return {
             restrict: 'E',
             replace: !0,
@@ -33,26 +42,31 @@ angular.module('playerApp').directive('stepsTimeline', [
                 hideMask: '=',
                 loaded: '=',
             },
-            link: function (b, i, j) {
+            link: function($scope: IScope, $element, j) {
                 function k(a?, c?) {
-                    if (((A = a), c || b.isEnabled)) {
-                        for (var d, e = 0; e < b.filteredSteps.length && b.filteredSteps[e].activityIndex < A; ) e++;
-                        (d = b.selectedStep !== e), d && ((b.selectedStep = e), l());
+                    if (((A = a), c || $scope.isEnabled)) {
+                        for (
+                            var d, e = 0;
+                            e < $scope.filteredSteps.length && $scope.filteredSteps[e].activityIndex < A;
+
+                        )
+                            e++;
+                        (d = $scope.selectedStep !== e), d && (($scope.selectedStep = e), l());
                     }
                 }
                 function l() {
                     if (!v.is(':hover')) {
-                        var a = i.find('.steps-section .step').outerHeight();
+                        var a = $element.find('.steps-section .step').outerHeight();
                         if (a) {
-                            var c = b.selectedStep * a,
+                            var c = $scope.selectedStep * a,
                                 d = (v.height() - v.offset().top + w.height()) / 3;
                             v.stop().animate({ scrollTop: c - d }, 300);
                         }
                     }
                 }
                 function m(a, c: boolean) {
-                    utils.forEach(a, function (a, d) {
-                        b.activityTypeStatuses[a] = c;
+                    utils.forEach(a, function(a, d) {
+                        $scope.activityTypeStatuses[a] = c;
                     });
                 }
                 function n(a?, time = 0) {
@@ -63,13 +77,13 @@ angular.module('playerApp').directive('stepsTimeline', [
                         a = y.outerHeight();
                     }
 
-                    var height = b.containerHeight - d - a;
+                    var height = $scope.containerHeight - d - a;
 
                     x.stop().animate({ height: height }, time);
 
                     l();
 
-                    b.$broadcast('$md-resize');
+                    $scope.$broadcast('$md-resize');
                 }
                 function o(type) {
                     switch (type) {
@@ -107,7 +121,7 @@ angular.module('playerApp').directive('stepsTimeline', [
                         case EVENT_TYPE.CONSOLE_DEBUG:
                             return s('Debug', 'ion-bug', '#2a6ce7', isLog);
                         case EVENT_TYPE.VISIBILITY_CHANGE:
-                            return 'visible' === b.visibilityState
+                            return 'visible' === $scope.visibilityState
                                 ? s('Tab displayed', 'ion-ios-albums', 'black', isLog)
                                 : s('Tab hidden', 'ion-ios-albums-outline', 'black', isLog);
                     }
@@ -139,7 +153,7 @@ angular.module('playerApp').directive('stepsTimeline', [
                     var b = '';
                     return (
                         utils.isArray(a) &&
-                            utils.forEach(utils.reverse(a), function (a, c) {
+                            utils.forEach(utils.reverse(a), function(a, c) {
                                 if ((c > 0 && (b += ' '), a.id)) b += '#' + a.id;
                                 else {
                                     if (!a.tagName)
@@ -154,37 +168,41 @@ angular.module('playerApp').directive('stepsTimeline', [
                     );
                 }
                 function u() {
-                    b.hideFilters();
+                    $scope.hideFilters();
                     m(C, !0);
                 }
-                var v = i.find('.md-virtual-repeat-container').children().eq(0),
-                    w = i.find('.filter-sections'),
-                    x = i.find('.steps-section'),
-                    y = i.parent().find('user-identity-details');
+                var v = $element
+                        .find('.md-virtual-repeat-container')
+                        .children()
+                        .eq(0),
+                    w = $element.find('.filter-sections'),
+                    x = $element.find('.steps-section'),
+                    y = $element.parent().find('user-identity-details');
 
                 n();
-                b.isEnabled = !0;
-                b.isLoaded = !1;
-                b.shouldShowMask = !0;
-                b.transformedSteps = [];
-                b.filteredSteps = [];
-                b.activityTypeStatuses = {};
-                b.EVENT_TYPE = EVENT_TYPE;
-                b.expandedStepIndex = null;
-                b.scrollbarConfig = {
+                $scope.isEnabled = !0;
+                $scope.isLoaded = !1;
+                $scope.shouldShowMask = !0;
+                $scope.transformedSteps = [];
+                $scope.filteredSteps = [];
+                $scope.activityTypeStatuses = {};
+                $scope.EVENT_TYPE = EVENT_TYPE;
+                $scope.expandedStepIndex = null;
+                $scope.scrollbarConfig = {
                     autoHideScrollbar: !1,
                     theme: 'light',
                     advanced: { updateOnContentResize: !0 },
                     callbacks: {
-                        onBeforeUpdate: function () {
-                            $('.step.is-open').is(':nth-last-of-type(-n+4)') && b.updateScrollbar('scrollTo', 'bottom');
+                        onBeforeUpdate: function() {
+                            $('.step.is-open').is(':nth-last-of-type(-n+4)') &&
+                                $scope.updateScrollbar('scrollTo', 'bottom');
                         },
                     },
                     mouseWheel: { scrollAmount: 100 },
                     setHeight: 200,
                     scrollInertia: 0,
                 };
-                var z = (function (a, b) {
+                var z = (function(a, b) {
                     function c(a) {
                         return !i[a.activityIndex];
                     }
@@ -204,7 +222,7 @@ angular.module('playerApp').directive('stepsTimeline', [
                         if (a.isLog) {
                             var b = g(a),
                                 c = j[b] || [];
-                            return lodash.find(c, function (b) {
+                            return lodash.find(c, function(b) {
                                 return (
                                     b.details.message === a.details.message &&
                                     b.details.level === a.details.level &&
@@ -217,7 +235,7 @@ angular.module('playerApp').directive('stepsTimeline', [
                         j = {},
                         k = a;
                     return {
-                        addNewStep: function (a) {
+                        addNewStep: function(a) {
                             if (a && c(a)) {
                                 var d = h(a);
                                 if (d) (d.activityIndex = a.activityIndex), d.count++;
@@ -229,7 +247,7 @@ angular.module('playerApp').directive('stepsTimeline', [
                             }
                         },
                     };
-                })(b.transformedSteps, p);
+                })($scope.transformedSteps, p);
 
                 var A = -1;
                 var B = [
@@ -241,73 +259,73 @@ angular.module('playerApp').directive('stepsTimeline', [
                 ];
                 var C = playerSettings.getActivitiesFilterFromUrl();
 
-                b.updateStepsTimeline = function (a, b) {
+                $scope.updateStepsTimeline = function(a, b) {
                     k(a, b);
                 };
-                b.setLastPlayedActivity = function (a) {
+                $scope.setLastPlayedActivity = function(a) {
                     k(a);
                 };
-                b.addNewSteps = function (a) {
+                $scope.addNewSteps = function(a) {
                     utils.isArray(a) && lodash.forEach(a, z.addNewStep);
                 };
-                b.updateSelectedStep = function () {
-                    $timeout(function () {
+                $scope.updateSelectedStep = function() {
+                    $timeout(function() {
                         k(A);
                     }, 0);
                 };
-                b.selectStep = function (a) {
-                    if (!(b.selectedStep === a || a < 0 || a >= b.filteredSteps.length)) {
-                        var c = b.filteredSteps[a];
-                        b.onSelectedStep(c), (b.selectedStep = a), l();
+                $scope.selectStep = function(a) {
+                    if (!($scope.selectedStep === a || a < 0 || a >= $scope.filteredSteps.length)) {
+                        var c = $scope.filteredSteps[a];
+                        $scope.onSelectedStep(c), ($scope.selectedStep = a), l();
                     }
                 };
-                b.selectNextStep = function () {
-                    b.selectStep(b.selectedStep + 1);
+                $scope.selectNextStep = function() {
+                    $scope.selectStep($scope.selectedStep + 1);
                 };
-                b.enable = function () {
-                    b.isEnabled = !0;
+                $scope.enable = function() {
+                    $scope.isEnabled = !0;
                 };
-                b.disable = function () {
-                    b.isEnabled = !1;
+                $scope.disable = function() {
+                    $scope.isEnabled = !1;
                 };
-                b.loaded = function () {
-                    b.isLoaded = !0;
+                $scope.loaded = function() {
+                    $scope.isLoaded = !0;
                 };
-                b.hasInactiveFilters = function () {
+                $scope.hasInactiveFilters = function() {
                     var a = !1;
                     return (
-                        utils.forEach(b.activityTypeStatuses, function (b, c) {
+                        utils.forEach($scope.activityTypeStatuses, function(b, c) {
                             b || (a = !0);
                         }),
                         a
                     );
                 };
-                b.toggleFilter = function (a) {
-                    b.activityTypeStatuses[a] = !b.activityTypeStatuses[a];
-                    b.updateSelectedStep();
+                $scope.toggleFilter = function(a) {
+                    $scope.activityTypeStatuses[a] = !$scope.activityTypeStatuses[a];
+                    $scope.updateSelectedStep();
                 };
-                b.showFilters = function () {
+                $scope.showFilters = function() {
                     m(B, !0);
-                    b.updateSelectedStep();
+                    $scope.updateSelectedStep();
                 };
-                b.hideFilters = function () {
+                $scope.hideFilters = function() {
                     m(B, !1);
-                    b.updateSelectedStep();
+                    $scope.updateSelectedStep();
                 };
-                b.$watch('containerHeight', function (a) {
+                $scope.$watch('containerHeight', function(a) {
                     a && n();
                 });
-                b.handleUserDetailsResize = function (a) {
+                $scope.handleUserDetailsResize = function(a) {
                     n(a, USER_DETAILS_ANIMATION_TIME);
                 };
-                b.onStepExpand = function (a) {
-                    b.expandedStepIndex === a ? (b.expandedStepIndex = null) : (b.expandedStepIndex = a);
+                $scope.onStepExpand = function(a) {
+                    $scope.expandedStepIndex === a ? ($scope.expandedStepIndex = null) : ($scope.expandedStepIndex = a);
                 };
-                b.hideMask = function () {
-                    b.shouldShowMask = !1;
+                $scope.hideMask = function() {
+                    $scope.shouldShowMask = !1;
                 };
                 u();
-                b.isCreated = !0;
+                $scope.isCreated = !0;
             },
         };
     },

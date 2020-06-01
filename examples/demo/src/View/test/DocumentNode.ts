@@ -1,3 +1,5 @@
+import { utils } from './common';
+
 const PROPERTY_OBJECT_KEY = '__sessionstack_player__';
 const NAMESPACES = {
     HTML: 'http://www.w3.org/1999/xhtml',
@@ -36,7 +38,7 @@ function o(a) {
     n.call(b, a, t);
 }
 function p(a) {
-    n.call(this, a, function (a) {
+    n.call(this, a, function(a) {
         angular.element(a.documentElement).remove();
     });
 }
@@ -104,7 +106,7 @@ function x(b, c, d) {
         angular
             .element(c, b)
             .addBack(c)
-            .each(function (b, c) {
+            .each(function(b, c) {
                 (e = c.getAttribute(d)),
                     e && (f.setAttribute(c, d, void 0), $timeout(f.setAttribute.bind(f), 0, true, c, d, e));
             });
@@ -153,7 +155,7 @@ function D(a, b) {
     if (b) return b;
     var d = a.baseUrl;
     return (
-        I(a.snapshot, function (a) {
+        I(a.snapshot, function(a) {
             if (a && 'BASE' === a.tagName && a.attributes) return (d = E(a, 'href')), !1;
         }),
         d ? utils.evaluateAbsoluteUrl(a.origin, d) : a.origin
@@ -162,7 +164,7 @@ function D(a, b) {
 function E(a, b) {
     var c;
     return (
-        a.attributes.forEach(function (a) {
+        a.attributes.forEach(function(a) {
             a.name === b && (c = a.value);
         }),
         c
@@ -177,7 +179,7 @@ function G(a, b) {
     var c,
         d,
         e = this;
-    I(a, function (a) {
+    I(a, function(a) {
         (d = Y(a)),
             (c = d.nodeId),
             (d.frameElementId = b),
@@ -188,7 +190,7 @@ function G(a, b) {
 function H(a) {
     var b,
         c = this;
-    I(a, function (a) {
+    I(a, function(a) {
         (b = Y(a)),
             delete c.documentElementIndex[b.nodeId],
             a.shadowRoot && ((b = Y(a.shadowRoot)), delete c.adoptedStyleSheetNodes[b.nodeId]);
@@ -266,7 +268,7 @@ function S(a, b) {
         (h.frameElementId = b),
         a.styleRules && (h.styleRules = a.styleRules.slice()),
         a.attributes &&
-            a.attributes.forEach(function (a) {
+            a.attributes.forEach(function(a) {
                 c.setAttribute(g, a.name, a.value);
             }),
         g
@@ -312,7 +314,7 @@ function V(a, d) {
         var m = a.attributes[l];
         lodash.startsWith(m.name, 'on') && j.push(m.name);
     }
-    j.forEach(function (a) {
+    j.forEach(function(a) {
         g.removeAttr(a);
     });
 }
@@ -320,10 +322,10 @@ function W(a) {
     this.settings.ignoreFormsAutofill() &&
         utils.matchesSelector(a, 'input') &&
         ((a.readOnly = true),
-        (a.onfocus = function () {
+        (a.onfocus = function() {
             a.readOnly = !1;
         }),
-        (a.onblur = function () {
+        (a.onblur = function() {
             a.readOnly = true;
         }));
 }
@@ -380,7 +382,7 @@ export class DocumentNode {
 
     detach() {
         var b = this;
-        angular.forEach(b.afterAttachCallbacks, function (b) {
+        angular.forEach(b.afterAttachCallbacks, function(b) {
             $timeout.cancel(b);
         });
         b.afterAttachCallbacks = [];
@@ -507,7 +509,7 @@ export class DocumentNode {
         return DocumentNode.getNodePropertyObject(a);
     }
     getFrameElementIds() {
-        return lodash.map(this.documentsCollection, function (a) {
+        return lodash.map(this.documentsCollection, function(a) {
             return a.frameElementId;
         });
     }
@@ -533,45 +535,3 @@ export class DocumentNode {
         this.settings = settings;
     }
 }
-
-// angular
-//     .module('playerApp')
-//     .constant('PROPERTY_OBJECT_KEY', '__sessionstack_player__')
-//     .constant('NAMESPACES', {
-//         HTML: 'http://www.w3.org/1999/xhtml',
-//         SVG: 'http://www.w3.org/2000/svg',
-//     })
-//     .constant('ALLOWED_SRC_PROTOCOLS', ['http', 'https', 'ftp', 'data'])
-//     .constant('STYLE_ELEMENT_NAMES', ['STYLE', 'LINK'])
-//     .factory('DocumentNode', [
-//         '$timeout',
-//         'lodash',
-//         'utils',
-//         'sessionstackManager',
-//         'URLTransformer',
-//         'PROPERTY_OBJECT_KEY',
-//         'NAMESPACES',
-//         'ALLOWED_SRC_PROTOCOLS',
-//         'CROSS_ORIGIN_FRAME_BACKGROUND',
-//         'STYLE_ELEMENT_NAMES',
-//         'FULL_SCREEN_CLASS',
-//         function (
-//             $timeout,
-//             lodash,
-//             utils,
-//             sessionstackManager,
-//             URLTransformer,
-//             PROPERTY_OBJECT_KEY,
-//             NAMESPACES,
-//             ALLOWED_SRC_PROTOCOLS,
-//             CROSS_ORIGIN_FRAME_BACKGROUND,
-//             STYLE_ELEMENT_NAMES,
-//             FULL_SCREEN_CLASS
-//         ) {
-//             var Z = function (documentContainer) {};
-//             return (
-//                 ,
-//                 Z
-//             );
-//         },
-//     ]);

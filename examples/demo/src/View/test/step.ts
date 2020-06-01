@@ -1,5 +1,5 @@
 angular.module('playerApp').directive('step', [
-    function () {
+    function() {
         return {
             restrict: 'E',
             replace: !0,
@@ -12,15 +12,15 @@ angular.module('playerApp').directive('step', [
                 onStepExpand: '&',
                 selectStep: '&',
             },
-            link: function (a, b, c) {
-                a.$watch('data', function (b) {
-                    b && ((a.data = b), (a.modalSize = b.modalSize), (a.stepStyle = b.stepStyle));
+            link: function($scope, $element, c) {
+                $scope.$watch('data', function(b) {
+                    b && (($scope.data = b), ($scope.modalSize = b.modalSize), ($scope.stepStyle = b.stepStyle));
                 });
-                a.$watch('updateHorizontalScrollbar', function () {
-                    a.updateHorizontalScrollbar && a.updateHorizontalScrollbar('scrollTo', 0);
+                $scope.$watch('updateHorizontalScrollbar', function() {
+                    $scope.updateHorizontalScrollbar && $scope.updateHorizontalScrollbar('scrollTo', 0);
                 });
-                a.showDetails = function () {
-                    b
+                $scope.showDetails = function() {
+                    $element
                         .find('.step-details')
                         .slideToggle()
                         .closest('.step')

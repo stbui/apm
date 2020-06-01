@@ -1,22 +1,38 @@
-const localStorageService: any = {};
+const localStorageService = {
+    prefix: 'ls',
+    storageType: 'localStorage',
+    cookie: { expiry: 30, path: '/' },
+    get: name => {
+        return 0;
+    },
+    set: (name, value) => {},
+    remove: name => {},
+    bind: (b, c, d, e) => {},
+};
 
-function b(b, c) {
-    var d = localStorageService.get(b);
-    return null === d || void 0 === d ? c : d;
+function get(name, value) {
+    // var d = localStorageService.get(name);
+    // return null === d || void 0 === d ? value : d;
+
+    const currentValue = localStorageService.get(name);
+
+    if (currentValue === null) return;
+
+    return currentValue === 0 ? value : currentValue;
 }
-function c(b, c) {
-    return localStorageService.set(b, c);
+function set(name, value) {
+    return localStorageService.set(name, value);
 }
-function d(b) {
-    return localStorageService.remove(b);
+function remove(name) {
+    return localStorageService.remove(name);
 }
-function e(b, c, d, e) {
+function bind(b, c, d, e) {
     return localStorageService.bind(b, c, d, e);
 }
 
 export const settings = {
-    get: b,
-    set: c,
-    remove: d,
-    bind: e,
+    get: get,
+    set: set,
+    remove: remove,
+    bind: bind,
 };

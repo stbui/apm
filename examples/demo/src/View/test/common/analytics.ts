@@ -80,7 +80,7 @@ angular.module('commonApp').factory('analytics', [
 ]);
 
 export const analytics = {
-    trackEvent: function () {},
+    trackEvent: function (...a) {},
     trackSessionOpened: function (a?, b?, c?, d?) {},
     trackLiveSessionOpened: function (a?, b?, c?) {},
     trackLiveSessionStopped: function (a?, b?) {},

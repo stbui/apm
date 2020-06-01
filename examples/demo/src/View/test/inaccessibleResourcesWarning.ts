@@ -1,3 +1,11 @@
+const INACCESSIBLE_RESOURCES_COOKIE_NAME_PREFIX = 'sessionstack-inaccessible-resource-detected-';
+
+interface IScope {
+    sessionId: number;
+    isCreated: boolean;
+    // [key: string]: any;
+}
+
 angular
     .module('playerApp')
     .constant('INACCESSIBLE_RESOURCES_COOKIE_NAME_PREFIX', 'sessionstack-inaccessible-resource-detected-')
@@ -7,24 +15,24 @@ angular
         '$timeout',
         'CookieChangeListener',
         'INACCESSIBLE_RESOURCES_COOKIE_NAME_PREFIX',
-        function ($window, $cookies, $timeout, CookieChangeListenerd, INACCESSIBLE_RESOURCES_COOKIE_NAME_PREFIX) {
+        function($window, $cookies, $timeout) {
             return {
                 templateUrl: 'templates/inaccessibleResourcesWarning.html',
                 replace: !0,
                 scope: { sessionId: '=' },
-                link: function (f, g, h) {
+                link: function($scope: IScope, $element, h) {
                     function i() {
-                        j || k || g.addClass('is-visible');
+                        j || k || $element.addClass('is-visible');
                     }
                     var j = !1,
                         k = 'http:' === $window.location.protocol;
 
-                    f.$watch('sessionId', function (sessionId) {
+                    $scope.$watch('sessionId', function(sessionId) {
                         if (sessionId) {
                             var f = INACCESSIBLE_RESOURCES_COOKIE_NAME_PREFIX + sessionId,
-                                g = new CookieChangeListener(f, function (a) {
+                                g = new CookieChangeListener(f, function(a) {
                                     a &&
-                                        ($timeout(function () {
+                                        ($timeout(function() {
                                             i();
                                         }, 2e3),
                                         $cookies.remove(f));
@@ -33,11 +41,11 @@ angular
                             g.listen();
                         }
                     });
-                    f.closeWarning = function () {
+                    $scope.closeWarning = function() {
                         j = !0;
-                        g.removeClass('is-visible');
+                        $element.removeClass('is-visible');
                     };
-                    f.switchToHttp = function () {
+                    $scope.switchToHttp = function() {
                         $window.location.protocol = 'http:';
                     };
                 },

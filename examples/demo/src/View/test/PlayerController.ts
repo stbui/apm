@@ -1,4 +1,5 @@
 import { auth, utils, sessionstackManager, intercomManager, analytics, navigation, pendoManager } from './common';
+import { HTTP_STATUS, FRONTEND_URL } from './common';
 import { SessionDataClient } from './SessionDataClient';
 import { InitialSettings } from './InitialSettings';
 import { Player } from './player';
@@ -11,18 +12,8 @@ const LIVE_MODE_CONFIGS = {
     GO_LIVE_OFFSET_TIME: 1000,
     MAX_ATTEMPTS: 3,
 };
-
 const DEMO_USER_ROLE = 'demo';
 const PLAN_EXPIRED = 'PLAN_EXPIRED';
-
-const HTTP_STATUS = {
-    BAD_REQUEST: 400,
-    UNAUTHORIZED: 401,
-    FORBIDDEN: 403,
-    NOT_FOUND: 404,
-    CONFLICT: 409,
-};
-
 const CONNECTION_STATUSES = { ONLINE: 'online', OFFLINE: 'offline' };
 
 //
@@ -32,7 +23,7 @@ const $stateParams: any = {};
 //
 
 function loadActivitiesUntil(timeLimit) {
-    sessionDataClient.loadActivitiesUntil(z, timeLimit).then(function (b) {
+    sessionDataClient.loadActivitiesUntil(z, timeLimit).then(function(b) {
         z(b), $scope.sessionPlayerApi.finishLoadingActivities();
     }, B);
 }
@@ -54,10 +45,10 @@ function B(b) {
     if (b)
         switch (b.status) {
             case HTTP_STATUS.FORBIDDEN:
-                // F(b) || (window.location = FRONTEND_URL + '#/login');
+                F(b) || (window.location.href = FRONTEND_URL + '#/login');
                 break;
             case HTTP_STATUS.UNAUTHORIZED:
-                // window.location = FRONTEND_URL + '#/login';
+                window.location.href = FRONTEND_URL + '#/login';
                 break;
             case HTTP_STATUS.BAD_REQUEST:
                 $scope.errors.invalidSessionId = !0;
@@ -70,21 +61,22 @@ function C() {
     var b,
         accessToken = initialSettings.getAccessToken(),
         source = initialSettings.getSource();
+
     auth.loadCurrentUser()
-        .then(function (a) {
+        .then(function(a) {
             b = a.id;
         })
-        ['finally'](function () {
+        ['finally'](function() {
             analytics.trackSessionOpened(b, $scope.sessionId, accessToken, source);
         });
 }
 function D() {
-    auth.loadCurrentUser().then(function (b) {
+    auth.loadCurrentUser().then(function(b) {
         analytics.trackLiveSessionOpened(b.id, $scope.sessionId);
     });
 }
 function loadCurrentUser() {
-    auth.loadCurrentUser().then(function (b) {
+    auth.loadCurrentUser().then(function(b) {
         analytics.trackLiveSessionStopped(b.id, $scope.sessionId);
     });
 }
@@ -99,7 +91,7 @@ if (!$scope.isBrowserNotSupported) {
     $scope.sessionId = $stateParams.sessionId;
     $scope.errors = {};
     $scope.activities = [];
-    $scope.playRecordedSession = function () {
+    $scope.playRecordedSession = function() {
         var session = $scope.initialSettings.getSession();
         navigation.openSessionInNewWindow(session.id, session.hasInaccessibleResources, 'player_offline_button');
     };
@@ -114,14 +106,14 @@ if (!$scope.isBrowserNotSupported) {
         N = new LiveConnectionMonitor(chatClient),
         O = -1;
 
-    auth.loadCurrentUser().then(function (user) {
+    auth.loadCurrentUser().then(function(user) {
         $scope.user = user;
         sessionstackManager.identify(user);
         pendoManager.initialize(user);
         user.role !== DEMO_USER_ROLE && intercomManager.update(user);
     }, B);
 
-    sessionDataClient.loadSession().then(function (b) {
+    sessionDataClient.loadSession().then(function(b) {
         initialSettings = new InitialSettings(
             b.sessionData.session,
             b.sessionData.log,
@@ -136,43 +128,43 @@ if (!$scope.isBrowserNotSupported) {
         initialSettings.shouldStartStreaming() && D();
     }, B);
 
-    liveConnectionMonitor.onStatusChange(function (b) {
+    liveConnectionMonitor.onStatusChange(function(b) {
         var c = b === CONNECTION_STATUSES.OFFLINE;
         $scope.sessionPlayerApi.setUserHasGoneOffline(c);
         c ? $scope.sessionPlayerApi.stopLiveStreaming() : $scope.sessionPlayerApi.startLiveStreaming();
     });
-    N.onStatusChange(function (b) {
+    N.onStatusChange(function(b) {
         var c = b === CONNECTION_STATUSES.OFFLINE;
         $scope.sessionPlayerApi.setUserHasGoneOffline(c);
         c && (chatClient.discardPendingRequests(), $scope.sessionPlayerApi.resetStreamingRequest(c));
     });
-    player.onUserPermissionRequestSend($scope, function () {
+    player.onUserPermissionRequestSend($scope, function() {
         N.start();
-        chatClient.onStreamingRequestDenied(function () {
+        chatClient.onStreamingRequestDenied(function() {
             N.stop();
             chatClient.disconnect();
             $scope.sessionPlayerApi.denyStreamingRequest();
         });
-        chatClient.onStreamingRequestApproved(function () {
+        chatClient.onStreamingRequestApproved(function() {
             N.stop();
             chatClient.disconnect();
             $scope.sessionPlayerApi.approveStreamingRequest();
         });
-        chatClient.onRecorderDisconnected(function () {
+        chatClient.onRecorderDisconnected(function() {
             N.stop();
             chatClient.disconnect();
             $scope.sessionPlayerApi.interruptStreamingRequest();
         });
-        chatClient.connect(function () {
+        chatClient.connect(function() {
             chatClient.sendStreamingRequest();
         });
     });
-    player.onUserPermissionRequestCanceled($scope, function () {
+    player.onUserPermissionRequestCanceled($scope, function() {
         N.stop();
         chatClient.sendStreamingRequestCanceled();
         chatClient.disconnect();
     });
-    player.onPlayerIsInitialized($scope, function () {
+    player.onPlayerIsInitialized($scope, function() {
         $scope.sessionPlayerApi.setFeatureFlags(initialSettings.featureFlags);
         $scope.sessionPlayerApi.setBrokerClient(brokerClient);
 
@@ -186,83 +178,20 @@ if (!$scope.isBrowserNotSupported) {
                 loadActivitiesUntil(session.clientStartMilliseconds + session.length);
             }
     });
-    player.onStartLiveStreaming($scope, function (b, c) {
+    player.onStartLiveStreaming($scope, function(b, c) {
         liveConnectionMonitor.start();
-        brokerClient.onAddData(function (b) {
+        brokerClient.onAddData(function(b) {
             z(b);
             $scope.sessionPlayerApi.setSessionLength(O);
         });
-        brokerClient.connect(function () {
+        brokerClient.connect(function() {
             c();
         });
     });
-    player.onStopLiveStreaming($scope, function () {
+    player.onStopLiveStreaming($scope, function() {
         brokerClient.disconnect();
         liveConnectionMonitor.stop();
         $scope.sessionPlayerApi.finishLoadingActivities();
         loadCurrentUser();
     });
 }
-
-// angular
-//     .module('playerApp')
-//     .constant('LIVE_MODE_CONFIGS', {
-//         GO_LIVE_OFFSET_TIME: 1e3,
-//         MAX_ATTEMPTS: 3,
-//     })
-//     .constant('DEMO_USER_ROLE', 'demo')
-//     .constant('PLAN_EXPIRED', 'PLAN_EXPIRED')
-//     .controller('PlayerController', [
-//         '$scope',
-//         '$stateParams',
-//         'SessionDataClient',
-//         'player',
-//         'playerSettings',
-//         'auth',
-//         'analytics',
-//         'sessionstackManager',
-//         'pendoManager',
-//         'intercomManager',
-//         'utils',
-//         'navigation',
-//         'BrokerWebSocketClient',
-//         'BrokerClient',
-//         'InitialSettings',
-//         'LiveConnectionMonitor',
-//         'FRONTEND_URL',
-//         'SERVER_URL',
-//         'HTTP_STATUS',
-//         'DEMO_USER_ROLE',
-//         'LIVE_MODE_CONFIGS',
-//         'CONNECTION_STATUSES',
-//         'ANALYTICS_EVENT_TYPES',
-//         'PLAN_EXPIRED',
-//         function (
-//             $scope,
-//             $stateParams,
-//             SessionDataClient,
-//             player,
-//             playerSettings,
-//             auth,
-//             analytics,
-//             sessionstackManager,
-//             pendoManager,
-//             intercomManager,
-//             utils,
-//             navigation,
-//             BrokerWebSocketClient,
-//             BrokerClient,
-//             InitialSettings,
-//             LiveConnectionMonitor,
-//             FRONTEND_URL,
-//             SERVER_URL,
-//             HTTP_STATUS,
-//             DEMO_USER_ROLE,
-//             LIVE_MODE_CONFIGS,
-//             CONNECTION_STATUSES,
-//             ANALYTICS_EVENT_TYPES,
-//             PLAN_EXPIRED
-//         ) {
-
-//         },
-//     ]);

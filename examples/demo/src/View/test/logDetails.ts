@@ -1,16 +1,25 @@
+import { ANALYTICS_EVENT_TYPES, analytics, sessionstackManager, utils, auth } from './common';
+import { player } from './Player';
+
+interface IScope {
+    message: any;
+    log: boolean;
+    // [key: string]: any;
+}
+
 angular.module('playerApp').directive('logDetails', [
     'player',
     'auth',
     'analytics',
     'sessionstackManager',
     'ANALYTICS_EVENT_TYPES',
-    function (player, auth, analytics, sessionstackManager, ANALYTICS_EVENT_TYPES) {
+    function() {
         return {
             restrict: 'E',
             templateUrl: 'templates/logDetails.html',
             replace: !0,
             scope: { log: '=' },
-            link: function (f) {
+            link: function($scope: IScope) {
                 function g() {
                     var currentUser = auth.getCurrentUser(),
                         f = { opened_from: 'step_details' };
@@ -19,15 +28,15 @@ angular.module('playerApp').directive('logDetails', [
                     sessionstackManager.log('Console opened from step details');
                 }
 
-                f.message = '';
+                $scope.message = '';
 
-                f.$watch('log', function (a) {
-                    f.message = (a && a.details.message) || '';
+                $scope.$watch('log', function(a) {
+                    $scope.message = (a && a.details.message) || '';
                 });
 
-                f.openConsole = function () {
+                $scope.openConsole = function() {
                     g();
-                    player.fireOpenConsole(f, f.log);
+                    player.fireOpenConsole($scope, $scope.log);
                 };
             },
         };

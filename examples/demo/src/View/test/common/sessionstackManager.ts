@@ -1,16 +1,11 @@
 import { utils } from './utils';
+import { LOG_LEVEL } from './constant';
 
 const MILLISECONDS_IN_A_SECOND = 1e3;
-const LOG_LEVEL = {
-    INFO: 'info',
-    DEBUG: 'debug',
-    WARN: 'warn',
-    ERROR: 'error',
-};
 
 var g = utils.isFunction(window.sessionstack);
 
-function d(a, b) {
+function d(a, b?) {
     g && window.sessionstack('log', a, b);
 }
 function e(a, c) {

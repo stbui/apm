@@ -1,3 +1,23 @@
+import lodash from 'lodash';
+import { ANALYTICS_EVENT_TYPES, analytics, sessionstackManager, utils, auth } from './common';
+import { SUPPORT_TOOLS } from './constant';
+import { player } from './Player';
+import { DocumentNode } from './DocumentNode';
+import { DrawingService } from './DrawingService';
+
+const DRAWING_OPTIONS = {
+    STROKE_WIDTH: 4,
+    FILL: 'none',
+    STROKE: '#ff9f33',
+    TIMEOUT: 3e3,
+};
+
+interface IScope {
+    activeTool: any;
+    isCreated: boolean;
+    // [key: string]: any;
+}
+
 angular
     .module('playerApp')
     .constant('DRAWING_OPTIONS', {
@@ -15,7 +35,7 @@ angular
         'DRAWING_OPTIONS',
         'SUPPORT_TOOLS',
         'DocumentNode',
-        function ($timeout, $stateParams, player, DrawingService, utils, DRAWING_OPTIONS, SUPPORT_TOOLS, DocumentNode) {
+        function($timeout, $stateParams) {
             return {
                 restrict: 'E',
                 templateUrl: 'templates/drawingOverlay.html',
@@ -30,32 +50,32 @@ angular
                     getFrameOffset: '=',
                     isCreated: '=',
                 },
-                link: function (c, i, j) {
+                link: function($scope: IScope, $element, j) {
                     function k() {
-                        i.off('mousedown');
-                        i.off('mousemove');
-                        i.off('mouseup');
-                        i.off('mouseleave');
-                        i.off('click');
+                        $element.off('mousedown');
+                        $element.off('mousemove');
+                        $element.off('mouseup');
+                        $element.off('mouseleave');
+                        $element.off('click');
                         P && (angular.element(P.node).off('keyup'), angular.element(P.node).off('focusout'));
                     }
                     function l() {
-                        i.on('mousedown', B);
-                        i.on('mousemove', C);
-                        i.on('mouseup', D);
-                        i.on('mouseleave', E);
+                        $element.on('mousedown', B);
+                        $element.on('mousemove', C);
+                        $element.on('mouseup', D);
+                        $element.on('mouseleave', E);
                     }
                     function m() {
-                        i.on('mousemove', w);
-                        i.on('click', r);
-                        i.on('wheel', z);
+                        $element.on('mousemove', w);
+                        $element.on('click', r);
+                        $element.on('wheel', z);
                     }
                     function n() {
-                        i.on('mousemove', o);
-                        i.on('click', q);
+                        $element.on('mousemove', o);
+                        $element.on('click', q);
                     }
                     function o(a) {
-                        x(a, function (a) {
+                        x(a, function(a) {
                             L.visualizeMouseMove(a.x, a.y);
                         });
                     }
@@ -86,12 +106,12 @@ angular
                         return a;
                     }
                     function q(a) {
-                        t(a, function (a, b) {
+                        t(a, function(a, b) {
                             L.visualizeClick(a, b);
                         });
                     }
                     function r(a) {
-                        t(a, function (a, b, c, d) {
+                        t(a, function(a, b, c, d) {
                             L.click(a, b, c, d);
                         });
                     }
@@ -100,7 +120,7 @@ angular
                         if (b) {
                             P && (angular.element(P.node).off('keyup'), angular.element(P.node).off('focusout')),
                                 (P = a),
-                                c.focusElement(a.nodeId),
+                                $scope.focusElement(a.nodeId),
                                 L.sendFocus(P.nodeId, P.frameElementId, P.hostElementId);
                             var d = angular.element(P.node);
                             d.on('keyup', u), d.on('focusout', v);
@@ -108,13 +128,13 @@ angular
                     }
                     function t(a, b) {
                         var d = F(a),
-                            e = c.getElement(d.relativeX, d.relativeY);
+                            e = $scope.getElement(d.relativeX, d.relativeY);
                         s(e), b(d.x, d.y, e.nodeId, e.frameElementId);
                         var f = p();
                         (f.style.top = d.y - 27 + 'px'),
                             (f.style.left = d.x - 27 + 'px'),
-                            i.append(f),
-                            setTimeout(function () {
+                            $element.append(f),
+                            setTimeout(function() {
                                 angular.element(f).remove();
                             }, 3e3);
                     }
@@ -128,7 +148,7 @@ angular
                             shiftKey: a.shiftKey,
                         };
                         L.sendKeyStroke(a.target.value, P.nodeId, P.frameElementId, P.hostElementId, b),
-                            c.updateLastTypingTime(Date.now());
+                            $scope.updateLastTypingTime(Date.now());
                     }
                     function v(a) {
                         var b = a.relatedTarget;
@@ -149,8 +169,8 @@ angular
                         }
                     }
                     function w(a) {
-                        x(a, function (a) {
-                            var b = c.getElement(a.relativeX, a.relativeY);
+                        x(a, function(a) {
+                            var b = $scope.getElement(a.relativeX, a.relativeY);
                             if (b) {
                                 (O && O.nodeId === b.nodeId) ||
                                     (L.hoverElement(b.nodeId, b.frameElementId, b.hostElementId), (O = b));
@@ -170,11 +190,11 @@ angular
                     function y(a, b, d) {
                         var e = { clientX: a, clientY: b };
                         if (!d) return e;
-                        var f = c.getFrameOffset(d);
+                        var f = $scope.getFrameOffset(d);
                         return (e.clientX -= f.left), (e.clientY -= f.top), e;
                     }
                     function z(a) {
-                        var b = c.getScrollableElement(
+                        var b = $scope.getScrollableElement(
                             N.relativeX,
                             N.relativeY,
                             a.originalEvent.deltaX,
@@ -208,15 +228,15 @@ angular
                         K && H(K, !0);
                     }
                     function F(a) {
-                        var b = i[0].getBoundingClientRect(),
-                            d = i.parents('#viewer-overlay')[0].getBoundingClientRect();
+                        var b = $element[0].getBoundingClientRect(),
+                            d = $element.parents('#viewer-overlay')[0].getBoundingClientRect();
                         return {
-                            x: (a.pageX - b.left) / c.scale,
-                            y: (a.pageY - b.top) / c.scale,
-                            relativeX: (a.pageX - d.left) / c.scale,
-                            relativeY: (a.pageY - d.top) / c.scale,
-                            relativeClientX: (a.clientX - d.left) / c.scale,
-                            relativeClientY: (a.clientY - d.top) / c.scale,
+                            x: (a.pageX - b.left) / $scope.scale,
+                            y: (a.pageY - b.top) / $scope.scale,
+                            relativeX: (a.pageX - d.left) / $scope.scale,
+                            relativeY: (a.pageY - d.top) / $scope.scale,
+                            relativeClientX: (a.clientX - d.left) / $scope.scale,
+                            relativeClientY: (a.clientY - d.top) / $scope.scale,
                         };
                     }
                     function G(a) {
@@ -225,13 +245,13 @@ angular
                     }
                     function H(b, c?) {
                         var d = c ? 0 : DRAWING_OPTIONS.TIMEOUT;
-                        $timeout(function () {
+                        $timeout(function() {
                             angular.element(b).remove();
                         }, d);
                         K = null;
                     }
                     var I,
-                        J = i.find('svg'),
+                        J = $element.find('svg'),
                         K: any = null,
                         L = new DrawingService(),
                         M = ($stateParams.sessionId, 0),
@@ -240,25 +260,25 @@ angular
                         P: any = null,
                         Q = 100;
 
-                    c.activeTool;
-                    c.SUPPORT_TOOLS = SUPPORT_TOOLS;
-                    c.api = {
-                        enableDrawing: function (a) {
+                    $scope.activeTool;
+                    $scope.SUPPORT_TOOLS = SUPPORT_TOOLS;
+                    $scope.api = {
+                        enableDrawing: function(a) {
                             L.connect(a);
                         },
-                        setToolIsActive: function (a, b) {
+                        setToolIsActive: function(a, b) {
                             a !== SUPPORT_TOOLS.CURSOR || b || L.exitCursor();
                             a !== SUPPORT_TOOLS.CONTROL_TAKEOVER || b || L.exitControlTakeOver();
-                            c.activeTool = b ? a : null;
+                            $scope.activeTool = b ? a : null;
                             k();
-                            c.activeTool === SUPPORT_TOOLS.PEN
+                            $scope.activeTool === SUPPORT_TOOLS.PEN
                                 ? l()
-                                : c.activeTool === SUPPORT_TOOLS.CURSOR
+                                : $scope.activeTool === SUPPORT_TOOLS.CURSOR
                                 ? n()
-                                : c.activeTool === SUPPORT_TOOLS.CONTROL_TAKEOVER && m();
+                                : $scope.activeTool === SUPPORT_TOOLS.CONTROL_TAKEOVER && m();
                         },
                     };
-                    c.isCreated = !0;
+                    $scope.isCreated = !0;
                 },
             };
         },

@@ -1,4 +1,6 @@
 import { utils } from './utils';
+import { BUILD_ENV } from './constant';
+
 // todo:
 const lodash: any = {};
 const $location: any = window.location;
@@ -7,14 +9,6 @@ const $window = window;
 
 export const $base64: any = {};
 export const $cookies: any = {};
-
-//
-export const BUILD_ENV = {
-    IS_DEV: !1,
-    PLAYER_ONLINE_MODE: !0,
-    IS_SAAS: !0,
-    USE_TESTING_INTERCOM: !1,
-};
 
 //
 var o,

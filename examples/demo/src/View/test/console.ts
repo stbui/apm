@@ -1,3 +1,32 @@
+import lodash from 'lodash';
+import { ANALYTICS_EVENT_TYPES, analytics, sessionstackManager, utils, auth } from './common';
+import { EVENT_TYPE, CONSOLE_CONSTANTS } from './constant';
+import { player } from './Player';
+interface IScope {
+    openConsole: any;
+    closeConsole: any;
+    isExpanded: any;
+    addNewLogs: any;
+    addNewNetworkRequests: any;
+    updateConsole: any;
+    onSelectedLog: any;
+    selectActivity: any;
+    filteredLogs: any;
+    filteredNetworkRequests: any;
+    lastPlayedActivityIndex: any;
+    selectedTab: number;
+    transformedLogs: any[];
+    logTypes: object;
+    networkTypes: object;
+    networkRequests: any[];
+    networkRequestDetails: number;
+    selectedLogIndex: any;
+    areGeneralDetailsExpanded: boolean;
+    areResponseHeadersExpanded: boolean;
+    areRequestHeadersExpanded: boolean;
+    // [key: string]: any;
+}
+
 angular
     .module('playerApp')
     .constant('CONSOLE_CONSTANTS', {
@@ -16,18 +45,7 @@ angular
         'CONSOLE_CONSTANTS',
         'EVENT_TYPE',
         'ANALYTICS_EVENT_TYPES',
-        function (
-            $timeout,
-            player,
-            sessionstackManager,
-            utils,
-            lodash,
-            auth,
-            analytics,
-            CONSOLE_CONSTANTS,
-            EVENT_TYPE,
-            ANALYTICS_EVENT_TYPES
-        ) {
+        function($timeout) {
             return {
                 restrict: 'E',
                 replace: !0,
@@ -42,16 +60,16 @@ angular
                     onSelectedLog: '=',
                     selectActivity: '=',
                 },
-                link: function (k, l, m) {
+                link: function($scope: IScope, $element, m) {
                     function n() {
                         v && ($timeout.cancel(v), (v = null));
-                        v = $timeout(function () {
+                        v = $timeout(function() {
                             sessionstackManager.log('Console search used');
                         }, 2e3);
                     }
                     function o(activityIndex) {
-                        if (!x.is(':hover') && k.isExpanded) {
-                            var b = lodash.findIndex(k.filteredLogs, ['activityIndex', activityIndex]);
+                        if (!x.is(':hover') && $scope.isExpanded) {
+                            var b = lodash.findIndex($scope.filteredLogs, ['activityIndex', activityIndex]);
                             if (!(b < 0)) {
                                 var c = q(activityIndex),
                                     d = 2 * CONSOLE_CONSTANTS.STEP_HEIGHT,
@@ -61,8 +79,8 @@ angular
                         }
                     }
                     function p(activityIndex) {
-                        if (!y.is(':hover') && k.isExpanded) {
-                            var b = lodash.findIndex(k.filteredNetworkRequests, ['activityIndex', activityIndex]);
+                        if (!y.is(':hover') && $scope.isExpanded) {
+                            var b = lodash.findIndex($scope.filteredNetworkRequests, ['activityIndex', activityIndex]);
                             if (!(b < 0)) {
                                 var c = r(activityIndex),
                                     d = 2 * CONSOLE_CONSTANTS.STEP_HEIGHT,
@@ -75,7 +93,7 @@ angular
                         if (isNaN(activityIndex)) return 0;
                         var b = 0;
 
-                        k.filteredLogs.forEach(function (c) {
+                        $scope.filteredLogs.forEach(function(c) {
                             if (c.activityIndex < activityIndex) {
                                 var d = w[c.activityIndex] || 0;
                                 b += d;
@@ -88,133 +106,135 @@ angular
                         if (isNaN(activityIndex)) return 0;
                         var b = 0;
 
-                        k.filteredNetworkRequests.forEach(function (c) {
+                        $scope.filteredNetworkRequests.forEach(function(c) {
                             c.activityIndex < activityIndex && (b += CONSOLE_CONSTANTS.STEP_HEIGHT);
                         });
 
                         return b;
                     }
                     function s() {
-                        l.animate({ height: 0 }, CONSOLE_CONSTANTS.ANIMATION_TIME);
-                        k.isExpanded = !1;
-                        $timeout(function () {
-                            player.fireConsoleResize(k, 0);
+                        $element.animate({ height: 0 }, CONSOLE_CONSTANTS.ANIMATION_TIME);
+                        $scope.isExpanded = !1;
+                        $timeout(function() {
+                            player.fireConsoleResize($scope, 0);
                         }, CONSOLE_CONSTANTS.ANIMATION_TIME);
                     }
                     function t() {
-                        l.animate({ height: CONSOLE_CONSTANTS.HEIGHT }, CONSOLE_CONSTANTS.ANIMATION_TIME);
-                        player.fireConsoleResize(k, CONSOLE_CONSTANTS.HEIGHT);
-                        k.isExpanded = !0;
-                        k.$broadcast('$md-resize');
-                        o(k.lastPlayedActivityIndex);
+                        $element.animate({ height: CONSOLE_CONSTANTS.HEIGHT }, CONSOLE_CONSTANTS.ANIMATION_TIME);
+                        player.fireConsoleResize($scope, CONSOLE_CONSTANTS.HEIGHT);
+                        $scope.isExpanded = !0;
+                        $scope.$broadcast('$md-resize');
+                        o($scope.lastPlayedActivityIndex);
                     }
 
-                    k.EVENT_TYPE = EVENT_TYPE;
-                    k.TAB_INDEX = { CONSOLE: 0, NETWORK: 1 };
-                    k.isExpanded = !1;
-                    k.selectedTab = 0;
-                    k.transformedLogs = [];
-                    k.logTypes = {};
-                    k.logTypes[EVENT_TYPE.CONSOLE_LOG] = !0;
-                    k.logTypes[EVENT_TYPE.CONSOLE_DEBUG] = !0;
-                    k.logTypes[EVENT_TYPE.CONSOLE_WARN] = !0;
-                    k.logTypes[EVENT_TYPE.CONSOLE_ERROR] = !0;
-                    k.networkTypes = { xhr: !0 };
-                    k.networkRequests = [];
-                    k.networkRequestDetails, (k.lastPlayedActivityIndex = 0);
-                    k.selectedLogIndex = null;
-                    k.areGeneralDetailsExpanded = !0;
-                    k.areResponseHeadersExpanded = !0;
-                    k.areRequestHeadersExpanded = !0;
+                    $scope.EVENT_TYPE = EVENT_TYPE;
+                    $scope.TAB_INDEX = { CONSOLE: 0, NETWORK: 1 };
+                    $scope.isExpanded = !1;
+                    $scope.selectedTab = 0;
+                    $scope.transformedLogs = [];
+                    $scope.logTypes = {};
+                    $scope.logTypes[EVENT_TYPE.CONSOLE_LOG] = !0;
+                    $scope.logTypes[EVENT_TYPE.CONSOLE_DEBUG] = !0;
+                    $scope.logTypes[EVENT_TYPE.CONSOLE_WARN] = !0;
+                    $scope.logTypes[EVENT_TYPE.CONSOLE_ERROR] = !0;
+                    $scope.networkTypes = { xhr: !0 };
+                    $scope.networkRequests = [];
+                    $scope.networkRequestDetails;
+                    $scope.lastPlayedActivityIndex = 0;
+                    $scope.selectedLogIndex = null;
+                    $scope.areGeneralDetailsExpanded = !0;
+                    $scope.areResponseHeadersExpanded = !0;
+                    $scope.areRequestHeadersExpanded = !0;
 
                     var u,
                         v,
                         w = {},
-                        x = l.find('.logs-container'),
-                        y = l.find('.network-requests-container'),
+                        x = $element.find('.logs-container'),
+                        y = $element.find('.network-requests-container'),
                         z = x.children().eq(0),
                         A = y.children().eq(0);
 
-                    k.openConsole = function (a) {
-                        k.isExpanded || t();
-                        a && k.selectLog(a);
+                    $scope.openConsole = function(a) {
+                        $scope.isExpanded || t();
+                        a && $scope.selectLog(a);
                     };
-                    k.closeConsole = function () {
+                    $scope.closeConsole = function() {
                         s();
                     };
-                    k.selectTab = function (a) {
-                        if (((k.selectedTab = a), a === k.TAB_INDEX.NETWORK)) {
+                    $scope.selectTab = function(a) {
+                        if ((($scope.selectedTab = a), a === $scope.TAB_INDEX.NETWORK)) {
                             var b = auth.getCurrentUser();
                             analytics.trackEvent(b.id, ANALYTICS_EVENT_TYPES.NETWORK_TAB_OPENED);
                         }
                     };
-                    k.toggleFilter = function (a) {
-                        k.logTypes[a] = !k.logTypes[a];
-                        o(k.lastPlayedActivityIndex);
+                    $scope.toggleFilter = function(a) {
+                        $scope.logTypes[a] = !$scope.logTypes[a];
+                        o($scope.lastPlayedActivityIndex);
                         n();
                     };
-                    k.searchChanged = function () {
+                    $scope.searchChanged = function() {
                         n();
                     };
-                    k.addNewLogs = function (a) {
-                        a.forEach(function (a) {
+                    $scope.addNewLogs = function(a) {
+                        a.forEach(function(a) {
                             if (
-                                (k.transformedLogs.length > 0 && (u = k.transformedLogs[k.transformedLogs.length - 1]),
+                                ($scope.transformedLogs.length > 0 &&
+                                    (u = $scope.transformedLogs[$scope.transformedLogs.length - 1]),
                                 utils.isDifferentActivity(a, u))
                             )
-                                k.transformedLogs.push(a);
+                                $scope.transformedLogs.push(a);
                             else {
-                                var b = k.transformedLogs[k.transformedLogs.length - 1];
+                                var b = $scope.transformedLogs[$scope.transformedLogs.length - 1];
                                 b.activityIndex = a.activityIndex;
                                 b.count++;
                             }
                             w[a.activityIndex] = CONSOLE_CONSTANTS.STEP_HEIGHT;
                         });
                     };
-                    k.addNewNetworkRequests = function (a) {
-                        utils.forEach(a, function (a) {
-                            k.networkRequests.push(a);
+                    $scope.addNewNetworkRequests = function(a) {
+                        utils.forEach(a, function(a) {
+                            $scope.networkRequests.push(a);
                         });
                     };
-                    k.updateConsole = function (activityIndex) {
-                        k.lastPlayedActivityIndex = activityIndex;
-                        k.selectedLogIndex || (o(activityIndex), p(activityIndex));
-                        k.selectedLogIndex < activityIndex && (o(activityIndex), p(activityIndex));
-                        activityIndex >= k.selectedLogIndex && (k.selectedLogIndex = null);
+                    $scope.updateConsole = function(activityIndex) {
+                        $scope.lastPlayedActivityIndex = activityIndex;
+                        $scope.selectedLogIndex || (o(activityIndex), p(activityIndex));
+                        $scope.selectedLogIndex < activityIndex && (o(activityIndex), p(activityIndex));
+                        activityIndex >= $scope.selectedLogIndex && ($scope.selectedLogIndex = null);
                     };
-                    k.selectLog = function (a) {
-                        k.selectedLogIndex = a.activityIndex;
-                        k.onSelectedLog(a);
+                    $scope.selectLog = function(a) {
+                        $scope.selectedLogIndex = a.activityIndex;
+                        $scope.onSelectedLog(a);
                         o(a.activityIndex);
                     };
-                    k.selectNetworkRequest = function (a) {
-                        k.selectedLogIndex = a.activityIndex;
-                        k.onSelectedLog(a);
+                    $scope.selectNetworkRequest = function(a) {
+                        $scope.selectedLogIndex = a.activityIndex;
+                        $scope.onSelectedLog(a);
                         p(a.activityIndex);
                     };
-                    k.selectActivity = function (a) {
-                        k.selectedLogIndex = a.activityIndex;
+                    $scope.selectActivity = function(a) {
+                        $scope.selectedLogIndex = a.activityIndex;
                         o(a.activityIndex);
                         p(a.activityIndex);
                     };
-                    k.onLogToggle = function (a, b) {
+                    $scope.onLogToggle = function(a, b) {
                         w[a] = w[a] || 0;
                         w[a] += b;
                     };
-                    k.showNetworkRequestDetails = function (a) {
-                        k.networkRequestDetails = a.details.request;
+                    $scope.showNetworkRequestDetails = function(a) {
+                        $scope.networkRequestDetails = a.details.request;
                     };
-                    k.closeExpandedNetworkRequest = function () {
-                        k.networkRequestDetails = null;
+                    $scope.closeExpandedNetworkRequest = function() {
+                        $scope.networkRequestDetails = null;
                     };
-                    k.toggleGeneralDetails = function () {
-                        k.areGeneralDetailsExpanded = !k.areGeneralDetailsExpanded;
+                    $scope.toggleGeneralDetails = function() {
+                        $scope.areGeneralDetailsExpanded = !$scope.areGeneralDetailsExpanded;
                     };
-                    k.toggleResponseHeaders = function () {
-                        k.areResponseHeadersExpanded = !k.areResponseHeadersExpanded;
+                    $scope.toggleResponseHeaders = function() {
+                        $scope.areResponseHeadersExpanded = !$scope.areResponseHeadersExpanded;
                     };
-                    k.toggleRequestHeaders = function () {
-                        k.areRequestHeadersExpanded = !k.areRequestHeadersExpanded;
+                    $scope.toggleRequestHeaders = function() {
+                        $scope.areRequestHeadersExpanded = !$scope.areRequestHeadersExpanded;
                     };
                 },
             };

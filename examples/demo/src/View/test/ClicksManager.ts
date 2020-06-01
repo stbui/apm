@@ -1,60 +1,65 @@
+import lodash from 'lodash';
 import { UserClick } from './UserClick';
 
-function c(b, c) {
-    lodash.remove(b.clicksQueue, function (a) {
-        return a == c;
+function c(clicksManager: ClicksManager, click: UserClick) {
+    lodash.remove(clicksManager.clicksQueue, function(a) {
+        return a == click;
     });
 }
-function d(a) {
-    a.visualizationIsEnabled = !1;
-    angular.forEach(a.clicksQueue, function (a) {
+function d(clicksManager: ClicksManager) {
+    clicksManager.visualizationIsEnabled = false;
+    angular.forEach(clicksManager.clicksQueue, function(a) {
         a.remove();
     });
-    a.clicksQueue = [];
+    clicksManager.clicksQueue = [];
 }
 
 export class ClicksManager {
-    public clicksQueue;
+    public clicksQueue: any[];
     public playerSpeed: number;
-    public visualizationIsEnabled;
+    public visualizationIsEnabled: boolean;
 
     constructor() {
         this.clicksQueue = [];
         this.playerSpeed = 1;
-        this.visualizationIsEnabled = !1;
+        this.visualizationIsEnabled = false;
     }
 
     setPlayerSpeed(playerSpeed: number) {
         this.playerSpeed = playerSpeed;
     }
     startClicksAnimation() {
-        var a = this;
-        a.visualizationIsEnabled &&
-            angular.forEach(a.clicksQueue, function (b) {
-                b.startAnimation(a.playerSpeed, function () {
-                    c(a, b);
+        if (this.visualizationIsEnabled) {
+            angular.forEach(this.clicksQueue, click => {
+                click.startAnimation(this.playerSpeed, () => {
+                    c(this, click);
                 });
             });
+        }
     }
     stopClicksAnimation() {
-        var a = this;
-        angular.forEach(a.clicksQueue, function (a) {
-            a.stopAnimation();
+        angular.forEach(this.clicksQueue, function(click) {
+            click.stopAnimation();
         });
     }
     registerClick(a, d) {
-        var e = this;
-        if (e.visualizationIsEnabled) {
-            var f = new UserClick(a, d);
+        if (this.visualizationIsEnabled) {
+            var userClick = new UserClick(a, d);
 
-            f.startAnimation(e.playerSpeed, function (a) {
-                c(e, a);
+            userClick.startAnimation(this.playerSpeed, (a: UserClick) => {
+                c(this, a);
             });
-            e.clicksQueue.push(f);
-            return f.element;
+
+            this.clicksQueue.push(userClick);
+
+            return userClick.element;
         }
     }
     setShouldVisualizeClicks(a) {
-        a ? (this.visualizationIsEnabled = !0) : d(this);
+        if (a) {
+            this.visualizationIsEnabled = true;
+        } else {
+            d(this);
+        }
     }
 }

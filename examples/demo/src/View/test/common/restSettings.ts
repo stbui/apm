@@ -1,4 +1,4 @@
-const SERVER_URL = 'https://app.stbui.com/api/';
+import { SERVER_URL } from './constant';
 
 function buildUrl(path: string): string {
     return SERVER_URL + path;

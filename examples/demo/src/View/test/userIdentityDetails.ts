@@ -1,21 +1,34 @@
+import { userIdentityService } from './common';
+import { USER_DETAILS_ANIMATION_TIME, NOT_AVAILABLE } from './constant';
+import { player } from './player';
+interface IScope {
+    displayName: string;
+    email: string;
+    expandableItems: any;
+    isExpanded: boolean;
+    shouldShowMask: boolean;
+    scrollbarConfig: object;
+    // [key: string]: any;
+}
+
 angular.module('playerApp').directive('userIdentityDetails', [
     'player',
     'userIdentityService',
     'NOT_AVAILABLE',
     'USER_DETAILS_ANIMATION_TIME',
-    function (player, userIdentityService, NOT_AVAILABLE, USER_DETAILS_ANIMATION_TIME) {
+    function() {
         return {
             restrict: 'E',
             templateUrl: 'templates/userIdentityDetails.html',
             scope: { userIdentityData: '=', hideMask: '=' },
-            link: function (e, f, g) {
+            link: function($scope: IScope, $element, g) {
                 function h(a) {
                     a = a || {};
                     var d = userIdentityService.formatCustomFields(a.customFields);
                     d.unshift({ label: 'User ID', value: a.identifier || NOT_AVAILABLE });
-                    e.displayName = a.displayName || NOT_AVAILABLE;
-                    e.email = a.email;
-                    e.expandableItems = d;
+                    $scope.displayName = a.displayName || NOT_AVAILABLE;
+                    $scope.email = a.email;
+                    $scope.expandableItems = d;
                 }
                 function i() {
                     var b = n.height();
@@ -23,14 +36,14 @@ angular.module('playerApp').directive('userIdentityDetails', [
                     var c = n.height(),
                         d = o.outerHeight();
                     l(b);
-                    player.fireUserDetailsResize(e, d);
+                    player.fireUserDetailsResize($scope, d);
                     m(c);
                 }
                 function j() {
                     var b = o.height() - n.height();
                     n.animate({ height: 0 }, USER_DETAILS_ANIMATION_TIME);
-                    player.fireUserDetailsResize(e, b);
-                    setTimeout(function () {
+                    player.fireUserDetailsResize($scope, b);
+                    setTimeout(function() {
                         n.addClass('collapsed');
                     }, USER_DETAILS_ANIMATION_TIME);
                 }
@@ -43,30 +56,30 @@ angular.module('playerApp').directive('userIdentityDetails', [
                     n.addClass('collapsed');
                 }
                 function m(a) {
-                    setTimeout(function () {
+                    setTimeout(function() {
                         n.animate({ height: a }, USER_DETAILS_ANIMATION_TIME);
                         n.removeClass('collapsed');
                     });
                 }
-                e.isExpanded = !1;
-                e.shouldShowMask = !0;
-                var n = f.find('.expandable-user-details'),
+                $scope.isExpanded = !1;
+                $scope.shouldShowMask = !0;
+                var n = $element.find('.expandable-user-details'),
                     o = n.parent();
-                e.$watch('userIdentityData', function (a) {
+                $scope.$watch('userIdentityData', function(a) {
                     h(a);
                 });
-                e.scrollbarConfig = {
+                $scope.scrollbarConfig = {
                     autoHideScrollbar: !1,
                     theme: 'light',
                     mouseWheel: { scrollAmount: 50 },
                     scrollInertia: 0,
                 };
-                e.toggleUserDetails = function (a) {
+                $scope.toggleUserDetails = function(a) {
                     'Range' !== a.view.getSelection().type &&
-                        (e.isExpanded ? j() : i(), (e.isExpanded = !e.isExpanded));
+                        ($scope.isExpanded ? j() : i(), ($scope.isExpanded = !$scope.isExpanded));
                 };
-                e.hideMask = function () {
-                    e.shouldShowMask = !1;
+                $scope.hideMask = function() {
+                    $scope.shouldShowMask = !1;
                 };
             },
         };

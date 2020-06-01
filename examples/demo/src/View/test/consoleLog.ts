@@ -1,3 +1,13 @@
+import lodash from 'lodash';
+import { utils } from './common';
+
+const JSON_INDENTATION = 4;
+const NEW_LINE_EXPRESSION = /\r|\n/;
+
+interface IScope {
+    log: any;
+    // [key: string]: any;
+}
 angular
     .module('playerApp')
     .constant('JSON_INDENTATION', 4)
@@ -9,7 +19,7 @@ angular
         'lodash',
         'JSON_INDENTATION',
         'NEW_LINE_EXPRESSION',
-        function ($timeout, player, utils, lodash, JSON_INDENTATION, NEW_LINE_EXPRESSION) {
+        function($timeout) {
             return {
                 restrict: 'E',
                 replace: !0,
@@ -21,19 +31,20 @@ angular
                     onLogToggle: '=',
                     selectLog: '&',
                 },
-                link: function (b, g, h) {
+                link: function($scope: IScope, $element, h) {
                     function i() {
-                        var d = j(b.log.details.message);
-                        b.log.details.formattedMessage = d.formattedMessage;
-                        b.log.isMultiLine = d.isMultiLine;
-                        b.log.details.stackFrames = k(b.log.details.stackFrames);
-                        b.log.searchLabel = b.log.searchLabel || l(b.log.details);
-                        (b.log.isMultiLine || (b.log.details.stackFrames && b.log.details.stackFrames.length > 0)) &&
-                            (b.log.isExpandable = !0);
+                        var d = j($scope.log.details.message);
+                        $scope.log.details.formattedMessage = d.formattedMessage;
+                        $scope.log.isMultiLine = d.isMultiLine;
+                        $scope.log.details.stackFrames = k($scope.log.details.stackFrames);
+                        $scope.log.searchLabel = $scope.log.searchLabel || l($scope.log.details);
+                        ($scope.log.isMultiLine ||
+                            ($scope.log.details.stackFrames && $scope.log.details.stackFrames.length > 0)) &&
+                            ($scope.log.isExpandable = !0);
 
-                        $timeout(function () {
-                            var a = g.find('.message-container .message');
-                            b.log.isExpandable = b.log.isExpandable || utils.isEllipsisActive(a[0]);
+                        $timeout(function() {
+                            var a = $element.find('.message-container .message');
+                            $scope.log.isExpandable = $scope.log.isExpandable || utils.isEllipsisActive(a[0]);
                         }, 250);
                     }
                     function j(message) {
@@ -49,7 +60,7 @@ angular
                     }
                     function k(a) {
                         if (a && 0 !== a.length)
-                            return lodash.map(a, function (a) {
+                            return lodash.map(a, function(a) {
                                 if (a) return a.trim();
                             });
                     }
@@ -58,18 +69,18 @@ angular
                         return a.message + b;
                     }
                     var m = g.find('.message-container');
-                    b.toggleMessage = function (c) {
+                    $scope.toggleMessage = function(c) {
                         if ('Range' !== c.view.getSelection().type) {
                             var d = m.outerHeight();
-                            (b.log.isExpanded = !b.log.isExpanded),
-                                $timeout(function () {
+                            ($scope.log.isExpanded = !$scope.log.isExpanded),
+                                $timeout(function() {
                                     var a = m.outerHeight(),
                                         c = a - d;
-                                    b.onLogToggle(b.log.activityIndex, c);
+                                    $scope.onLogToggle($scope.log.activityIndex, c);
                                 });
                         }
                     };
-                    b.$watch('log.activityIndex', i);
+                    $scope.$watch('log.activityIndex', i);
                 },
             };
         },
