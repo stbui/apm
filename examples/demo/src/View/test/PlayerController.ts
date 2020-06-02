@@ -28,18 +28,33 @@ function loadActivitiesUntil(timeLimit) {
     }, B);
 }
 
-function z(b) {
-    b &&
-        0 !== b.length &&
-        ((timestamp = timestamp || b[0].timestamp),
-        A(b),
-        (O = b[b.length - 1].time),
-        $scope.sessionPlayerApi.addActivities(b));
+// {
+//     data: object;
+//     index: -1;
+//     playerIndex: 0;
+//     time: 0;
+//     timestamp: 1591025539170;
+//     type: 'dom_snapshot';
+// }
+function z(activities: any[]) {
+    if (activities && 0 !== activities.length) {
+        timestamp = timestamp || activities[0].timestamp;
+        A(activities);
+        time = activities[activities.length - 1].time;
+        $scope.sessionPlayerApi.addActivities(activities);
+    }
+
+    // activities &&
+    //     0 !== activities.length &&
+    //     ((timestamp = timestamp || activities[0].timestamp),
+    //     A(activities),
+    //     (O = activities[activities.length - 1].time),
+    //     $scope.sessionPlayerApi.addActivities(activities));
 }
-function A(a) {
-    // angular.forEach(a, function (a) {
-    //     a.time = a.timestamp - timestamp;
-    // });
+function A(activities) {
+    angular.forEach(activities, function(a) {
+        a.time = a.timestamp - timestamp;
+    });
 }
 function B(b) {
     if (b)
@@ -104,7 +119,7 @@ if (!$scope.isBrowserNotSupported) {
         chatClient = new BrokerClient(BrokerWebSocketClient.createChatClient($scope.sessionId)),
         liveConnectionMonitor = new LiveConnectionMonitor(brokerClient),
         N = new LiveConnectionMonitor(chatClient),
-        O = -1;
+        time: number = -1;
 
     auth.loadCurrentUser().then(function(user) {
         $scope.user = user;
@@ -182,7 +197,7 @@ if (!$scope.isBrowserNotSupported) {
         liveConnectionMonitor.start();
         brokerClient.onAddData(function(b) {
             z(b);
-            $scope.sessionPlayerApi.setSessionLength(O);
+            $scope.sessionPlayerApi.setSessionLength(time);
         });
         brokerClient.connect(function() {
             c();

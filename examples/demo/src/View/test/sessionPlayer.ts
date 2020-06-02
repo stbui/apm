@@ -158,7 +158,14 @@ angular
                         player.fireHideBuffering($scope);
                         player.fireAttach($scope);
                     }
-                    function A(a) {
+                    function A(a: {
+                        data: object;
+                        index: number;
+                        playerIndex: number;
+                        time: number;
+                        timestamp: number;
+                        type: 'dom_snapshot';
+                    }) {
                         return (
                             [
                                 EVENT_TYPE.CONSOLE_ERROR,
@@ -168,10 +175,24 @@ angular
                             ].indexOf(a.type) > -1
                         );
                     }
-                    function B(a) {
+                    function B(a: {
+                        data: object;
+                        index: number;
+                        playerIndex: number;
+                        time: number;
+                        timestamp: number;
+                        type: 'dom_snapshot';
+                    }) {
                         return a.type === EVENT_TYPE.NETWORK_REQUEST;
                     }
-                    function C(a) {
+                    function C(a: {
+                        data: object;
+                        index: number;
+                        playerIndex: number;
+                        time: number;
+                        timestamp: number;
+                        type: 'dom_snapshot';
+                    }) {
                         if (!a.data) return false;
                         var b = 0 === a.time && 0 === a.index && a.type === EVENT_TYPE.DOM_SNAPSHOT;
                         if (b) return false;
@@ -182,7 +203,21 @@ angular
                             g = f && U.indexOf(a.type) >= 0;
                         return (c && !e) || g;
                     }
-                    function D(a) {
+                    // data= object
+                    // extension: null
+                    // isMessageTrimmed: false
+                    // isTrimmed: false
+                    // level: "warn"
+                    // message: "Warning: componentWillReceiveProps has been renamed, and is not recommended for use. See https://fb.me/react-unsafe-component-lifecycles for details.↵↵* Move data fetching code or side effects to componentDidUpdate.↵* If you're updating state whenever props change, refactor your code to use memoization techniques or move it to static getDerivedStateFromProps. Learn more at: https://fb.me/react-derived-state↵* Rename componentWillReceiveProps to UNSAFE_componentWillReceiveProps to suppress this warning in non-strict mode. In React 17.x, only the UNSAFE_ name will work. To rename all deprecated lifecycles to their new names, you can run `npx react-codemod rename-unsafe-lifecycles` in your project source folder.↵↵Please update the following components: %s"
+                    // type: "string"
+                    function D(a: {
+                        data: object;
+                        index: number;
+                        playerIndex: number;
+                        time: number;
+                        timestamp: number;
+                        type: 'console_warn';
+                    }) {
                         var b = {};
                         b[EVENT_TYPE.CONSOLE_LOG] = 'info';
                         b[EVENT_TYPE.CONSOLE_ERROR] = 'error';
@@ -205,7 +240,14 @@ angular
                         }
                         return c;
                     }
-                    function E(a) {
+                    function E(a: {
+                        data: object;
+                        index: number;
+                        playerIndex: number;
+                        time: number;
+                        timestamp: number;
+                        type: 'dom_snapshot';
+                    }) {
                         var b = a.data;
                         switch (a.type) {
                             case EVENT_TYPE.CONSOLE_LOG:
@@ -232,7 +274,14 @@ angular
                                 return { visibilityState: b.visibilityState };
                         }
                     }
-                    function F(a) {
+                    function F(a: {
+                        data: object;
+                        index: number;
+                        playerIndex: number;
+                        time: number;
+                        timestamp: number;
+                        type: 'dom_snapshot';
+                    }) {
                         return {
                             message: a.data.message,
                             level: a.data.level,
@@ -254,13 +303,13 @@ angular
                             !!$scope.session
                         );
                     }
-                    function I(b) {
-                        $scope.activities.push(b);
+                    function I(activities) {
+                        $scope.activities.push(activities);
                         var c: any = [],
                             d: any = [],
                             e: any = [];
 
-                        b.forEach(function(a) {
+                        activities.forEach(function(a) {
                             var b: any = {
                                 time: a.time,
                                 activityIndex: a.playerIndex,
@@ -371,40 +420,44 @@ angular
                             { label: '4x', value: 4 },
                         ];
                         $scope.steps = [];
-                        var lastRenderedActivity = { playerIndex: -1, time: 0 },
-                            render = {
-                                _onTabHiddenCallback: lodash.noop,
-                                isTabHidden: false,
-                                lastRenderedActivity: lastRenderedActivity,
-                                reset: function() {
-                                    this.isTabHidden = false;
-                                    this.lastRenderedActivity = lastRenderedActivity;
-                                },
-                                render: function(b, d) {
-                                    var f = this;
-                                    b.forEach(function(b) {
-                                        // window.ss_debug && console.log(d, b);
-                                        A(b) || player.fireExecuteEvent($scope, b);
+                        var lastRenderedActivity = { playerIndex: -1, time: 0 };
 
-                                        if (
-                                            Activity.isTabVisibilityChange(b) ||
-                                            (Activity.isTopLevel(b) && Activity.isSnapshot(b))
-                                        ) {
-                                            f.isTabHidden = b.data.visibilityState == TAB_VISIBILITY.HIDDEN;
-                                        }
-                                    });
-                                    this.lastRenderedActivity = lodash.last(b);
-                                    $scope.updateStepsTimeline(f.lastRenderedActivity.playerIndex);
-                                    $scope.updateConsole(f.lastRenderedActivity.playerIndex);
-                                    this.isTabHidden && setTimeout(f._onTabHiddenCallback, 0);
-                                },
-                                onTabHidden: function(callback) {
-                                    this._onTabHiddenCallback = callback;
-                                },
-                            };
+                        var render = {
+                            _onTabHiddenCallback: lodash.noop,
+                            isTabHidden: false,
+                            lastRenderedActivity: lastRenderedActivity,
+                            reset: function() {
+                                this.isTabHidden = false;
+                                this.lastRenderedActivity = lastRenderedActivity;
+                            },
+                            render: function(activities, d) {
+                                var f = this;
+                                activities.forEach(function(b) {
+                                    // window.ss_debug && console.log(d, b);
+                                    A(b) || player.fireExecuteEvent($scope, b);
+
+                                    if (
+                                        Activity.isTabVisibilityChange(b) ||
+                                        (Activity.isTopLevel(b) && Activity.isSnapshot(b))
+                                    ) {
+                                        f.isTabHidden = b.data.visibilityState == TAB_VISIBILITY.HIDDEN;
+                                    }
+                                });
+
+                                this.lastRenderedActivity = lodash.last(activities);
+                                $scope.updateStepsTimeline(f.lastRenderedActivity.playerIndex);
+                                $scope.updateConsole(f.lastRenderedActivity.playerIndex);
+                                this.isTabHidden && setTimeout(f._onTabHiddenCallback, 0);
+                            },
+                            onTabHidden: function(callback) {
+                                this._onTabHiddenCallback = callback;
+                            },
+                        };
+
                         render.onTabHidden(function() {
                             render.isTabHidden && $scope.player.skipToTabShown($scope.timelineValue);
                         });
+
                         $scope.activities = new Activities();
                         $scope.player = new Player($scope.activities, render, PLAYER_CONFIG);
                         $scope.player.onTimeChanged(onTimeChanged);
@@ -537,15 +590,26 @@ angular
                             $scope.pause();
                             sessionDetailsModal.open(b);
                         };
-                        $scope.onSelectedActivity = function(b) {
+                        $scope.onSelectedActivity = function(selectedActivity: {
+                            activityIndex: number;
+                            count: number;
+                            details: object;
+                            isLog: boolean;
+                            modalSize: 'sm';
+                            playerIndex: number;
+                            searchLabel: string;
+                            stepStyle: boolean;
+                            time: number;
+                            type: 'mouse_click';
+                        }) {
                             // window.ss_debug && console.log('selected activitiy', b);
-                            $scope.player.jumpToActivity(b);
+                            $scope.player.jumpToActivity(selectedActivity);
                             G();
                             $scope.isPlaying = false;
                             $scope.hasFinished = false;
-                            $scope.timelineValue = b.time;
-                            $scope.updateStepsTimeline(b.playerIndex, true);
-                            $scope.selectActivity(b);
+                            $scope.timelineValue = selectedActivity.time;
+                            $scope.updateStepsTimeline(selectedActivity.playerIndex, true);
+                            $scope.selectActivity(selectedActivity);
                             $scope.api.setUserHasGoneOffline(false);
                         };
                         $scope.userPermissionRequest = {
@@ -610,9 +674,18 @@ angular
                                 $scope.refreshTimeline(true, []);
                                 $scope.stepsTimelineLoaded();
                             },
-                            addActivities: function(b) {
-                                I(b);
-                                $scope.refreshTimeline(false, b);
+                            addActivities: function(activities: any[]) {
+                                // {
+                                //     data: object;
+                                //     index: number;
+                                //     playerIndex: number;
+                                //     time: number;
+                                //     timestamp: number;
+                                //     type: 'dom_snapshot';
+                                // }
+
+                                I(activities);
+                                $scope.refreshTimeline(false, activities);
                             },
                             denyStreamingRequest: function() {
                                 $scope.userPermissionRequest.deny();

@@ -22,16 +22,27 @@ function i(a) {
                       eventsIndex: d.lastEventIndex,
                   })
                   .then(
-                      function (b) {
+                      function(b) {
                           var c = k(b, d.timeLimit);
-                          return 0 === c.activities.length
-                              ? e.resolve(c.activities)
-                              : ((d.lastEventTimestamp = c.lastEventTimestamp),
-                                (d.lastEventIndex = c.lastEventIndex),
-                                a(c.activities),
-                                void f());
+                          if (0 === c.activities.length) {
+                              return e.resolve(c.activities);
+                          } else {
+                              d.lastEventTimestamp = c.lastEventTimestamp;
+                              d.lastEventIndex = c.lastEventIndex;
+                              a(c.activities);
+
+                              f();
+                              return;
+                          }
+
+                          //   return 0 === c.activities.length
+                          //       ? e.resolve(c.activities)
+                          //       : ((d.lastEventTimestamp = c.lastEventTimestamp),
+                          //         (d.lastEventIndex = c.lastEventIndex),
+                          //         a(c.activities),
+                          //         void f());
                       },
-                      function (a) {
+                      function(a) {
                           e.reject(a);
                       }
                   );
@@ -53,7 +64,7 @@ function l(a, b) {
         lastEventIndex,
         activities: any = [];
 
-    lodash.forEach(a, function (a, f) {
+    lodash.forEach(a, function(a, f) {
         if (!(a.time > b)) {
             activities.push(a);
             lastEventTimestamp = a.timestamp;
@@ -99,12 +110,12 @@ export class SessionDataClient {
         a = e.logId ? session.getSessionLog(e.sessionId, e.logId) : session.getSession(e.sessionId);
 
         $q.all([g, a]).then(
-            function (a) {
+            function(a) {
                 var b = { featureFlags: a[0], sessionData: a[1] };
                 e.isLive = b.sessionData.session.isLive;
                 f.resolve(b);
             },
-            function (a) {
+            function(a) {
                 f.reject(a);
             }
         );
@@ -116,7 +127,7 @@ export class SessionDataClient {
         var c = this;
         this.timeLimit = timeLimit;
         this.loadingActivitiesPromise ||
-            (c.loadingActivitiesPromise = i.call(c, callback).then(function (b) {
+            (c.loadingActivitiesPromise = i.call(c, callback).then(function(b) {
                 c.loadingActivitiesPromise = null;
                 callback(b);
             }));

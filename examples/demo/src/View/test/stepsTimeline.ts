@@ -126,7 +126,16 @@ angular.module('playerApp').directive('stepsTimeline', [
                                 : s('Tab hidden', 'ion-ios-albums-outline', 'black', isLog);
                     }
                 }
-                function r(type, details) {
+                function r(
+                    type,
+                    details: {
+                        absoluteLeft: 83;
+                        absoluteTop: 283;
+                        left: 83;
+                        top: 283;
+                        selector: any | object;
+                    }
+                ) {
                     switch (type) {
                         case EVENT_TYPE.MOUSE_CLICK:
                             return t(details.selector);
@@ -259,8 +268,8 @@ angular.module('playerApp').directive('stepsTimeline', [
                 ];
                 var C = playerSettings.getActivitiesFilterFromUrl();
 
-                $scope.updateStepsTimeline = function(a, b) {
-                    k(a, b);
+                $scope.updateStepsTimeline = function(playerIndex, b?) {
+                    k(playerIndex, b);
                 };
                 $scope.setLastPlayedActivity = function(a) {
                     k(a);
@@ -273,10 +282,18 @@ angular.module('playerApp').directive('stepsTimeline', [
                         k(A);
                     }, 0);
                 };
-                $scope.selectStep = function(a) {
-                    if (!($scope.selectedStep === a || a < 0 || a >= $scope.filteredSteps.length)) {
-                        var c = $scope.filteredSteps[a];
-                        $scope.onSelectedStep(c), ($scope.selectedStep = a), l();
+                $scope.selectStep = function(selectedStep) {
+                    if (
+                        !(
+                            $scope.selectedStep === selectedStep ||
+                            selectedStep < 0 ||
+                            selectedStep >= $scope.filteredSteps.length
+                        )
+                    ) {
+                        var c = $scope.filteredSteps[selectedStep];
+                        $scope.onSelectedStep(c);
+                        $scope.selectedStep = selectedStep;
+                        l();
                     }
                 };
                 $scope.selectNextStep = function() {

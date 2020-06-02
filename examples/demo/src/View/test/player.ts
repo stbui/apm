@@ -207,9 +207,27 @@ import { Activities } from './Activities';
 
 const noop = function() {};
 
+interface ILastRenderedActivity {
+    playerIndex: number;
+    time: number;
+    data?: { visibilityState: 'hidden' };
+    index?: number;
+    timestamp?: number;
+    type?: 'visibility_change'|'childList';
+}
+
+interface IRender {
+    isTabHidden: boolean;
+            lastRenderedActivity: ILastRenderedActivity;
+    onTabHidden: (...a) => void;
+    render: (b, d?) => void;
+    reset: () => void;
+    _onTabHiddenCallback: () => void;
+}
+
 export class Player {
     private _activities: Activities;
-    private _render;
+    private _render: IRender;
     private _skippingToTabShown;
     private _pauseAt: number | null;
     private _config;
@@ -223,7 +241,7 @@ export class Player {
 
     private _replayFinished;
 
-    constructor(activities: Activities, render, config) {
+    constructor(activities: Activities, render: IRender, config) {
         this._activities = activities;
         this._render = render;
         this._skippingToTabShown = false;
@@ -261,13 +279,13 @@ export class Player {
         var lastRenderedActivity = this._render.lastRenderedActivity;
 
         if (this._pauseAt && timelineValue < this._pauseAt)
-            var endTime = this._pauseAt,
+            var sessionLength = this._pauseAt,
                 activities = this._activities.getIteratorBetween(lastRenderedActivity, this._pauseAt);
         else
-            var endTime = this._activities.getSessionLength() + 1,
+            var sessionLength = this._activities.getSessionLength() + 1,
                 activities = this._activities.getIteratorAfter(lastRenderedActivity);
 
-        this._playback = this._createNormalPlayback(timelineValue, endTime, activities);
+        this._playback = this._createNormalPlayback(timelineValue, sessionLength, activities);
         this._playback.replay(this._replayFinished);
     }
     pause() {
