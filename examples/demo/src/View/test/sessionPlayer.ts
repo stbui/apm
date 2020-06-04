@@ -458,7 +458,7 @@ angular
                                   });
                         };
                         $scope.$watch('initialSettings', function(initialSettings) {
-                            b && $scope.api.loadSession(initialSettings);
+                            initialSettings && $scope.api.loadSession(initialSettings);
                         });
                         // 初始化组件完毕
                         $scope.$watch(H, function(inited: boolean) {
