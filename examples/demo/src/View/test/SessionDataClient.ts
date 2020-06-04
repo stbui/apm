@@ -23,12 +23,16 @@ function i(a) {
                   })
                   .then(
                       function(b) {
+                          // c = b
                           var c = k(b, d.timeLimit);
+
                           if (0 === c.activities.length) {
                               return e.resolve(c.activities);
                           } else {
                               d.lastEventTimestamp = c.lastEventTimestamp;
                               d.lastEventIndex = c.lastEventIndex;
+
+                              // PlayerController.z(c.activities)
                               a(c.activities);
 
                               f();
@@ -50,34 +54,32 @@ function i(a) {
 
     return e.promise;
 }
-function j(a) {
-    var b = lodash.last(a);
+function j(activities) {
+    var b = lodash.last(activities);
     return b ? b.time : null;
 }
-function k(a, b) {
-    var c = a.activities,
-        d = j(c);
-    return d && d > b ? l(c, b) : a;
+function k(resove, timeLimit) {
+    var activities = resove.activities,
+        time = j(activities);
+    return time && time > timeLimit ? l(activities, timeLimit) : resove;
 }
-function l(a, b) {
+function l(activities, timeLimit) {
     var lastEventTimestamp,
         lastEventIndex,
-        activities: any = [];
-
-    lodash.forEach(a, function(a, f) {
-        if (!(a.time > b)) {
-            activities.push(a);
-            lastEventTimestamp = a.timestamp;
-            lastEventIndex = a.index;
-            return;
+        e: any = [];
+    return (
+        lodash.forEach(activities, function(a, f) {
+            return (
+                !(a.time > timeLimit) &&
+                (e.push(a), (lastEventTimestamp = a.timestamp), void (lastEventIndex = a.index))
+            );
+        }),
+        {
+            activities: e,
+            lastEventTimestamp: lastEventTimestamp,
+            lastEventIndex: lastEventIndex,
         }
-
-        // return (
-        //     !(a.time > b) && (activities.push(a), (lastEventTimestamp = a.timestamp), void (lastEventIndex = a.index))
-        // );
-    });
-
-    return { activities: activities, lastEventTimestamp: lastEventTimestamp, lastEventIndex: lastEventIndex };
+    );
 }
 
 export class SessionDataClient {
@@ -123,11 +125,12 @@ export class SessionDataClient {
         return f.promise;
     }
 
+    // callback = PlayerController.z(c.activities)
     loadActivitiesUntil(callback, timeLimit) {
         var c = this;
         this.timeLimit = timeLimit;
         this.loadingActivitiesPromise ||
-            (c.loadingActivitiesPromise = i.call(c, callback).then(function(b) {
+            (this.loadingActivitiesPromise = i.call(this, callback).then(function(b) {
                 c.loadingActivitiesPromise = null;
                 callback(b);
             }));

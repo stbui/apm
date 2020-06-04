@@ -69,15 +69,15 @@ angular.module('playerApp').directive('stepsTimeline', [
                         $scope.activityTypeStatuses[a] = c;
                     });
                 }
-                function n(a?, time = 0) {
+                function n(outerHeight?, time = 0) {
                     var d = w.outerHeight();
 
                     // void 0 === a && (a = y.outerHeight());
-                    if (0 === a) {
-                        a = y.outerHeight();
+                    if (0 === outerHeight) {
+                        outerHeight = y.outerHeight();
                     }
 
-                    var height = $scope.containerHeight - d - a;
+                    var height = $scope.containerHeight - d - outerHeight;
 
                     x.stop().animate({ height: height }, time);
 
@@ -274,7 +274,16 @@ angular.module('playerApp').directive('stepsTimeline', [
                 $scope.setLastPlayedActivity = function(a) {
                     k(a);
                 };
-                $scope.addNewSteps = function(a) {
+                $scope.addNewSteps = function(
+                    a: {
+                        time: any;
+                        activityIndex: any;
+                        playerIndex: any;
+                        type: any;
+                        isLog: any;
+                        details: any;
+                    }[]
+                ) {
                     utils.isArray(a) && lodash.forEach(a, z.addNewStep);
                 };
                 $scope.updateSelectedStep = function() {
@@ -332,8 +341,8 @@ angular.module('playerApp').directive('stepsTimeline', [
                 $scope.$watch('containerHeight', function(a) {
                     a && n();
                 });
-                $scope.handleUserDetailsResize = function(a) {
-                    n(a, USER_DETAILS_ANIMATION_TIME);
+                $scope.handleUserDetailsResize = function(outerHeight) {
+                    n(outerHeight, USER_DETAILS_ANIMATION_TIME);
                 };
                 $scope.onStepExpand = function(a) {
                     $scope.expandedStepIndex === a ? ($scope.expandedStepIndex = null) : ($scope.expandedStepIndex = a);

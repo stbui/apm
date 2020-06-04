@@ -17,14 +17,31 @@ const PLAN_EXPIRED = 'PLAN_EXPIRED';
 const CONNECTION_STATUSES = { ONLINE: 'online', OFFLINE: 'offline' };
 
 //
-const $scope: any = {};
+interface ISessionPlayerApi {
+    finishLoadingActivities: Function;
+    addActivities: Function;
+    startLiveStreaming: Function;
+    setSessionLength: Function;
+    startPlayback: Function;
+    setFeatureFlags: Function;
+    setBrokerClient: Function;
+}
+interface IScope {
+    // sessionPlayer.ts -> sessionPlayerApi
+    sessionPlayerApi: ISessionPlayerApi;
+    initialSettings: InitialSettings;
+}
 const $stateParams: any = {};
+let $scope: IScope;
 
 //
 
-function loadActivitiesUntil(timeLimit) {
+function loadActivitiesUntil(timeLimit: number) {
+    // timeLimit:1591025627881
     sessionDataClient.loadActivitiesUntil(z, timeLimit).then(function(b) {
-        z(b), $scope.sessionPlayerApi.finishLoadingActivities();
+        // b: undefined
+        z(b);
+        $scope.sessionPlayerApi.finishLoadingActivities();
     }, B);
 }
 
@@ -36,11 +53,21 @@ function loadActivitiesUntil(timeLimit) {
 //     timestamp: 1591025539170;
 //     type: 'dom_snapshot';
 // }
-function z(activities: any[]) {
+function z(
+    activities: {
+        data: object;
+        index: number;
+        time: number;
+        timestamp: number;
+        type: string;
+    }[]
+) {
     if (activities && 0 !== activities.length) {
         timestamp = timestamp || activities[0].timestamp;
         A(activities);
         time = activities[activities.length - 1].time;
+
+        // sessionPlayer.ts -> addActivities
         $scope.sessionPlayerApi.addActivities(activities);
     }
 
@@ -111,7 +138,7 @@ if (!$scope.isBrowserNotSupported) {
         navigation.openSessionInNewWindow(session.id, session.hasInaccessibleResources, 'player_offline_button');
     };
 
-    var initialSettings,
+    var initialSettings: InitialSettings,
         timestamp,
         logId = $stateParams.logId,
         sessionDataClient = new SessionDataClient($scope.sessionId, logId, $scope.settings.general.playLive),
@@ -138,6 +165,7 @@ if (!$scope.isBrowserNotSupported) {
             $scope.settings.analytics,
             b.featureFlags
         );
+        // sessionPlayer.$watch('initialSettings')
         $scope.initialSettings = initialSettings;
         C();
         initialSettings.shouldStartStreaming() && D();
@@ -179,6 +207,7 @@ if (!$scope.isBrowserNotSupported) {
         chatClient.sendStreamingRequestCanceled();
         chatClient.disconnect();
     });
+    // firePlayerIsInitialized
     player.onPlayerIsInitialized($scope, function() {
         $scope.sessionPlayerApi.setFeatureFlags(initialSettings.featureFlags);
         $scope.sessionPlayerApi.setBrokerClient(brokerClient);
@@ -190,6 +219,7 @@ if (!$scope.isBrowserNotSupported) {
                 var session = initialSettings.getSession();
                 $scope.sessionPlayerApi.setSessionLength(session.length);
                 $scope.sessionPlayerApi.startPlayback();
+                // 加载数据
                 loadActivitiesUntil(session.clientStartMilliseconds + session.length);
             }
     });

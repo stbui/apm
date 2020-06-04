@@ -1,6 +1,7 @@
 import { SliceIterator } from './SliceIterator';
+import { IActivity } from './Activity';
 
-const noop = function () {};
+const noop = function() {};
 
 export class AsyncSliceIterator {
     private _syncSlice: SliceIterator;
@@ -24,8 +25,8 @@ export class AsyncSliceIterator {
     peekLast() {
         return this._syncSlice.peekLast();
     }
-    push(a) {
-        this._syncSlice.array.push(a);
+    push(activity: IActivity) {
+        this._syncSlice.array.push(activity);
         this._retryPendingOperations();
     }
     finish() {
@@ -59,7 +60,7 @@ export class AsyncSliceIterator {
         var a = this,
             b = a._pendingOperations;
         a._pendingOperations = [];
-        b.forEach(function (b) {
+        b.forEach(function(b) {
             'next' === b.type ? a.next(b.callback) : 'peek' === b.type && a.peek(b.callback);
         });
     }

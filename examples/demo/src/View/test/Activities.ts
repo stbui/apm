@@ -1,16 +1,16 @@
 import lodash from 'lodash';
-import { Activity } from './Activity';
+import { Activity, IActivity } from './Activity';
 import { AsyncSliceIterator } from './AsyncSliceIterator';
 
 class Snapshots {
-    private _snapshots;
+    private _snapshots: IActivity[];
 
     constructor() {
         this._snapshots = [];
     }
 
-    add(a) {
-        this._snapshots.push(a);
+    add(activity) {
+        this._snapshots.push(activity);
     }
     findBetween(lastActivityIndex: number, timelineSelectedValue: number) {
         return lodash.findLast(this._snapshots, function(a) {
@@ -91,19 +91,20 @@ export class Activities {
     getSessionLength(): number {
         return this._sessionLength;
     }
-    setSessionLength(a) {
-        this._sessionLength = a;
+    setSessionLength(length: number) {
+        this._sessionLength = length;
     }
 
-    push(b) {
-        b.forEach(a => {
-            a.playerIndex = this._activities.length;
-            this._asyncIterator.push(a);
-            Activity.isTopLevel(a) && Activity.isSnapshot(a) && this._snapshots.add(a);
+    push(activities: IActivity[]) {
+        activities.forEach((activity: IActivity) => {
+            // 添加属性
+            activity.playerIndex = this._activities.length;
+            this._asyncIterator.push(activity);
+            Activity.isTopLevel(activity) && Activity.isSnapshot(activity) && this._snapshots.add(activity);
         });
 
-        if (b.length > 0) {
-            var length = Math.max(this.getSessionLength(), lodash.last(b).time);
+        if (activities.length > 0) {
+            var length = Math.max(this.getSessionLength(), lodash.last(activities).time);
             this.setSessionLength(length);
         }
     }

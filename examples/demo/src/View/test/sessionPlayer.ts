@@ -11,7 +11,8 @@ import {
 import { SUPPORT_TOOLS, TAB_VISIBILITY, EVENT_TYPE } from './constant';
 import { Activities } from './Activities';
 import { Player, player } from './player';
-import { Activity } from './Activity';
+import { Activity, IActivity } from './Activity';
+import { InitialSettings } from './InitialSettings';
 
 const PLAYER_CONFIG = {
     MAX_INACTIVITY_TIME: 3e3,
@@ -58,7 +59,7 @@ interface IScope {
     isLive: boolean;
     startTime: number;
     pauseActivity: any;
-    initialSettings: any;
+    initialSettings: InitialSettings;
     sessionId: number;
     url: string | null;
     session: any;
@@ -158,74 +159,45 @@ angular
                         player.fireHideBuffering($scope);
                         player.fireAttach($scope);
                     }
-                    function A(a: {
-                        data: object;
-                        index: number;
-                        playerIndex: number;
-                        time: number;
-                        timestamp: number;
-                        type: 'dom_snapshot';
-                    }) {
+                    function A(activity: IActivity) {
                         return (
                             [
                                 EVENT_TYPE.CONSOLE_ERROR,
                                 EVENT_TYPE.CONSOLE_WARN,
                                 EVENT_TYPE.CONSOLE_DEBUG,
                                 EVENT_TYPE.CONSOLE_LOG,
-                            ].indexOf(a.type) > -1
+                            ].indexOf(activity.type) > -1
                         );
                     }
-                    function B(a: {
-                        data: object;
-                        index: number;
-                        playerIndex: number;
-                        time: number;
-                        timestamp: number;
-                        type: 'dom_snapshot';
-                    }) {
-                        return a.type === EVENT_TYPE.NETWORK_REQUEST;
+                    function B(activity: IActivity) {
+                        return activity.type === EVENT_TYPE.NETWORK_REQUEST;
                     }
-                    function C(a: {
-                        data: object;
-                        index: number;
-                        playerIndex: number;
-                        time: number;
-                        timestamp: number;
-                        type: 'dom_snapshot';
-                    }) {
-                        if (!a.data) return false;
-                        var b = 0 === a.time && 0 === a.index && a.type === EVENT_TYPE.DOM_SNAPSHOT;
+                    function C(activity: IActivity) {
+                        if (!activity.data) return false;
+
+                        var b =
+                            0 === activity.time && 0 === activity.index && activity.type === EVENT_TYPE.DOM_SNAPSHOT;
                         if (b) return false;
-                        var c = a.type === EVENT_TYPE.MOUSE_CLICK,
-                            d = !!a.data.frameElementId,
-                            e = !!a.data.hostElementId,
+
+                        var c = activity.type === EVENT_TYPE.MOUSE_CLICK,
+                            d = !!activity.data.frameElementId,
+                            e = !!activity.data.hostElementId,
                             f = !d && !e,
-                            g = f && U.indexOf(a.type) >= 0;
+                            g = f && U.indexOf(activity.type) >= 0;
+
                         return (c && !e) || g;
                     }
-                    // data= object
-                    // extension: null
-                    // isMessageTrimmed: false
-                    // isTrimmed: false
-                    // level: "warn"
-                    // message: "Warning: componentWillReceiveProps has been renamed, and is not recommended for use. See https://fb.me/react-unsafe-component-lifecycles for details.↵↵* Move data fetching code or side effects to componentDidUpdate.↵* If you're updating state whenever props change, refactor your code to use memoization techniques or move it to static getDerivedStateFromProps. Learn more at: https://fb.me/react-derived-state↵* Rename componentWillReceiveProps to UNSAFE_componentWillReceiveProps to suppress this warning in non-strict mode. In React 17.x, only the UNSAFE_ name will work. To rename all deprecated lifecycles to their new names, you can run `npx react-codemod rename-unsafe-lifecycles` in your project source folder.↵↵Please update the following components: %s"
-                    // type: "string"
-                    function D(a: {
-                        data: object;
-                        index: number;
-                        playerIndex: number;
-                        time: number;
-                        timestamp: number;
-                        type: 'console_warn';
-                    }) {
+
+                    // type: 'console_warn';
+                    function D(activity: IActivity) {
                         var b = {};
                         b[EVENT_TYPE.CONSOLE_LOG] = 'info';
                         b[EVENT_TYPE.CONSOLE_ERROR] = 'error';
                         b[EVENT_TYPE.CONSOLE_WARN] = 'warn';
                         b[EVENT_TYPE.CONSOLE_DEBUG] = 'debug';
-                        var c: any = { id: a.id, level: b[a.type] };
-                        if ('exception' === a.data.type) {
-                            var d = a.data.exception;
+                        var c: any = { id: activity.id, level: b[activity.type] };
+                        if ('exception' === activity.data.type) {
+                            var d = activity.data.exception;
                             c.message = d.type ? d.type + ': ' : '';
                             c.message += d.message;
                             c.isMessageTrimmed = false;
@@ -233,31 +205,32 @@ angular
                                 return a.source || '';
                             });
                         } else {
-                            var e = a.data;
+                            var e = activity.data;
                             c.message = e.message;
                             c.isMessageTrimmed = e.isMessageTrimmed;
                             c.stackFrames = null;
                         }
+
+                        // data= object
+                        // extension: null
+                        // isMessageTrimmed: false
+                        // isTrimmed: false
+                        // level: "warn"
+                        // message: "Warning: componentWillReceiveProps has been renamed, and is not recommended for use. See https://fb.me/react-unsafe-component-lifecycles for details.↵↵* Move data fetching code or side effects to componentDidUpdate.↵* If you're updating state whenever props change, refactor your code to use memoization techniques or move it to static getDerivedStateFromProps. Learn more at: https://fb.me/react-derived-state↵* Rename componentWillReceiveProps to UNSAFE_componentWillReceiveProps to suppress this warning in non-strict mode. In React 17.x, only the UNSAFE_ name will work. To rename all deprecated lifecycles to their new names, you can run `npx react-codemod rename-unsafe-lifecycles` in your project source folder.↵↵Please update the following components: %s"
+                        // type: "string"
                         return c;
                     }
-                    function E(a: {
-                        data: object;
-                        index: number;
-                        playerIndex: number;
-                        time: number;
-                        timestamp: number;
-                        type: 'dom_snapshot';
-                    }) {
-                        var b = a.data;
-                        switch (a.type) {
+                    function E(activity: IActivity) {
+                        var b = activity.data;
+                        switch (activity.type) {
                             case EVENT_TYPE.CONSOLE_LOG:
-                                return D(a);
+                                return D(activity);
                             case EVENT_TYPE.CONSOLE_ERROR:
-                                return D(a);
+                                return D(activity);
                             case EVENT_TYPE.CONSOLE_WARN:
-                                return D(a);
+                                return D(activity);
                             case EVENT_TYPE.CONSOLE_DEBUG:
-                                return D(a);
+                                return D(activity);
                             case EVENT_TYPE.MOUSE_CLICK:
                                 return {
                                     top: b.y,
@@ -274,18 +247,11 @@ angular
                                 return { visibilityState: b.visibilityState };
                         }
                     }
-                    function F(a: {
-                        data: object;
-                        index: number;
-                        playerIndex: number;
-                        time: number;
-                        timestamp: number;
-                        type: 'dom_snapshot';
-                    }) {
+                    function F(activity: IActivity) {
                         return {
-                            message: a.data.message,
-                            level: a.data.level,
-                            request: a.data,
+                            message: activity.data.message,
+                            level: activity.data.level,
+                            request: activity.data,
                         };
                     }
                     function G() {
@@ -303,38 +269,41 @@ angular
                             !!$scope.session
                         );
                     }
-                    function I(activities) {
+
+                    function I(activities: IActivity[]) {
                         $scope.activities.push(activities);
-                        var c: any = [],
+                        // activities增加了playerIndex
+
+                        var newSteps: any = [],
                             d: any = [],
                             e: any = [];
 
-                        activities.forEach(function(a) {
+                        activities.forEach(function(activity: IActivity) {
                             var b: any = {
-                                time: a.time,
-                                activityIndex: a.playerIndex,
-                                playerIndex: a.playerIndex,
-                                type: a.type,
-                                isLog: A(a),
+                                time: activity.time,
+                                activityIndex: activity.playerIndex,
+                                playerIndex: activity.playerIndex,
+                                type: activity.type,
+                                isLog: A(activity),
                             };
 
-                            if (C(a)) {
-                                b.details = E(a);
-                                c.push(b);
+                            if (C(activity)) {
+                                b.details = E(activity);
+                                newSteps.push(b);
                             }
 
-                            if (A(a)) {
-                                b.details = D(a);
+                            if (A(activity)) {
+                                b.details = D(activity);
                                 d.push(b);
                             }
 
-                            if (B(a)) {
-                                b.details = F(a);
+                            if (B(activity)) {
+                                b.details = F(activity);
                                 e.push(b);
                             }
                         });
 
-                        $scope.addNewSteps(c);
+                        $scope.addNewSteps(newSteps);
                         $scope.addNewLogs(d);
                         $scope.addNewNetworkRequests(e);
                     }
@@ -488,16 +457,20 @@ angular
                                       return b.value === $scope.settings.playback.speed;
                                   });
                         };
-                        $scope.$watch('initialSettings', function(b) {
-                            b && $scope.api.loadSession(b);
+                        $scope.$watch('initialSettings', function(initialSettings) {
+                            b && $scope.api.loadSession(initialSettings);
                         });
-                        $scope.$watch(H, function(b) {
-                            b &&
-                                (player.firePlayerIsInitialized($scope),
-                                $scope.hideUserDetailsMask(),
-                                $scope.hideStepsTimelineMask(),
-                                ($scope.shouldShowLoadingOverlay = false),
-                                $scope.enableTimeline());
+                        // 初始化组件完毕
+                        $scope.$watch(H, function(inited: boolean) {
+                            if (inited) {
+                                // 初始化数据
+                                // playerController
+                                player.firePlayerIsInitialized($scope);
+                                $scope.hideUserDetailsMask();
+                                $scope.hideStepsTimelineMask();
+                                $scope.shouldShowLoadingOverlay = false;
+                                $scope.enableTimeline();
+                            }
                         });
                         $scope.$watch(
                             function() {
@@ -652,20 +625,21 @@ angular
                             $scope.playRecordedSession();
                         };
                         $scope.api = {
-                            loadSession: function(b) {
-                                $scope.userPermissionRequest.ignore = !b.shouldWaitUserConfirmation();
-                                $scope.session = b.getSession();
-                                $scope.isLive = b.isLive();
-                                $scope.showGoLiveButton = b.shouldShowGoLiveButton();
-                                $scope.startTime = b.getStartTime();
-                                $scope.pauseActivity = b.getPauseActivity();
-                                $scope.initialSettings = b;
+                            loadSession: function(initialSettings: InitialSettings) {
+                                $scope.userPermissionRequest.ignore = !initialSettings.shouldWaitUserConfirmation();
+                                $scope.session = initialSettings.getSession();
+                                $scope.isLive = initialSettings.isLive();
+                                $scope.showGoLiveButton = initialSettings.shouldShowGoLiveButton();
+                                $scope.startTime = initialSettings.getStartTime();
+                                $scope.pauseActivity = initialSettings.getPauseActivity();
+                                $scope.initialSettings = initialSettings;
                                 $scope.sessionId = $scope.session.id;
                                 $scope.pauseActivity &&
                                     $scope.settings.playback.shouldPauseOnMarker &&
                                     $scope.player.changePauseMarker($scope.pauseActivity.time);
                             },
-                            setSessionLength: function(timelineMax) {
+                            // session.length 的总时长
+                            setSessionLength: function(timelineMax: number) {
                                 $scope.timelineMax = timelineMax;
                                 $scope.activities.setSessionLength(timelineMax);
                             },
@@ -674,16 +648,8 @@ angular
                                 $scope.refreshTimeline(true, []);
                                 $scope.stepsTimelineLoaded();
                             },
-                            addActivities: function(activities: any[]) {
-                                // {
-                                //     data: object;
-                                //     index: number;
-                                //     playerIndex: number;
-                                //     time: number;
-                                //     timestamp: number;
-                                //     type: 'dom_snapshot';
-                                // }
-
+                            // PlayerController
+                            addActivities: function(activities: IActivity[]) {
                                 I(activities);
                                 $scope.refreshTimeline(false, activities);
                             },
@@ -732,10 +698,11 @@ angular
                                 $scope.setIsOffline(status);
                             },
                         };
-                        player.onUserDetailsResize($scope, function(b, c) {
-                            $scope.handleUserDetailsResize(c);
+                        // fireUserDetailsResize
+                        player.onUserDetailsResize($scope, function(b, outerHeight: number) {
+                            $scope.handleUserDetailsResize(outerHeight);
                         });
-                        player.onConsoleResize($scope, function(b, c) {
+                        player.onConsoleResize($scope, function(b, c: number) {
                             $scope.handleResize(c);
                         });
                         player.onOpenConsole($scope, function(b, c) {

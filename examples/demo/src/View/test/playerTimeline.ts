@@ -1,3 +1,4 @@
+import { IActivity } from './Activity';
 const MIN_ACTIVITY_BLOCK_WIDTH = 2;
 
 interface IScope {
@@ -124,13 +125,14 @@ angular
                         var duration = $scope.duration || 1;
                         return (duration / f()) * 100;
                     };
-                    $scope.refresh = function(b, d) {
+                    // sessionPlayer.refreshTimeline(a,b)
+                    $scope.refresh = function(b: boolean, activities: IActivity[]) {
                         var activityBlocks = $scope.activityBlocks || [];
 
-                        d.forEach(function(a) {
-                            var b: any = { time: $scope.time };
+                        activities.forEach(function(activity: IActivity) {
+                            var times: any = { time: activity.time };
                             $scope.isFirstLiveActivity && (b.isFirstLiveActivity = true);
-                            activityBlocks.push(b);
+                            activityBlocks.push(times);
                         });
 
                         $scope.activityBlocks = h(activityBlocks);
@@ -141,6 +143,9 @@ angular
                             $scope.max = Math.max($scope.max, g.time);
                             $scope.loadedTime = g.time;
                         }
+
+                        // d 是data，IActivity[]
+
                         $scope.loadedTimePercentage = $scope.timelineValueToPercentage($scope.loadedTime);
                         e();
                         $scope.pauseActivity

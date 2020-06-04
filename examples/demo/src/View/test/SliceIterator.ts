@@ -1,10 +1,11 @@
+import { IActivity } from './Activity';
 export class SliceIterator {
-    public array: any[];
+    public array: IActivity[];
     public start;
     public end: number;
     public index: number;
 
-    constructor(activities: any[], start, end: number, index: number) {
+    constructor(activities: IActivity[], start, end: number, index: number) {
         this.array = activities;
         this.start = start;
         this.end = end;
