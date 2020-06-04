@@ -9,6 +9,7 @@ import {
 import { DocumentNode } from './DocumentNode';
 import { AsyncWhile } from './AsyncWhile';
 import { player } from './player';
+import { IActivity } from './Activity';
 
 const STYLESHEETS_SELECTOR = 'style, link[rel="stylesheet"]';
 const KEYSTROKE_OPTIONS = { END_USER_TYPE_DELAY_SECONDS: 2 };
@@ -52,7 +53,7 @@ angular
         'ELEMENTS',
         'KEYSTROKE_OPTIONS',
         'FULL_SCREEN_CLASS',
-        function($timeout, $interval, sessionstackManager, PROCESS_HOVER_STYLES_CONFIG, ELEMENTS) {
+        function ($timeout, $interval, sessionstackManager, PROCESS_HOVER_STYLES_CONFIG, ELEMENTS) {
             return {
                 restrict: 'E',
                 templateUrl: 'templates/viewer.html',
@@ -73,7 +74,7 @@ angular
                     updateUrl: '=',
                     playUserRecordedSession: '=',
                 },
-                link: function($scope: IScope, $element, l) {
+                link: function ($scope: IScope, $element, l) {
                     function m(a, b) {
                         var c = oa();
                         if (c) {
@@ -149,7 +150,7 @@ angular
                     }
                     function x(a, b) {
                         ya.isAttached ||
-                            ya.attach(function() {
+                            ya.attach(function () {
                                 w();
                                 y();
                                 z();
@@ -160,17 +161,17 @@ angular
                     }
                     function y() {
                         C({ top: Fa.top, left: Fa.left }),
-                            angular.forEach(Ea, function(a, b) {
+                            angular.forEach(Ea, function (a, b) {
                                 var c = t(b);
                                 c(a);
                             }),
-                            angular.forEach(Object.keys(Ga), function(a) {
+                            angular.forEach(Object.keys(Ga), function (a) {
                                 C(Ga[a]);
                             });
                     }
                     function z() {
                         ya.isAttached &&
-                            ya.traverseDocuments(za, function(a) {
+                            ya.traverseDocuments(za, function (a) {
                                 D(a.documentElement);
                             });
                     }
@@ -178,11 +179,11 @@ angular
                         var c = Ca[b.id],
                             d = angular.element(E(b.id));
                         c && (c.cancel(), delete Ca[b.id]);
-                        var e = function() {
+                        var e = function () {
                                 return d.scrollLeft() !== b.left || d.scrollTop() !== b.top;
                             },
-                            f = function() {
-                                $timeout(function() {
+                            f = function () {
+                                $timeout(function () {
                                     d.scrollTop(b.top), d.scrollLeft(b.left);
                                 });
                             },
@@ -198,11 +199,11 @@ angular
 
                         if (d && !d.is(ELEMENTS.HTML)) {
                             c && (c.cancel(), delete Ba[b.id]);
-                            var e = function() {
+                            var e = function () {
                                     return d.scrollTop() !== b.top || d.scrollLeft() !== b.left;
                                 },
-                                f = function() {
-                                    $timeout(function() {
+                                f = function () {
+                                    $timeout(function () {
                                         d.scrollTop(b.top), d.scrollLeft(b.left);
                                     });
                                 },
@@ -220,7 +221,7 @@ angular
                         b(a);
                     }
                     function D(a) {
-                        ya.traverseNode(a, function(a) {
+                        ya.traverseNode(a, function (a) {
                             var b = ya.getNodePropertyObject(a);
                             if (b.top || b.left) {
                                 var c = { id: b.nodeId, top: b.top, left: b.left };
@@ -247,9 +248,9 @@ angular
                     function H(a, b) {
                         M(b);
                     }
-                    function I(a, b) {
-                        var c = b.type,
-                            d = b.data,
+                    function I(a, activity: IActivity) {
+                        var c = activity.type,
+                            d = activity.data,
                             e = t(c);
                         e && d && e(d);
                     }
@@ -279,7 +280,7 @@ angular
                                     $scope.visibilityState !== c.visibilityState &&
                                     J(c.visibilityState),
                                     c.nestedSnapshots &&
-                                        c.nestedSnapshots.forEach(function(a) {
+                                        c.nestedSnapshots.forEach(function (a) {
                                             M(a);
                                         });
 
@@ -298,7 +299,7 @@ angular
                             w();
                             G(c.top, c.left, c.hostElementId || c.frameElementId);
                             c.nodesScrollPositions &&
-                                angular.forEach(c.nodesScrollPositions, function(a, b) {
+                                angular.forEach(c.nodesScrollPositions, function (a, b) {
                                     Ga[b] = { id: b, top: a.top, left: a.left };
                                 });
                             $timeout(z);
@@ -416,7 +417,7 @@ angular
                         ya.addFullScreenNode(a.nodeId);
                     }
                     function ba(a) {
-                        ya.traverseFullScreenNodes(function(a) {
+                        ya.traverseFullScreenNodes(function (a) {
                             angular.element(a).removeClass(FULL_SCREEN_CLASS);
                         });
                     }
@@ -424,13 +425,13 @@ angular
                         utils.forEach(ya.styleRuleNodes, fa);
                     }
                     function da() {
-                        utils.forEach(ya.adoptedStyleSheetNodes, function(a) {
+                        utils.forEach(ya.adoptedStyleSheetNodes, function (a) {
                             var b = ya.getNodePropertyObject(a);
                             utils.addAdoptedStyleSheets(a, b.adoptedStyleSheets);
                         });
                     }
                     function ea(frameElementId, hostElementId) {
-                        utils.forEach(ya.styleRuleNodes, function(c) {
+                        utils.forEach(ya.styleRuleNodes, function (c) {
                             var d = ya.getNodePropertyObject(c);
                             d.frameElementId === frameElementId && d.hostElementId === hostElementId && fa(c);
                         });
@@ -440,7 +441,7 @@ angular
                             var b = ya.getNodePropertyObject(a);
                             b.styleRules &&
                                 (ga(a),
-                                b.styleRules.forEach(function(b, c) {
+                                b.styleRules.forEach(function (b, c) {
                                     try {
                                         b.indexOf('inset:') >= 0 && (b = utils.replaceInsetStyleRule(b)),
                                             a.sheet.insertRule(b, c);
@@ -453,7 +454,7 @@ angular
                     }
                     function ha(addedOrMoved) {
                         addedOrMoved &&
-                            angular.forEach(addedOrMoved, function(a) {
+                            angular.forEach(addedOrMoved, function (a) {
                                 var b;
                                 if (a.node) {
                                     var c = ia(a),
@@ -499,21 +500,21 @@ angular
                     }
                     function la(removed) {
                         removed &&
-                            angular.forEach(removed, function(a) {
+                            angular.forEach(removed, function (a) {
                                 var id = ya.getNode(a.id);
                                 ya.removeNode(id);
                             });
                     }
                     function ma(a) {
                         a &&
-                            angular.forEach(a, function(a) {
+                            angular.forEach(a, function (a) {
                                 var b = ya.getNode(a.id);
                                 ya.setAttribute(b, a.name, a.value);
                             });
                     }
                     function na(a) {
                         a &&
-                            angular.forEach(a, function(a) {
+                            angular.forEach(a, function (a) {
                                 var b = ya.getNode(a.id);
                                 b && (b.textContent = a.value);
                             });
@@ -579,49 +580,49 @@ angular
                     s(EVENT_TYPE.FULL_SCREEN_ENTER, aa);
                     s(EVENT_TYPE.FULL_SCREEN_LEAVE, ba);
 
-                    $scope.$watch('maxWidth', function(maxWidth) {
+                    $scope.$watch('maxWidth', function (maxWidth) {
                         maxWidth &&
                             u(maxWidth, $scope.maxHeight, $scope.sessionScreenWidth, $scope.sessionScreenHeight);
                     });
-                    $scope.$watch('maxHeight', function(maxHeight) {
+                    $scope.$watch('maxHeight', function (maxHeight) {
                         maxHeight &&
                             u($scope.maxWidth, maxHeight, $scope.sessionScreenWidth, $scope.sessionScreenHeight);
                     });
-                    $scope.$watch('renderingProgress', function(a) {
+                    $scope.$watch('renderingProgress', function (a) {
                         $scope.viewerOverlay && $scope.viewerOverlay.setRenderingProgress(a);
                     });
-                    $scope.$watch('showLoadingAnimation', function(a) {
+                    $scope.$watch('showLoadingAnimation', function (a) {
                         $scope.viewerOverlay && $scope.viewerOverlay.showLoadingAnimation(a);
                     });
                     player.onExecuteEvent($scope, I),
                         player.onClear($scope, H),
-                        player.onPlayerSpeedChange($scope, function(a, c) {
+                        player.onPlayerSpeedChange($scope, function (a, c) {
                             $scope.viewerOverlay && $scope.viewerOverlay.setPlayerSpeed(c);
                         });
-                    player.onVisualizeClicks($scope, function(a, c) {
+                    player.onVisualizeClicks($scope, function (a, c) {
                         $scope.viewerOverlay && $scope.viewerOverlay.setShouldVisualizeClicks(c);
                     });
-                    player.onPlayerStarted($scope, function(a) {
+                    player.onPlayerStarted($scope, function (a) {
                         $scope.viewerOverlay && $scope.viewerOverlay.startClicksAnimation();
                     });
-                    player.onPlayerStopped($scope, function(a) {
+                    player.onPlayerStopped($scope, function (a) {
                         $scope.viewerOverlay && $scope.viewerOverlay.stopClicksAnimation();
                     });
                     player.onAttach($scope, x),
                         player.onDetach($scope, v),
-                        player.onShowViewerOverlay($scope, function() {
+                        player.onShowViewerOverlay($scope, function () {
                             $scope.viewerOverlay && $scope.viewerOverlay.showRenderingOverlay();
                         });
-                    player.onHideViewerOverlay($scope, function() {
+                    player.onHideViewerOverlay($scope, function () {
                         $scope.viewerOverlay && $scope.viewerOverlay.hideRenderingOverlay();
                     });
-                    player.onShowBuffering($scope, function() {
+                    player.onShowBuffering($scope, function () {
                         $scope.viewerOverlay && $scope.viewerOverlay.showBufferingOverlay();
                     });
-                    player.onHideBuffering($scope, function() {
+                    player.onHideBuffering($scope, function () {
                         $scope.viewerOverlay && $scope.viewerOverlay.hideBufferingOverlay();
                     });
-                    player.onHideHiddenTabOverlay($scope, function() {
+                    player.onHideHiddenTabOverlay($scope, function () {
                         $scope.viewerOverlay && $scope.viewerOverlay.hideVisibilityOverlay();
                     });
                     $scope.api = {
@@ -629,14 +630,14 @@ angular
                         setSessionScreenHeight: setSessionScreenHeight,
                         setInitialSettings: setInitialSettings,
                     };
-                    $scope.playRecordedSession = function() {
+                    $scope.playRecordedSession = function () {
                         $scope.playUserRecordedSession();
                     };
-                    $scope.focusNodeByNodeId = function(a) {
+                    $scope.focusNodeByNodeId = function (a) {
                         var b = ya.getNode(a);
                         b && b.focus();
                     };
-                    $scope.getNodeFromPoint = function(a, b) {
+                    $scope.getNodeFromPoint = function (a, b) {
                         var c = m(a, b);
                         if (c) {
                             var d = ya.getNodePropertyObject(c);
@@ -648,7 +649,7 @@ angular
                             };
                         }
                     };
-                    $scope.getScrollableNodeFromPoint = function(a, b, c, e) {
+                    $scope.getScrollableNodeFromPoint = function (a, b, c, e) {
                         for (var f = m(a, b); ; ) {
                             var g = angular.element(f),
                                 h = g.scrollTop(),
@@ -668,42 +669,42 @@ angular
                             hostElementId: o.hostElementId,
                         };
                     };
-                    $scope.getOwnerFrameElementId = function(a) {
+                    $scope.getOwnerFrameElementId = function (a) {
                         var b = ya.getNode(a),
                             c = b.ownerDocument.defaultView.frameElement;
                         return ya.getNodePropertyObject(c).nodeId;
                     };
-                    $scope.updateLastTypingTime = function(a) {
+                    $scope.updateLastTypingTime = function (a) {
                         Da = a;
                     };
-                    $scope.getFrameElementOffset = function(a) {
+                    $scope.getFrameElementOffset = function (a) {
                         var b;
                         return angular.isDefined(a) && (b = ya.getNode(a)), ya.getNodeOffset(b);
                     };
-                    $scope.handleResize = function(a) {
+                    $scope.handleResize = function (a) {
                         var c = $element.parent().height(),
                             d = c - a;
                         u($scope.maxWidth, d, $scope.sessionScreenWidth, $scope.sessionScreenHeight);
                     };
-                    $scope.setToolIsActive = function(a, c) {
+                    $scope.setToolIsActive = function (a, c) {
                         $scope.viewerOverlay.setToolIsActive(a, c);
                     };
-                    $scope.enableToolkit = function(a) {
+                    $scope.enableToolkit = function (a) {
                         $scope.viewerOverlay.enableDrawing(a);
                     };
-                    $scope.setIsCollaborativeMode = function(a) {
+                    $scope.setIsCollaborativeMode = function (a) {
                         $scope.isCollaborativeMode = a;
                     };
-                    $scope.setIsOffline = function(a) {
+                    $scope.setIsOffline = function (a) {
                         a ? $scope.viewerOverlay.showOfflineOverlay() : $scope.viewerOverlay.hideOfflineOverlay();
                     };
-                    $scope.$watch(pa, function(height) {
+                    $scope.$watch(pa, function (height) {
                         $scope.viewerOverlay && $scope.viewerOverlay.setOverlayHeight(height);
                     });
-                    $scope.$watch(qa, function(width) {
+                    $scope.$watch(qa, function (width) {
                         $scope.viewerOverlay && $scope.viewerOverlay.setOverlayWidth(width);
                     });
-                    $scope.$watch('viewerOverlayIsCreated', function(isCreated) {
+                    $scope.$watch('viewerOverlayIsCreated', function (isCreated) {
                         $scope.isCreated = isCreated;
                     });
                 },

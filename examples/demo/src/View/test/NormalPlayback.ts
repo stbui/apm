@@ -1,7 +1,8 @@
 import { Timer } from './Timer';
+import { AsyncSliceIterator } from './AsyncSliceIterator';
 
 export class Frames {
-    private _activities;
+    private _activities:AsyncSliceIterator;
     private _millisecondsPerFrame;
 
     constructor(activities, millisecondsPerFrame) {
@@ -114,9 +115,9 @@ export class NormalPlayback {
                 return this._finish(callback);
             }
 
-            var d = c.value;
-            var e = d[0];
-            var f = d[d.length - 1];
+            var activities = c.value;
+            var e = activities[0];
+            var f = activities[activities.length - 1];
 
             var speed = 0;
 
@@ -147,7 +148,8 @@ export class NormalPlayback {
             this._timer.tickTo(f.time);
             this._frameExecutor = setTimeout(() => {
                 if (!this._stopped) {
-                    this._render.render(d, 'normalPlayback');
+                    // sessionnPlayer.render.render
+                    this._render.render(activities, 'normalPlayback');
                     this._timer.finishTicking();
                     this._delay += Date.now() - i;
                     this._replayLoop(callback);
