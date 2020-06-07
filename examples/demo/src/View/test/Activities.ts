@@ -9,32 +9,32 @@ class Snapshots {
         this._snapshots = [];
     }
 
-    add(activity) {
+    add(activity: IActivity) {
         this._snapshots.push(activity);
     }
-    findBetween(lastActivityIndex: number, timelineSelectedValue: number) {
-        return lodash.findLast(this._snapshots, function(a) {
-            return a.playerIndex >= lastActivityIndex && a.time < timelineSelectedValue;
+    findBetween(lastActivityIndex: number, timelineSelectedValue: number): IActivity {
+        return lodash.findLast(this._snapshots, activity => {
+            return activity.playerIndex >= lastActivityIndex && activity.time < timelineSelectedValue;
         });
     }
-    findBetweenActivities(lastActivityIndex: number, selectedActivityIndex: number) {
-        return lodash.findLast(this._snapshots, function(a) {
-            return a.playerIndex >= lastActivityIndex && a.playerIndex < selectedActivityIndex;
+    findBetweenActivities(lastActivityIndex: number, selectedActivityIndex: number): IActivity {
+        return lodash.findLast(this._snapshots, activity => {
+            return activity.playerIndex >= lastActivityIndex && activity.playerIndex < selectedActivityIndex;
         });
     }
-    findBefore(timelineSelectedValue: number) {
-        return lodash.findLast(this._snapshots, function(a) {
-            return a.time < timelineSelectedValue;
+    findBefore(timelineSelectedValue: number): IActivity {
+        return lodash.findLast(this._snapshots, activity => {
+            return activity.time < timelineSelectedValue;
         });
     }
-    findBeforeAcivity(playerIndex: number) {
-        return lodash.findLast(this._snapshots, function(a) {
-            return a.playerIndex < playerIndex;
+    findBeforeAcivity(playerIndex: number): IActivity {
+        return lodash.findLast(this._snapshots, activity => {
+            return activity.playerIndex < playerIndex;
         });
     }
 }
 
-class IteratorFromClosestSnapshotToTime {
+export class IteratorFromClosestSnapshotToTime {
     private _iterator: AsyncSliceIterator;
     private _predicate;
     private _done;
@@ -49,34 +49,66 @@ class IteratorFromClosestSnapshotToTime {
         this._iterator.onPending(callback);
     }
 
-    next(a) {
+    next(callback) {
         var b = this;
-        return b._done
-            ? a({ done: true })
-            : void b.peek(function(c) {
-                  return c.done
-                      ? a({ done: true })
-                      : void b._iterator.next(function(b) {
-                            a(c);
-                        });
-              });
+
+        if (this._done) {
+            return callback({ done: true });
+        }
+
+        this.peek(function (c) {
+            if (c.done) {
+                return callback({ done: true });
+            }
+
+            b._iterator.next(function (b) {
+                callback(c);
+            });
+        });
+
+        // return b._done
+        //     ? a({ done: true })
+        //     : void b.peek(function (c) {
+        //           return c.done
+        //               ? a({ done: true })
+        //               : void b._iterator.next(function (b) {
+        //                     a(c);
+        //                 });
+        //       });
     }
     peek(a) {
         var b = this;
-        return b._done
-            ? a({ done: true })
-            : void b._iterator.peek(function(c) {
-                  return c.done
-                      ? a({ done: true })
-                      : b._predicate(c.value)
-                      ? void a({ done: false, value: c.value })
-                      : ((b._done = true), a({ done: true }));
-              });
+
+        if (this._done) {
+            return a({ done: true });
+        }
+
+        this._iterator.peek(function (c) {
+            if (c.done) {
+                return a({ done: true });
+            } else if (b._predicate(c.value)) {
+                a({ done: false, value: c.value });
+                return;
+            } else {
+                b._done = true;
+                a({ done: true });
+            }
+        });
+
+        // return b._done
+        //     ? a({ done: true })
+        //     : void b._iterator.peek(function (c) {
+        //           return c.done
+        //               ? a({ done: true })
+        //               : b._predicate(c.value)
+        //               ? void a({ done: false, value: c.value })
+        //               : ((b._done = true), a({ done: true }));
+        //       });
     }
 }
 
 export class Activities {
-    private _activities: any[];
+    private _activities: IActivity[];
     private _asyncIterator: AsyncSliceIterator;
     private _snapshots: Snapshots;
 
@@ -125,23 +157,23 @@ export class Activities {
     }
 
     getIteratorFromClosestSnapshotToTime(timelineSelectedValue: number): IteratorFromClosestSnapshotToTime {
-        var b = this._snapshots.findBefore(timelineSelectedValue);
-        var playerIndex = b ? b.playerIndex : 0;
+        var activity = this._snapshots.findBefore(timelineSelectedValue);
+        var index = activity ? activity.playerIndex : 0;
 
-        this._asyncIterator.rewind(playerIndex);
+        this._asyncIterator.rewind(index);
 
-        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function(b) {
+        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function (b) {
             return b.time < timelineSelectedValue;
         });
     }
 
     getIteratorFromClosestSnapshotToActivity(selectedActivity): IteratorFromClosestSnapshotToTime {
         var b = this._snapshots.findBeforeAcivity(selectedActivity.playerIndex),
-            playerIndex = b ? b.playerIndex : 0;
+            index = b ? b.playerIndex : 0;
 
-        this._asyncIterator.rewind(playerIndex);
+        this._asyncIterator.rewind(index);
 
-        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function(b) {
+        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function (b) {
             return b.playerIndex < selectedActivity.playerIndex;
         });
     }
@@ -152,15 +184,15 @@ export class Activities {
     }
     getIteratorAfterEnd(): AsyncSliceIterator {
         var a = this._asyncIterator.peekLast(),
-            b = a ? a.playerIndex : -1;
+            index = a ? a.playerIndex : -1;
 
-        this._asyncIterator.rewind(b + 1);
+        this._asyncIterator.rewind(index + 1);
         return this._asyncIterator;
     }
     getIteratorBetween(lastRenderedActivity, endTime): IteratorFromClosestSnapshotToTime {
         this._asyncIterator.rewind(lastRenderedActivity.playerIndex + 1);
 
-        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function(a) {
+        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function (a) {
             return a.time < endTime;
         });
     }
@@ -170,12 +202,12 @@ export class Activities {
         timelineSelectedValue: number
     ): IteratorFromClosestSnapshotToTime {
         var lastActivityIndex = lastRenderedActivity.playerIndex + 1,
-            d = this._snapshots.findBetween(lastActivityIndex, timelineSelectedValue),
-            playerIndex = d ? d.playerIndex : lastActivityIndex;
+            activity = this._snapshots.findBetween(lastActivityIndex, timelineSelectedValue),
+            index = activity ? activity.playerIndex : lastActivityIndex;
 
-        this._asyncIterator.rewind(playerIndex);
+        this._asyncIterator.rewind(index);
 
-        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function(a) {
+        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function (a) {
             return a.time < timelineSelectedValue;
         });
     }
@@ -185,12 +217,12 @@ export class Activities {
         selectedActivity
     ): IteratorFromClosestSnapshotToTime {
         var lastActivityIndex = lastRenderedActivity.playerIndex + 1,
-            d = this._snapshots.findBetweenActivities(lastActivityIndex, selectedActivity.playerIndex),
-            playerIndex = d ? d.playerIndex : lastActivityIndex;
+            activity = this._snapshots.findBetweenActivities(lastActivityIndex, selectedActivity.playerIndex),
+            index = activity ? activity.playerIndex : lastActivityIndex;
 
-        this._asyncIterator.rewind(playerIndex);
+        this._asyncIterator.rewind(index);
 
-        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function(a) {
+        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function (a) {
             return a.playerIndex < selectedActivity.playerIndex;
         });
     }
@@ -201,11 +233,13 @@ export class Activities {
     ): IteratorFromClosestSnapshotToTime {
         var lastActivityIndex = lastRenderedActivity.playerIndex + 1,
             f = this._snapshots.findBetween(lastActivityIndex, timelineSelectedValue);
+
         f ? f.playerIndex : lastActivityIndex;
+
         this._asyncIterator.rewind(lastRenderedActivity.playerIndex + 1);
         var g = false;
 
-        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function(a) {
+        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function (a) {
             return (
                 !g &&
                 ((g = Activity.isTabVisible(a) || (Activity.isTopLevel(a) && Activity.isVisibleSnapshot(a))),

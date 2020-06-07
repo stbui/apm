@@ -47,21 +47,28 @@ export class AsyncSliceIterator {
     onPending(callback: Function) {
         this._onPending = callback;
     }
-    private _isPending() {
-        var a = this._syncSlice.peek();
+    private _isPending(): boolean {
+        var peek = this._syncSlice.peek();
 
-        return !this._finished && void 0 === a.value;
+        return !this._finished && void 0 === peek.value;
     }
-    private _scheduleOperation(type, callback) {
+    private _scheduleOperation(type: 'next' | 'peek', callback: Function) {
         this._pendingOperations.push({ type: type, callback: callback });
-        1 === this._pendingOperations.length && this._onPending();
+
+        if (this._pendingOperations.length === 1) {
+            this._onPending();
+        }
     }
     private _retryPendingOperations() {
-        var a = this,
-            b = a._pendingOperations;
-        a._pendingOperations = [];
-        b.forEach(function (b) {
-            'next' === b.type ? a.next(b.callback) : 'peek' === b.type && a.peek(b.callback);
+        const _pendingOperations = this._pendingOperations;
+        this._pendingOperations = [];
+
+        _pendingOperations.forEach(b => {
+            if (b.type === 'next') {
+                this.next(b.callback);
+            } else if (b.type === 'peek') {
+                this.peek(b.callback);
+            }
         });
     }
 }

@@ -13,6 +13,7 @@ import { Activities } from './Activities';
 import { Player, player } from './player';
 import { Activity, IActivity } from './Activity';
 import { InitialSettings } from './InitialSettings';
+import { IRender } from './interface';
 
 const PLAYER_CONFIG = {
     MAX_INACTIVITY_TIME: 3e3,
@@ -275,10 +276,10 @@ angular
                         // activities增加了playerIndex
 
                         var newSteps: any = [],
-                            d: any = [],
-                            e: any = [];
+                            newLogs: any = [],
+                            newNetworkRequests: any = [];
 
-                        activities.forEach(function (activity: IActivity) {
+                        activities.forEach((activity: IActivity) => {
                             var b: any = {
                                 time: activity.time,
                                 activityIndex: activity.playerIndex,
@@ -294,18 +295,18 @@ angular
 
                             if (A(activity)) {
                                 b.details = D(activity);
-                                d.push(b);
+                                newLogs.push(b);
                             }
 
                             if (B(activity)) {
                                 b.details = F(activity);
-                                e.push(b);
+                                newNetworkRequests.push(b);
                             }
                         });
 
                         $scope.addNewSteps(newSteps);
-                        $scope.addNewLogs(d);
-                        $scope.addNewNetworkRequests(e);
+                        $scope.addNewLogs(newLogs);
+                        $scope.addNewNetworkRequests(newNetworkRequests);
                     }
                     function J(url) {
                         return 'about:blank' === url || url.indexOf('undefined') > -1;
@@ -320,12 +321,16 @@ angular
                         }
                     }
                     function L(activeTool: string, status: boolean) {
-                        if (status && (($scope.activeTool = activeTool), auth.isCurrentUserLoaded())) {
-                            var currentUser = auth.getCurrentUser();
+                        if (status) {
+                            $scope.activeTool = activeTool;
 
-                            analytics.trackEvent(currentUser.id, ANALYTICS_EVENT_TYPES.SUPPORT_TOOLKIT_ENABLED, {
-                                active_tool: activeTool,
-                            });
+                            if (auth.isCurrentUserLoaded()) {
+                                var currentUser = auth.getCurrentUser();
+
+                                analytics.trackEvent(currentUser.id, ANALYTICS_EVENT_TYPES.SUPPORT_TOOLKIT_ENABLED, {
+                                    active_tool: activeTool,
+                                });
+                            }
                         }
 
                         $scope.setToolIsActive(activeTool, status);
@@ -366,6 +371,7 @@ angular
                     function toolkitFromHeight() {
                         return $element.find('.support-toolkit').height();
                     }
+
                     if (!utils.isBrowserNotSupported()) {
                         var S,
                             brokerClient,
@@ -375,6 +381,7 @@ angular
                                 EVENT_TYPE.VISIBILITY_CHANGE,
                                 EVENT_TYPE.CONSOLE_ERROR,
                             ];
+
                         $scope.PLAYER_ONLINE_MODE = BUILD_ENV.PLAYER_ONLINE_MODE;
                         $scope.isPlaying = false;
                         $scope.timelineValue = 0;
@@ -391,7 +398,7 @@ angular
                         $scope.steps = [];
                         var lastRenderedActivity = { playerIndex: -1, time: 0 };
 
-                        var render = {
+                        var render: IRender = {
                             _onTabHiddenCallback: lodash.noop,
                             isTabHidden: false,
                             lastRenderedActivity: lastRenderedActivity,
@@ -478,20 +485,21 @@ angular
                                 return $scope.viewerIsCreated && !!$scope.session;
                             },
                             function (b) {
-                                b &&
-                                    ($scope.viewerApi.setSessionScreenWidth($scope.session.screenWidth),
-                                    $scope.viewerApi.setSessionScreenHeight($scope.session.screenHeight),
-                                    $scope.viewerApi.setInitialSettings($scope.initialSettings),
-                                    player.fireVisualizeClicks($scope, $scope.settings.playback.shouldVisualizeClicks));
+                                if (b) {
+                                    $scope.viewerApi.setSessionScreenWidth($scope.session.screenWidth);
+                                    $scope.viewerApi.setSessionScreenHeight($scope.session.screenHeight);
+                                    $scope.viewerApi.setInitialSettings($scope.initialSettings);
+                                    player.fireVisualizeClicks($scope, $scope.settings.playback.shouldVisualizeClicks);
+                                }
                             }
                         );
                         $scope.$watch('isTimelineSelectionInProgress', function (b) {
                             H() && b && $scope.pause();
                         });
-                        $scope.$watch('timelineSelectedValue', function (timelineSelectedValue) {
+                        $scope.$watch('timelineSelectedValue', function (time) {
                             if (H()) {
                                 // window.ss_debug && console.log('jump to', b);
-                                $scope.player.jumpToTime(timelineSelectedValue);
+                                $scope.player.jumpToTime(time);
                                 G();
                                 $scope.isPlaying = true;
                                 $scope.hasFinished = false;
@@ -710,27 +718,40 @@ angular
                             $scope.openConsole(c);
                         });
                         $scope.toggleConsole = function () {
-                            $scope.isConsoleExpanded ? $scope.closeConsole() : (K(), $scope.openConsole(null));
+                            if ($scope.isConsoleExpanded) {
+                                $scope.closeConsole();
+                            } else {
+                                K();
+                                $scope.openConsole(null);
+                            }
                         };
                         $scope.updateUrl = function (url) {
                             J(url) || ($scope.url = url);
                         };
-                        $scope.toggleTool = function (b) {
+                        $scope.toggleTool = function (activeTool) {
                             if (
-                                b !== $scope.CONTROL_TAKEOVER ||
+                                activeTool !== $scope.CONTROL_TAKEOVER ||
                                 X !== $scope.CONTROL_TAKEOVER ||
                                 !$scope.endUserPermissionAwaiting
                             ) {
                                 if ($scope.isCollaborativeMode) {
-                                    var c = b !== $scope.activeTool;
-                                    if ((M(), !c)) return;
-                                    b !== $scope.CONTROL_TAKEOVER
-                                        ? (L(b, true), ($scope.endUserPermissionAwaiting = false))
-                                        : ((X = b), N());
-                                } else
-                                    (X = b),
-                                        ($scope.isConfirmationVisible = true),
-                                        ($scope.endUserPermissionAwaiting = false);
+                                    var c = activeTool !== $scope.activeTool;
+                                    M();
+
+                                    if (!c) return;
+
+                                    if (activeTool !== $scope.CONTROL_TAKEOVER) {
+                                        L(activeTool, true);
+                                        $scope.endUserPermissionAwaiting = false;
+                                    } else {
+                                        X = activeTool;
+                                        N();
+                                    }
+                                } else {
+                                    X = activeTool;
+                                    $scope.isConfirmationVisible = true;
+                                    $scope.endUserPermissionAwaiting = false;
+                                }
                                 $scope.endUserDeniedControlTakeOver = false;
                             }
                         };
@@ -741,7 +762,13 @@ angular
                         };
                         $scope.goToCollaborativeMode = function () {
                             $scope.isConfirmationVisible = false;
-                            X !== $scope.CONTROL_TAKEOVER ? (L(X, true), O(true)) : N();
+
+                            if (X !== $scope.CONTROL_TAKEOVER) {
+                                L(X, true);
+                                O(true);
+                            } else {
+                                N();
+                            }
                         };
                         $scope.cancelCollaborativeConfirmation = function () {
                             $scope.isConfirmationVisible = false;

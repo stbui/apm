@@ -1,42 +1,44 @@
 import { Timer } from './Timer';
 import { AsyncSliceIterator } from './AsyncSliceIterator';
-
+import { IRender, IActivity } from './interface';
 export class Frames {
-    private _activities:AsyncSliceIterator;
-    private _millisecondsPerFrame;
+    private _activities: AsyncSliceIterator;
+    private _millisecondsPerFrame: number;
 
-    constructor(activities, millisecondsPerFrame) {
+    constructor(activities: AsyncSliceIterator, millisecondsPerFrame: number) {
         this._activities = activities;
         this._millisecondsPerFrame = millisecondsPerFrame;
     }
 
-    next(a) {
-        this._activities.next(c => {
-            if (c.done) {
-                return a({ done: true });
+    next(callback) {
+        this._activities.next(activity => {
+            if (activity.done) {
+                return callback({ done: true });
             }
 
-            var d = c.value;
-            var e = d.time + this._millisecondsPerFrame;
-            this._getNextFrame(e, [d], a);
+            var value = activity.value;
+            var time = value.time + this._millisecondsPerFrame;
+            this._getNextFrame(time, [value], callback);
         });
     }
 
-    private _getNextFrame(a, b, c) {
-        this._activities.peek(e => {
-            if (e.done) return c({ done: false, value: b });
-            var f = e.value;
-
-            if (f.time > a) {
-                return c({ done: false, value: b });
-            } else {
-                b.push(f);
-                this._activities.next(e => {
-                    this._getNextFrame(a, b, c);
-                });
-
-                return;
+    private _getNextFrame(time: number, value: IActivity[], callback: Function) {
+        this._activities.peek(activity => {
+            if (activity.done) {
+                return callback({ done: false, value: value });
             }
+
+            var val = activity.value;
+            if (val.time > time) {
+                return callback({ done: false, value: value });
+            }
+
+            value.push(val);
+            this._activities.next(e => {
+                this._getNextFrame(time, value, callback);
+            });
+
+            return;
         });
     }
 }
@@ -46,7 +48,7 @@ export class NormalPlayback {
     private _endTime;
     private _activities;
     private _frames: Frames;
-    private _render;
+    private _render: IRender;
     private _delay;
     private _stopped: boolean;
     private _skipPrologedInactivity;
@@ -59,7 +61,7 @@ export class NormalPlayback {
 
     private _frameExecutor: NodeJS.Timeout;
 
-    constructor(time: number, endTime: number, activities, render, config) {
+    constructor(time: number, endTime: number, activities: AsyncSliceIterator, render: IRender, config) {
         this._timer = new Timer(time, config.millisecondsPerFrame);
         this._endTime = endTime;
         this._activities = activities;
@@ -76,15 +78,13 @@ export class NormalPlayback {
         this._onRendering = function () {};
         this._onTimeChanged = function () {};
 
-        var i = this;
-        var buffering = function () {
-            i._onBuffering();
-        };
-        var timeChanged = function (a) {
-            i._onTimeChanged(a);
-        };
-        this._activities.onPending(buffering);
-        this._timer.onTimeChanged(timeChanged);
+        this._activities.onPending(() => {
+            this._onBuffering();
+        });
+
+        this._timer.onTimeChanged(time => {
+            this._onTimeChanged(time);
+        });
     }
 
     onBuffering(callback: Function) {
@@ -103,31 +103,30 @@ export class NormalPlayback {
         this._timer.stopTicking();
         clearTimeout(this._frameExecutor);
     }
-    replay(b) {
+    replay(callback = function () {}) {
         this._stopped = false;
         this._onRendering();
-        this._replayLoop(b || function () {});
+        this._replayLoop(callback);
     }
     private _replayLoop(callback: Function) {
-        var b = this;
         this._frames.next(c => {
             if (c.done) {
                 return this._finish(callback);
             }
 
             var activities = c.value;
-            var e = activities[0];
-            var f = activities[activities.length - 1];
+            var activity = activities[0];
+            var lastActivities = activities[activities.length - 1];
 
             var speed = 0;
 
-            if (e.isFirstLiveActivity) {
+            if (activity.isFirstLiveActivity) {
                 speed = 0;
             } else {
-                var speed = e.time - b._timer.time;
-                speed = Math.min(speed, b._maxInactivityTime);
+                var speed = activity.time - this._timer.time;
+                speed = Math.min(speed, this._maxInactivityTime);
 
-                var h = speed - b._delay;
+                var h = speed - this._delay;
                 if (h < 0) {
                     this._delay -= speed;
                     speed = 0;
@@ -139,13 +138,13 @@ export class NormalPlayback {
                 speed /= this._speed;
 
                 if (this._skipPrologedInactivity && this._render.isTabHidden) {
-                    speed = Math.min(speed, b._tabHiddenMessageTime);
+                    speed = Math.min(speed, this._tabHiddenMessageTime);
                 }
             }
 
             let i = Date.now() + speed;
             this._onRendering();
-            this._timer.tickTo(f.time);
+            this._timer.tickTo(lastActivities.time);
             this._frameExecutor = setTimeout(() => {
                 if (!this._stopped) {
                     // sessionnPlayer.render.render

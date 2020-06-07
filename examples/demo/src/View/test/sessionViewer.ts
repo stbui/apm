@@ -109,8 +109,12 @@ angular
                     function setSessionScreenHeight(sessionScreenHeight) {
                         $scope.sessionScreenHeight = sessionScreenHeight;
                         var height = $element.parent().height();
-                        u($scope.maxWidth, height, $scope.sessionScreenWidth, sessionScreenHeight),
-                            ua || (ua = sessionScreenHeight);
+                        u($scope.maxWidth, height, $scope.sessionScreenWidth, sessionScreenHeight);
+
+                        if (!ua) {
+                            ua = sessionScreenHeight;
+                        }
+                        // ua || (ua = sessionScreenHeight);
                     }
                     function s(a, b) {
                         Aa[a] = b;
@@ -124,23 +128,26 @@ angular
                             i = 1,
                             j = 1;
 
-                        0 !== sessionScreenWidth && (i = sessionScreenWidth < f ? 1 : f / sessionScreenWidth),
-                            0 !== sessionScreenHeight && (j = $element < g ? 1 : g / sessionScreenHeight),
-                            ($scope.scale = Math.min(i, j));
+                        0 !== sessionScreenWidth && (i = sessionScreenWidth < f ? 1 : f / sessionScreenWidth);
+                        0 !== sessionScreenHeight && (j = $element < g ? 1 : g / sessionScreenHeight);
+                        $scope.scale = Math.min(i, j);
 
                         var k = sessionScreenWidth * $scope.scale,
                             l = sessionScreenHeight * $scope.scale;
 
                         f > k
                             ? ($scope.marginLeft = (maxWidth - k) / 2)
-                            : ($scope.marginLeft = VIEWER_MARGINS.HORIZONTAL),
-                            g > l
-                                ? ($scope.marginTop = (maxHeight - l) / 2)
-                                : ($scope.marginTop = VIEWER_MARGINS.VERTICAL),
-                            xa.css({ width: sessionScreenWidth, height: sessionScreenHeight });
+                            : ($scope.marginLeft = VIEWER_MARGINS.HORIZONTAL);
+
+                        g > l ? ($scope.marginTop = (maxHeight - l) / 2) : ($scope.marginTop = VIEWER_MARGINS.VERTICAL);
+
+                        xa.css({ width: sessionScreenWidth, height: sessionScreenHeight });
                     }
                     function v() {
-                        ya.isAttached && (va && va.cancel(), ya.detach());
+                        if (ya.isAttached) {
+                            va && va.cancel();
+                            ya.detach();
+                        }
                     }
                     function w() {
                         if (ja()) {
@@ -170,28 +177,37 @@ angular
                             });
                     }
                     function z() {
-                        ya.isAttached &&
+                        if (ya.isAttached) {
                             ya.traverseDocuments(za, function (a) {
                                 D(a.documentElement);
                             });
+                        }
                     }
                     function A(b) {
                         var c = Ca[b.id],
                             d = angular.element(E(b.id));
-                        c && (c.cancel(), delete Ca[b.id]);
-                        var e = function () {
+
+                        if (c) {
+                            c.cancel();
+                            delete Ca[b.id];
+                        }
+
+                        var condition = function () {
                                 return d.scrollLeft() !== b.left || d.scrollTop() !== b.top;
                             },
-                            f = function () {
+                            body = function () {
                                 $timeout(function () {
-                                    d.scrollTop(b.top), d.scrollLeft(b.left);
+                                    d.scrollTop(b.top);
+                                    d.scrollLeft(b.left);
                                 });
                             },
-                            h = {
+                            waitTimeConfig = {
                                 maxIterations: SCROLL_POSITION_CHANGE.MAX_RETRIES,
                                 waitTime: SCROLL_POSITION_CHANGE.TIMEOUT,
                             };
-                        (Ca[b.id] = new AsyncWhile(e, f, h)), Ca[b.id].start();
+
+                        Ca[b.id] = new AsyncWhile(condition, body, waitTimeConfig);
+                        Ca[b.id].start();
                     }
                     function B(b) {
                         var c = Ba[b.id],
@@ -236,14 +252,21 @@ angular
                     function F(a?) {
                         return angular.isDefined(a) ? ya.getNode(a) : viewer[0];
                     }
-                    function G(a, c?, d?) {
-                        var e = { id: d, top: a, left: c, windowScroll: !0 };
-                        ya.isAttached &&
-                            (A(e),
-                            angular.isUndefined(d) &&
+                    function G(top, left?, id?) {
+                        var e = { id: id, top: top, left: left, windowScroll: true };
+
+                        if (ya.isAttached) {
+                            A(e);
+                            angular.isUndefined(id) &&
                                 $scope.viewerOverlay &&
-                                $scope.viewerOverlay.setScrollPosition(a, c)),
-                            angular.isUndefined(d) ? (Fa = { top: a || 0, left: c || 0 }) : (Ga[d] = e);
+                                $scope.viewerOverlay.setScrollPosition(top, left);
+                        }
+
+                        if (angular.isUndefined(id)) {
+                            Fa = { top: top || 0, left: left || 0 };
+                        } else {
+                            Ga[id] = e;
+                        }
                     }
                     function H(a, b) {
                         M(b);
@@ -255,11 +278,15 @@ angular
                         e && d && e(d);
                     }
                     function J(visibilityState) {
-                        $scope.viewerOverlay &&
-                            ('prerender' === visibilityState || 'hidden' === visibilityState
-                                ? $scope.viewerOverlay.showVisibilityOverlay(visibilityState)
-                                : $scope.viewerOverlay.hideVisibilityOverlay(),
-                            ($scope.visibilityState = visibilityState));
+                        if ($scope.viewerOverlay) {
+                            if ('prerender' === visibilityState || 'hidden' === visibilityState) {
+                                $scope.viewerOverlay.showVisibilityOverlay(visibilityState);
+                            } else {
+                                $scope.viewerOverlay.hideVisibilityOverlay();
+                            }
+
+                            $scope.visibilityState = visibilityState;
+                        }
                     }
                     function K(a) {
                         M(a);
@@ -276,87 +303,123 @@ angular
                                 Ga = {};
                                 Fa = { top: c.top, left: c.left };
 
-                                utils.isDefined(c.visibilityState) &&
-                                    $scope.visibilityState !== c.visibilityState &&
-                                    J(c.visibilityState),
-                                    c.nestedSnapshots &&
-                                        c.nestedSnapshots.forEach(function (a) {
-                                            M(a);
-                                        });
+                                if (
+                                    utils.isDefined(c.visibilityState) &&
+                                    $scope.visibilityState !== c.visibilityState
+                                ) {
+                                    J(c.visibilityState);
+                                }
+
+                                if (c.nestedSnapshots) {
+                                    c.nestedSnapshots.forEach(function (a) {
+                                        M(a);
+                                    });
+                                }
 
                                 var screenWidth = c.screenWidth || ta,
                                     screenHeight = c.screenHeight || ua;
 
-                                ya.isAttached
-                                    ? (setSessionScreenWidth(screenWidth),
-                                      setSessionScreenHeight(screenHeight),
-                                      $scope.viewerOverlay && $scope.viewerOverlay.setScrollPosition(Fa.top, Fa.left))
-                                    : (Ea[EVENT_TYPE.WINDOW_RESIZE] = { width: screenWidth, height: screenHeight });
+                                if (ya.isAttached) {
+                                    setSessionScreenWidth(screenWidth);
+                                    setSessionScreenHeight(screenHeight);
+                                    $scope.viewerOverlay && $scope.viewerOverlay.setScrollPosition(Fa.top, Fa.left);
+                                } else {
+                                    Ea[EVENT_TYPE.WINDOW_RESIZE] = { width: screenWidth, height: screenHeight };
+                                }
+
+                                // ya.isAttached
+                                //     ? (setSessionScreenWidth(screenWidth),
+                                //       setSessionScreenHeight(screenHeight),
+                                //       $scope.viewerOverlay && $scope.viewerOverlay.setScrollPosition(Fa.top, Fa.left))
+                                //     : (Ea[EVENT_TYPE.WINDOW_RESIZE] = { width: screenWidth, height: screenHeight });
                             }
 
                             var customOrigin = $scope.initialSettings.getCustomOrigin();
                             ya.write(c, customOrigin, $scope.sessionId);
                             w();
                             G(c.top, c.left, c.hostElementId || c.frameElementId);
-                            c.nodesScrollPositions &&
+
+                            if (c.nodesScrollPositions) {
                                 angular.forEach(c.nodesScrollPositions, function (a, b) {
                                     Ga[b] = { id: b, top: a.top, left: a.left };
                                 });
+                            }
+
                             $timeout(z);
                             ea(c.frameElementId, c.hostElementId);
                         }
                     }
                     function N(a) {
                         if (!Da) return false;
+
                         var b = Date.now() - Da,
                             c = utils.millisecondsToSeconds(b);
+
                         return Math.floor(c) <= a;
                     }
-                    function O(a) {
+                    function O(data) {
                         if (!N(KEYSTROKE_OPTIONS.END_USER_TYPE_DELAY_SECONDS)) {
-                            var b = angular.element(ya.getNode(a.id));
-                            b.val(a.value);
+                            var b = angular.element(ya.getNode(data.id));
+                            b.val(data.value);
                         }
                     }
-                    function P(a) {
+                    function P(data) {
                         if (ya.isAttached && $scope.viewerOverlay) {
-                            var c = $scope.getFrameElementOffset(a.frameElementId),
-                                d = a.y + c.top,
-                                e = a.x + c.left;
-                            $scope.viewerOverlay.setCursorPosition({ top: d, left: e });
-                        } else Ea[EVENT_TYPE.MOUSE_MOVE] = a;
+                            var c = $scope.getFrameElementOffset(data.frameElementId),
+                                top = data.y + c.top,
+                                left = data.x + c.left;
+                            $scope.viewerOverlay.setCursorPosition({ top: top, left: left });
+                        } else {
+                            Ea[EVENT_TYPE.MOUSE_MOVE] = data;
+                        }
                     }
-                    function Q(a) {
-                        P(a);
+                    function Q(data: { pageX: 84; pageY: 183; selector: any; x: 84; y: 183 }) {
+                        P(data);
                         if (ya.isAttached && $scope.viewerOverlay) {
-                            var c = $scope.getFrameElementOffset(a.frameElementId),
-                                d = Fa.top + a.y + c.top,
-                                e = Fa.left + a.x + c.left;
+                            var c = $scope.getFrameElementOffset(data.frameElementId),
+                                d = Fa.top + data.y + c.top,
+                                e = Fa.left + data.x + c.left;
 
                             $scope.viewerOverlay.registerClick(d, e);
                         }
                     }
-                    function R(a) {
-                        var b = angular.element(ya.getNode(a.id));
-                        b && (b.addClass(SESSIONSTACK_HOVER_CLASS), b.parents().addClass(SESSIONSTACK_HOVER_CLASS));
+                    function R(data: { id: 11780 }) {
+                        var b = angular.element(ya.getNode(data.id));
+                        if (b) {
+                            b.addClass(SESSIONSTACK_HOVER_CLASS);
+                            b.parents().addClass(SESSIONSTACK_HOVER_CLASS);
+                        }
                     }
-                    function S(a) {
-                        var b = angular.element(ya.getNode(a.id));
-                        b &&
-                            (b.removeClass(SESSIONSTACK_HOVER_CLASS),
-                            b.parents().removeClass(SESSIONSTACK_HOVER_CLASS));
+                    function S(data: { id: 11780 }) {
+                        var b = angular.element(ya.getNode(data.id));
+                        if (b) {
+                            b.removeClass(SESSIONSTACK_HOVER_CLASS);
+                            b.parents().removeClass(SESSIONSTACK_HOVER_CLASS);
+                        }
                     }
-                    function T(a) {
-                        a.id ? (Ga[a.id] = a) : (Fa = { top: a.top || 0, left: a.left || 0 }),
-                            ya.isAttached &&
-                                (a.id ? (a.windowScroll ? G(a.top, a.left, a.id) : B(a)) : G(a.top, a.left));
+                    function T(data: { id?: number; left: 0; top: 1; windowScroll: true }) {
+                        if (data.id) {
+                            Ga[data.id] = data;
+                        } else {
+                            Fa = { top: data.top || 0, left: data.left || 0 };
+                        }
+
+                        if (ya.isAttached) {
+                            data.id
+                                ? data.windowScroll
+                                    ? G(data.top, data.left, data.id)
+                                    : B(data)
+                                : G(data.top, data.left);
+                        }
                     }
-                    function U(a) {
-                        ya.isAttached
-                            ? (setSessionScreenWidth(a.width),
-                              setSessionScreenHeight(a.height),
-                              $scope.viewerOverlay && $scope.viewerOverlay.setScrollPosition(Fa.top, Fa.left))
-                            : (Ea[EVENT_TYPE.WINDOW_RESIZE] = a);
+                    function U(data: { height: 679; width: 1623 }) {
+                        if (ya.isAttached) {
+                            setSessionScreenWidth(data.width);
+                            setSessionScreenHeight(data.height);
+                            $scope.viewerOverlay && $scope.viewerOverlay.setScrollPosition(Fa.top, Fa.left);
+                        } else {
+                            Ea[EVENT_TYPE.WINDOW_RESIZE] = data;
+                        }
                     }
                     function V(a) {
                         var b = angular.element(ya.getNode(a.id));
@@ -366,14 +429,14 @@ angular
                         var b = angular.element(ya.getNode(a.id));
                         b.prop('checked', a.state);
                     }
-                    function X(a) {
-                        ha(a.addedOrMoved);
-                        la(a.removed);
-                        na(a.characterData);
-                        ma(a.attributes);
+                    function X(data) {
+                        ha(data.addedOrMoved);
+                        la(data.removed);
+                        na(data.characterData);
+                        ma(data.attributes);
                     }
-                    function Y(a) {
-                        J(a.visibilityState);
+                    function Y(data: { visibilityState: 'hidden' }) {
+                        J(data.visibilityState);
                     }
                     function Z(a) {
                         var b;
@@ -392,24 +455,26 @@ angular
                         c.styleRules = c.styleRules || [];
                         isNaN(a.index) ? c.styleRules.push(a.rule) : c.styleRules.splice(a.index, 0, a.rule);
 
-                        if (ya.isAttached)
+                        if (ya.isAttached) {
                             try {
                                 var d = isNaN(a.index) ? b.sheet.cssRules.length : a.index;
                                 b.sheet.insertRule(a.rule, d);
                             } catch (e) {}
+                        }
                     }
                     function _(a) {
                         var b = ya.getNode(a.nodeId),
                             c = ya.getNodePropertyObject(b);
-                        if (
-                            ((ya.styleRuleNodes[a.nodeId] = b),
-                            (c.styleRules = c.styleRules || []),
-                            c.styleRules.length > a.index && c.styleRules.splice(a.index, 1),
-                            ya.isAttached)
-                        )
+
+                        ya.styleRuleNodes[a.nodeId] = b;
+                        c.styleRules = c.styleRules || [];
+                        c.styleRules.length > a.index && c.styleRules.splice(a.index, 1);
+
+                        if (ya.isAttached) {
                             try {
                                 b.sheet.deleteRule(a.index);
                             } catch (d) {}
+                        }
                     }
                     function aa(a) {
                         var b = angular.element(ya.getNode(a.nodeId));
@@ -439,21 +504,23 @@ angular
                     function fa(a) {
                         if (a && a.sheet) {
                             var b = ya.getNodePropertyObject(a);
-                            b.styleRules &&
-                                (ga(a),
+
+                            if (b.styleRuleNodes) {
+                                ga(a);
                                 b.styleRules.forEach(function (b, c) {
                                     try {
-                                        b.indexOf('inset:') >= 0 && (b = utils.replaceInsetStyleRule(b)),
-                                            a.sheet.insertRule(b, c);
+                                        b.indexOf('inset:') >= 0 && (b = utils.replaceInsetStyleRule(b));
+                                        a.sheet.insertRule(b, c);
                                     } catch (e) {}
-                                }));
+                                });
+                            }
                         }
                     }
                     function ga(a) {
                         for (; a.sheet.cssRules.length > 0; ) a.sheet.deleteRule(0);
                     }
                     function ha(addedOrMoved) {
-                        addedOrMoved &&
+                        if (addedOrMoved) {
                             angular.forEach(addedOrMoved, function (a) {
                                 var b;
                                 if (a.node) {
@@ -476,16 +543,18 @@ angular
                                 }
                                 a.node && 'STYLE' === a.node.tagName && a.node.styleRules && fa(b);
                             });
+                        }
                     }
                     function ia(a) {
                         var b;
-                        if (
-                            (a.parentId
-                                ? (b = ya.getNode(a.parentId))
-                                : a.previousSiblingId && (b = ya.getNode(a.previousSiblingId)),
-                            b)
-                        )
+
+                        a.parentId
+                            ? (b = ya.getNode(a.parentId))
+                            : a.previousSiblingId && (b = ya.getNode(a.previousSiblingId));
+
+                        if (b) {
                             return ya.getNodePropertyObject(b);
+                        }
                     }
                     function ja() {
                         return $scope.initialSettings && $scope.initialSettings.isAssureCoWorkaroundEnabled();
@@ -505,19 +574,21 @@ angular
                                 ya.removeNode(id);
                             });
                     }
-                    function ma(a) {
-                        a &&
-                            angular.forEach(a, function (a) {
-                                var b = ya.getNode(a.id);
-                                ya.setAttribute(b, a.name, a.value);
+                    function ma(attributes) {
+                        if (attributes) {
+                            angular.forEach(attributes, function (attribute) {
+                                var b = ya.getNode(attribute.id);
+                                ya.setAttribute(b, attribute.name, attribute.value);
                             });
+                        }
                     }
-                    function na(a) {
-                        a &&
-                            angular.forEach(a, function (a) {
+                    function na(characterData) {
+                        if (characterData) {
+                            angular.forEach(characterData, function (a) {
                                 var b = ya.getNode(a.id);
                                 b && (b.textContent = a.value);
                             });
+                        }
                     }
                     function oa() {
                         if (viewer[0]) return viewer[0].contentDocument;
@@ -542,7 +613,7 @@ angular
                         ya.setSettings(initialSettings);
                     }
                     var ta,
-                        ua,
+                        ua, // sessionScreenHeight
                         va,
                         viewer = angular.element('#viewer'),
                         xa = angular.element('#viewer-container'),
@@ -656,11 +727,17 @@ angular
                                 i = g.scrollLeft(),
                                 j = Math.floor(h + e),
                                 k = Math.floor(i + c);
-                            g.scrollTop(j), g.scrollLeft(k);
+
+                            g.scrollTop(j);
+                            g.scrollLeft(k);
+
                             var l = Math.floor(g.scrollTop()) === j,
                                 n = Math.floor(g.scrollLeft()) === k;
+
                             if ((g.scrollTop(h), g.scrollLeft(i), l && n)) break;
-                            if (((f = utils.getParentElement(f)), f === g[0] || f === viewer[0])) break;
+
+                            f = utils.getParentElement(f);
+                            if (f === g[0] || f === viewer[0]) break;
                         }
                         var o = ya.getNodePropertyObject(f);
                         return {
@@ -683,8 +760,8 @@ angular
                     };
                     $scope.handleResize = function (a) {
                         var c = $element.parent().height(),
-                            d = c - a;
-                        u($scope.maxWidth, d, $scope.sessionScreenWidth, $scope.sessionScreenHeight);
+                            maxHeight = c - a;
+                        u($scope.maxWidth, maxHeight, $scope.sessionScreenWidth, $scope.sessionScreenHeight);
                     };
                     $scope.setToolIsActive = function (a, c) {
                         $scope.viewerOverlay.setToolIsActive(a, c);
@@ -695,8 +772,12 @@ angular
                     $scope.setIsCollaborativeMode = function (a) {
                         $scope.isCollaborativeMode = a;
                     };
-                    $scope.setIsOffline = function (a) {
-                        a ? $scope.viewerOverlay.showOfflineOverlay() : $scope.viewerOverlay.hideOfflineOverlay();
+                    $scope.setIsOffline = function (status) {
+                        if (status) {
+                            $scope.viewerOverlay.showOfflineOverlay();
+                        } else {
+                            $scope.viewerOverlay.hideOfflineOverlay();
+                        }
                     };
                     $scope.$watch(pa, function (height) {
                         $scope.viewerOverlay && $scope.viewerOverlay.setOverlayHeight(height);

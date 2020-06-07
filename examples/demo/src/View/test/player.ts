@@ -203,27 +203,11 @@ export const player = {
 import { InstantPlayback } from './InstantPlayback';
 import { NormalPlayback } from './NormalPlayback';
 import { LivePlayback } from './LivePlayback';
-import { Activities } from './Activities';
+import { Activities, IteratorFromClosestSnapshotToTime } from './Activities';
+import { AsyncSliceIterator } from './AsyncSliceIterator';
+import { IRender } from './interface';
 
-const noop = function() {};
-
-interface ILastRenderedActivity {
-    playerIndex: number;
-    time: number;
-    data?: { visibilityState: 'hidden' };
-    index?: number;
-    timestamp?: number;
-    type?: 'visibility_change'|'childList';
-}
-
-interface IRender {
-    isTabHidden: boolean;
-            lastRenderedActivity: ILastRenderedActivity;
-    onTabHidden: (...a) => void;
-    render: (b, d?) => void;
-    reset: () => void;
-    _onTabHiddenCallback: () => void;
-}
+const noop = function () {};
 
 export class Player {
     private _activities: Activities;
@@ -266,11 +250,10 @@ export class Player {
         this._onPaused = noop;
         this._onTimeChanged = noop;
 
-        var e = this;
-        this._replayFinished = function() {
-            e._stop();
-            var lastRenderedActivity = e._render.lastRenderedActivity;
-            e._activities.isLastActivity(lastRenderedActivity) ? e._onFinished() : e._onPaused();
+        this._replayFinished = () => {
+            this._stop();
+            var lastRenderedActivity = this._render.lastRenderedActivity;
+            this._activities.isLastActivity(lastRenderedActivity) ? this._onFinished() : this._onPaused();
         };
     }
 
@@ -278,14 +261,17 @@ export class Player {
         this._stop();
         var lastRenderedActivity = this._render.lastRenderedActivity;
 
-        if (this._pauseAt && timelineValue < this._pauseAt)
-            var sessionLength = this._pauseAt,
-                activities = this._activities.getIteratorBetween(lastRenderedActivity, this._pauseAt);
-        else
-            var sessionLength = this._activities.getSessionLength() + 1,
-                activities = this._activities.getIteratorAfter(lastRenderedActivity);
+        var sessionLength;
+        var asyncSliceIterator;
+        if (this._pauseAt && timelineValue < this._pauseAt) {
+            sessionLength = this._pauseAt;
+            asyncSliceIterator = this._activities.getIteratorBetween(lastRenderedActivity, this._pauseAt);
+        } else {
+            sessionLength = this._activities.getSessionLength() + 1;
+            asyncSliceIterator = this._activities.getIteratorAfter(lastRenderedActivity);
+        }
 
-        this._playback = this._createNormalPlayback(timelineValue, sessionLength, activities);
+        this._playback = this._createNormalPlayback(timelineValue, sessionLength, asyncSliceIterator);
         this._playback.replay(this._replayFinished);
     }
     pause() {
@@ -296,14 +282,15 @@ export class Player {
         this._stop();
         var lastRenderedActivity = this._render.lastRenderedActivity;
 
+        var activities;
         if (timelineSelectedValue < lastRenderedActivity.time) {
+            // 回退
             this._render.reset();
-            var activities = this._activities.getIteratorFromClosestSnapshotToTime(timelineSelectedValue);
-        } else
-            var activities = this._activities.getIteratorFromClosestSnapshotBetween(
-                lastRenderedActivity,
-                timelineSelectedValue
-            );
+            this._activities.getIteratorFromClosestSnapshotToTime(timelineSelectedValue);
+        } else {
+            // 前进
+            this._activities.getIteratorFromClosestSnapshotBetween(lastRenderedActivity, timelineSelectedValue);
+        }
 
         this._playback = this._createInstantPlayback(activities);
         this._playback.replay(this.play.bind(this, timelineSelectedValue));
@@ -347,8 +334,8 @@ export class Player {
                 f = Math.min(a + b._config.tabHiddenMessageTime, e);
 
             if (a < endTime && endTime <= f) {
-                var activities = b._activities.getIteratorBetween(lastRenderedActivity, endTime);
-                b._playback = b._createNormalPlayback(a, endTime, activities);
+                var activities = this._activities.getIteratorBetween(lastRenderedActivity, endTime);
+                this._playback = this._createNormalPlayback(a, endTime, activities);
                 b._playback.replay(b._replayFinished);
 
                 return;
@@ -357,7 +344,7 @@ export class Player {
             var g = b._activities.getIteratorBetween(lastRenderedActivity, f);
             b._playback = b._createNormalPlayback(a, f, g);
 
-            b._playback.replay(function() {
+            b._playback.replay(function () {
                 b._stop();
                 b._skippingToTabShown = true;
 
@@ -375,7 +362,7 @@ export class Player {
                 var activities = b._activities.getIteratorFromClosestSnapshotToFirstTabShown(lastRenderedActivity, c);
 
                 b._playback = b._createInstantPlayback(activities);
-                b._playback.replay(function() {
+                b._playback.replay(function () {
                     var a = b._render.lastRenderedActivity,
                         c = Math.max(f, a.time);
 
@@ -426,8 +413,12 @@ export class Player {
         this._playback = this._createNullPlayback(0);
         this._skippingToTabShown = false;
     }
-    _createNormalPlayback(time: number, endTime: number, activities): NormalPlayback {
-        const normalPlayback = new NormalPlayback(time, endTime, activities, this._render, this._config);
+    _createNormalPlayback(
+        time: number,
+        endTime: number,
+        iterator: AsyncSliceIterator | IteratorFromClosestSnapshotToTime
+    ): NormalPlayback {
+        const normalPlayback = new NormalPlayback(time, endTime, iterator, this._render, this._config);
 
         normalPlayback.onBuffering(this._onBuffering);
         normalPlayback.onRendering(this._onPlaying);

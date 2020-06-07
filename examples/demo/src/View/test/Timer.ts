@@ -6,7 +6,7 @@ export class Timer {
     private _interval;
     private _stopped: boolean;
 
-    private _onTimeChanged: Function;
+    private _onTimeChanged: (time: number) => void;
 
     constructor(time: number, tickStep: number) {
         this.time = time;
@@ -28,13 +28,13 @@ export class Timer {
     stopTicking() {
         this._stopInterval();
     }
-    onTimeChanged(callback: Function) {
+    onTimeChanged(callback: (time: number) => void) {
         this._onTimeChanged = callback;
     }
     changeSpeed(speed: number) {
         this._speed = speed;
     }
-    private _updateTime(time) {
+    private _updateTime(time: number) {
         if (time !== this.time) {
             this.time = time;
             this._onTimeChanged(time);

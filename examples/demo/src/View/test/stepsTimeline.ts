@@ -25,10 +25,10 @@ angular.module('playerApp').directive('stepsTimeline', [
     'lodash',
     'EVENT_TYPE',
     'USER_DETAILS_ANIMATION_TIME',
-    function($timeout) {
+    function ($timeout) {
         return {
             restrict: 'E',
-            replace: !0,
+            replace: true,
             templateUrl: 'templates/stepsTimeline.html',
             scope: {
                 addNewSteps: '=',
@@ -42,9 +42,9 @@ angular.module('playerApp').directive('stepsTimeline', [
                 hideMask: '=',
                 loaded: '=',
             },
-            link: function($scope: IScope, $element, j) {
-                function k(a?, c?) {
-                    if (((A = a), c || $scope.isEnabled)) {
+            link: function ($scope: IScope, $element, j) {
+                function k(playerIndex?, c?) {
+                    if (((A = playerIndex), c || $scope.isEnabled)) {
                         for (
                             var d, e = 0;
                             e < $scope.filteredSteps.length && $scope.filteredSteps[e].activityIndex < A;
@@ -65,7 +65,7 @@ angular.module('playerApp').directive('stepsTimeline', [
                     }
                 }
                 function m(a, c: boolean) {
-                    utils.forEach(a, function(a, d) {
+                    utils.forEach(a, function (a, d) {
                         $scope.activityTypeStatuses[a] = c;
                     });
                 }
@@ -102,7 +102,12 @@ angular.module('playerApp').directive('stepsTimeline', [
 
                     var d = c.title + ' ' + (c.summary || '');
 
-                    return (a.modalSize = b), (a.stepStyle = c), (a.searchLabel = d), (a.count = 1), a;
+                    a.modalSize = b;
+                    a.stepStyle = c;
+                    a.searchLabel = d;
+                    a.count = 1;
+
+                    return a;
                 }
                 function q(type, details, isLog) {
                     switch (type) {
@@ -160,49 +165,51 @@ angular.module('playerApp').directive('stepsTimeline', [
                 }
                 function t(a) {
                     var b = '';
-                    return (
-                        utils.isArray(a) &&
-                            utils.forEach(utils.reverse(a), function(a, c) {
-                                if ((c > 0 && (b += ' '), a.id)) b += '#' + a.id;
-                                else {
-                                    if (!a.tagName)
-                                        return void sessionstackManager.warn(
-                                            'Element node does not have a tag name. Element index: ' + c
-                                        );
-                                    (b += a.tagName.toLowerCase()),
-                                        a.classes && a.classes.length > 0 && (b += '.' + utils.join(a.classes, '.'));
+
+                    if (utils.isArray(a)) {
+                        utils.forEach(utils.reverse(a), function (a, c) {
+                            if ((c > 0 && (b += ' '), a.id)) {
+                                b += '#' + a.id;
+                            } else {
+                                if (!a.tagName) {
+                                    // sessionstackManager.warn(
+                                    //     'Element node does not have a tag name. Element index: ' + c
+                                    // );
+                                    return;
                                 }
-                            }),
-                        b
-                    );
+
+                                b += a.tagName.toLowerCase();
+                                a.classes && a.classes.length > 0 && (b += '.' + utils.join(a.classes, '.'));
+                            }
+                        });
+                    }
+
+                    return b;
                 }
                 function u() {
                     $scope.hideFilters();
-                    m(C, !0);
+                    m(C, true);
                 }
-                var v = $element
-                        .find('.md-virtual-repeat-container')
-                        .children()
-                        .eq(0),
+                var v = $element.find('.md-virtual-repeat-container').children().eq(0),
                     w = $element.find('.filter-sections'),
                     x = $element.find('.steps-section'),
                     y = $element.parent().find('user-identity-details');
 
                 n();
-                $scope.isEnabled = !0;
-                $scope.isLoaded = !1;
-                $scope.shouldShowMask = !0;
+                $scope.isEnabled = true;
+                $scope.isLoaded = false;
+                $scope.shouldShowMask = true;
                 $scope.transformedSteps = [];
                 $scope.filteredSteps = [];
                 $scope.activityTypeStatuses = {};
                 $scope.EVENT_TYPE = EVENT_TYPE;
                 $scope.expandedStepIndex = null;
                 $scope.scrollbarConfig = {
-                    autoHideScrollbar: !1,
+                    autoHideScrollbar: false,
                     theme: 'light',
-                    advanced: { updateOnContentResize: !0 },
+                    advanced: { updateOnContentResize: true },
                     callbacks: {
-                        onBeforeUpdate: function() {
+                        onBeforeUpdate: function () {
                             $('.step.is-open').is(':nth-last-of-type(-n+4)') &&
                                 $scope.updateScrollbar('scrollTo', 'bottom');
                         },
@@ -211,7 +218,7 @@ angular.module('playerApp').directive('stepsTimeline', [
                     setHeight: 200,
                     scrollInertia: 0,
                 };
-                var z = (function(a, b) {
+                var z = (function (a, b) {
                     function c(a) {
                         return !i[a.activityIndex];
                     }
@@ -222,7 +229,7 @@ angular.module('playerApp').directive('stepsTimeline', [
                             c.push(a);
                             j[b] = c;
                         }
-                        i[a.activityIndex] = !0;
+                        i[a.activityIndex] = true;
                     }
                     function g(a) {
                         return Math.floor(utils.millisecondsToSeconds(a.time));
@@ -231,7 +238,8 @@ angular.module('playerApp').directive('stepsTimeline', [
                         if (a.isLog) {
                             var b = g(a),
                                 c = j[b] || [];
-                            return lodash.find(c, function(b) {
+
+                            return lodash.find(c, function (b) {
                                 return (
                                     b.details.message === a.details.message &&
                                     b.details.level === a.details.level &&
@@ -244,7 +252,7 @@ angular.module('playerApp').directive('stepsTimeline', [
                         j = {},
                         k = a;
                     return {
-                        addNewStep: function(a) {
+                        addNewStep: function (a) {
                             if (a && c(a)) {
                                 var d = h(a);
                                 if (d) (d.activityIndex = a.activityIndex), d.count++;
@@ -268,13 +276,13 @@ angular.module('playerApp').directive('stepsTimeline', [
                 ];
                 var C = playerSettings.getActivitiesFilterFromUrl();
 
-                $scope.updateStepsTimeline = function(playerIndex, b?) {
+                $scope.updateStepsTimeline = function (playerIndex, b?) {
                     k(playerIndex, b);
                 };
-                $scope.setLastPlayedActivity = function(a) {
+                $scope.setLastPlayedActivity = function (a) {
                     k(a);
                 };
-                $scope.addNewSteps = function(
+                $scope.addNewSteps = function (
                     a: {
                         time: any;
                         activityIndex: any;
@@ -286,12 +294,12 @@ angular.module('playerApp').directive('stepsTimeline', [
                 ) {
                     utils.isArray(a) && lodash.forEach(a, z.addNewStep);
                 };
-                $scope.updateSelectedStep = function() {
-                    $timeout(function() {
+                $scope.updateSelectedStep = function () {
+                    $timeout(function () {
                         k(A);
                     }, 0);
                 };
-                $scope.selectStep = function(selectedStep) {
+                $scope.selectStep = function (selectedStep) {
                     if (
                         !(
                             $scope.selectedStep === selectedStep ||
@@ -305,53 +313,53 @@ angular.module('playerApp').directive('stepsTimeline', [
                         l();
                     }
                 };
-                $scope.selectNextStep = function() {
+                $scope.selectNextStep = function () {
                     $scope.selectStep($scope.selectedStep + 1);
                 };
-                $scope.enable = function() {
-                    $scope.isEnabled = !0;
+                $scope.enable = function () {
+                    $scope.isEnabled = true;
                 };
-                $scope.disable = function() {
-                    $scope.isEnabled = !1;
+                $scope.disable = function () {
+                    $scope.isEnabled = false;
                 };
-                $scope.loaded = function() {
-                    $scope.isLoaded = !0;
+                $scope.loaded = function () {
+                    $scope.isLoaded = true;
                 };
-                $scope.hasInactiveFilters = function() {
-                    var a = !1;
-                    return (
-                        utils.forEach($scope.activityTypeStatuses, function(b, c) {
-                            b || (a = !0);
-                        }),
-                        a
-                    );
+                $scope.hasInactiveFilters = function () {
+                    var a = false;
+
+                    utils.forEach($scope.activityTypeStatuses, function (b, c) {
+                        b || (a = true);
+                    });
+
+                    return a;
                 };
-                $scope.toggleFilter = function(a) {
+                $scope.toggleFilter = function (a) {
                     $scope.activityTypeStatuses[a] = !$scope.activityTypeStatuses[a];
                     $scope.updateSelectedStep();
                 };
-                $scope.showFilters = function() {
-                    m(B, !0);
+                $scope.showFilters = function () {
+                    m(B, true);
                     $scope.updateSelectedStep();
                 };
-                $scope.hideFilters = function() {
-                    m(B, !1);
+                $scope.hideFilters = function () {
+                    m(B, false);
                     $scope.updateSelectedStep();
                 };
-                $scope.$watch('containerHeight', function(a) {
+                $scope.$watch('containerHeight', function (a) {
                     a && n();
                 });
-                $scope.handleUserDetailsResize = function(outerHeight) {
+                $scope.handleUserDetailsResize = function (outerHeight) {
                     n(outerHeight, USER_DETAILS_ANIMATION_TIME);
                 };
-                $scope.onStepExpand = function(a) {
+                $scope.onStepExpand = function (a) {
                     $scope.expandedStepIndex === a ? ($scope.expandedStepIndex = null) : ($scope.expandedStepIndex = a);
                 };
-                $scope.hideMask = function() {
-                    $scope.shouldShowMask = !1;
+                $scope.hideMask = function () {
+                    $scope.shouldShowMask = false;
                 };
                 u();
-                $scope.isCreated = !0;
+                $scope.isCreated = true;
             },
         };
     },
