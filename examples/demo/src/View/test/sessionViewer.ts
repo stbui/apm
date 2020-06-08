@@ -665,11 +665,12 @@ angular
                     $scope.$watch('showLoadingAnimation', function (a) {
                         $scope.viewerOverlay && $scope.viewerOverlay.showLoadingAnimation(a);
                     });
-                    player.onExecuteEvent($scope, I),
-                        player.onClear($scope, H),
-                        player.onPlayerSpeedChange($scope, function (a, c) {
-                            $scope.viewerOverlay && $scope.viewerOverlay.setPlayerSpeed(c);
-                        });
+
+                    player.onExecuteEvent($scope, I);
+                    player.onClear($scope, H);
+                    player.onPlayerSpeedChange($scope, function (a, c) {
+                        $scope.viewerOverlay && $scope.viewerOverlay.setPlayerSpeed(c);
+                    });
                     player.onVisualizeClicks($scope, function (a, c) {
                         $scope.viewerOverlay && $scope.viewerOverlay.setShouldVisualizeClicks(c);
                     });

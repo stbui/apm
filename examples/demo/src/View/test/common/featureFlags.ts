@@ -1,11 +1,11 @@
 import { restSettings } from './restSettings';
 import { utils } from './utils';
 import { tokenManager } from './tokenManager';
+import { $resource } from './resource';
 
 //
 //
 const promise: any = {};
-const $resource: any = {};
 
 //
 var i = restSettings.buildUrl('features/:id'),

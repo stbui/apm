@@ -1,10 +1,7 @@
 import { restSettings } from './restSettings';
 import { tokenManager } from './tokenManager';
 import { utils } from './utils';
-
-//
-export const promise: any = {};
-export const $resource: any = {};
+import { $resource } from './resource';
 
 //
 

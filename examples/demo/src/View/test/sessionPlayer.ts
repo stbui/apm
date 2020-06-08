@@ -96,7 +96,7 @@ angular
         'ANALYTICS_EVENT_TYPES',
         'BUILD_ENV',
         'EVENT_TYPE',
-        function($interval, $timeout) {
+        function ($interval, $timeout) {
             return {
                 restrict: 'E',
                 replace: true,
@@ -114,9 +114,9 @@ angular
                     api: '=',
                     playRecordedSession: '=',
                 },
-                link: function($scope: IScope, $element, t) {
+                link: function ($scope: IScope, $element, t) {
                     function onTimeChanged(timelineValue) {
-                        $scope.$apply(function() {
+                        $scope.$apply(function () {
                             $scope.timelineValue = timelineValue;
                         });
                     }
@@ -202,7 +202,7 @@ angular
                             c.message = d.type ? d.type + ': ' : '';
                             c.message += d.message;
                             c.isMessageTrimmed = false;
-                            c.stackFrames = (d.stackFrames || []).map(function(a) {
+                            c.stackFrames = (d.stackFrames || []).map(function (a) {
                                 return a.source || '';
                             });
                         } else {
@@ -402,16 +402,19 @@ angular
                             _onTabHiddenCallback: lodash.noop,
                             isTabHidden: false,
                             lastRenderedActivity: lastRenderedActivity,
-                            reset: function() {
+                            reset: function () {
                                 this.isTabHidden = false;
                                 this.lastRenderedActivity = lastRenderedActivity;
                             },
                             // d:normalPlayback
-                            render: function(activities: IActivity[], d) {
+                            render: function (activities: IActivity[], d) {
                                 // var f = this;
                                 activities.forEach(activity => {
                                     // window.ss_debug && console.log(d, b);
-                                    A(activity) || player.fireExecuteEvent($scope, activity);
+                                    if (!A(activity)) {
+                                        // 668 sessionViewer.onExecuteEvent()
+                                        player.fireExecuteEvent($scope, activity);
+                                    }
 
                                     if (
                                         Activity.isTabVisibilityChange(activity) ||
@@ -426,12 +429,12 @@ angular
                                 $scope.updateConsole(this.lastRenderedActivity.playerIndex);
                                 this.isTabHidden && setTimeout(this._onTabHiddenCallback, 0);
                             },
-                            onTabHidden: function(callback) {
+                            onTabHidden: function (callback) {
                                 this._onTabHiddenCallback = callback;
                             },
                         };
 
-                        render.onTabHidden(function() {
+                        render.onTabHidden(function () {
                             render.isTabHidden && $scope.player.skipToTabShown($scope.timelineValue);
                         });
 
@@ -459,14 +462,14 @@ angular
                         $scope.CURSOR = SUPPORT_TOOLS.CURSOR;
                         $scope.PEN = SUPPORT_TOOLS.PEN;
                         $scope.CONTROL_TAKEOVER = SUPPORT_TOOLS.CONTROL_TAKEOVER;
-                        $scope.settings.playback.speedOption = function(b) {
+                        $scope.settings.playback.speedOption = function (b) {
                             return arguments.length > 0
                                 ? ($scope.settings.playback.speed = b.value)
-                                : lodash.find($scope.speedOptions, function(b) {
+                                : lodash.find($scope.speedOptions, function (b) {
                                       return b.value === $scope.settings.playback.speed;
                                   });
                         };
-                        $scope.$watch('initialSettings', function(initialSettings) {
+                        $scope.$watch('initialSettings', function (initialSettings) {
                             if (initialSettings) {
                                 // 639
                                 $scope.api.loadSession(initialSettings);
@@ -474,7 +477,7 @@ angular
                         });
                         // 初始化组件完毕
                         // test:1
-                        $scope.$watch(H, function(inited: boolean) {
+                        $scope.$watch(H, function (inited: boolean) {
                             if (inited) {
                                 // 初始化数据
                                 // playerController.onPlayerIsInitialized
@@ -486,10 +489,10 @@ angular
                             }
                         });
                         $scope.$watch(
-                            function() {
+                            function () {
                                 return $scope.viewerIsCreated && !!$scope.session;
                             },
-                            function(b) {
+                            function (b) {
                                 if (b) {
                                     $scope.viewerApi.setSessionScreenWidth($scope.session.screenWidth);
                                     $scope.viewerApi.setSessionScreenHeight($scope.session.screenHeight);
@@ -498,10 +501,10 @@ angular
                                 }
                             }
                         );
-                        $scope.$watch('isTimelineSelectionInProgress', function(b) {
+                        $scope.$watch('isTimelineSelectionInProgress', function (b) {
                             H() && b && $scope.pause();
                         });
-                        $scope.$watch('timelineSelectedValue', function(time) {
+                        $scope.$watch('timelineSelectedValue', function (time) {
                             if (H()) {
                                 // window.ss_debug && console.log('jump to', b);
                                 $scope.player.jumpToTime(time);
@@ -511,7 +514,7 @@ angular
                                 $scope.api.setUserHasGoneOffline(false);
                             }
                         });
-                        $scope.$watch('settings.playback.shouldSkipProlongedInactivity', function(
+                        $scope.$watch('settings.playback.shouldSkipProlongedInactivity', function (
                             shouldSkipProlongedInactivity: boolean
                         ) {
                             $scope.player.changeProlongedInactivitySetting(
@@ -519,21 +522,21 @@ angular
                                 $scope.timelineValue
                             );
                         });
-                        $scope.$watch('settings.playback.speed', function(speed: number) {
+                        $scope.$watch('settings.playback.speed', function (speed: number) {
                             $scope.player.changeSpeedSetting(speed, $scope.timelineValue);
                         });
-                        $scope.$watch('settings.playback.shouldPauseOnMarker', function(shouldPauseOnMarker) {
+                        $scope.$watch('settings.playback.shouldPauseOnMarker', function (shouldPauseOnMarker) {
                             shouldPauseOnMarker && $scope.pauseActivity
                                 ? $scope.player.changePauseMarker($scope.pauseActivity.time, $scope.timelineValue)
                                 : $scope.player.changePauseMarker(null, $scope.timelineValue);
                         });
-                        $scope.$watch('settings.playback.shouldVisualizeClicks', function(shouldVisualizeClicks) {
+                        $scope.$watch('settings.playback.shouldVisualizeClicks', function (shouldVisualizeClicks) {
                             player.fireVisualizeClicks($scope, shouldVisualizeClicks);
                         });
-                        $scope.togglePlaying = function() {
+                        $scope.togglePlaying = function () {
                             $scope.isPlaying ? $scope.pause() : $scope.play();
                         };
-                        $scope.start = function() {
+                        $scope.start = function () {
                             // window.ss_debug && console.log('firststart activities');
                             $scope.player.jumpToTime($scope.startTime);
                             $scope.isStreamingLive = false;
@@ -542,14 +545,14 @@ angular
                             $scope.timelineValue = $scope.startTime;
                             $scope.api.setUserHasGoneOffline(false);
                         };
-                        $scope.play = function() {
+                        $scope.play = function () {
                             // window.ss_debug && console.log('play activities');
                             $scope.player.play($scope.timelineValue);
                             $scope.isStreamingLive = false;
                             $scope.isPlaying = true;
                             $scope.hasFinished = false;
                         };
-                        $scope.pause = function() {
+                        $scope.pause = function () {
                             // window.ss_debug && console.log('pause activities');
                             var isStreamingLive = $scope.isStreamingLive;
                             $scope.player.pause();
@@ -557,10 +560,10 @@ angular
                             $scope.isPlaying = false;
                             $scope.hasFinished = isStreamingLive;
                         };
-                        $scope.repeat = function() {
+                        $scope.repeat = function () {
                             $scope.start();
                         };
-                        $scope.goLive = function() {
+                        $scope.goLive = function () {
                             // window.ss_debug && console.log('go live');
                             $scope.activities.resetLoading();
                             $scope.player.goLive($scope.timelineValue);
@@ -572,12 +575,12 @@ angular
                             player.fireStartLiveStreaming($scope, lodash.noop);
                             P();
                         };
-                        $scope.showSessionDetails = function(b) {
+                        $scope.showSessionDetails = function (b) {
                             sessionstackManager.log("Clicked on 'Details'");
                             $scope.pause();
                             sessionDetailsModal.open(b);
                         };
-                        $scope.onSelectedActivity = function(selectedActivity: {
+                        $scope.onSelectedActivity = function (selectedActivity: {
                             activityIndex: number;
                             count: number;
                             details: object;
@@ -602,31 +605,31 @@ angular
                         $scope.userPermissionRequest = {
                             ignore: true,
                             state: null,
-                            isApproved: function() {
+                            isApproved: function () {
                                 return this.ignore || 'approved' === this.state;
                             },
-                            send: function() {
+                            send: function () {
                                 'awaiting-response' != this.state &&
                                     ((this.state = 'awaiting-response'), player.fireUserPermissionRequestSend($scope));
                             },
-                            cancel: function() {
+                            cancel: function () {
                                 'canceled' != this.state &&
                                     ((this.state = 'canceled'), player.fireUserPermissionRequestCanceled($scope));
                             },
-                            deny: function() {
+                            deny: function () {
                                 'denied-request' != this.state && (this.state = 'denied-request');
                             },
-                            approve: function() {
+                            approve: function () {
                                 'approved' != this.state && (this.state = 'approved');
                             },
-                            interrupt: function() {
+                            interrupt: function () {
                                 'interrupted-request' != this.state && (this.state = 'interrupted-request');
                             },
-                            reset: function() {
+                            reset: function () {
                                 this.state && (this.state = null);
                             },
                         };
-                        $scope.getLiveState = function() {
+                        $scope.getLiveState = function () {
                             return $scope.showGoLiveButton
                                 ? $scope.isStreamingLive
                                     ? 'streaming'
@@ -635,12 +638,12 @@ angular
                                     : 'online'
                                 : 'none';
                         };
-                        $scope.playUserRecordedSession = function() {
+                        $scope.playUserRecordedSession = function () {
                             $scope.playRecordedSession();
                         };
 
                         $scope.api = {
-                            loadSession: function(initialSettings: InitialSettings) {
+                            loadSession: function (initialSettings: InitialSettings) {
                                 $scope.userPermissionRequest.ignore = !initialSettings.shouldWaitUserConfirmation();
                                 $scope.session = initialSettings.getSession();
                                 $scope.isLive = initialSettings.isLive();
@@ -654,77 +657,77 @@ angular
                                     $scope.player.changePauseMarker($scope.pauseActivity.time);
                             },
                             // session.length 的总时长
-                            setSessionLength: function(timelineMax: number) {
+                            setSessionLength: function (timelineMax: number) {
                                 $scope.timelineMax = timelineMax;
                                 $scope.activities.setSessionLength(timelineMax);
                             },
-                            finishLoadingActivities: function() {
+                            finishLoadingActivities: function () {
                                 $scope.activities.finishLoading();
                                 $scope.refreshTimeline(true, []);
                                 $scope.stepsTimelineLoaded();
                             },
                             // PlayerController
-                            addActivities: function(activities: IActivity[]) {
+                            addActivities: function (activities: IActivity[]) {
                                 I(activities);
                                 $scope.refreshTimeline(false, activities);
                             },
-                            denyStreamingRequest: function() {
+                            denyStreamingRequest: function () {
                                 $scope.userPermissionRequest.deny();
                             },
-                            interruptStreamingRequest: function() {
+                            interruptStreamingRequest: function () {
                                 $scope.userPermissionRequest.interrupt();
                             },
-                            resetStreamingRequest: function() {
+                            resetStreamingRequest: function () {
                                 $scope.userPermissionRequest.reset();
                             },
-                            approveStreamingRequest: function() {
+                            approveStreamingRequest: function () {
                                 $scope.userPermissionRequest.approve();
                                 this.startLiveStreaming();
                             },
-                            startPlayback: function() {
+                            startPlayback: function () {
                                 $scope.start();
                             },
-                            startLiveStreaming: function() {
+                            startLiveStreaming: function () {
                                 $scope.isStreamingLive || $scope.goLive();
                             },
-                            stopLiveStreaming: function() {
+                            stopLiveStreaming: function () {
                                 $scope.isStreamingLive && $scope.pause();
                             },
-                            setFeatureFlags: function(featureFlags) {
+                            setFeatureFlags: function (featureFlags) {
                                 S = featureFlags;
                             },
-                            setBrokerClient: function(client) {
+                            setBrokerClient: function (client) {
                                 brokerClient = client;
-                                brokerClient.onControlTakeOverRequestApproved(function() {
+                                brokerClient.onControlTakeOverRequestApproved(function () {
                                     L(X, true);
                                     O(true);
                                     $scope.endUserPermissionAwaiting = false;
                                 });
-                                brokerClient.onControlTakeOverRequestDenied(function() {
+                                brokerClient.onControlTakeOverRequestDenied(function () {
                                     $scope.endUserPermissionAwaiting = false;
                                     $scope.endUserDeniedControlTakeOver = true;
                                 });
-                                brokerClient.onControlTakeOverRequestStopped(function() {
+                                brokerClient.onControlTakeOverRequestStopped(function () {
                                     $scope.exitCollaborativeMode();
                                 });
                             },
-                            setUserHasGoneOffline: function(status) {
+                            setUserHasGoneOffline: function (status) {
                                 status && ($scope.isUserOffline = true);
                                 $scope.setIsOffline(status);
                             },
                         };
 
                         // fireUserDetailsResize
-                        player.onUserDetailsResize($scope, function(b, outerHeight: number) {
+                        player.onUserDetailsResize($scope, function (b, outerHeight: number) {
                             $scope.handleUserDetailsResize(outerHeight);
                         });
-                        player.onConsoleResize($scope, function(b, c: number) {
+                        player.onConsoleResize($scope, function (b, c: number) {
                             $scope.handleResize(c);
                         });
-                        player.onOpenConsole($scope, function(b, c) {
+                        player.onOpenConsole($scope, function (b, c) {
                             $scope.openConsole(c);
                         });
-                        $scope.toggleConsole = function() {
+                        $scope.toggleConsole = function () {
                             if ($scope.isConsoleExpanded) {
                                 $scope.closeConsole();
                             } else {
@@ -732,10 +735,10 @@ angular
                                 $scope.openConsole(null);
                             }
                         };
-                        $scope.updateUrl = function(url) {
+                        $scope.updateUrl = function (url) {
                             J(url) || ($scope.url = url);
                         };
-                        $scope.toggleTool = function(activeTool) {
+                        $scope.toggleTool = function (activeTool) {
                             if (
                                 activeTool !== $scope.CONTROL_TAKEOVER ||
                                 X !== $scope.CONTROL_TAKEOVER ||
@@ -762,12 +765,12 @@ angular
                                 $scope.endUserDeniedControlTakeOver = false;
                             }
                         };
-                        $scope.exitCollaborativeMode = function() {
+                        $scope.exitCollaborativeMode = function () {
                             M();
                             O(false);
                             $scope.isConfirmationVisible = false;
                         };
-                        $scope.goToCollaborativeMode = function() {
+                        $scope.goToCollaborativeMode = function () {
                             $scope.isConfirmationVisible = false;
 
                             if (X !== $scope.CONTROL_TAKEOVER) {
@@ -777,7 +780,7 @@ angular
                                 N();
                             }
                         };
-                        $scope.cancelCollaborativeConfirmation = function() {
+                        $scope.cancelCollaborativeConfirmation = function () {
                             $scope.isConfirmationVisible = false;
                             X = null;
                         };

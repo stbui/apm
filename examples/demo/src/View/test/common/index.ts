@@ -13,3 +13,4 @@ export * from './settings';
 export * from './constant';
 export * from './sessionDetailsModal';
 export * from './userIdentityService';
+export * from './angular';

@@ -1,11 +1,10 @@
 import { restSettings } from './restSettings';
 import { tokenManager } from './tokenManager';
+import { $resource, promise } from './resource';
 
 //
-const $resource: any = {};
 const $q: any = {};
 const $http: any = {};
-const promise: any = {};
 const $rootScope: any = {};
 
 //
