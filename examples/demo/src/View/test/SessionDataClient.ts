@@ -9,7 +9,7 @@ const $q: any = {};
 
 //
 
-function i(a) {
+function i(callback) {
     var d = this,
         e = $q.defer();
 
@@ -28,16 +28,17 @@ function i(a) {
 
                           if (0 === c.activities.length) {
                               return e.resolve(c.activities);
-                          } else {
-                              d.lastEventTimestamp = c.lastEventTimestamp;
-                              d.lastEventIndex = c.lastEventIndex;
-
-                              // PlayerController.z(c.activities)
-                              a(c.activities);
-
-                              f();
-                              return;
                           }
+
+                          d.lastEventTimestamp = c.lastEventTimestamp;
+                          d.lastEventIndex = c.lastEventIndex;
+
+                          // PlayerController.z(c.activities)
+                          callback(c.activities);
+
+                          f();
+
+                          return;
 
                           //   return 0 === c.activities.length
                           //       ? e.resolve(c.activities)
@@ -127,13 +128,15 @@ export class SessionDataClient {
 
     // callback = PlayerController.z(c.activities)
     loadActivitiesUntil(callback, timeLimit) {
-        var c = this;
         this.timeLimit = timeLimit;
-        this.loadingActivitiesPromise ||
-            (this.loadingActivitiesPromise = i.call(this, callback).then(function(b) {
-                c.loadingActivitiesPromise = null;
+
+        if (!this.loadingActivitiesPromise) {
+            this.loadingActivitiesPromise = i.call(this, callback).then(b => {
+                this.loadingActivitiesPromise = null;
                 callback(b);
-            }));
+            });
+        }
+
         return this.loadingActivitiesPromise;
     }
 }

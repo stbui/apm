@@ -59,38 +59,37 @@ export const session = {
             revolve({});
         });
     },
-    getSessionDetails: () => { },
-    getSessionLogs: () => { },
-    getSessions: () => { },
-    deleteSession: () => { },
-    deleteSessions: () => { },
-    sessionCanBeDownloaded: () => { },
+    getSessionDetails: () => {},
+    getSessionLogs: () => {},
+    getSessions: () => {},
+    deleteSession: () => {},
+    deleteSessions: () => {},
+    sessionCanBeDownloaded: () => {},
     getActivities: (sessionId, lastEvent) => {
         return new Promise((revolve, reject) => {
             revolve({});
         });
     },
-    getActivitiesCount: () => { },
-    getSessionStatus: () => { },
+    getActivitiesCount: () => {},
+    getSessionStatus: () => {},
 };
 
 export class SessionDataClient {
-
-    sessionId: string | number
-    logId: string | number
-    lastEventTimestamp: number
-    lastEventIndex: number
-    lastLogTimestamp: number
-    timeLimit
-    lastLoadedActivityTime: number
-    loadingActivitiesPromise
-    activitiesPollerIsCanceled: boolean
+    sessionId: string | number;
+    logId: string | number;
+    lastEventTimestamp: number;
+    lastEventIndex: number;
+    lastLogTimestamp: number;
+    timeLimit;
+    lastLoadedActivityTime: number;
+    loadingActivitiesPromise;
+    activitiesPollerIsCanceled: boolean;
 
     ACTIVITIES_POLL_WAIT_TIME: number = 0;
     SESSION_STATUS_POLL_WAIT_TIME: number = 30000;
     NO_ACTIVITIES_POLL_WAIT_TIME: number = 500;
 
-    isLive
+    isLive;
 
     constructor(sessionId, logId) {
         this.sessionId = sessionId;

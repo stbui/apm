@@ -7,6 +7,7 @@ import { playerSettings } from './playerSettings';
 import { BrokerClient } from './BrokerClient';
 import { BrokerWebSocketClient } from './BrokerWebSocketClient';
 import { LiveConnectionMonitor } from './LiveConnectionMonitor';
+import { IRender, ISessionPlayerApi } from './interface';
 
 const LIVE_MODE_CONFIGS = {
     GO_LIVE_OFFSET_TIME: 1000,
@@ -16,20 +17,11 @@ const DEMO_USER_ROLE = 'demo';
 const PLAN_EXPIRED = 'PLAN_EXPIRED';
 const CONNECTION_STATUSES = { ONLINE: 'online', OFFLINE: 'offline' };
 
-//
-interface ISessionPlayerApi {
-    finishLoadingActivities: Function;
-    addActivities: Function;
-    startLiveStreaming: Function;
-    setSessionLength: Function;
-    startPlayback: Function;
-    setFeatureFlags: Function;
-    setBrokerClient: Function;
-}
 interface IScope {
     // sessionPlayer.ts -> sessionPlayerApi
     sessionPlayerApi: ISessionPlayerApi;
     initialSettings: InitialSettings;
+    // settings: playerSettings;
 }
 const $stateParams: any = {};
 let $scope: IScope;
@@ -38,6 +30,7 @@ let $scope: IScope;
 
 function loadActivitiesUntil(timeLimit: number) {
     // timeLimit:1591025627881
+    // test: 循环拉取数据
     sessionDataClient.loadActivitiesUntil(z, timeLimit).then(function(b) {
         // b: undefined
         z(b);
@@ -68,6 +61,7 @@ function z(
         time = activities[activities.length - 1].time;
 
         // sessionPlayer.ts -> addActivities
+        // test:3
         $scope.sessionPlayerApi.addActivities(activities);
     }
 
@@ -129,6 +123,7 @@ function F(a) {
 $scope.isBrowserNotSupported = utils.isBrowserNotSupported();
 
 if (!$scope.isBrowserNotSupported) {
+    // $scope.settings的值
     playerSettings.init($scope);
     $scope.sessionId = $stateParams.sessionId;
     $scope.errors = {};
@@ -155,6 +150,8 @@ if (!$scope.isBrowserNotSupported) {
         user.role !== DEMO_USER_ROLE && intercomManager.update(user);
     }, B);
 
+    // 页面快照
+    // test:0
     sessionDataClient.loadSession().then(function(b) {
         initialSettings = new InitialSettings(
             b.sessionData.session,
@@ -165,7 +162,7 @@ if (!$scope.isBrowserNotSupported) {
             $scope.settings.analytics,
             b.featureFlags
         );
-        // sessionPlayer.$watch('initialSettings')
+        // 变更： sessionPlayer.$watch('initialSettings')
         $scope.initialSettings = initialSettings;
         C();
         initialSettings.shouldStartStreaming() && D();
@@ -208,6 +205,7 @@ if (!$scope.isBrowserNotSupported) {
         chatClient.disconnect();
     });
     // firePlayerIsInitialized
+    // test:2
     player.onPlayerIsInitialized($scope, function() {
         $scope.sessionPlayerApi.setFeatureFlags(initialSettings.featureFlags);
         $scope.sessionPlayerApi.setBrokerClient(brokerClient);

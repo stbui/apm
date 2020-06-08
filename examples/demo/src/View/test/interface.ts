@@ -30,3 +30,20 @@ export interface IRender {
     reset: () => void;
     _onTabHiddenCallback: () => void;
 }
+
+export interface ISessionPlayerApi {
+    finishLoadingActivities: Function;
+    addActivities: Function;
+    startLiveStreaming: Function;
+    setSessionLength: Function;
+    startPlayback: Function;
+    setFeatureFlags: Function;
+    setBrokerClient: Function;
+    loadSession: Function;
+    denyStreamingRequest: Function;
+    interruptStreamingRequest: Function;
+    resetStreamingRequest: Function;
+    approveStreamingRequest: Function;
+    stopLiveStreaming: Function;
+    setUserHasGoneOffline: Function;
+}
