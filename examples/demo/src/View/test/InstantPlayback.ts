@@ -1,4 +1,4 @@
-const noop = function () {};
+const noop = function() {};
 
 export class Batches {
     private _activities;
@@ -26,7 +26,7 @@ export class Batches {
         if (a.length === c._size) {
             return b({ done: false, value: a });
         } else {
-            c._activities.next(function (d) {
+            c._activities.next(function(d) {
                 if (d.done) return b({ done: false, value: a });
                 var e = d.value;
                 a.push(e);
@@ -65,18 +65,16 @@ export class InstantPlayback {
         this._onBuffering = noop;
         this._onRendering = noop;
 
-        var f = this;
-        const buffering = function () {
-            f._onBuffering();
-        };
-        this._activities.onPending(buffering);
+        this._activities.onPending(() => {
+            this._onBuffering();
+        });
     }
 
-    onBuffering(a) {
-        this._onBuffering = a;
+    onBuffering(callback) {
+        this._onBuffering = callback;
     }
-    onRendering(a) {
-        this._onRendering = a;
+    onRendering(callback) {
+        this._onRendering = callback;
     }
     stop() {
         this._stopped = true;
@@ -89,11 +87,11 @@ export class InstantPlayback {
     }
     private _replayLoop(a) {
         var b = this;
-        b._batches.next(function (c) {
+        b._batches.next(function(c) {
             if (c.done) return a();
             var d = c.value;
             b._onRendering();
-            b._batchExecutor = setTimeout(function () {
+            b._batchExecutor = setTimeout(function() {
                 b._stopped || (b._render.render(d, 'instantPlayback'), b._replayLoop(a));
             }, 0);
         });

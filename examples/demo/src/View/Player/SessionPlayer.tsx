@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { findLastIndex, last } from 'lodash';
+import { findLastIndex, last, noop } from 'lodash';
 import Viewer from './Viewer';
 import Console from './Console';
 import UserIdentityDetails from './UserIdentityDetails';
@@ -22,8 +22,6 @@ import mock from './mock';
 // const activities = mock.activities;
 
 let storeTimelineValue;
-let ra;
-let interval;
 /// activityIndex
 let wa = -1;
 /**
@@ -31,48 +29,20 @@ let wa = -1;
  */
 let isPaused = false;
 let loadedTime = -1;
-// ta
-let asyncWhile;
 
 let renderingProgress = 0;
-const speedOptions = [
-    { label: '0.25x', value: 0.25 },
-    { label: '0.5x', value: 0.5 },
-    { label: 'Normal', value: 1 },
-    { label: '2x', value: 2 },
-    { label: '4x', value: 4 },
-];
 
-let steps = [];
 // let activities = activities;
-let detailsStep = 0;
-let logStep = 0;
-let shouldShowLoadingOverlay = true;
-
-const viewerIsCreated = true;
-const timelineIsCreated = true;
-const stepsTimelineIsCreated = true;
-
-let Ba = false;
-let timeoutExecutionError;
-// ya
-let visibilityState = false;
-// buffering
-let xa = false;
-let buffering = false;
 
 // tmp
 let containerWidth = 330;
 let containerHeight = 537;
-let handleConsoleResize = 0;
-
-let imitate;
-let LogStepOnRange = 0;
 
 //
+let storeOnExecuteEvent;
 
 const activities = new Activities();
-let player;
+let player: Player;
 
 export const SessionPlayer = ({
     session,
@@ -109,39 +79,112 @@ export const SessionPlayer = ({
     const [currentActivity, setCurrentActivity] = useState();
     const [fireClear, setFireClear] = useState(false);
     const [fireAttach, setFireAttach]: any = useState();
+    const [onExecuteEvent, fireExecuteEvent]: any = useState();
 
-    useEffect(() => {
-        // 自动播放开始
-        console.log(session);
-    }, [session]);
+    const addActivities = (as: IActivity[]) => {
+        activities.push(as);
+    };
+
+    const start = () => {
+        player.jumpToTime(0);
+    };
+
+    const play = () => {
+        player.play(timelineValue);
+    };
+    const pause = () => {
+        player.pause();
+    };
+
+    const onRepeat = () => {
+        start();
+    };
+
+    const onTogglePlaying = playing => {
+        if (playing) {
+            pause();
+            setIsPlaying(false);
+        } else {
+            play();
+            setIsPlaying(true);
+        }
+    };
+
+    // fixed:
+    const updateExecuteEventState = newValue => {
+        storeOnExecuteEvent = newValue;
+        fireExecuteEvent(newValue);
+    };
 
     useEffect(() => {
         const lastRenderedActivity = { playerIndex: -1, time: 0 };
         const render = {
-            _onTabHiddenCallback: () => {},
+            _onTabHiddenCallback: noop,
             isTabHidden: false,
             lastRenderedActivity,
-            reset: function () {
+            reset: function() {
                 this.isTabHidden = false;
                 this.lastRenderedActivity = lastRenderedActivity;
             },
-            onTabHidden: function (callback) {
+            onTabHidden: function(callback) {
                 this._onTabHiddenCallback = callback;
             },
-            render: function (activities, d) {
+            render: function(activities, d) {
+                updateExecuteEventState(activities);
+
                 activities.forEach((activity: IActivity) => {
-                    player.fireExecuteEvent($scope, activity);
+                    // bug: 批量更新数据会丢失
+                    // bug：data嵌套数据会丢失
+
+                    if (
+                        Activity.isTabVisibilityChange(activity) ||
+                        (Activity.isTopLevel(activity) && Activity.isSnapshot(activity))
+                    ) {
+                        this.isTabHidden = activity.data.visibilityState == TAB_VISIBILITY.HIDDEN;
+                    }
                 });
 
                 this.lastRenderedActivity = last(activities);
+                this.isTabHidden && setTimeout(this._onTabHiddenCallback, 0);
             },
         };
-        render.onTabHidden(function () {
-            render.isTabHidden && $scope.player.skipToTabShown($scope.timelineValue);
+        render.onTabHidden(function() {
+            if (render.isTabHidden) {
+                player.skipToTabShown(timelineValue);
+            }
         });
 
-        new Player(activities, render, PLAYER_CONFIG);
-    }, []);
+        player = new Player(activities, render, PLAYER_CONFIG);
+        player.onTimeChanged(time => {
+            // console.log('onTimeChanged', time);
+            setTimelineValue(time);
+        });
+        player.onBuffering(() => {
+            console.log('onBuffering');
+        });
+        player.onRendering(() => {
+            console.log('onRendering');
+            setHasFinished(false);
+        });
+        player.onPlaying(() => {
+            console.log('onPlaying');
+        });
+        player.onPaused(() => {
+            console.log('onPaused');
+        });
+        player.onFinished(() => {
+            console.log('onFinished');
+            setHasFinished(true);
+        });
+
+        addActivities(mock.activities);
+        activities.setSessionLength(session.length);
+        activities.finishLoading();
+
+        start();
+    }, [session]);
+
+    // console.log(storeOnExecuteEvent);
 
     return (
         <div>
@@ -162,28 +205,23 @@ export const SessionPlayer = ({
                 hide-mask="hideStepsTimelineMask"
             ></StepsTimeline>*/}
             <div style="overflow: hidden;background: #242628;">
-                <Viewer
-                    maxWidth={containerWidth}
-                    maxHeight={containerHeight}
-                    sessionScreenWidth={session.screenWidth}
-                    sessionScreenHeight={session.screenHeight}
-                    className="viewer-container"
-                    isCreated={viewerIsCreated}
-                    renderingProgress={renderingProgress}
-                    initialVisibilityState={session.visibilityState}
-                    sessionId={session.id}
-                    handleConsoleResize={handleConsoleResize}
-                    currentActivity={currentActivity}
-                    snapshotData={{
-                        snapshot: session.snapshot,
-                        origin: session.origin,
-                        docType: session.docType,
-                        top: session.top,
-                        left: session.left,
-                    }}
-                    fireClear={fireClear}
-                    fireAttach={fireAttach}
-                ></Viewer>
+                {onExecuteEvent ? (
+                    <Viewer
+                        maxWidth={containerWidth}
+                        maxHeight={containerHeight}
+                        sessionScreenWidth={session.screenWidth}
+                        sessionScreenHeight={session.screenHeight}
+                        className="viewer-container"
+                        isCreated={true}
+                        renderingProgress={renderingProgress}
+                        initialVisibilityState={session.visibilityState}
+                        sessionId={session.id}
+                        handleConsoleResize={true}
+                        currentActivity={storeOnExecuteEvent}
+                        fireClear={fireClear}
+                        fireAttach={fireAttach}
+                    ></Viewer>
+                ) : null}
             </div>
 
             <Controls
@@ -193,12 +231,14 @@ export const SessionPlayer = ({
                 arePlayerButtonsEnabled={arePlayerButtonsEnabled}
                 isLive={isLive}
                 sessionWasInitiallyLive={sessionWasInitiallyLive}
+                onRepeat={onRepeat}
+                onTogglePlaying={onTogglePlaying}
             >
                 <Timelline
                     min={timelineMin}
                     max={timelineMax}
-                    value={storeTimelineValue}
-                    activities={activities}
+                    value={timelineValue}
+                    activities={mock.activities}
                     // refresh={refreshTimeline}
                     // pauseActivity={pauseActivity}
                     // isCreated={timelineIsCreated}

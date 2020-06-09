@@ -235,7 +235,7 @@ const Viewer = ({
         const type = activity.type;
         const data = activity.data;
         const eventType = p(type);
-        // console.log(type, activity);
+        // console.log(type, data);
         // 执行事件类型
         if (eventType && data) {
             eventType(data);
@@ -751,11 +751,6 @@ const Viewer = ({
         o(EVENT_TYPE.VISIBILITY_CHANGE, setVisibilityChange);
         o(EVENT_TYPE.CSS_RULE_INSERT, setCssRuleInsert);
         o(EVENT_TYPE.CSS_RULE_DELETE, deleteRule);
-
-        // player
-
-        // c.onAttach(b, onAttach);
-        // c.onDetach(b, onDetach);
     }, []);
 
     // // 设置容器宽高
@@ -765,37 +760,18 @@ const Viewer = ({
 
     useEffect(() => {
         if (currentActivity) {
-            console.log('currentActivity', currentActivity);
-            onExecuteEvent(currentActivity);
+            // console.log(currentActivity.type, currentActivity.data);
+            currentActivity.map(d => {
+                onExecuteEvent(d);
+            });
+            // onExecuteEvent(currentActivity);
         }
     }, [JSON.stringify(currentActivity)]);
-
-    useEffect(() => {
-        if (fireClear) {
-            // onClear(snapshotData);
-            // onFireAttach(fireAttach);
-            // console.log(1,fireAttach)
-        }
-    }, [fireClear]);
-
-    useEffect(() => {
-        if (fireAttach) {
-            onAttach(fireAttach.callback);
-            // console.log('fireAttach', fireAttach);
-        }
-    }, [fireAttach]);
-
-    // 组件创建状态
-    // useEffect(() => {
-    //     if ((d.isDefined(viewerOverlay) && d.isDefined(initialVisibilityState)) || null === viewerOverlay) {
-    //         b.isCreated = true;
-    //     }
-    // }, [initialVisibilityState, viewerOverlay]);
 
     return (
         <div ng-style="{'margin-left': marginLeft, 'margin-top': marginTop}" style="margin-left: 20px;margin-top:50px">
             <div className="viewer-wrapper" style={{ transform: 'scale(0.7720271102895871)' }}>
-                <div ref={viewerContainerRef} id="viewer-container" style="width: 1623px;height: 426px;">
+                <div ref={viewerContainerRef} id="viewer-container" style="width: 1623px;height: 600px;">
                     <iframe ref={viewerRef} id="viewer" sandbox="allow-scripts allow-same-origin"></iframe>
                 </div>
             </div>

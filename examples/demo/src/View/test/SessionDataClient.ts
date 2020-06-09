@@ -9,7 +9,7 @@ const $q: any = {};
 
 //
 
-function i(callback) {
+function i(addActivities) {
     var d = this,
         e = $q.defer();
 
@@ -34,7 +34,7 @@ function i(callback) {
                           d.lastEventIndex = c.lastEventIndex;
 
                           // PlayerController.z(c.activities)
-                          callback(c.activities);
+                          addActivities(c.activities);
 
                           f();
 
@@ -67,20 +67,20 @@ function k(resove, timeLimit) {
 function l(activities, timeLimit) {
     var lastEventTimestamp,
         lastEventIndex,
-        e: any = [];
-    return (
-        lodash.forEach(activities, function(a, f) {
-            return (
-                !(a.time > timeLimit) &&
-                (e.push(a), (lastEventTimestamp = a.timestamp), void (lastEventIndex = a.index))
-            );
-        }),
-        {
-            activities: e,
-            lastEventTimestamp: lastEventTimestamp,
-            lastEventIndex: lastEventIndex,
-        }
-    );
+        newActivities: any = [];
+
+    lodash.forEach(activities, function(a, f) {
+        return (
+            !(a.time > timeLimit) &&
+            (newActivities.push(a), (lastEventTimestamp = a.timestamp), void (lastEventIndex = a.index))
+        );
+    });
+
+    return {
+        activities: newActivities,
+        lastEventTimestamp: lastEventTimestamp,
+        lastEventIndex: lastEventIndex,
+    };
 }
 
 export class SessionDataClient {
@@ -127,13 +127,13 @@ export class SessionDataClient {
     }
 
     // callback = PlayerController.z(c.activities)
-    loadActivitiesUntil(callback, timeLimit) {
+    loadActivitiesUntil(addActivities, timeLimit) {
         this.timeLimit = timeLimit;
 
         if (!this.loadingActivitiesPromise) {
-            this.loadingActivitiesPromise = i.call(this, callback).then(b => {
+            this.loadingActivitiesPromise = i.call(this, addActivities).then(b => {
                 this.loadingActivitiesPromise = null;
-                callback(b);
+                addActivities(b);
             });
         }
 

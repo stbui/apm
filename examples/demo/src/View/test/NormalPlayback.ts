@@ -74,9 +74,9 @@ export class NormalPlayback {
         this._tabHiddenMessageTime = config.tabHiddenMessageTime;
         this._speed = config.speed;
         this._timer.changeSpeed(this._speed);
-        this._onBuffering = function () {};
-        this._onRendering = function () {};
-        this._onTimeChanged = function () {};
+        this._onBuffering = function() {};
+        this._onRendering = function() {};
+        this._onTimeChanged = function() {};
 
         this._activities.onPending(() => {
             this._onBuffering();
@@ -98,62 +98,42 @@ export class NormalPlayback {
     }
     stop() {
         this._stopped = true;
-        this._activities.onPending(function () {});
-        this._timer.onTimeChanged(function () {});
+        this._activities.onPending(function() {});
+        this._timer.onTimeChanged(function() {});
         this._timer.stopTicking();
         clearTimeout(this._frameExecutor);
     }
-    replay(callback = function () {}) {
+    replay(callback = function() {}) {
         this._stopped = false;
         this._onRendering();
         this._replayLoop(callback);
     }
-    private _replayLoop(callback: Function) {
-        this._frames.next(c => {
-            if (c.done) {
-                return this._finish(callback);
+    private _replayLoop(a: Function) {
+        var b = this;
+        b._frames.next(function(c) {
+            if (c.done) return b._finish(a);
+            var d = c.value,
+                e = d[0],
+                f = d[d.length - 1];
+            if (e.isFirstLiveActivity) var g = 0;
+            else {
+                var g = e.time - b._timer.time;
+                g = Math.min(g, b._maxInactivityTime);
+                var h = g - b._delay;
+                h < 0 ? ((b._delay -= g), (g = 0)) : ((b._delay = 0), (g = h)),
+                    (g /= b._speed),
+                    b._skipPrologedInactivity && b._render.isTabHidden && (g = Math.min(g, b._tabHiddenMessageTime));
             }
-
-            var activities = c.value;
-            var activity = activities[0];
-            var lastActivities = activities[activities.length - 1];
-
-            var speed = 0;
-
-            if (activity.isFirstLiveActivity) {
-                speed = 0;
-            } else {
-                var speed = activity.time - this._timer.time;
-                speed = Math.min(speed, this._maxInactivityTime);
-
-                var h = speed - this._delay;
-                if (h < 0) {
-                    this._delay -= speed;
-                    speed = 0;
-                } else {
-                    this._delay = 0;
-                    speed = h;
-                }
-
-                speed /= this._speed;
-
-                if (this._skipPrologedInactivity && this._render.isTabHidden) {
-                    speed = Math.min(speed, this._tabHiddenMessageTime);
-                }
-            }
-
-            let i = Date.now() + speed;
-            this._onRendering();
-            this._timer.tickTo(lastActivities.time);
-            this._frameExecutor = setTimeout(() => {
-                if (!this._stopped) {
-                    // sessionnPlayer.render.render
-                    this._render.render(activities, 'normalPlayback');
-                    this._timer.finishTicking();
-                    this._delay += Date.now() - i;
-                    this._replayLoop(callback);
-                }
-            }, speed);
+            var i = Date.now() + g;
+            b._onRendering(),
+                b._timer.tickTo(f.time),
+                (b._frameExecutor = setTimeout(function() {
+                    b._stopped ||
+                        (b._render.render(d, 'normalPlayback'),
+                        b._timer.finishTicking(),
+                        (b._delay += Date.now() - i),
+                        b._replayLoop(a));
+                }, g));
         });
     }
     private _finish(callback: Function) {

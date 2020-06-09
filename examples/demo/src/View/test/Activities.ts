@@ -52,29 +52,29 @@ export class IteratorFromClosestSnapshotToTime {
     next(callback) {
         var b = this;
 
-        if (this._done) {
-            return callback({ done: true });
-        }
+        // if (this._done) {
+        //     return callback({ done: true });
+        // }
 
-        this.peek(function (c) {
-            if (c.done) {
-                return callback({ done: true });
-            }
+        // this.peek(function (c) {
+        //     if (c.done) {
+        //         return callback({ done: true });
+        //     }
 
-            b._iterator.next(function (b) {
-                callback(c);
-            });
-        });
+        //     b._iterator.next(function (b) {
+        //         callback(c);
+        //     });
+        // });
 
-        // return b._done
-        //     ? a({ done: true })
-        //     : void b.peek(function (c) {
-        //           return c.done
-        //               ? a({ done: true })
-        //               : void b._iterator.next(function (b) {
-        //                     a(c);
-        //                 });
-        //       });
+        return b._done
+            ? callback({ done: true })
+            : void b.peek(function(c) {
+                  return c.done
+                      ? callback({ done: true })
+                      : void b._iterator.next(function(b) {
+                            callback(c);
+                        });
+              });
     }
     peek(a) {
         var b = this;
@@ -83,7 +83,7 @@ export class IteratorFromClosestSnapshotToTime {
             return a({ done: true });
         }
 
-        this._iterator.peek(function (c) {
+        this._iterator.peek(function(c) {
             if (c.done) {
                 return a({ done: true });
             } else if (b._predicate(c.value)) {
@@ -162,7 +162,7 @@ export class Activities {
 
         this._asyncIterator.rewind(index);
 
-        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function (b) {
+        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function(b) {
             return b.time < timelineSelectedValue;
         });
     }
@@ -173,7 +173,7 @@ export class Activities {
 
         this._asyncIterator.rewind(index);
 
-        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function (b) {
+        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function(b) {
             return b.playerIndex < selectedActivity.playerIndex;
         });
     }
@@ -192,7 +192,7 @@ export class Activities {
     getIteratorBetween(lastRenderedActivity, endTime): IteratorFromClosestSnapshotToTime {
         this._asyncIterator.rewind(lastRenderedActivity.playerIndex + 1);
 
-        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function (a) {
+        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function(a) {
             return a.time < endTime;
         });
     }
@@ -207,7 +207,7 @@ export class Activities {
 
         this._asyncIterator.rewind(index);
 
-        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function (a) {
+        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function(a) {
             return a.time < timelineSelectedValue;
         });
     }
@@ -222,7 +222,7 @@ export class Activities {
 
         this._asyncIterator.rewind(index);
 
-        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function (a) {
+        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function(a) {
             return a.playerIndex < selectedActivity.playerIndex;
         });
     }
@@ -239,7 +239,7 @@ export class Activities {
         this._asyncIterator.rewind(lastRenderedActivity.playerIndex + 1);
         var g = false;
 
-        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function (a) {
+        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function(a) {
             return (
                 !g &&
                 ((g = Activity.isTabVisible(a) || (Activity.isTopLevel(a) && Activity.isVisibleSnapshot(a))),

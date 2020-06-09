@@ -31,9 +31,9 @@ let $scope: IScope;
 function loadActivitiesUntil(timeLimit: number) {
     // timeLimit:1591025627881
     // test: 循环拉取数据
-    sessionDataClient.loadActivitiesUntil(z, timeLimit).then(function(b) {
+    sessionDataClient.loadActivitiesUntil(addActivities, timeLimit).then(function(b) {
         // b: undefined
-        z(b);
+        addActivities(b);
         $scope.sessionPlayerApi.finishLoadingActivities();
     }, B);
 }
@@ -46,7 +46,7 @@ function loadActivitiesUntil(timeLimit: number) {
 //     timestamp: 1591025539170;
 //     type: 'dom_snapshot';
 // }
-function z(
+function addActivities(
     activities: {
         data: object;
         index: number;
@@ -73,8 +73,8 @@ function z(
     //     $scope.sessionPlayerApi.addActivities(activities));
 }
 function A(activities) {
-    angular.forEach(activities, function(a) {
-        a.time = a.timestamp - timestamp;
+    angular.forEach(activities, function(activity) {
+        activity.time = activity.timestamp - timestamp;
     });
 }
 function B(b) {

@@ -53,7 +53,7 @@ angular
         'ELEMENTS',
         'KEYSTROKE_OPTIONS',
         'FULL_SCREEN_CLASS',
-        function ($timeout, $interval, sessionstackManager, PROCESS_HOVER_STYLES_CONFIG, ELEMENTS) {
+        function($timeout, $interval, sessionstackManager, PROCESS_HOVER_STYLES_CONFIG, ELEMENTS) {
             return {
                 restrict: 'E',
                 templateUrl: 'templates/viewer.html',
@@ -74,7 +74,7 @@ angular
                     updateUrl: '=',
                     playUserRecordedSession: '=',
                 },
-                link: function ($scope: IScope, $element, l) {
+                link: function($scope: IScope, $element, l) {
                     function m(a, b) {
                         var c = oa();
                         if (c) {
@@ -88,7 +88,7 @@ angular
                                     }
                                     if (
                                         (d.shadowRoot && (g = d.shadowRoot.elementFromPoint(e, f)),
-                                        !g || ya.getNodeId(d) === ya.getNodeId(g))
+                                        !g || documentNode.getNodeId(d) === documentNode.getNodeId(g))
                                     )
                                         break;
                                     d = g;
@@ -144,9 +144,9 @@ angular
                         xa.css({ width: sessionScreenWidth, height: sessionScreenHeight });
                     }
                     function v() {
-                        if (ya.isAttached) {
-                            va && va.cancel();
-                            ya.detach();
+                        if (documentNode.isAttached) {
+                            documentNode && va.cancel();
+                            documentNode.detach();
                         }
                     }
                     function w() {
@@ -156,8 +156,8 @@ angular
                         }
                     }
                     function x(a, b) {
-                        ya.isAttached ||
-                            ya.attach(function () {
+                        documentNode.isAttached ||
+                            documentNode.attach(function() {
                                 w();
                                 y();
                                 z();
@@ -168,17 +168,17 @@ angular
                     }
                     function y() {
                         C({ top: Fa.top, left: Fa.left }),
-                            angular.forEach(Ea, function (a, b) {
+                            angular.forEach(Ea, function(a, b) {
                                 var c = t(b);
                                 c(a);
                             }),
-                            angular.forEach(Object.keys(Ga), function (a) {
+                            angular.forEach(Object.keys(Ga), function(a) {
                                 C(Ga[a]);
                             });
                     }
                     function z() {
-                        if (ya.isAttached) {
-                            ya.traverseDocuments(za, function (a) {
+                        if (documentNode.isAttached) {
+                            documentNode.traverseDocuments(za, function(a) {
                                 D(a.documentElement);
                             });
                         }
@@ -192,11 +192,11 @@ angular
                             delete Ca[b.id];
                         }
 
-                        var condition = function () {
+                        var condition = function() {
                                 return d.scrollLeft() !== b.left || d.scrollTop() !== b.top;
                             },
-                            body = function () {
-                                $timeout(function () {
+                            body = function() {
+                                $timeout(function() {
                                     d.scrollTop(b.top);
                                     d.scrollLeft(b.left);
                                 });
@@ -211,15 +211,15 @@ angular
                     }
                     function B(b) {
                         var c = Ba[b.id],
-                            d = angular.element(ya.getNode(b.id));
+                            d = angular.element(documentNode.getNode(b.id));
 
                         if (d && !d.is(ELEMENTS.HTML)) {
                             c && (c.cancel(), delete Ba[b.id]);
-                            var e = function () {
+                            var e = function() {
                                     return d.scrollTop() !== b.top || d.scrollLeft() !== b.left;
                                 },
-                                f = function () {
-                                    $timeout(function () {
+                                f = function() {
+                                    $timeout(function() {
                                         d.scrollTop(b.top), d.scrollLeft(b.left);
                                     });
                                 },
@@ -237,8 +237,8 @@ angular
                         b(a);
                     }
                     function D(a) {
-                        ya.traverseNode(a, function (a) {
-                            var b = ya.getNodePropertyObject(a);
+                        documentNode.traverseNode(a, function(a) {
+                            var b = documentNode.getNodePropertyObject(a);
                             if (b.top || b.left) {
                                 var c = { id: b.nodeId, top: b.top, left: b.left };
                                 Ga[c.id] || C(c);
@@ -250,12 +250,12 @@ angular
                         return b && b.shadowRoot ? b : ((b && b.contentWindow) || (b = F()), b.contentWindow);
                     }
                     function F(a?) {
-                        return angular.isDefined(a) ? ya.getNode(a) : viewer[0];
+                        return angular.isDefined(a) ? documentNode.getNode(a) : viewer[0];
                     }
                     function G(top, left?, id?) {
                         var e = { id: id, top: top, left: left, windowScroll: true };
 
-                        if (ya.isAttached) {
+                        if (documentNode.isAttached) {
                             A(e);
                             angular.isUndefined(id) &&
                                 $scope.viewerOverlay &&
@@ -288,38 +288,38 @@ angular
                             $scope.visibilityState = visibilityState;
                         }
                     }
-                    function K(a) {
-                        M(a);
+                    function K(data) {
+                        M(data);
                     }
-                    function L(a) {
-                        $scope.updateUrl(a.url);
+                    function L(data) {
+                        $scope.updateUrl(data.url);
                     }
-                    function M(c) {
-                        if (ya && c) {
-                            var e = !c.hostElementId && !c.frameElementId;
+                    function M(data) {
+                        if (documentNode && data) {
+                            var e = !data.hostElementId && !data.frameElementId;
                             if (e) {
-                                $scope.updateUrl(c.pageUrl);
+                                $scope.updateUrl(data.pageUrl);
                                 Ea = {};
                                 Ga = {};
-                                Fa = { top: c.top, left: c.left };
+                                Fa = { top: data.top, left: data.left };
 
                                 if (
-                                    utils.isDefined(c.visibilityState) &&
-                                    $scope.visibilityState !== c.visibilityState
+                                    utils.isDefined(data.visibilityState) &&
+                                    $scope.visibilityState !== data.visibilityState
                                 ) {
-                                    J(c.visibilityState);
+                                    J(data.visibilityState);
                                 }
 
-                                if (c.nestedSnapshots) {
-                                    c.nestedSnapshots.forEach(function (a) {
+                                if (data.nestedSnapshots) {
+                                    data.nestedSnapshots.forEach(function(a) {
                                         M(a);
                                     });
                                 }
 
-                                var screenWidth = c.screenWidth || ta,
-                                    screenHeight = c.screenHeight || ua;
+                                var screenWidth = data.screenWidth || ta,
+                                    screenHeight = data.screenHeight || ua;
 
-                                if (ya.isAttached) {
+                                if (documentNode.isAttached) {
                                     setSessionScreenWidth(screenWidth);
                                     setSessionScreenHeight(screenHeight);
                                     $scope.viewerOverlay && $scope.viewerOverlay.setScrollPosition(Fa.top, Fa.left);
@@ -327,7 +327,7 @@ angular
                                     Ea[EVENT_TYPE.WINDOW_RESIZE] = { width: screenWidth, height: screenHeight };
                                 }
 
-                                // ya.isAttached
+                                // documentNode.isAttached
                                 //     ? (setSessionScreenWidth(screenWidth),
                                 //       setSessionScreenHeight(screenHeight),
                                 //       $scope.viewerOverlay && $scope.viewerOverlay.setScrollPosition(Fa.top, Fa.left))
@@ -335,12 +335,12 @@ angular
                             }
 
                             var customOrigin = $scope.initialSettings.getCustomOrigin();
-                            ya.write(c, customOrigin, $scope.sessionId);
+                            documentNode.write(c, customOrigin, $scope.sessionId);
                             w();
                             G(c.top, c.left, c.hostElementId || c.frameElementId);
 
                             if (c.nodesScrollPositions) {
-                                angular.forEach(c.nodesScrollPositions, function (a, b) {
+                                angular.forEach(c.nodesScrollPositions, function(a, b) {
                                     Ga[b] = { id: b, top: a.top, left: a.left };
                                 });
                             }
@@ -359,12 +359,12 @@ angular
                     }
                     function O(data) {
                         if (!N(KEYSTROKE_OPTIONS.END_USER_TYPE_DELAY_SECONDS)) {
-                            var b = angular.element(ya.getNode(data.id));
+                            var b = angular.element(documentNode.getNode(data.id));
                             b.val(data.value);
                         }
                     }
                     function P(data) {
-                        if (ya.isAttached && $scope.viewerOverlay) {
+                        if (documentNode.isAttached && $scope.viewerOverlay) {
                             var c = $scope.getFrameElementOffset(data.frameElementId),
                                 top = data.y + c.top,
                                 left = data.x + c.left;
@@ -375,7 +375,7 @@ angular
                     }
                     function Q(data: { pageX: 84; pageY: 183; selector: any; x: 84; y: 183 }) {
                         P(data);
-                        if (ya.isAttached && $scope.viewerOverlay) {
+                        if (documentNode.isAttached && $scope.viewerOverlay) {
                             var c = $scope.getFrameElementOffset(data.frameElementId),
                                 d = Fa.top + data.y + c.top,
                                 e = Fa.left + data.x + c.left;
@@ -384,14 +384,14 @@ angular
                         }
                     }
                     function R(data: { id: 11780 }) {
-                        var b = angular.element(ya.getNode(data.id));
+                        var b = angular.element(documentNode.getNode(data.id));
                         if (b) {
                             b.addClass(SESSIONSTACK_HOVER_CLASS);
                             b.parents().addClass(SESSIONSTACK_HOVER_CLASS);
                         }
                     }
                     function S(data: { id: 11780 }) {
-                        var b = angular.element(ya.getNode(data.id));
+                        var b = angular.element(documentNode.getNode(data.id));
                         if (b) {
                             b.removeClass(SESSIONSTACK_HOVER_CLASS);
                             b.parents().removeClass(SESSIONSTACK_HOVER_CLASS);
@@ -404,7 +404,7 @@ angular
                             Fa = { top: data.top || 0, left: data.left || 0 };
                         }
 
-                        if (ya.isAttached) {
+                        if (documentNode.isAttached) {
                             data.id
                                 ? data.windowScroll
                                     ? G(data.top, data.left, data.id)
@@ -413,7 +413,7 @@ angular
                         }
                     }
                     function U(data: { height: 679; width: 1623 }) {
-                        if (ya.isAttached) {
+                        if (documentNode.isAttached) {
                             setSessionScreenWidth(data.width);
                             setSessionScreenHeight(data.height);
                             $scope.viewerOverlay && $scope.viewerOverlay.setScrollPosition(Fa.top, Fa.left);
@@ -421,13 +421,13 @@ angular
                             Ea[EVENT_TYPE.WINDOW_RESIZE] = data;
                         }
                     }
-                    function V(a) {
-                        var b = angular.element(ya.getNode(a.id));
-                        b.prop('checked', a.state);
+                    function V(data) {
+                        var b = angular.element(documentNode.getNode(data.id));
+                        b.prop('checked', data.state);
                     }
-                    function W(a) {
-                        var b = angular.element(ya.getNode(a.id));
-                        b.prop('checked', a.state);
+                    function W(data) {
+                        var b = angular.element(documentNode.getNode(data.id));
+                        b.prop('checked', data.state);
                     }
                     function X(data) {
                         ha(data.addedOrMoved);
@@ -438,76 +438,81 @@ angular
                     function Y(data: { visibilityState: 'hidden' }) {
                         J(data.visibilityState);
                     }
-                    function Z(a) {
+                    function Z(data) {
                         var b;
-                        b = void 0 === a.nodeId ? ya.documentContainer.contentDocument : ya.getNode(a.nodeId);
+                        b =
+                            void 0 === data.nodeId
+                                ? documentNode.documentContainer.contentDocument
+                                : documentNode.getNode(data.nodeId);
 
-                        ya.adoptedStyleSheetNodes[a.nodeId] = b;
-                        var c = ya.getNodePropertyObject(b);
-                        c.adoptedStyleSheets = a.styles;
-                        ya.isAttached && utils.addAdoptedStyleSheets(b, a.styles);
+                        documentNode.adoptedStyleSheetNodes[data.nodeId] = b;
+                        var c = documentNode.getNodePropertyObject(b);
+                        c.adoptedStyleSheets = data.styles;
+                        documentNode.isAttached && utils.addAdoptedStyleSheets(b, data.styles);
                     }
-                    function $(a) {
-                        var b = ya.getNode(a.nodeId),
-                            c = ya.getNodePropertyObject(b);
+                    function $(data) {
+                        var b = documentNode.getNode(data.nodeId),
+                            c = documentNode.getNodePropertyObject(b);
 
-                        ya.styleRuleNodes[a.nodeId] = b;
+                        documentNode.styleRuleNodes[data.nodeId] = b;
                         c.styleRules = c.styleRules || [];
-                        isNaN(a.index) ? c.styleRules.push(a.rule) : c.styleRules.splice(a.index, 0, a.rule);
+                        isNaN(data.index)
+                            ? c.styleRules.push(data.rule)
+                            : c.styleRules.splice(data.index, 0, data.rule);
 
-                        if (ya.isAttached) {
+                        if (documentNode.isAttached) {
                             try {
-                                var d = isNaN(a.index) ? b.sheet.cssRules.length : a.index;
-                                b.sheet.insertRule(a.rule, d);
+                                var d = isNaN(data.index) ? b.sheet.cssRules.length : data.index;
+                                b.sheet.insertRule(data.rule, d);
                             } catch (e) {}
                         }
                     }
-                    function _(a) {
-                        var b = ya.getNode(a.nodeId),
-                            c = ya.getNodePropertyObject(b);
+                    function _(data) {
+                        var b = documentNode.getNode(data.nodeId),
+                            c = documentNode.getNodePropertyObject(b);
 
-                        ya.styleRuleNodes[a.nodeId] = b;
+                        documentNode.styleRuleNodes[data.nodeId] = b;
                         c.styleRules = c.styleRules || [];
-                        c.styleRules.length > a.index && c.styleRules.splice(a.index, 1);
+                        c.styleRules.length > data.index && c.styleRules.splice(data.index, 1);
 
-                        if (ya.isAttached) {
+                        if (documentNode.isAttached) {
                             try {
-                                b.sheet.deleteRule(a.index);
+                                b.sheet.deleteRule(data.index);
                             } catch (d) {}
                         }
                     }
-                    function aa(a) {
-                        var b = angular.element(ya.getNode(a.nodeId));
+                    function aa(data) {
+                        var b = angular.element(documentNode.getNode(data.nodeId));
                         b.addClass(FULL_SCREEN_CLASS);
-                        ya.addFullScreenNode(a.nodeId);
+                        documentNode.addFullScreenNode(data.nodeId);
                     }
-                    function ba(a) {
-                        ya.traverseFullScreenNodes(function (a) {
+                    function ba(data) {
+                        documentNode.traverseFullScreenNodes(function(a) {
                             angular.element(a).removeClass(FULL_SCREEN_CLASS);
                         });
                     }
                     function ca() {
-                        utils.forEach(ya.styleRuleNodes, fa);
+                        utils.forEach(documentNode.styleRuleNodes, fa);
                     }
                     function da() {
-                        utils.forEach(ya.adoptedStyleSheetNodes, function (a) {
-                            var b = ya.getNodePropertyObject(a);
+                        utils.forEach(documentNode.adoptedStyleSheetNodes, function(a) {
+                            var b = documentNode.getNodePropertyObject(a);
                             utils.addAdoptedStyleSheets(a, b.adoptedStyleSheets);
                         });
                     }
                     function ea(frameElementId, hostElementId) {
-                        utils.forEach(ya.styleRuleNodes, function (c) {
-                            var d = ya.getNodePropertyObject(c);
+                        utils.forEach(documentNode.styleRuleNodes, function(c) {
+                            var d = documentNode.getNodePropertyObject(c);
                             d.frameElementId === frameElementId && d.hostElementId === hostElementId && fa(c);
                         });
                     }
                     function fa(a) {
                         if (a && a.sheet) {
-                            var b = ya.getNodePropertyObject(a);
+                            var b = documentNode.getNodePropertyObject(a);
 
                             if (b.styleRuleNodes) {
                                 ga(a);
-                                b.styleRules.forEach(function (b, c) {
+                                b.styleRules.forEach(function(b, c) {
                                     try {
                                         b.indexOf('inset:') >= 0 && (b = utils.replaceInsetStyleRule(b));
                                         a.sheet.insertRule(b, c);
@@ -521,25 +526,25 @@ angular
                     }
                     function ha(addedOrMoved) {
                         if (addedOrMoved) {
-                            angular.forEach(addedOrMoved, function (a) {
+                            angular.forEach(addedOrMoved, function(a) {
                                 var b;
                                 if (a.node) {
                                     var c = ia(a),
                                         d = c ? c.hostElementId : null,
                                         e = c ? c.frameElementId : null;
-                                    b = ya.createElement(a.node, d, e);
-                                } else b = ya.getNode(a.id);
+                                    b = documentNode.createElement(a.node, d, e);
+                                } else b = documentNode.getNode(a.id);
                                 if (a.frameElementId)
                                     a.node && a.node.nodeType !== Node.ELEMENT_NODE
                                         ? a.node.nodeType === Node.DOCUMENT_TYPE_NODE &&
-                                          ya.replaceDocType(a.node.docTypeString, a.frameElementId)
-                                        : ya.replaceDocumentElement(b, a.frameElementId);
+                                          documentNode.replaceDocType(a.node.docTypeString, a.frameElementId)
+                                        : documentNode.replaceDocumentElement(b, a.frameElementId);
                                 else if (a.previousSiblingId) {
-                                    var f = ya.getNode(a.previousSiblingId);
-                                    ya.insertAfter(f, b), D(b);
+                                    var f = documentNode.getNode(a.previousSiblingId);
+                                    documentNode.insertAfter(f, b), D(b);
                                 } else if (a.parentId) {
-                                    var g = ya.getNode(a.parentId);
-                                    g && (ya.prepend(g, b), D(b), ka(g, b) && fa(g));
+                                    var g = documentNode.getNode(a.parentId);
+                                    g && (documentNode.prepend(g, b), D(b), ka(g, b) && fa(g));
                                 }
                                 a.node && 'STYLE' === a.node.tagName && a.node.styleRules && fa(b);
                             });
@@ -549,11 +554,11 @@ angular
                         var b;
 
                         a.parentId
-                            ? (b = ya.getNode(a.parentId))
-                            : a.previousSiblingId && (b = ya.getNode(a.previousSiblingId));
+                            ? (b = documentNode.getNode(a.parentId))
+                            : a.previousSiblingId && (b = documentNode.getNode(a.previousSiblingId));
 
                         if (b) {
-                            return ya.getNodePropertyObject(b);
+                            return documentNode.getNodePropertyObject(b);
                         }
                     }
                     function ja() {
@@ -569,23 +574,23 @@ angular
                     }
                     function la(removed) {
                         removed &&
-                            angular.forEach(removed, function (a) {
-                                var id = ya.getNode(a.id);
-                                ya.removeNode(id);
+                            angular.forEach(removed, function(a) {
+                                var id = documentNode.getNode(a.id);
+                                documentNode.removeNode(id);
                             });
                     }
                     function ma(attributes) {
                         if (attributes) {
-                            angular.forEach(attributes, function (attribute) {
-                                var b = ya.getNode(attribute.id);
-                                ya.setAttribute(b, attribute.name, attribute.value);
+                            angular.forEach(attributes, function(attribute) {
+                                var b = documentNode.getNode(attribute.id);
+                                documentNode.setAttribute(b, attribute.name, attribute.value);
                             });
                         }
                     }
                     function na(characterData) {
                         if (characterData) {
-                            angular.forEach(characterData, function (a) {
-                                var b = ya.getNode(a.id);
+                            angular.forEach(characterData, function(a) {
+                                var b = documentNode.getNode(a.id);
                                 b && (b.textContent = a.value);
                             });
                         }
@@ -610,14 +615,15 @@ angular
                     }
                     function setInitialSettings(initialSettings) {
                         $scope.initialSettings = initialSettings;
-                        ya.setSettings(initialSettings);
+                        documentNode.setSettings(initialSettings);
                     }
                     var ta,
                         ua, // sessionScreenHeight
                         va,
                         viewer = angular.element('#viewer'),
                         xa = angular.element('#viewer-container'),
-                        ya = new DocumentNode(viewer[0]),
+                        // ya = new DocumentNode(viewer[0]),
+                        documentNode = new DocumentNode(viewer[0]),
                         za = void 0,
                         Aa = {},
                         Ba = {},
@@ -651,68 +657,69 @@ angular
                     s(EVENT_TYPE.FULL_SCREEN_ENTER, aa);
                     s(EVENT_TYPE.FULL_SCREEN_LEAVE, ba);
 
-                    $scope.$watch('maxWidth', function (maxWidth) {
+                    $scope.$watch('maxWidth', function(maxWidth) {
                         maxWidth &&
                             u(maxWidth, $scope.maxHeight, $scope.sessionScreenWidth, $scope.sessionScreenHeight);
                     });
-                    $scope.$watch('maxHeight', function (maxHeight) {
+                    $scope.$watch('maxHeight', function(maxHeight) {
                         maxHeight &&
                             u($scope.maxWidth, maxHeight, $scope.sessionScreenWidth, $scope.sessionScreenHeight);
                     });
-                    $scope.$watch('renderingProgress', function (a) {
+                    $scope.$watch('renderingProgress', function(a) {
                         $scope.viewerOverlay && $scope.viewerOverlay.setRenderingProgress(a);
                     });
-                    $scope.$watch('showLoadingAnimation', function (a) {
+                    $scope.$watch('showLoadingAnimation', function(a) {
                         $scope.viewerOverlay && $scope.viewerOverlay.showLoadingAnimation(a);
                     });
 
                     player.onExecuteEvent($scope, I);
                     player.onClear($scope, H);
-                    player.onPlayerSpeedChange($scope, function (a, c) {
+                    player.onPlayerSpeedChange($scope, function(a, c) {
                         $scope.viewerOverlay && $scope.viewerOverlay.setPlayerSpeed(c);
                     });
-                    player.onVisualizeClicks($scope, function (a, c) {
+                    player.onVisualizeClicks($scope, function(a, c) {
                         $scope.viewerOverlay && $scope.viewerOverlay.setShouldVisualizeClicks(c);
                     });
-                    player.onPlayerStarted($scope, function (a) {
+                    player.onPlayerStarted($scope, function(a) {
                         $scope.viewerOverlay && $scope.viewerOverlay.startClicksAnimation();
                     });
-                    player.onPlayerStopped($scope, function (a) {
+                    player.onPlayerStopped($scope, function(a) {
                         $scope.viewerOverlay && $scope.viewerOverlay.stopClicksAnimation();
                     });
-                    player.onAttach($scope, x),
-                        player.onDetach($scope, v),
-                        player.onShowViewerOverlay($scope, function () {
-                            $scope.viewerOverlay && $scope.viewerOverlay.showRenderingOverlay();
-                        });
-                    player.onHideViewerOverlay($scope, function () {
+                    player.onAttach($scope, x);
+                    player.onDetach($scope, v);
+                    player.onShowViewerOverlay($scope, function() {
+                        $scope.viewerOverlay && $scope.viewerOverlay.showRenderingOverlay();
+                    });
+                    player.onHideViewerOverlay($scope, function() {
                         $scope.viewerOverlay && $scope.viewerOverlay.hideRenderingOverlay();
                     });
-                    player.onShowBuffering($scope, function () {
+                    player.onShowBuffering($scope, function() {
                         $scope.viewerOverlay && $scope.viewerOverlay.showBufferingOverlay();
                     });
-                    player.onHideBuffering($scope, function () {
+                    player.onHideBuffering($scope, function() {
                         $scope.viewerOverlay && $scope.viewerOverlay.hideBufferingOverlay();
                     });
-                    player.onHideHiddenTabOverlay($scope, function () {
+                    player.onHideHiddenTabOverlay($scope, function() {
                         $scope.viewerOverlay && $scope.viewerOverlay.hideVisibilityOverlay();
                     });
+
                     $scope.api = {
                         setSessionScreenWidth: setSessionScreenWidth,
                         setSessionScreenHeight: setSessionScreenHeight,
                         setInitialSettings: setInitialSettings,
                     };
-                    $scope.playRecordedSession = function () {
+                    $scope.playRecordedSession = function() {
                         $scope.playUserRecordedSession();
                     };
-                    $scope.focusNodeByNodeId = function (a) {
-                        var b = ya.getNode(a);
+                    $scope.focusNodeByNodeId = function(a) {
+                        var b = documentNode.getNode(a);
                         b && b.focus();
                     };
-                    $scope.getNodeFromPoint = function (a, b) {
+                    $scope.getNodeFromPoint = function(a, b) {
                         var c = m(a, b);
                         if (c) {
-                            var d = ya.getNodePropertyObject(c);
+                            var d = documentNode.getNodePropertyObject(c);
                             return {
                                 nodeId: d.nodeId,
                                 frameElementId: d.frameElementId,
@@ -721,7 +728,7 @@ angular
                             };
                         }
                     };
-                    $scope.getScrollableNodeFromPoint = function (a, b, c, e) {
+                    $scope.getScrollableNodeFromPoint = function(a, b, c, e) {
                         for (var f = m(a, b); ; ) {
                             var g = angular.element(f),
                                 h = g.scrollTop(),
@@ -740,53 +747,58 @@ angular
                             f = utils.getParentElement(f);
                             if (f === g[0] || f === viewer[0]) break;
                         }
-                        var o = ya.getNodePropertyObject(f);
+                        var o = documentNode.getNodePropertyObject(f);
                         return {
                             nodeId: o.nodeId,
                             frameElementId: o.frameElementId,
                             hostElementId: o.hostElementId,
                         };
                     };
-                    $scope.getOwnerFrameElementId = function (a) {
-                        var b = ya.getNode(a),
+                    $scope.getOwnerFrameElementId = function(a) {
+                        var b = documentNode.getNode(a),
                             c = b.ownerDocument.defaultView.frameElement;
-                        return ya.getNodePropertyObject(c).nodeId;
+                        return documentNode.getNodePropertyObject(c).nodeId;
                     };
-                    $scope.updateLastTypingTime = function (a) {
+                    $scope.updateLastTypingTime = function(a) {
                         Da = a;
                     };
-                    $scope.getFrameElementOffset = function (a) {
+                    $scope.getFrameElementOffset = function(frameElementId) {
                         var b;
-                        return angular.isDefined(a) && (b = ya.getNode(a)), ya.getNodeOffset(b);
+
+                        if (angular.isDefined(frameElementId)) {
+                            b = documentNode.getNode(frameElementId);
+                        }
+
+                        return documentNode.getNodeOffset(b);
                     };
-                    $scope.handleResize = function (a) {
-                        var c = $element.parent().height(),
-                            maxHeight = c - a;
+                    $scope.handleResize = function(height) {
+                        var parentHeight = $element.parent().height(),
+                            maxHeight = parentHeight - height;
                         u($scope.maxWidth, maxHeight, $scope.sessionScreenWidth, $scope.sessionScreenHeight);
                     };
-                    $scope.setToolIsActive = function (a, c) {
-                        $scope.viewerOverlay.setToolIsActive(a, c);
+                    $scope.setToolIsActive = function(activeTool, status) {
+                        $scope.viewerOverlay.setToolIsActive(activeTool, status);
                     };
-                    $scope.enableToolkit = function (a) {
-                        $scope.viewerOverlay.enableDrawing(a);
+                    $scope.enableToolkit = function(brokerClient) {
+                        $scope.viewerOverlay.enableDrawing(brokerClient);
                     };
-                    $scope.setIsCollaborativeMode = function (a) {
-                        $scope.isCollaborativeMode = a;
+                    $scope.setIsCollaborativeMode = function(isCollaborativeMode) {
+                        $scope.isCollaborativeMode = isCollaborativeMode;
                     };
-                    $scope.setIsOffline = function (status) {
+                    $scope.setIsOffline = function(status) {
                         if (status) {
                             $scope.viewerOverlay.showOfflineOverlay();
                         } else {
                             $scope.viewerOverlay.hideOfflineOverlay();
                         }
                     };
-                    $scope.$watch(pa, function (height) {
+                    $scope.$watch(pa, function(height) {
                         $scope.viewerOverlay && $scope.viewerOverlay.setOverlayHeight(height);
                     });
-                    $scope.$watch(qa, function (width) {
+                    $scope.$watch(qa, function(width) {
                         $scope.viewerOverlay && $scope.viewerOverlay.setOverlayWidth(width);
                     });
-                    $scope.$watch('viewerOverlayIsCreated', function (isCreated) {
+                    $scope.$watch('viewerOverlayIsCreated', function(isCreated) {
                         $scope.isCreated = isCreated;
                     });
                 },

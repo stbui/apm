@@ -1,4 +1,4 @@
-class NullPlayback {
+export class NullPlayback {
     private _wait: number;
     private _lastPlayedActivity;
 
@@ -13,7 +13,7 @@ class NullPlayback {
         clearTimeout(this._executor);
     }
     replay(callback) {
-        callback = callback || function () {};
+        callback = callback || function() {};
         this._executor = setTimeout(callback, this._wait);
     }
     getLastPlayedActivity() {

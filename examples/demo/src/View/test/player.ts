@@ -202,12 +202,13 @@ export const player = {
 
 import { InstantPlayback } from './InstantPlayback';
 import { NormalPlayback } from './NormalPlayback';
+import { NullPlayback } from './NullPlayback';
 import { LivePlayback } from './LivePlayback';
 import { Activities, IteratorFromClosestSnapshotToTime } from './Activities';
 import { AsyncSliceIterator } from './AsyncSliceIterator';
 import { IRender } from './interface';
 
-const noop = function () {};
+const noop = function() {};
 
 export class Player {
     private _activities: Activities;
@@ -286,10 +287,13 @@ export class Player {
         if (timelineSelectedValue < lastRenderedActivity.time) {
             // 回退
             this._render.reset();
-            this._activities.getIteratorFromClosestSnapshotToTime(timelineSelectedValue);
+            activities = this._activities.getIteratorFromClosestSnapshotToTime(timelineSelectedValue);
         } else {
             // 前进
-            this._activities.getIteratorFromClosestSnapshotBetween(lastRenderedActivity, timelineSelectedValue);
+            activities = this._activities.getIteratorFromClosestSnapshotBetween(
+                lastRenderedActivity,
+                timelineSelectedValue
+            );
         }
 
         this._playback = this._createInstantPlayback(activities);
@@ -344,7 +348,7 @@ export class Player {
             var g = b._activities.getIteratorBetween(lastRenderedActivity, f);
             b._playback = b._createNormalPlayback(a, f, g);
 
-            b._playback.replay(function () {
+            b._playback.replay(function() {
                 b._stop();
                 b._skippingToTabShown = true;
 
@@ -362,7 +366,7 @@ export class Player {
                 var activities = b._activities.getIteratorFromClosestSnapshotToFirstTabShown(lastRenderedActivity, c);
 
                 b._playback = b._createInstantPlayback(activities);
-                b._playback.replay(function () {
+                b._playback.replay(function() {
                     var a = b._render.lastRenderedActivity,
                         c = Math.max(f, a.time);
 
