@@ -1,6 +1,3 @@
-// import Apm from 'apm';
-// Apm('1dw43f34232424');
-
 import React, { render, useState } from 'react';
 import './style/index.scss';
 

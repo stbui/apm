@@ -2,16 +2,10 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { findLastIndex, last, noop } from 'lodash';
 import Viewer from './Viewer';
 import Console from './Console';
-import UserIdentityDetails from './UserIdentityDetails';
-import InaccessibleResourcesWarning from './InaccessibleResourcesWarning';
-import StepsTimeline from './StepsTimeline';
-import Timelline from './Timelline';
+import PlayerTimeline from './PlayerTimeline';
 import { SessionDataClient } from './session';
 import { playerSettings } from './settings';
-import { auth } from './auth';
 import Controls from './Controls';
-import { AsyncWhile } from './AsyncWhile';
-import { timeout } from './timeout';
 import { PLAYER_CONFIG, TAB_VISIBILITY, UI_MODE, EVENT_TYPE, MOUSE_TYPE } from './constant';
 
 import { Player } from '../test/player';
@@ -21,9 +15,6 @@ import { Activity, IActivity } from '../test/Activity';
 import mock from './mock';
 // const activities = mock.activities;
 
-let storeTimelineValue;
-/// activityIndex
-let wa = -1;
 /**
  * 暂停状态
  */
@@ -44,42 +35,20 @@ let storeOnExecuteEvent;
 const activities = new Activities();
 let player: Player;
 
-export const SessionPlayer = ({
-    session,
-    // isLive,
-    autostart,
-    isTimelineDirty,
-    startTime,
-    selectedLogId,
-    requestProgress,
-    pauseActivity,
-    settings,
-    // sessionWasInitiallyLive,
-    errors,
-    isCatchingUpWithLive,
-}) => {
-    ///
-
-    // let timelineMin = 0;
-    // let timelineMax = 9329;
-    // let timelineValue = 1000;
-
-    const [timelineMax, setTimelineMax] = useState(9329);
-    const [timelineMin, setTimelineMin] = useState(0);
-    const [timelineValue, setTimelineValue] = useState(0);
-    storeTimelineValue = timelineValue;
-
-    const [hasFinished, setHasFinished] = useState(false);
-    const [isStreamingLive, setIsStreamingLive] = useState(false);
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [arePlayerButtonsEnabled, setArePlayerButtonsEnabled] = useState(false);
-    const [isLive, setIsLive] = useState(false);
-    const [sessionWasInitiallyLive, setSessionWasInitiallyLive] = useState(false);
+export const SessionPlayer = ({ session }) => {
     // viewer
-    const [currentActivity, setCurrentActivity] = useState();
     const [fireClear, setFireClear] = useState(false);
     const [fireAttach, setFireAttach]: any = useState();
     const [onExecuteEvent, fireExecuteEvent]: any = useState();
+
+    const [timeline, setTimeline] = useState({ timelineMax: 9329, timelineMin: 0, timelineValue: 0 });
+    const [playState, setPlayState] = useState({
+        hasFinished: false,
+        isPlaying: false,
+        isLive: false,
+        isStreamingLive: false,
+        arePlayerButtonsEnabled: false,
+    });
 
     const addActivities = (as: IActivity[]) => {
         activities.push(as);
@@ -90,7 +59,7 @@ export const SessionPlayer = ({
     };
 
     const play = () => {
-        player.play(timelineValue);
+        player.play(timeline.timelineValue);
     };
     const pause = () => {
         player.pause();
@@ -103,10 +72,8 @@ export const SessionPlayer = ({
     const onTogglePlaying = playing => {
         if (playing) {
             pause();
-            setIsPlaying(false);
         } else {
             play();
-            setIsPlaying(true);
         }
     };
 
@@ -156,25 +123,56 @@ export const SessionPlayer = ({
 
         player = new Player(activities, render, PLAYER_CONFIG);
         player.onTimeChanged(time => {
-            // console.log('onTimeChanged', time);
-            setTimelineValue(time);
+            // console.log('onTimeChanged', timelineMax);
+            setTimeline({
+                timelineValue: time,
+                timelineMax: timeline.timelineMax,
+                timelineMin: timeline.timelineMin,
+            });
         });
         player.onBuffering(() => {
             console.log('onBuffering');
         });
         player.onRendering(() => {
             console.log('onRendering');
-            setHasFinished(false);
+            setPlayState({
+                arePlayerButtonsEnabled: false,
+                hasFinished: false,
+                isPlaying: false,
+                isLive: false,
+                isStreamingLive: false,
+            });
         });
         player.onPlaying(() => {
             console.log('onPlaying');
+            setPlayState({
+                arePlayerButtonsEnabled: false,
+                hasFinished: false,
+                isPlaying: true,
+                isLive: false,
+                isStreamingLive: false,
+            });
         });
         player.onPaused(() => {
             console.log('onPaused');
+            setPlayState({
+                arePlayerButtonsEnabled: false,
+                hasFinished: false,
+                isPlaying: false,
+                isLive: false,
+                isStreamingLive: false,
+            });
         });
         player.onFinished(() => {
             console.log('onFinished');
-            setHasFinished(true);
+
+            setPlayState({
+                arePlayerButtonsEnabled: false,
+                hasFinished: true,
+                isPlaying: false,
+                isLive: false,
+                isStreamingLive: false,
+            });
         });
 
         addActivities(mock.activities);
@@ -184,7 +182,7 @@ export const SessionPlayer = ({
         start();
     }, [session]);
 
-    // console.log(storeOnExecuteEvent);
+    console.log(timeline.timelineValue);
 
     return (
         <div>
@@ -220,29 +218,30 @@ export const SessionPlayer = ({
                         currentActivity={storeOnExecuteEvent}
                         fireClear={fireClear}
                         fireAttach={fireAttach}
+                        isPlaying={playState.isPlaying}
                     ></Viewer>
                 ) : null}
             </div>
 
             <Controls
-                hasFinished={hasFinished}
-                isStreamingLive={isStreamingLive}
-                isPlaying={isPlaying}
-                arePlayerButtonsEnabled={arePlayerButtonsEnabled}
-                isLive={isLive}
-                sessionWasInitiallyLive={sessionWasInitiallyLive}
+                hasFinished={playState.hasFinished}
+                isStreamingLive={playState.isStreamingLive}
+                isPlaying={playState.isPlaying}
+                arePlayerButtonsEnabled={playState.arePlayerButtonsEnabled}
+                isLive={playState.isLive}
+                sessionWasInitiallyLive={false}
                 onRepeat={onRepeat}
                 onTogglePlaying={onTogglePlaying}
             >
-                <Timelline
-                    min={timelineMin}
-                    max={timelineMax}
-                    value={timelineValue}
+                <PlayerTimeline
+                    min={timeline.timelineMin}
+                    max={timeline.timelineMax}
+                    value={timeline.timelineValue}
                     activities={mock.activities}
                     // refresh={refreshTimeline}
                     // pauseActivity={pauseActivity}
                     // isCreated={timelineIsCreated}
-                ></Timelline>
+                ></PlayerTimeline>
             </Controls>
 
             <Console

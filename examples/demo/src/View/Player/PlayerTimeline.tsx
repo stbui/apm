@@ -57,7 +57,13 @@ const momentformat = time => {
     return dateStr;
 };
 
-export const Timelline = ({
+/**
+ * 转换百分比
+ * @param {*} value
+ */
+const timelineValueToPercentage = value => (value / timelineOffset) * 100;
+
+export const PlayerTimeline = ({
     min,
     max,
     value,
@@ -105,12 +111,6 @@ export const Timelline = ({
      * timeline-clickable-wrapper 元素宽度
      */
     const getClickableWith = () => clickableRef.current.clientWidth;
-
-    /**
-     * 转换百分比
-     * @param {*} value
-     */
-    const timelineValueToPercentage = value => (value / timelineOffset) * 100;
 
     /**
      * 百分比
@@ -356,4 +356,4 @@ export const Timelline = ({
     );
 };
 
-export default Timelline;
+export default PlayerTimeline;

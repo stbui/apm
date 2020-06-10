@@ -60,6 +60,7 @@ const Viewer = ({
     fireClear,
     fireAttach,
     onFireAttach,
+    isPlaying,
 }) => {
     // iframe
     const viewerRef: any = useRef();
@@ -88,7 +89,7 @@ const Viewer = ({
      * @param a
      * @param callback
      */
-    function onAttach(callback) {
+    function onAttach(callback?) {
         documentNode.attach(() => {
             initialScrollPosition();
             traverseDocuments();
@@ -768,10 +769,15 @@ const Viewer = ({
         }
     }, [JSON.stringify(currentActivity)]);
 
+    useEffect(() => {
+        // onClear();
+        onAttach();
+    }, [isPlaying]);
+
     return (
         <div ng-style="{'margin-left': marginLeft, 'margin-top': marginTop}" style="margin-left: 20px;margin-top:50px">
             <div className="viewer-wrapper" style={{ transform: 'scale(0.7720271102895871)' }}>
-                <div ref={viewerContainerRef} id="viewer-container" style="width: 1623px;height: 600px;">
+                <div ref={viewerContainerRef} id="viewer-container" style="width: 1623px;height: 426px;">
                     <iframe ref={viewerRef} id="viewer" sandbox="allow-scripts allow-same-origin"></iframe>
                 </div>
             </div>
