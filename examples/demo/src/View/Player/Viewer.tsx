@@ -604,11 +604,11 @@ const Viewer = ({
             delete ha[position.id];
         }
 
-        const condition = function() {
+        const condition = function () {
             return element.scrollLeft !== position.left || element.scrollTop !== position.top;
         };
 
-        const body = function() {
+        const body = function () {
             timeout(() => {
                 // element.scrollTop(position.top), element.scrollLeft(position.left);
                 element.scrollTop = position.top;

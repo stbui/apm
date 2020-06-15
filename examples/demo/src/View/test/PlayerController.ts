@@ -87,10 +87,10 @@ function B(b) {
                 window.location.href = FRONTEND_URL + '#/login';
                 break;
             case HTTP_STATUS.BAD_REQUEST:
-                $scope.errors.invalidSessionId = !0;
+                $scope.errors.invalidSessionId = true;
                 break;
             case HTTP_STATUS.NOT_FOUND:
-                $scope.errors.sessionNotFound = !0;
+                $scope.errors.sessionNotFound = true;
         }
 }
 function C() {
@@ -116,7 +116,9 @@ function loadCurrentUser() {
         analytics.trackLiveSessionStopped(b.id, $scope.sessionId);
     });
 }
+
 function F(a) {
+    // 当前用户使用已过期
     return a.data && a.data.message === PLAN_EXPIRED;
 }
 

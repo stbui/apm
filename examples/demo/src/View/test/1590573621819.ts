@@ -1912,10 +1912,11 @@ angular
                                 });
                         }
                         function z() {
-                            ya.isAttached &&
+                            if (ya.isAttached) {
                                 ya.traverseDocuments(za, function (a) {
                                     D(a.documentElement);
                                 });
+                            }
                         }
                         function A(b) {
                             var c = Ca[b.id],
@@ -1953,8 +1954,8 @@ angular
                             var b = t(j.SCROLL_POSITION_CHANGE);
                             b(a);
                         }
-                        function D(a) {
-                            ya.traverseNode(a, function (a) {
+                        function D(documentElement) {
+                            ya.traverseNode(documentElement, function (a) {
                                 var b = ya.getNodePropertyObject(a);
                                 if (b.top || b.left) {
                                     var c = { id: b.nodeId, top: b.top, left: b.left };
@@ -1964,17 +1965,28 @@ angular
                         }
                         function E(a) {
                             var b = F(a);
-                            return b && b.shadowRoot ? b : ((b && b.contentWindow) || (b = F()), b.contentWindow);
+                            if (b && b.shadowRoot) {
+                                return b;
+                            } else {
+                                (b && b.contentWindow) || (b = F());
+
+                                return b.contentWindow;
+                            }
+
+                            // return b && b.shadowRoot ? b : ((b && b.contentWindow) || (b = F()), b.contentWindow);
                         }
                         function F(a) {
                             return angular.isDefined(a) ? ya.getNode(a) : wa[0];
                         }
                         function G(a, c, d) {
-                            var e = { id: d, top: a, left: c, windowScroll: !0 };
-                            ya.isAttached &&
-                                (A(e),
-                                angular.isUndefined(d) && b.viewerOverlay && b.viewerOverlay.setScrollPosition(a, c)),
-                                angular.isUndefined(d) ? (Fa = { top: a || 0, left: c || 0 }) : (Ga[d] = e);
+                            var e = { id: d, top: a, left: c, windowScroll: true };
+
+                            if (ya.isAttached) {
+                                A(e);
+                                angular.isUndefined(d) && b.viewerOverlay && b.viewerOverlay.setScrollPosition(a, c);
+                            }
+
+                            angular.isUndefined(d) ? (Fa = { top: a || 0, left: c || 0 }) : (Ga[d] = e);
                         }
                         function H(a, b) {
                             M(b);
@@ -2002,35 +2014,44 @@ angular
                             if (ya && c) {
                                 var e = !c.hostElementId && !c.frameElementId;
                                 if (e) {
-                                    b.updateUrl(c.pageUrl),
-                                        (Ea = {}),
-                                        (Ga = {}),
-                                        (Fa = { top: c.top, left: c.left }),
-                                        d.isDefined(c.visibilityState) &&
-                                            b.visibilityState !== c.visibilityState &&
-                                            J(c.visibilityState),
-                                        c.nestedSnapshots &&
-                                            c.nestedSnapshots.forEach(function (a) {
-                                                M(a);
-                                            });
+                                    b.updateUrl(c.pageUrl);
+                                    Ea = {};
+                                    Ga = {};
+                                    Fa = { top: c.top, left: c.left };
+
+                                    d.isDefined(c.visibilityState) &&
+                                        b.visibilityState !== c.visibilityState &&
+                                        J(c.visibilityState);
+
+                                    c.nestedSnapshots &&
+                                        c.nestedSnapshots.forEach(function (a) {
+                                            M(a);
+                                        });
+
                                     var f = c.screenWidth || ta,
                                         g = c.screenHeight || ua;
-                                    ya.isAttached
-                                        ? (q(f),
-                                          r(g),
-                                          b.viewerOverlay && b.viewerOverlay.setScrollPosition(Fa.top, Fa.left))
-                                        : (Ea[j.WINDOW_RESIZE] = { width: f, height: g });
+
+                                    if (ya.isAttached) {
+                                        q(f);
+                                        r(g);
+                                        b.viewerOverlay && b.viewerOverlay.setScrollPosition(Fa.top, Fa.left);
+                                    } else {
+                                        Ea[j.WINDOW_RESIZE] = { width: f, height: g };
+                                    }
                                 }
+
                                 var h = b.initialSettings.getCustomOrigin();
-                                ya.write(c, h, b.sessionId),
-                                    w(),
-                                    G(c.top, c.left, c.hostElementId || c.frameElementId),
-                                    c.nodesScrollPositions &&
-                                        angular.forEach(c.nodesScrollPositions, function (a, b) {
-                                            Ga[b] = { id: b, top: a.top, left: a.left };
-                                        }),
-                                    a(z),
-                                    ea(c.frameElementId, c.hostElementId);
+                                ya.write(c, h, b.sessionId);
+                                w();
+                                G(c.top, c.left, c.hostElementId || c.frameElementId);
+
+                                c.nodesScrollPositions &&
+                                    angular.forEach(c.nodesScrollPositions, function (a, b) {
+                                        Ga[b] = { id: b, top: a.top, left: a.left };
+                                    });
+
+                                a(z);
+                                ea(c.frameElementId, c.hostElementId);
                             }
                         }
                         function N(a) {

@@ -33,7 +33,7 @@ angular
         'PLAYER_CONFIG',
         'lodash',
         '$timeout',
-        function(MIN_ACTIVITY_BLOCK_WIDTH, PLAYER_CONFIG, lodash, $timeout) {
+        function (MIN_ACTIVITY_BLOCK_WIDTH, PLAYER_CONFIG, lodash, $timeout) {
             return {
                 templateUrl: 'templates/timeline.html',
                 replace: true,
@@ -50,7 +50,7 @@ angular
                     isCreated: '=',
                 },
                 restrict: 'E',
-                link: function($scope: IScope, $element, d) {
+                link: function ($scope: IScope, $element, d) {
                     function e() {
                         if (!$scope.isTimelineSelectionInProgress) {
                             var b = Math.min($scope.value, $scope.loadedTime);
@@ -71,17 +71,22 @@ angular
                             d = { time: 0 },
                             e = 0;
 
-                        activityBlocks.forEach(function(a) {
-                            if (a.isFirstLiveActivity) {
+                        activityBlocks.forEach(function (activityBlock) {
+                            if (activityBlock.isFirstLiveActivity) {
                                 var f: any = {
                                     unknown: true,
                                     time: d.time,
-                                    duration: a.time - d.time,
+                                    duration: activityBlock.time - d.time,
                                 };
                                 b.push(f);
                             }
-                            a.time >= e && (b.push(a), (e = a.time + c));
-                            d = a;
+
+                            if (activityBlock.time >= e) {
+                                b.push(activityBlock);
+                                e = activityBlock.time + c;
+                            }
+
+                            d = activityBlock;
                         });
 
                         return b;
@@ -104,41 +109,43 @@ angular
                     $scope.renderedTimePercentage = 0;
                     $scope.loadedTimePercentage = 0;
 
-                    $scope.enable = function() {
+                    $scope.enable = function () {
                         m = true;
                         $scope.enableTimelineHandle();
                     };
-                    $scope.disable = function() {
+                    $scope.disable = function () {
                         m = false;
                         $scope.disableTimelineHandle();
                     };
-                    $scope.timelineValueToPercentage = function(value) {
+                    $scope.timelineValueToPercentage = function (value) {
                         return (value / f()) * 100;
                     };
-                    $scope.$watch('value', function() {
+                    $scope.$watch('value', function () {
                         var b = (k.width() / j.width()) * 100,
                             c = $scope.timelineValueToPercentage($scope.value);
                         $scope.handleOffset = c - b / 2;
                         e();
                     });
-                    $scope.activityWidthInPercents = function(a) {
+                    $scope.activityWidthInPercents = function (a) {
                         var duration = $scope.duration || 1;
                         return (duration / f()) * 100;
                     };
                     // sessionPlayer.refreshTimeline(a,b)
-                    $scope.refresh = function(b: boolean, activities: IActivity[]) {
+                    // 有activities的时候，将调用该方法
+                    $scope.refresh = function (isFinish: boolean, activities: IActivity[]) {
                         var activityBlocks = $scope.activityBlocks || [];
 
-                        activities.forEach(function(activity: IActivity) {
+                        activities.forEach(function (activity: IActivity) {
                             var times: any = { time: activity.time };
-                            $scope.isFirstLiveActivity && (b.isFirstLiveActivity = true);
+                            $scope.isFirstLiveActivity && (isFinish.isFirstLiveActivity = true);
                             activityBlocks.push(times);
                         });
 
                         $scope.activityBlocks = h(activityBlocks);
 
-                        if (b) $scope.loadedTime = $scope.max;
-                        else if (d.length > 0) {
+                        if (isFinish) {
+                            $scope.loadedTime = $scope.max;
+                        } else if (d.length > 0) {
                             var g = lodash.last(d);
                             $scope.max = Math.max($scope.max, g.time);
                             $scope.loadedTime = g.time;
@@ -155,33 +162,33 @@ angular
                               )))
                             : l.hide();
                     };
-                    k.on('dragstart', function(b) {
-                        $scope.$apply(function() {
+                    k.on('dragstart', function (b) {
+                        $scope.$apply(function () {
                             $scope.valueSelectionInProgress = true;
                             $scope.draggedValue = null;
                         });
                     });
-                    k.on('drag', function(b) {
-                        $scope.$apply(function() {
+                    k.on('drag', function (b) {
+                        $scope.$apply(function () {
                             var c = j.offset(),
                                 d = Math.max(b.pageX - c.left, $scope.min + 1);
                             $scope.draggedValue = i(d);
                         });
                     });
-                    k.on('dragstop', function(b) {
-                        $scope.$apply(function() {
+                    k.on('dragstop', function (b) {
+                        $scope.$apply(function () {
                             $scope.valueSelectionInProgress = false;
                             $scope.draggedValue = null;
                             $scope.value = g(b);
                             $scope.selectedValue = $scope.value;
                         });
                     });
-                    j.on('click', function(b) {
+                    j.on('click', function (b) {
                         if (m) {
                             var c = angular.element(b.target),
                                 d = c.hasClass('timeline-unknown-activity');
                             d ||
-                                $scope.$apply(function() {
+                                $scope.$apply(function () {
                                     $scope.value = g(b);
                                     $scope.selectedValue = $scope.value;
                                 });

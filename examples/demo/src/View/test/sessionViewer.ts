@@ -5,6 +5,7 @@ import {
     SCROLL_POSITION_CHANGE,
     EVENT_TYPE,
     SESSIONSTACK_HOVER_CLASS,
+    ELEMENTS,
 } from './constant';
 import { DocumentNode } from './DocumentNode';
 import { AsyncWhile } from './AsyncWhile';
@@ -53,7 +54,7 @@ angular
         'ELEMENTS',
         'KEYSTROKE_OPTIONS',
         'FULL_SCREEN_CLASS',
-        function($timeout, $interval, sessionstackManager, PROCESS_HOVER_STYLES_CONFIG, ELEMENTS) {
+        function ($timeout, $interval, sessionstackManager, PROCESS_HOVER_STYLES_CONFIG, ELEMENTS) {
             return {
                 restrict: 'E',
                 templateUrl: 'templates/viewer.html',
@@ -74,7 +75,7 @@ angular
                     updateUrl: '=',
                     playUserRecordedSession: '=',
                 },
-                link: function($scope: IScope, $element, l) {
+                link: function ($scope: IScope, $element, l) {
                     function m(a, b) {
                         var c = oa();
                         if (c) {
@@ -157,7 +158,7 @@ angular
                     }
                     function x(a, b) {
                         documentNode.isAttached ||
-                            documentNode.attach(function() {
+                            documentNode.attach(function () {
                                 w();
                                 y();
                                 z();
@@ -168,17 +169,17 @@ angular
                     }
                     function y() {
                         C({ top: Fa.top, left: Fa.left }),
-                            angular.forEach(Ea, function(a, b) {
+                            angular.forEach(Ea, function (a, b) {
                                 var c = t(b);
                                 c(a);
                             }),
-                            angular.forEach(Object.keys(Ga), function(a) {
+                            angular.forEach(Object.keys(Ga), function (a) {
                                 C(Ga[a]);
                             });
                     }
                     function z() {
                         if (documentNode.isAttached) {
-                            documentNode.traverseDocuments(za, function(a) {
+                            documentNode.traverseDocuments(za, function (a) {
                                 D(a.documentElement);
                             });
                         }
@@ -192,11 +193,11 @@ angular
                             delete Ca[b.id];
                         }
 
-                        var condition = function() {
+                        var condition = function () {
                                 return d.scrollLeft() !== b.left || d.scrollTop() !== b.top;
                             },
-                            body = function() {
-                                $timeout(function() {
+                            body = function () {
+                                $timeout(function () {
                                     d.scrollTop(b.top);
                                     d.scrollLeft(b.left);
                                 });
@@ -215,11 +216,11 @@ angular
 
                         if (d && !d.is(ELEMENTS.HTML)) {
                             c && (c.cancel(), delete Ba[b.id]);
-                            var e = function() {
+                            var e = function () {
                                     return d.scrollTop() !== b.top || d.scrollLeft() !== b.left;
                                 },
-                                f = function() {
-                                    $timeout(function() {
+                                f = function () {
+                                    $timeout(function () {
                                         d.scrollTop(b.top), d.scrollLeft(b.left);
                                     });
                                 },
@@ -237,7 +238,7 @@ angular
                         b(a);
                     }
                     function D(a) {
-                        documentNode.traverseNode(a, function(a) {
+                        documentNode.traverseNode(a, function (a) {
                             var b = documentNode.getNodePropertyObject(a);
                             if (b.top || b.left) {
                                 var c = { id: b.nodeId, top: b.top, left: b.left };
@@ -311,7 +312,7 @@ angular
                                 }
 
                                 if (data.nestedSnapshots) {
-                                    data.nestedSnapshots.forEach(function(a) {
+                                    data.nestedSnapshots.forEach(function (a) {
                                         M(a);
                                     });
                                 }
@@ -335,18 +336,18 @@ angular
                             }
 
                             var customOrigin = $scope.initialSettings.getCustomOrigin();
-                            documentNode.write(c, customOrigin, $scope.sessionId);
+                            documentNode.write(data, customOrigin, $scope.sessionId);
                             w();
-                            G(c.top, c.left, c.hostElementId || c.frameElementId);
+                            G(data.top, data.left, data.hostElementId || data.frameElementId);
 
-                            if (c.nodesScrollPositions) {
-                                angular.forEach(c.nodesScrollPositions, function(a, b) {
+                            if (data.nodesScrollPositions) {
+                                angular.forEach(data.nodesScrollPositions, function (a, b) {
                                     Ga[b] = { id: b, top: a.top, left: a.left };
                                 });
                             }
 
                             $timeout(z);
-                            ea(c.frameElementId, c.hostElementId);
+                            ea(data.frameElementId, data.hostElementId);
                         }
                     }
                     function N(a) {
@@ -487,7 +488,7 @@ angular
                         documentNode.addFullScreenNode(data.nodeId);
                     }
                     function ba(data) {
-                        documentNode.traverseFullScreenNodes(function(a) {
+                        documentNode.traverseFullScreenNodes(function (a) {
                             angular.element(a).removeClass(FULL_SCREEN_CLASS);
                         });
                     }
@@ -495,13 +496,13 @@ angular
                         utils.forEach(documentNode.styleRuleNodes, fa);
                     }
                     function da() {
-                        utils.forEach(documentNode.adoptedStyleSheetNodes, function(a) {
+                        utils.forEach(documentNode.adoptedStyleSheetNodes, function (a) {
                             var b = documentNode.getNodePropertyObject(a);
                             utils.addAdoptedStyleSheets(a, b.adoptedStyleSheets);
                         });
                     }
                     function ea(frameElementId, hostElementId) {
-                        utils.forEach(documentNode.styleRuleNodes, function(c) {
+                        utils.forEach(documentNode.styleRuleNodes, function (c) {
                             var d = documentNode.getNodePropertyObject(c);
                             d.frameElementId === frameElementId && d.hostElementId === hostElementId && fa(c);
                         });
@@ -512,7 +513,7 @@ angular
 
                             if (b.styleRuleNodes) {
                                 ga(a);
-                                b.styleRules.forEach(function(b, c) {
+                                b.styleRules.forEach(function (b, c) {
                                     try {
                                         b.indexOf('inset:') >= 0 && (b = utils.replaceInsetStyleRule(b));
                                         a.sheet.insertRule(b, c);
@@ -526,7 +527,7 @@ angular
                     }
                     function ha(addedOrMoved) {
                         if (addedOrMoved) {
-                            angular.forEach(addedOrMoved, function(a) {
+                            angular.forEach(addedOrMoved, function (a) {
                                 var b;
                                 if (a.node) {
                                     var c = ia(a),
@@ -574,14 +575,14 @@ angular
                     }
                     function la(removed) {
                         removed &&
-                            angular.forEach(removed, function(a) {
+                            angular.forEach(removed, function (a) {
                                 var id = documentNode.getNode(a.id);
                                 documentNode.removeNode(id);
                             });
                     }
                     function ma(attributes) {
                         if (attributes) {
-                            angular.forEach(attributes, function(attribute) {
+                            angular.forEach(attributes, function (attribute) {
                                 var b = documentNode.getNode(attribute.id);
                                 documentNode.setAttribute(b, attribute.name, attribute.value);
                             });
@@ -589,7 +590,7 @@ angular
                     }
                     function na(characterData) {
                         if (characterData) {
-                            angular.forEach(characterData, function(a) {
+                            angular.forEach(characterData, function (a) {
                                 var b = documentNode.getNode(a.id);
                                 b && (b.textContent = a.value);
                             });
@@ -617,7 +618,7 @@ angular
                         $scope.initialSettings = initialSettings;
                         documentNode.setSettings(initialSettings);
                     }
-                    var ta,
+                    var ta, // screenWidth
                         ua, // sessionScreenHeight
                         va,
                         viewer = angular.element('#viewer'),
@@ -657,50 +658,50 @@ angular
                     s(EVENT_TYPE.FULL_SCREEN_ENTER, aa);
                     s(EVENT_TYPE.FULL_SCREEN_LEAVE, ba);
 
-                    $scope.$watch('maxWidth', function(maxWidth) {
+                    $scope.$watch('maxWidth', function (maxWidth) {
                         maxWidth &&
                             u(maxWidth, $scope.maxHeight, $scope.sessionScreenWidth, $scope.sessionScreenHeight);
                     });
-                    $scope.$watch('maxHeight', function(maxHeight) {
+                    $scope.$watch('maxHeight', function (maxHeight) {
                         maxHeight &&
                             u($scope.maxWidth, maxHeight, $scope.sessionScreenWidth, $scope.sessionScreenHeight);
                     });
-                    $scope.$watch('renderingProgress', function(a) {
+                    $scope.$watch('renderingProgress', function (a) {
                         $scope.viewerOverlay && $scope.viewerOverlay.setRenderingProgress(a);
                     });
-                    $scope.$watch('showLoadingAnimation', function(a) {
+                    $scope.$watch('showLoadingAnimation', function (a) {
                         $scope.viewerOverlay && $scope.viewerOverlay.showLoadingAnimation(a);
                     });
 
                     player.onExecuteEvent($scope, I);
                     player.onClear($scope, H);
-                    player.onPlayerSpeedChange($scope, function(a, c) {
+                    player.onPlayerSpeedChange($scope, function (a, c) {
                         $scope.viewerOverlay && $scope.viewerOverlay.setPlayerSpeed(c);
                     });
-                    player.onVisualizeClicks($scope, function(a, c) {
+                    player.onVisualizeClicks($scope, function (a, c) {
                         $scope.viewerOverlay && $scope.viewerOverlay.setShouldVisualizeClicks(c);
                     });
-                    player.onPlayerStarted($scope, function(a) {
+                    player.onPlayerStarted($scope, function (a) {
                         $scope.viewerOverlay && $scope.viewerOverlay.startClicksAnimation();
                     });
-                    player.onPlayerStopped($scope, function(a) {
+                    player.onPlayerStopped($scope, function (a) {
                         $scope.viewerOverlay && $scope.viewerOverlay.stopClicksAnimation();
                     });
                     player.onAttach($scope, x);
                     player.onDetach($scope, v);
-                    player.onShowViewerOverlay($scope, function() {
+                    player.onShowViewerOverlay($scope, function () {
                         $scope.viewerOverlay && $scope.viewerOverlay.showRenderingOverlay();
                     });
-                    player.onHideViewerOverlay($scope, function() {
+                    player.onHideViewerOverlay($scope, function () {
                         $scope.viewerOverlay && $scope.viewerOverlay.hideRenderingOverlay();
                     });
-                    player.onShowBuffering($scope, function() {
+                    player.onShowBuffering($scope, function () {
                         $scope.viewerOverlay && $scope.viewerOverlay.showBufferingOverlay();
                     });
-                    player.onHideBuffering($scope, function() {
+                    player.onHideBuffering($scope, function () {
                         $scope.viewerOverlay && $scope.viewerOverlay.hideBufferingOverlay();
                     });
-                    player.onHideHiddenTabOverlay($scope, function() {
+                    player.onHideHiddenTabOverlay($scope, function () {
                         $scope.viewerOverlay && $scope.viewerOverlay.hideVisibilityOverlay();
                     });
 
@@ -709,14 +710,14 @@ angular
                         setSessionScreenHeight: setSessionScreenHeight,
                         setInitialSettings: setInitialSettings,
                     };
-                    $scope.playRecordedSession = function() {
+                    $scope.playRecordedSession = function () {
                         $scope.playUserRecordedSession();
                     };
-                    $scope.focusNodeByNodeId = function(a) {
+                    $scope.focusNodeByNodeId = function (a) {
                         var b = documentNode.getNode(a);
                         b && b.focus();
                     };
-                    $scope.getNodeFromPoint = function(a, b) {
+                    $scope.getNodeFromPoint = function (a, b) {
                         var c = m(a, b);
                         if (c) {
                             var d = documentNode.getNodePropertyObject(c);
@@ -728,7 +729,7 @@ angular
                             };
                         }
                     };
-                    $scope.getScrollableNodeFromPoint = function(a, b, c, e) {
+                    $scope.getScrollableNodeFromPoint = function (a, b, c, e) {
                         for (var f = m(a, b); ; ) {
                             var g = angular.element(f),
                                 h = g.scrollTop(),
@@ -754,15 +755,15 @@ angular
                             hostElementId: o.hostElementId,
                         };
                     };
-                    $scope.getOwnerFrameElementId = function(a) {
+                    $scope.getOwnerFrameElementId = function (a) {
                         var b = documentNode.getNode(a),
                             c = b.ownerDocument.defaultView.frameElement;
                         return documentNode.getNodePropertyObject(c).nodeId;
                     };
-                    $scope.updateLastTypingTime = function(a) {
+                    $scope.updateLastTypingTime = function (a) {
                         Da = a;
                     };
-                    $scope.getFrameElementOffset = function(frameElementId) {
+                    $scope.getFrameElementOffset = function (frameElementId) {
                         var b;
 
                         if (angular.isDefined(frameElementId)) {
@@ -771,34 +772,34 @@ angular
 
                         return documentNode.getNodeOffset(b);
                     };
-                    $scope.handleResize = function(height) {
+                    $scope.handleResize = function (height) {
                         var parentHeight = $element.parent().height(),
                             maxHeight = parentHeight - height;
                         u($scope.maxWidth, maxHeight, $scope.sessionScreenWidth, $scope.sessionScreenHeight);
                     };
-                    $scope.setToolIsActive = function(activeTool, status) {
+                    $scope.setToolIsActive = function (activeTool, status) {
                         $scope.viewerOverlay.setToolIsActive(activeTool, status);
                     };
-                    $scope.enableToolkit = function(brokerClient) {
+                    $scope.enableToolkit = function (brokerClient) {
                         $scope.viewerOverlay.enableDrawing(brokerClient);
                     };
-                    $scope.setIsCollaborativeMode = function(isCollaborativeMode) {
+                    $scope.setIsCollaborativeMode = function (isCollaborativeMode) {
                         $scope.isCollaborativeMode = isCollaborativeMode;
                     };
-                    $scope.setIsOffline = function(status) {
+                    $scope.setIsOffline = function (status) {
                         if (status) {
                             $scope.viewerOverlay.showOfflineOverlay();
                         } else {
                             $scope.viewerOverlay.hideOfflineOverlay();
                         }
                     };
-                    $scope.$watch(pa, function(height) {
+                    $scope.$watch(pa, function (height) {
                         $scope.viewerOverlay && $scope.viewerOverlay.setOverlayHeight(height);
                     });
-                    $scope.$watch(qa, function(width) {
+                    $scope.$watch(qa, function (width) {
                         $scope.viewerOverlay && $scope.viewerOverlay.setOverlayWidth(width);
                     });
-                    $scope.$watch('viewerOverlayIsCreated', function(isCreated) {
+                    $scope.$watch('viewerOverlayIsCreated', function (isCreated) {
                         $scope.isCreated = isCreated;
                     });
                 },

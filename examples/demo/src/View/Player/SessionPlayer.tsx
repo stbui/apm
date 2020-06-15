@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { findLastIndex, last, noop } from 'lodash';
 import Viewer from './Viewer';
 import Console from './Console';
-import PlayerTimeline from './PlayerTimeline';
+import PlayerTimeline from '../PlayerTimeline';
 import { SessionDataClient } from './session';
 import { playerSettings } from './settings';
 import Controls from './Controls';
@@ -14,12 +14,6 @@ import { Activity, IActivity } from '../test/Activity';
 
 import mock from './mock';
 // const activities = mock.activities;
-
-/**
- * 暂停状态
- */
-let isPaused = false;
-let loadedTime = -1;
 
 let renderingProgress = 0;
 
@@ -89,14 +83,14 @@ export const SessionPlayer = ({ session }) => {
             _onTabHiddenCallback: noop,
             isTabHidden: false,
             lastRenderedActivity,
-            reset: function() {
+            reset: function () {
                 this.isTabHidden = false;
                 this.lastRenderedActivity = lastRenderedActivity;
             },
-            onTabHidden: function(callback) {
+            onTabHidden: function (callback) {
                 this._onTabHiddenCallback = callback;
             },
-            render: function(activities, d) {
+            render: function (activities, d) {
                 updateExecuteEventState(activities);
 
                 activities.forEach((activity: IActivity) => {
@@ -115,7 +109,7 @@ export const SessionPlayer = ({ session }) => {
                 this.isTabHidden && setTimeout(this._onTabHiddenCallback, 0);
             },
         };
-        render.onTabHidden(function() {
+        render.onTabHidden(function () {
             if (render.isTabHidden) {
                 player.skipToTabShown(timelineValue);
             }
@@ -182,7 +176,7 @@ export const SessionPlayer = ({ session }) => {
         start();
     }, [session]);
 
-    console.log(timeline.timelineValue);
+    // console.log(timeline.timelineValue);
 
     return (
         <div>
@@ -222,7 +216,6 @@ export const SessionPlayer = ({ session }) => {
                     ></Viewer>
                 ) : null}
             </div>
-
             <Controls
                 hasFinished={playState.hasFinished}
                 isStreamingLive={playState.isStreamingLive}
@@ -238,12 +231,9 @@ export const SessionPlayer = ({ session }) => {
                     max={timeline.timelineMax}
                     value={timeline.timelineValue}
                     activities={mock.activities}
-                    // refresh={refreshTimeline}
-                    // pauseActivity={pauseActivity}
-                    // isCreated={timelineIsCreated}
+                    loadedTime={timeline.timelineMax}
                 ></PlayerTimeline>
             </Controls>
-
             <Console
                 open-console="openConsole"
                 close-console="closeConsole"

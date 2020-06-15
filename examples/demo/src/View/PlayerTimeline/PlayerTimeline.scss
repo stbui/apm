@@ -1,0 +1,141 @@
+.timeline-track {
+    overflow: hidden;
+    height: 5px;
+    z-index: 0;
+    transition: height 0.2s 0.5s;
+}
+.timeline-track:hover,
+.timeline-track:active {
+    height: 10px;
+    transition: height 0.2s 0s;
+}
+.timeline-track:hover .timeline-progress-handle,
+.timeline-track:active .timeline-progress-handle {
+    transform: scale(3.6);
+    transition-delay: 0s;
+}
+.timeline-track .timeline-track-hover-area {
+    position: absolute;
+    height: 13px;
+    width: 100%;
+    bottom: -3px;
+}
+.timeline-track .timeline-progress-handle {
+    position: absolute;
+    top: 0px !important;
+    border-radius: 50%;
+    height: 5px;
+    width: 5px !important;
+    background-color: #fff;
+    box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.3);
+    box-sizing: border-box;
+    margin-top: 0px;
+    z-index: 4;
+    transition: transform 0.2s 0.5s, top 0.2s 0.5s;
+    transform-origin: 100% 30%;
+}
+.timeline-progress-wrapper {
+    position: absolute;
+    margin: 0;
+    bottom: 42px;
+    left: 0;
+    right: 2px;
+}
+.timeline-progress-background {
+    height: 100%;
+    background-color: #62696c;
+    position: absolute;
+    max-width: 100%;
+    overflow: hidden;
+}
+.timeline-progress-bar {
+    height: 100%;
+    border-radius: 3px;
+    background-color: #007afd;
+    position: absolute;
+    z-index: 2;
+    max-width: 100%;
+    transition: all 0s 0s;
+}
+.timeline-buffering-bar {
+    background-color: #f6f6f6;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: -2;
+    width: 100%;
+}
+.timeline-activity-wrapper {
+    position: relative;
+}
+.timeline-activity {
+    background-color: #00b46d;
+    height: 10px;
+    position: absolute;
+    z-index: 1;
+}
+.timeline-unknown-activity {
+    background-color: #bbb;
+    background-image: repeating-linear-gradient(-45deg, transparent, transparent 20px, #eee 20px, #eee 30px);
+    background-size: 29px 29px;
+    height: 10px;
+    position: absolute;
+    z-index: 3;
+}
+.timeline-pause-activity-wrapper {
+    position: absolute;
+    display: none;
+    bottom: -2px;
+    height: 36px;
+    width: 0px;
+}
+.timeline-pause-activity {
+    background-color: #ffffff;
+    width: 2px;
+    height: 10px;
+    bottom: 0px;
+    position: absolute;
+    z-index: 4;
+}
+.timeline-pause-activity-marker {
+    position: relative;
+    right: 8px;
+    color: #ffffff;
+    font-size: 36px !important;
+    text-shadow: 0px 0px 5px #2e3440;
+}
+.timeline-value {
+    display: block;
+    margin-left: 10px;
+    margin-top: 1em;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
+}
+.player-menu {
+    overflow: visible;
+    max-height: none;
+    background-color: #404554 !important;
+}
+.player-menu md-divider {
+    background-color: #7d8da3;
+    margin: 0 15px;
+}
+.player-menu md-label {
+    margin: 15px 0 0 15px;
+    color: #fff;
+}
+.buffering-animation-container {
+    height: 100%;
+}
+.timeline-buffering-animation {
+    position: absolute;
+    height: 5px;
+    z-index: 1;
+    width: 100%;
+    background-color: #bbb;
+    background-image: repeating-linear-gradient(-45deg, transparent, transparent 20px, #eee 20px, #eee 30px);
+    background-size: 29px 29px;
+    animation: move 0.3s linear infinite;
+    border-radius: 3px;
+}
