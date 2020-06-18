@@ -534,18 +534,26 @@ angular
                                         d = c ? c.hostElementId : null,
                                         e = c ? c.frameElementId : null;
                                     b = documentNode.createElement(a.node, d, e);
-                                } else b = documentNode.getNode(a.id);
-                                if (a.frameElementId)
+                                } else {
+                                    b = documentNode.getNode(a.id);
+                                }
+
+                                if (a.frameElementId) {
                                     a.node && a.node.nodeType !== Node.ELEMENT_NODE
                                         ? a.node.nodeType === Node.DOCUMENT_TYPE_NODE &&
                                           documentNode.replaceDocType(a.node.docTypeString, a.frameElementId)
                                         : documentNode.replaceDocumentElement(b, a.frameElementId);
-                                else if (a.previousSiblingId) {
+                                } else if (a.previousSiblingId) {
                                     var f = documentNode.getNode(a.previousSiblingId);
-                                    documentNode.insertAfter(f, b), D(b);
+                                    documentNode.insertAfter(f, b);
+                                    D(b);
                                 } else if (a.parentId) {
                                     var g = documentNode.getNode(a.parentId);
-                                    g && (documentNode.prepend(g, b), D(b), ka(g, b) && fa(g));
+                                    if (g) {
+                                        documentNode.prepend(g, b);
+                                        D(b);
+                                        ka(g, b) && fa(g);
+                                    }
                                 }
                                 a.node && 'STYLE' === a.node.tagName && a.node.styleRules && fa(b);
                             });

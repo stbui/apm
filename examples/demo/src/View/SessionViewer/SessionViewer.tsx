@@ -24,8 +24,44 @@ let Ea = {};
 let Ga = {};
 let Fa = {};
 
-function s(a, b) {
-    Aa[a] = b;
+function ia(a) {
+    var b;
+
+    a.parentId
+        ? (b = documentNode.getNode(a.parentId))
+        : a.previousSiblingId && (b = documentNode.getNode(a.previousSiblingId));
+
+    if (b) {
+        return documentNode.getNodePropertyObject(b);
+    }
+}
+
+function t(a) {
+    return Aa[a];
+}
+
+/**
+ * x
+ * 滚动位置
+ * @param position { top, left }
+ */
+function C(a) {
+    var b = t(EVENT_TYPE.SCROLL_POSITION_CHANGE);
+    b(a);
+}
+
+function traverseNodeByScrollPosition(a: Element) {
+    documentNode.traverseNode(a, function (a) {
+        var b = documentNode.getNodePropertyObject(a);
+        if (b.top || b.left) {
+            var c = { id: b.nodeId, top: b.top, left: b.left };
+            Ga[c.id] || C(c);
+        }
+    });
+}
+
+function mapping(key, value) {
+    Aa[key] = value;
 }
 
 function N(a) {
@@ -98,40 +134,85 @@ function M(data) {
 }
 
 /**
- * W
  * 添加或移除节点
  * @param  data
  */
 function addedOrMoved(data: any[]) {
     if (data) {
-        data.forEach(item => {
-            const element = item.node ? documentNode.createElement(item.node) : documentNode.getNode(item.id);
+        angular.forEach(addedOrMoved, function (a) {
+            var b;
+            if (a.node) {
+                var c = ia(a),
+                    d = c ? c.hostElementId : null,
+                    e = c ? c.frameElementId : null;
+                b = documentNode.createElement(a.node, d, e);
+            } else {
+                b = documentNode.getNode(a.id);
+            }
 
-            if (item.frameElementId) {
-                if (item.node.nodeType === Node.ELEMENT_NODE) {
-                    documentNode.replaceDocumentElement(element, item.frameElementId);
-                } else if (item.node.nodeType === Node.DOCUMENT_TYPE_NODE) {
-                    documentNode.replaceDocType(item.node.docTypeString, item.frameElementId);
-                }
-            } else if (item.previousSiblingId) {
-                const previousSiblingElement = documentNode.getNode(item.previousSiblingId);
+            if (a.frameElementId) {
+                a.node && a.node.nodeType !== Node.ELEMENT_NODE
+                    ? a.node.nodeType === Node.DOCUMENT_TYPE_NODE &&
+                      documentNode.replaceDocType(a.node.docTypeString, a.frameElementId)
+                    : documentNode.replaceDocumentElement(b, a.frameElementId);
+            } else if (a.previousSiblingId) {
+                var f = documentNode.getNode(a.previousSiblingId);
                 // 元素后面插入
-                documentNode.insertAfter(previousSiblingElement, element);
+                documentNode.insertAfter(f, b);
                 // 滚动
-                traverseNodeByScrollPosition(element);
-            } else if (item.parentId) {
-                const parentElement = documentNode.getNode(item.parentId);
-
-                if (parentElement) {
+                traverseNodeByScrollPosition(b);
+            } else if (a.parentId) {
+                var g = documentNode.getNode(a.parentId);
+                if (g) {
                     // 元素前面插入
-                    documentNode.prepend(parentElement, element);
+                    documentNode.prepend(g, b);
                     // 滚动
-                    traverseNodeByScrollPosition(element);
-                } else {
-                    // e.warn('Missing parent node, id: ' + item.parentId);
-                    console.warn('Missing parent node, id: ' + item.parentId);
+                    traverseNodeByScrollPosition(b);
+                    // ka(g, b) && fa(g);
                 }
             }
+            // a.node && 'STYLE' === a.node.tagName && a.node.styleRules && fa(b);
+        });
+    }
+}
+
+/**
+ * removed
+ * @param {*} elements
+ */
+function removed(data: any[]) {
+    if (data) {
+        data.forEach(item => {
+            const element = documentNode.getNode(item.id);
+            // 删除所有节点
+            documentNode.removeNode(element);
+        });
+    }
+}
+
+/**
+ * characterData
+ */
+function characterData(data: any[]) {
+    if (data) {
+        data.forEach(item => {
+            const element = documentNode.getNode(item.id);
+            if (element) {
+                element.textContent = item.value;
+            }
+        });
+    }
+}
+
+/**
+ * attributes
+ * @param {*} data
+ */
+function setAttribute(data: any[]) {
+    if (data) {
+        data.forEach(item => {
+            const element = documentNode.getNode(item.id);
+            documentNode.setAttribute(element, item.name, item.value);
         });
     }
 }
@@ -158,8 +239,35 @@ function setDomMutation(data) {
     setAttribute(data.attributes);
 }
 function setVisibilityChange(data) {}
-function setCssRuleInsert(data) {}
-function deleteRule(data) {}
+function setCssRuleInsert(data) {
+    var b = documentNode.getNode(data.nodeId),
+        c = documentNode.getNodePropertyObject(b);
+
+    documentNode.styleRuleNodes[data.nodeId] = b;
+    c.styleRules = c.styleRules || [];
+    isNaN(data.index) ? c.styleRules.push(data.rule) : c.styleRules.splice(data.index, 0, data.rule);
+
+    if (documentNode.isAttached) {
+        try {
+            var d = isNaN(data.index) ? b.sheet.cssRules.length : data.index;
+            b.sheet.insertRule(data.rule, d);
+        } catch (e) {}
+    }
+}
+function deleteRule(data) {
+    var b = documentNode.getNode(data.nodeId),
+        c = documentNode.getNodePropertyObject(b);
+
+    documentNode.styleRuleNodes[data.nodeId] = b;
+    c.styleRules = c.styleRules || [];
+    c.styleRules.length > data.index && c.styleRules.splice(data.index, 1);
+
+    if (documentNode.isAttached) {
+        try {
+            b.sheet.deleteRule(data.index);
+        } catch (d) {}
+    }
+}
 
 const Viewer = ({
     sessionScreenWidth,
@@ -190,20 +298,20 @@ const Viewer = ({
         }
 
         //
-        s(EVENT_TYPE.DOM_ELEMENT_VALUE_CHANGE, domElementValueChange);
-        s(EVENT_TYPE.DOM_SNAPSHOT, domSnapshot);
-        s(EVENT_TYPE.MOUSE_MOVE, setCursorPosition);
-        s(EVENT_TYPE.MOUSE_CLICK, registerClick);
-        s(EVENT_TYPE.MOUSE_OVER, setMouseOver);
-        s(EVENT_TYPE.MOUSE_OUT, setMouseOut);
-        s(EVENT_TYPE.SCROLL_POSITION_CHANGE, setScrollPositionChange);
-        s(EVENT_TYPE.WINDOW_RESIZE, setWindowResize);
-        s(EVENT_TYPE.RADIO_BUTTON_CHANGE, setRadioButtonChange);
-        s(EVENT_TYPE.CHECKBOX_CHANGE, setCheckboxChange);
-        s(EVENT_TYPE.DOM_MUTATION, setDomMutation);
-        s(EVENT_TYPE.VISIBILITY_CHANGE, setVisibilityChange);
-        s(EVENT_TYPE.CSS_RULE_INSERT, setCssRuleInsert);
-        s(EVENT_TYPE.CSS_RULE_DELETE, deleteRule);
+        mapping(EVENT_TYPE.DOM_ELEMENT_VALUE_CHANGE, domElementValueChange);
+        mapping(EVENT_TYPE.DOM_SNAPSHOT, domSnapshot);
+        mapping(EVENT_TYPE.MOUSE_MOVE, setCursorPosition);
+        mapping(EVENT_TYPE.MOUSE_CLICK, registerClick);
+        mapping(EVENT_TYPE.MOUSE_OVER, setMouseOver);
+        mapping(EVENT_TYPE.MOUSE_OUT, setMouseOut);
+        mapping(EVENT_TYPE.SCROLL_POSITION_CHANGE, setScrollPositionChange);
+        mapping(EVENT_TYPE.WINDOW_RESIZE, setWindowResize);
+        mapping(EVENT_TYPE.RADIO_BUTTON_CHANGE, setRadioButtonChange);
+        mapping(EVENT_TYPE.CHECKBOX_CHANGE, setCheckboxChange);
+        mapping(EVENT_TYPE.DOM_MUTATION, setDomMutation);
+        mapping(EVENT_TYPE.VISIBILITY_CHANGE, setVisibilityChange);
+        mapping(EVENT_TYPE.CSS_RULE_INSERT, setCssRuleInsert);
+        mapping(EVENT_TYPE.CSS_RULE_DELETE, deleteRule);
     }, []);
 
     return (
