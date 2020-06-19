@@ -33,6 +33,22 @@ export const angular = {
     },
 
     val(text) {
+        this[0].value;
+
+        return this;
+    },
+
+    css(css) {
+        if (typeof css === 'object') {
+            var str = '';
+            for (var k in css) {
+                const val = typeof css[k] === 'number' ? css[k] + 'px' : css[k];
+                str = str.concat(k, ':', val, ';');
+            }
+
+            this[0].style = str;
+        }
+
         return this;
     },
 
@@ -49,7 +65,7 @@ export const angular = {
 
         if (typeof selector === 'string') {
             //如果传进来的是标签字符串
-            let ele = document.getElementsByTagName(selector); //获取指定名称的元素
+            let ele = document.querySelectorAll(selector); //获取指定名称的元素
             for (let i = 0; i < ele.length; i++) {
                 //将获取到的元素放入实例对象中
                 this[i] = ele[i];

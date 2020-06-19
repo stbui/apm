@@ -15,7 +15,7 @@ export class Interceptor extends Plugin {
         let open = XMLHttpRequest.prototype.open;
         // send = XMLHttpRequest.prototype.send;
 
-        XMLHttpRequest.prototype.open = function(method, url) {
+        XMLHttpRequest.prototype.open = function (method, url) {
             if (url !== self.config.endpoint) {
                 const event = {
                     type: 'xhr',

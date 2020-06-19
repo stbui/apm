@@ -28,7 +28,9 @@ export class Client extends Kernal {
         });
     }
 
-    report(data) { this.dispatcher.dispatch('notify', data); }
+    report(data) {
+        this.dispatcher.dispatch('notify', data);
+    }
 
     onSession() {
         this.dispatcher.on('session', event => {
@@ -57,7 +59,7 @@ export class Client extends Kernal {
         this.dispatcher.dispatch('notify', event);
     }
 
-    captureBreadcrumb() { }
+    captureBreadcrumb() {}
 
     getUser() {
         return this.config.user;

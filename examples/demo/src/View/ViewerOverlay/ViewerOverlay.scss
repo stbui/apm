@@ -1,0 +1,141 @@
+.viewer-overlay {
+    position: absolute;
+    z-index: 20;
+}
+.viewer-overlay.drawing-container {
+    z-index: 22;
+    overflow: hidden;
+}
+
+svg {
+    vertical-align: middle;
+}
+.cursor {
+    position: relative;
+}
+.cursor-highlighter {
+    position: relative;
+    background: yellow;
+    border-radius: 50%;
+    height: 20px;
+    width: 20px;
+    top: -30px;
+    left: -10px;
+    opacity: 0.5;
+    z-index: 20;
+}
+.cursor-arrow {
+    position: relative;
+    z-index: 21;
+    width: auto;
+    height: auto;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    transition: left 50ms, top 50ms;
+}
+
+.user-offline-container img {
+    width: 30px;
+}
+.user-offline-container .offline-overlay-message {
+    color: #ffffff;
+}
+
+.player-loader-container {
+    background-color: #242628;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 100;
+}
+.player-loader {
+    top: 50%;
+    left: 30%;
+    width: 40%;
+    position: relative;
+}
+.player-loader-background {
+    margin-bottom: 10px;
+    height: 4px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    background-color: #585858;
+}
+.player-loader-filler {
+    display: block;
+    position: absolute;
+    height: 4px;
+    background-color: #005e9c;
+}
+.loader {
+    height: 4px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    background-color: #585858;
+    margin-bottom: 10px;
+}
+.loader:before {
+    display: block;
+    position: absolute;
+    content: '';
+    left: -200px;
+    width: 200px;
+    height: 4px;
+    background-color: #005e9c;
+    animation: loading 2s linear infinite;
+}
+@keyframes loading {
+    from {
+        left: -200px;
+        width: 30%;
+    }
+    50% {
+        width: 30%;
+    }
+    70% {
+        width: 70%;
+    }
+    80% {
+        left: 50%;
+    }
+    95% {
+        left: 120%;
+    }
+    to {
+        left: 100%;
+    }
+}
+.loader-footer {
+    color: #585858;
+}
+.visibility-overlay {
+    position: absolute;
+    z-index: 23;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    opacity: 0.75;
+}
+.visibility-overlay-info {
+    position: absolute;
+    z-index: 23;
+    height: 100%;
+    width: 100%;
+    color: white;
+}
+.visibility-overlay-icon {
+    font-size: 41px !important;
+}
+.visibility-overlay-message {
+    text-align: center;
+}
+.visibility-overlay-details {
+    font-size: 17px;
+}
+.viewer-overlay.drawing-container {
+    z-index: 22;
+    overflow: hidden;
+}

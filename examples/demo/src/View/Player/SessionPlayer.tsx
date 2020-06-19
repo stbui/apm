@@ -8,6 +8,7 @@ import { playerSettings } from './settings';
 import Controls from './Controls';
 import { PLAYER_CONFIG, TAB_VISIBILITY, UI_MODE, EVENT_TYPE, MOUSE_TYPE } from './constant';
 
+import SessionViewer from '../SessionViewer';
 import { Player } from '../test/player';
 import { Activities } from '../test/Activities';
 import { Activity, IActivity } from '../test/Activity';
@@ -198,7 +199,7 @@ export const SessionPlayer = ({ session }) => {
             ></StepsTimeline>*/}
             <div style="overflow: hidden;background: #242628;">
                 {onExecuteEvent ? (
-                    <Viewer
+                    <SessionViewer
                         maxWidth={containerWidth}
                         maxHeight={containerHeight}
                         sessionScreenWidth={session.screenWidth}
@@ -213,7 +214,7 @@ export const SessionPlayer = ({ session }) => {
                         fireClear={fireClear}
                         fireAttach={fireAttach}
                         isPlaying={playState.isPlaying}
-                    ></Viewer>
+                    ></SessionViewer>
                 ) : null}
             </div>
             <Controls

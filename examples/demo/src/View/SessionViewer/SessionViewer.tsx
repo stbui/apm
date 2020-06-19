@@ -12,6 +12,7 @@ import { utils } from '../test/common';
 
 import { DocumentNode } from '../Player/DocumentNode';
 import { angular } from '../Player/angular';
+import ViewerOverlay from '../ViewerOverlay';
 
 const STYLESHEETS_SELECTOR = 'style, link[rel="stylesheet"]';
 const KEYSTROKE_OPTIONS = { END_USER_TYPE_DELAY_SECONDS: 2 };
@@ -60,7 +61,7 @@ function traverseNodeByScrollPosition(a: Element) {
     });
 }
 
-function mapping(key, value) {
+function strategy(key, value) {
     Aa[key] = value;
 }
 
@@ -77,59 +78,6 @@ function domElementValueChange(data) {
     if (!N(KEYSTROKE_OPTIONS.END_USER_TYPE_DELAY_SECONDS)) {
         var b = angular.element(documentNode.getNode(data.id));
         b.val(data.value);
-    }
-}
-
-function M(data) {
-    if (documentNode && data) {
-        var e = !data.hostElementId && !data.frameElementId;
-        if (e) {
-            // updateUrl(data.pageUrl);
-            Ea = {};
-            Ga = {};
-            Fa = { top: data.top, left: data.left };
-
-            // if (utils.isDefined(data.visibilityState) && visibilityState !== data.visibilityState) {
-            //     J(data.visibilityState);
-            // }
-
-            if (data.nestedSnapshots) {
-                data.nestedSnapshots.forEach(function (a) {
-                    M(a);
-                });
-            }
-
-            var screenWidth = data.screenWidth,
-                screenHeight = data.screenHeight;
-
-            if (documentNode.isAttached) {
-                // setSessionScreenWidth(screenWidth);
-                // setSessionScreenHeight(screenHeight);
-                // $scope.viewerOverlay && $scope.viewerOverlay.setScrollPosition(Fa.top, Fa.left);
-            } else {
-                Ea[EVENT_TYPE.WINDOW_RESIZE] = { width: screenWidth, height: screenHeight };
-            }
-
-            // documentNode.isAttached
-            //     ? (setSessionScreenWidth(screenWidth),
-            //       setSessionScreenHeight(screenHeight),
-            //       $scope.viewerOverlay && $scope.viewerOverlay.setScrollPosition(Fa.top, Fa.left))
-            //     : (Ea[EVENT_TYPE.WINDOW_RESIZE] = { width: screenWidth, height: screenHeight });
-        }
-
-        var customOrigin = initialSettings.getCustomOrigin();
-        documentNode.write(data, customOrigin, sessionId);
-        // w();
-        // G(data.top, data.left, data.hostElementId || data.frameElementId);
-
-        // if (data.nodesScrollPositions) {
-        //     angular.forEach(data.nodesScrollPositions, function (a, b) {
-        //         Ga[b] = { id: b, top: a.top, left: a.left };
-        //     });
-        // }
-
-        // $timeout(z);
-        // ea(data.frameElementId, data.hostElementId);
     }
 }
 
@@ -217,9 +165,6 @@ function setAttribute(data: any[]) {
     }
 }
 
-function domSnapshot(data) {
-    M(data);
-}
 function setCursorPosition(data) {}
 function registerClick(data) {}
 function setMouseOver(data) {}
@@ -269,6 +214,17 @@ function deleteRule(data) {
     }
 }
 
+function onExecuteEvent(activity: { type: string; data: any }) {
+    const type = activity.type;
+    const data = activity.data;
+    const eventType = t(type);
+    // console.log(type, data);
+    // 执行事件类型
+    if (eventType && data) {
+        eventType(data);
+    }
+}
+
 const Viewer = ({
     sessionScreenWidth,
     sessionScreenHeight,
@@ -292,33 +248,116 @@ const Viewer = ({
     const viewerContainerRef: any = useRef();
 
     //
+
+    function domSnapshot(data) {
+        M(data);
+    }
+
+    function M(data) {
+        if (documentNode && data) {
+            var e = !data.hostElementId && !data.frameElementId;
+            if (e) {
+                // updateUrl(data.pageUrl);
+                Ea = {};
+                Ga = {};
+                Fa = { top: data.top, left: data.left };
+
+                // if (utils.isDefined(data.visibilityState) && visibilityState !== data.visibilityState) {
+                //     J(data.visibilityState);
+                // }
+
+                if (data.nestedSnapshots) {
+                    data.nestedSnapshots.forEach(function (a) {
+                        M(a);
+                    });
+                }
+
+                var screenWidth = data.screenWidth,
+                    screenHeight = data.screenHeight;
+
+                if (documentNode.isAttached) {
+                    // setSessionScreenWidth(screenWidth);
+                    // setSessionScreenHeight(screenHeight);
+                    // $scope.viewerOverlay && $scope.viewerOverlay.setScrollPosition(Fa.top, Fa.left);
+                } else {
+                    Ea[EVENT_TYPE.WINDOW_RESIZE] = { width: screenWidth, height: screenHeight };
+                }
+
+                // documentNode.isAttached
+                //     ? (setSessionScreenWidth(screenWidth),
+                //       setSessionScreenHeight(screenHeight),
+                //       $scope.viewerOverlay && $scope.viewerOverlay.setScrollPosition(Fa.top, Fa.left))
+                //     : (Ea[EVENT_TYPE.WINDOW_RESIZE] = { width: screenWidth, height: screenHeight });
+            }
+
+            // var customOrigin = initialSettings.getCustomOrigin();
+            // documentNode.write(data, customOrigin, sessionId);
+            documentNode.write(data, sessionId);
+            // w();
+            // G(data.top, data.left, data.hostElementId || data.frameElementId);
+
+            // if (data.nodesScrollPositions) {
+            //     angular.forEach(data.nodesScrollPositions, function (a, b) {
+            //         Ga[b] = { id: b, top: a.top, left: a.left };
+            //     });
+            // }
+
+            // $timeout(z);
+            // ea(data.frameElementId, data.hostElementId);
+        }
+    }
+
+    //
     useEffect(() => {
         if (viewerRef.current) {
             documentNode = new DocumentNode(viewerRef.current);
         }
 
         //
-        mapping(EVENT_TYPE.DOM_ELEMENT_VALUE_CHANGE, domElementValueChange);
-        mapping(EVENT_TYPE.DOM_SNAPSHOT, domSnapshot);
-        mapping(EVENT_TYPE.MOUSE_MOVE, setCursorPosition);
-        mapping(EVENT_TYPE.MOUSE_CLICK, registerClick);
-        mapping(EVENT_TYPE.MOUSE_OVER, setMouseOver);
-        mapping(EVENT_TYPE.MOUSE_OUT, setMouseOut);
-        mapping(EVENT_TYPE.SCROLL_POSITION_CHANGE, setScrollPositionChange);
-        mapping(EVENT_TYPE.WINDOW_RESIZE, setWindowResize);
-        mapping(EVENT_TYPE.RADIO_BUTTON_CHANGE, setRadioButtonChange);
-        mapping(EVENT_TYPE.CHECKBOX_CHANGE, setCheckboxChange);
-        mapping(EVENT_TYPE.DOM_MUTATION, setDomMutation);
-        mapping(EVENT_TYPE.VISIBILITY_CHANGE, setVisibilityChange);
-        mapping(EVENT_TYPE.CSS_RULE_INSERT, setCssRuleInsert);
-        mapping(EVENT_TYPE.CSS_RULE_DELETE, deleteRule);
+        strategy(EVENT_TYPE.DOM_ELEMENT_VALUE_CHANGE, domElementValueChange);
+        strategy(EVENT_TYPE.DOM_SNAPSHOT, domSnapshot);
+        strategy(EVENT_TYPE.MOUSE_MOVE, setCursorPosition);
+        strategy(EVENT_TYPE.MOUSE_CLICK, registerClick);
+        strategy(EVENT_TYPE.MOUSE_OVER, setMouseOver);
+        strategy(EVENT_TYPE.MOUSE_OUT, setMouseOut);
+        strategy(EVENT_TYPE.SCROLL_POSITION_CHANGE, setScrollPositionChange);
+        strategy(EVENT_TYPE.WINDOW_RESIZE, setWindowResize);
+        strategy(EVENT_TYPE.RADIO_BUTTON_CHANGE, setRadioButtonChange);
+        strategy(EVENT_TYPE.CHECKBOX_CHANGE, setCheckboxChange);
+        strategy(EVENT_TYPE.DOM_MUTATION, setDomMutation);
+        strategy(EVENT_TYPE.VISIBILITY_CHANGE, setVisibilityChange);
+        strategy(EVENT_TYPE.CSS_RULE_INSERT, setCssRuleInsert);
+        strategy(EVENT_TYPE.CSS_RULE_DELETE, deleteRule);
     }, []);
+
+    useEffect(() => {
+        if (currentActivity) {
+            // console.log(currentActivity.type, currentActivity.data);
+            currentActivity.map(d => {
+                onExecuteEvent(d);
+            });
+            // onExecuteEvent(currentActivity);
+        }
+    }, [JSON.stringify(currentActivity)]);
 
     return (
         <div ng-style="{'margin-left': marginLeft, 'margin-top': marginTop}" style="margin-left: 20px;margin-top:50px">
             <div className="viewer-wrapper" style={{ transform: 'scale(0.7720271102895871)' }}>
-                <div ref={viewerContainerRef} id="viewer-container" style="width: 1623px;height: 426px;">
-                    <iframe ref={viewerRef} id="viewer" sandbox="allow-scripts allow-same-origin"></iframe>
+                <div id="viewer-container" style="width: 1623px;height: 426px;" ref={viewerContainerRef}>
+                    <ViewerOverlay
+                        width="sessionScreenWidth"
+                        height="sessionScreenHeight"
+                        scale="scale"
+                        get-node="getNodeFromPoint"
+                        get-scrollable-node="getScrollableNodeFromPoint"
+                        update-last-typing="updateLastTypingTime"
+                        get-frame-element-offset="getFrameElementOffset"
+                        focus-node="focusNodeByNodeId"
+                        api="viewerOverlay"
+                        is-created="viewerOverlayIsCreated"
+                        play-recorded-session="playRecordedSession()"
+                    ></ViewerOverlay>
+                    <iframe id="viewer" sandbox="allow-scripts allow-same-origin" ref={viewerRef}></iframe>
                 </div>
             </div>
         </div>
