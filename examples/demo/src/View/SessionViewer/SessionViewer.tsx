@@ -87,7 +87,7 @@ function domElementValueChange(data) {
  */
 function addedOrMoved(data: any[]) {
     if (data) {
-        angular.forEach(addedOrMoved, function (a) {
+        angular.forEach(data, a => {
             var b;
             if (a.node) {
                 var c = ia(a),
@@ -165,7 +165,16 @@ function setAttribute(data: any[]) {
     }
 }
 
-function setCursorPosition(data) {}
+const getFrameElementOffset = function (frameElementId) {
+    var b;
+
+    if (angular.isDefined(frameElementId)) {
+        b = documentNode.getNode(frameElementId);
+    }
+
+    return documentNode.getNodeOffset(b);
+};
+
 function registerClick(data) {}
 function setMouseOver(data) {}
 function setMouseOut(v) {}
@@ -248,6 +257,21 @@ const Viewer = ({
     const viewerContainerRef: any = useRef();
 
     //
+    const [cursorPosition, setCursorPosition] = useState();
+    const [scrollPosition, setScrollPosition] = useState();
+
+    //
+    function setMouseMove(data) {
+        if (documentNode.isAttached) {
+            var c = getFrameElementOffset(data.frameElementId),
+                top = data.y + c.top,
+                left = data.x + c.left;
+
+            setCursorPosition({ top: top, left: left });
+        } else {
+            Ea[EVENT_TYPE.MOUSE_MOVE] = data;
+        }
+    }
 
     function domSnapshot(data) {
         M(data);
@@ -279,6 +303,8 @@ const Viewer = ({
                     // setSessionScreenWidth(screenWidth);
                     // setSessionScreenHeight(screenHeight);
                     // $scope.viewerOverlay && $scope.viewerOverlay.setScrollPosition(Fa.top, Fa.left);
+
+                    setScrollPosition(Fa);
                 } else {
                     Ea[EVENT_TYPE.WINDOW_RESIZE] = { width: screenWidth, height: screenHeight };
                 }
@@ -316,7 +342,7 @@ const Viewer = ({
         //
         strategy(EVENT_TYPE.DOM_ELEMENT_VALUE_CHANGE, domElementValueChange);
         strategy(EVENT_TYPE.DOM_SNAPSHOT, domSnapshot);
-        strategy(EVENT_TYPE.MOUSE_MOVE, setCursorPosition);
+        strategy(EVENT_TYPE.MOUSE_MOVE, setMouseMove);
         strategy(EVENT_TYPE.MOUSE_CLICK, registerClick);
         strategy(EVENT_TYPE.MOUSE_OVER, setMouseOver);
         strategy(EVENT_TYPE.MOUSE_OUT, setMouseOut);
@@ -332,18 +358,17 @@ const Viewer = ({
 
     useEffect(() => {
         if (currentActivity) {
-            // console.log(currentActivity.type, currentActivity.data);
+            // console.log(currentActivity);
             currentActivity.map(d => {
                 onExecuteEvent(d);
             });
-            // onExecuteEvent(currentActivity);
         }
     }, [JSON.stringify(currentActivity)]);
 
     return (
         <div ng-style="{'margin-left': marginLeft, 'margin-top': marginTop}" style="margin-left: 20px;margin-top:50px">
             <div className="viewer-wrapper" style={{ transform: 'scale(0.7720271102895871)' }}>
-                <div id="viewer-container" style="width: 1623px;height: 426px;" ref={viewerContainerRef}>
+                <div id="viewer-container" style="width: 1623px;height: 680px;" ref={viewerContainerRef}>
                     <ViewerOverlay
                         width="sessionScreenWidth"
                         height="sessionScreenHeight"
@@ -356,6 +381,8 @@ const Viewer = ({
                         api="viewerOverlay"
                         is-created="viewerOverlayIsCreated"
                         play-recorded-session="playRecordedSession()"
+                        cursorPosition={cursorPosition}
+                        scrollPosition={scrollPosition}
                     ></ViewerOverlay>
                     <iframe id="viewer" sandbox="allow-scripts allow-same-origin" ref={viewerRef}></iframe>
                 </div>

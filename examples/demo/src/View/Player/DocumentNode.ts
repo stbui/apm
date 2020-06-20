@@ -2,7 +2,7 @@ import { URLTransformer } from './URLTransformer';
 import { angular } from './angular';
 import { timeout } from './timeout';
 import utils from './utils';
-import { NAMESPACES, CROSS_ORIGIN_FRAME_BACKGROUND, PROPERTY_OBJECT_KEY, ALLOWED_SRC_PROTOCOLS } from './constant'
+import { NAMESPACES, CROSS_ORIGIN_FRAME_BACKGROUND, PROPERTY_OBJECT_KEY, ALLOWED_SRC_PROTOCOLS } from './constant';
 
 interface attributes {
     name: string;
@@ -32,10 +32,6 @@ interface sessionNode {
 // interface customElement extends Element {
 //     __sessionstack_player__: any;
 // }
-
-
-
-
 
 function j(obj: any = {}) {
     const frameElementId = obj.frameElementId;
@@ -73,10 +69,10 @@ function getDocumentsCollectionById(frameElementId: number) {
  * @param {*} b
  */
 function traverseDocuments(frameElementId, callback: Function) {
-    for (var c, e = [frameElementId]; e.length > 0;)
+    for (var c, e = [frameElementId]; e.length > 0; )
         (c = this.documentsCollection[e.shift()]),
             c &&
-            (callback.call(this, c),
+                (callback.call(this, c),
                 angular.forEach(c.childDocuments, (a, b) => {
                     e.push(b);
                 }));
@@ -155,14 +151,12 @@ function r(documentElement) {
 function s(documentElement, element: string, attribute: string) {
     // var e,
     //     f = this;
-
     // if (documentElement) {
     //     angular
     //         .element(element, documentElement)
     //         .addBack(element)
     //         .each(function(b, c) {
     //             e = c.getAttribute(attribute);
-
     //             if (e) {
     //                 this.setAttribute(c, attribute, undefined);
     //                 timeout(this.setAttribute.bind(this), 0, true, c, attribute, e);
@@ -171,7 +165,7 @@ function s(documentElement, element: string, attribute: string) {
     // }
 }
 
-function t() { }
+function t() {}
 /**
  * t
  * 创建snapshot元素
@@ -365,20 +359,13 @@ function traverseNode(element, callback: Function) {
  * 父节点
  * @param {*} referenceNode
  */
-function getParentNode(referenceNode: Element): ParentNode | undefined {
-    // const node = angular.element(referenceNode).parent();
-
-    // if (node.length > 0) {
-    //     return node[0];
-    // }
-
+function getParentNode(referenceNode: Element) {
     if (referenceNode) {
         const parentNode = referenceNode.parentNode;
-        if (parentNode) {
-            return parentNode;
-        }
+        return parentNode;
     } else {
         console.warn('parent:', referenceNode);
+        return;
     }
 }
 
@@ -389,7 +376,7 @@ function getParentNode(referenceNode: Element): ParentNode | undefined {
 function getFrameElement(element) {
     try {
         return element.ownerDocument.defaultView.frameElement;
-    } catch (error) { }
+    } catch (error) {}
 }
 
 /**
@@ -684,14 +671,12 @@ export class DocumentNode {
      * @param sessionId
      */
     write(data, sessionId) {
-        if (angular.isUndefined(data.frameElementId)) {
+        if (angular.isUndefined(data.frameElementId) && angular.isUndefined(data.hostElementId)) {
             initiaDocType(z.call(this), data.docType);
-        }
-
-        //
-        if (angular.isUndefined(data.frameElementId)) {
             this.documentElementIndex = [];
             this.documentsCollection = {};
+            this.styleRuleNodes = {};
+            this.adoptedStyleSheetNodes = {};
         }
 
         //  从快照中找到url
@@ -874,7 +859,7 @@ export class DocumentNode {
                 } else {
                     element.setAttribute(name, value);
                 }
-            } catch (error) { }
+            } catch (error) {}
         }
     }
     /**

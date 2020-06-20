@@ -19,38 +19,16 @@ module.exports = {
         extensions: ['.ts', '.js', '.tsx', '.json', '.scss'],
         alias: {
             apm: path.join(__dirname, '..', '..', 'packages', 'apm-js', 'src'),
-            react: path.join(__dirname, '.', 'src', 'core'),
+            // react: path.join(__dirname, '.', 'src', 'core'),
+            react: 'preact/compat',
+            'react-dom': 'preact/compat',
         },
     },
     module: {
         rules: [
             {
                 test: /\.(gif|png|jpe?g|svg)$/i,
-                use: [
-                    'file-loader',
-                    {
-                        loader: 'image-webpack-loader',
-                        options: {
-                            mozjpeg: {
-                                progressive: true,
-                                quality: 65,
-                            },
-                            optipng: {
-                                enabled: !isDevelopment,
-                            },
-                            pngquant: {
-                                quality: [0.65, 0.9],
-                                speed: 4,
-                            },
-                            gifsicle: {
-                                interlaced: false,
-                            },
-                            webp: {
-                                quality: 75,
-                            },
-                        },
-                    },
-                ],
+                use: ['file-loader'],
             },
             {
                 test: /\.(t|j)sx?$/,
@@ -66,9 +44,7 @@ module.exports = {
                 test: /\.s[ac]ss$/i,
                 exclude: /node_modules/,
                 use: [
-                    isDevelopment
-                        ? 'style-loader'
-                        : MiniCssExtractPlugin.loader,
+                    isDevelopment ? 'style-loader' : MiniCssExtractPlugin.loader,
                     {
                         loader: 'css-loader',
                         options: { modules: false, sourceMap: true },
@@ -85,7 +61,7 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({
             template: './index.html',
-            inject: 'head',
+            // inject: 'head',
         }),
         new MiniCssExtractPlugin(),
         new CleanWebpackPlugin(),

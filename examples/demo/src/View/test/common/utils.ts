@@ -52,7 +52,7 @@ function o(a, b) {
     var e = angular.element('a', d)[0];
     return angular.element(c).remove(), e.href;
 }
-function p(a, b, c) {
+function p(a, b, c?) {
     var d = '<' + a;
     return (
         x(b) &&

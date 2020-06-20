@@ -8,19 +8,56 @@ var f;
 var g;
 var h;
 
-export const ViewerOverlay = ({ width, height, scale, ...other }) => {
-    const setCursorPosition = a => {
-        a && h.css({ left: a.left, top: a.top });
+export const ViewerOverlay = ({ width, height, scale, cursorPosition, scrollPosition, ...other }) => {
+    const api = {
+        setCursorPosition: function (a) {
+            a && h.css({ left: a.left, top: a.top });
+        },
+        registerClick: function (x, y) {
+            var c = clicksManager.registerClick(x, y);
+            c && f.append(c);
+        },
+        setScrollPosition: function (a, b) {
+            f.css({ top: -a, left: -b });
+            g.css({ top: -a, left: -b });
+        },
+        setRenderingProgress: function (a) {},
+        showRenderingOverlay: function () {},
+        hideRenderingOverlay: function () {},
+        setPlayerSpeed: function (playerSpeed) {},
+        setShouldVisualizeClicks: function (a) {},
+        startClicksAnimation: function () {},
+        stopClicksAnimation: function () {},
+        showVisibilityOverlay: function (visibilityState) {},
+        hideVisibilityOverlay: function () {},
+        showBufferingOverlay: function () {},
+        hideBufferingOverlay: function () {},
+        enableDrawing: function (a) {},
+        setToolIsActive: function (a, c) {},
+        setOverlayHeight: function (height) {},
+        setOverlayWidth: function (width) {},
+        showOfflineOverlay: function () {},
+        hideOfflineOverlay: function () {},
     };
 
     useEffect(() => {
         f = angular.element('.click-elements-overlay');
         g = angular.element('.drawing-container');
         h = angular.element('.cursor');
-        console.log(f, g, h);
-
-        setCursorPosition({ left: 100, top: 200 });
+        // console.log(f, g, h);
     }, []);
+
+    useEffect(() => {
+        if (cursorPosition) {
+            api.setCursorPosition(cursorPosition);
+        }
+    }, [JSON.stringify(cursorPosition)]);
+
+    useEffect(() => {
+        if (scrollPosition) {
+            api.setScrollPosition(scrollPosition.top, scrollPosition.left);
+        }
+    }, [JSON.stringify(scrollPosition)]);
 
     return (
         <div

@@ -1,14 +1,15 @@
 import lodash from 'lodash';
 import { UserClick } from './UserClick';
+import { angular } from '../Player/angular';
 
 function c(clicksManager: ClicksManager, click: UserClick) {
-    lodash.remove(clicksManager.clicksQueue, function(a) {
+    lodash.remove(clicksManager.clicksQueue, function (a) {
         return a == click;
     });
 }
 function d(clicksManager: ClicksManager) {
     clicksManager.visualizationIsEnabled = false;
-    angular.forEach(clicksManager.clicksQueue, function(a) {
+    angular.forEach(clicksManager.clicksQueue, function (a) {
         a.remove();
     });
     clicksManager.clicksQueue = [];
@@ -38,7 +39,7 @@ export class ClicksManager {
         }
     }
     stopClicksAnimation() {
-        angular.forEach(this.clicksQueue, function(click) {
+        angular.forEach(this.clicksQueue, function (click) {
             click.stopAnimation();
         });
     }

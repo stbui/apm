@@ -24,7 +24,7 @@ interface IScope {
 
 angular.module('playerApp').directive('viewerOverlay', [
     'ClicksManager',
-    function() {
+    function () {
         return {
             restrict: 'E',
             templateUrl: 'templates/viewerOverlay.html',
@@ -42,97 +42,97 @@ angular.module('playerApp').directive('viewerOverlay', [
                 isCreated: '=',
                 playRecordedSession: '&',
             },
-            link: function($scope: IScope, $element, d) {
+            link: function ($scope: IScope, $element, d) {
                 var clicksManager = new ClicksManager();
                 var f = angular.element('.click-elements-overlay');
                 var g = angular.element('.drawing-container');
                 var h = angular.element('.cursor');
 
-                $scope.getElement = function(a, c) {
+                $scope.getElement = function (a, c) {
                     return $scope.getNode(a, c);
                 };
-                $scope.getScrollableElement = function(a, c, d, e) {
+                $scope.getScrollableElement = function (a, c, d, e) {
                     return $scope.getScrollableNode(a, c, d, e);
                 };
-                $scope.getFrameOffset = function(a) {
+                $scope.getFrameOffset = function (a) {
                     return $scope.getFrameElementOffset(a);
                 };
-                $scope.updateLastTypingTime = function(a) {
+                $scope.updateLastTypingTime = function (a) {
                     return $scope.updateLastTyping(a);
                 };
-                $scope.focusElement = function(a) {
+                $scope.focusElement = function (a) {
                     return $scope.focusNode(a);
                 };
                 $scope.api = {
-                    setCursorPosition: function(a) {
+                    setCursorPosition: function (a) {
                         a && h.css({ left: a.left, top: a.top });
                     },
-                    registerClick: function(a, b) {
-                        var c = clicksManager.registerClick(a, b);
+                    registerClick: function (x, y) {
+                        var c = clicksManager.registerClick(x, y);
                         c && f.append(c);
                     },
-                    setScrollPosition: function(a, b) {
+                    setScrollPosition: function (a, b) {
                         f.css({ top: -a, left: -b });
                         g.css({ top: -a, left: -b });
                     },
-                    setRenderingProgress: function(a) {
+                    setRenderingProgress: function (a) {
                         if (a) {
                             var c = (a.current / a.total) * 100;
                             $scope.renderingProgressPercentage = Math.round(c);
                         }
                     },
-                    showRenderingOverlay: function() {
+                    showRenderingOverlay: function () {
                         $scope.shouldShowRenderingOverlay = true;
                     },
-                    hideRenderingOverlay: function() {
+                    hideRenderingOverlay: function () {
                         $scope.shouldShowRenderingOverlay = false;
                     },
-                    setPlayerSpeed: function(playerSpeed) {
+                    setPlayerSpeed: function (playerSpeed) {
                         clicksManager.setPlayerSpeed(playerSpeed);
                     },
-                    setShouldVisualizeClicks: function(a) {
+                    setShouldVisualizeClicks: function (a) {
                         clicksManager.setShouldVisualizeClicks(a);
                     },
-                    startClicksAnimation: function() {
+                    startClicksAnimation: function () {
                         clicksManager.startClicksAnimation();
                     },
-                    stopClicksAnimation: function() {
+                    stopClicksAnimation: function () {
                         clicksManager.stopClicksAnimation();
                     },
-                    showVisibilityOverlay: function(visibilityState) {
+                    showVisibilityOverlay: function (visibilityState) {
                         $scope.visibilityState = visibilityState;
                         $scope.shouldShowVisibilityOverlay = true;
                     },
-                    hideVisibilityOverlay: function() {
+                    hideVisibilityOverlay: function () {
                         $scope.shouldShowVisibilityOverlay = false;
                     },
-                    showBufferingOverlay: function() {
+                    showBufferingOverlay: function () {
                         $scope.shouldShowBufferingOverlay = true;
                     },
-                    hideBufferingOverlay: function() {
+                    hideBufferingOverlay: function () {
                         $scope.shouldShowBufferingOverlay = false;
                     },
-                    enableDrawing: function(a) {
+                    enableDrawing: function (a) {
                         $scope.drawingApi.enableDrawing(a);
                     },
-                    setToolIsActive: function(a, c) {
+                    setToolIsActive: function (a, c) {
                         $scope.drawingApi.setToolIsActive(a, c);
                     },
-                    setOverlayHeight: function(height) {
+                    setOverlayHeight: function (height) {
                         $scope.overlayHeight = height;
                     },
-                    setOverlayWidth: function(width) {
+                    setOverlayWidth: function (width) {
                         $scope.overlayWidth = width;
                     },
-                    showOfflineOverlay: function() {
+                    showOfflineOverlay: function () {
                         $scope.shouldShowBufferingOverlay = false;
                         $scope.shouldShowOfflineOverlay = true;
                     },
-                    hideOfflineOverlay: function() {
+                    hideOfflineOverlay: function () {
                         $scope.shouldShowOfflineOverlay = false;
                     },
                 };
-                $scope.$watch('drawingOverlayIsCreated', function(a) {
+                $scope.$watch('drawingOverlayIsCreated', function (a) {
                     $scope.isCreated = a;
                 });
             },

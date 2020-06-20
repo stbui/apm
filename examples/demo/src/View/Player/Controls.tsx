@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import './Controls.scss';
 
-const Button = ({ className, onClick, children, show = true }) => {
-    return (
-        <button className={`button ` + className} onClick={onClick} style={{ display: show ? '' : 'none' }}>
-            {children}
-        </button>
-    );
-};
+import Button from './Button';
+import ButtonNext from './ButtonNext';
+import ButtonRepeat from './ButtonRepeat';
+import ButtonPlay from './ButtonPlay';
+import ButtonPause from './ButtonPause';
 
 const Controls = ({
     children,
@@ -26,7 +24,7 @@ const Controls = ({
         hasFinished: false,
         isStreamingLive: false,
         isPlaying: false,
-        arePlayerButtonsEnabled: false,
+        arePlayerButtonsEnabled: true,
         isLive: false,
         sessionWasInitiallyLive: false,
     });
@@ -48,24 +46,22 @@ const Controls = ({
 
     return (
         <div className="player-controls-container player-controls" style={{ display: 'flex', flexDirection: 'row' }}>
-            <Button
-                className="player-controls-button"
-                onClick={togglePlaying}
-                disabled={!arePlayerButtonsEnabled}
-                show={!hasFinished || isStreamingLive}
-            >
-                {isPlaying || isStreamingLive ? (
-                    <span className="icon-pause"></span>
-                ) : (
-                    <span className="icon-play"></span>
-                )}
-            </Button>
-            <Button show={hasFinished && !isStreamingLive} className="player-controls-button" onClick={repeat}>
-                <span className="icon-repeat"></span>
-            </Button>
-            <Button disabled={!arePlayerButtonsEnabled} className="player-controls-button" onClick={selectNextStep}>
-                <span className="icon-next"></span>
-            </Button>
+            {isPlaying || isStreamingLive ? (
+                <ButtonPause
+                    disabled={!arePlayerButtonsEnabled}
+                    show={!hasFinished || isStreamingLive}
+                    onClick={togglePlaying}
+                />
+            ) : (
+                <ButtonPlay
+                    disabled={!arePlayerButtonsEnabled}
+                    show={!hasFinished || isStreamingLive}
+                    onClick={togglePlaying}
+                />
+            )}
+
+            <ButtonRepeat show={hasFinished && !isStreamingLive} onClick={repeat} />
+            <ButtonNext disabled={!arePlayerButtonsEnabled} onClick={selectNextStep} />
 
             <Button
                 className={`player-controls-button watch-live ${!isLive ? 'is-offline' : 'green'} `}

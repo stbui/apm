@@ -1,4 +1,7 @@
+import lodash from 'lodash';
 import { utils } from './common';
+import { angular } from '../Player/angular';
+import { URLTransformer } from './URLTransformer';
 
 const PROPERTY_OBJECT_KEY = '__sessionstack_player__';
 const NAMESPACES = {
@@ -7,6 +10,9 @@ const NAMESPACES = {
 };
 const ALLOWED_SRC_PROTOCOLS = ['http', 'https', 'ftp', 'data'];
 const STYLE_ELEMENT_NAMES = ['STYLE', 'LINK'];
+const FULL_SCREEN_CLASS = '_ss-full-screen';
+const CROSS_ORIGIN_FRAME_BACKGROUND =
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACMAAAAjCAIAAACRuyQOAAAApElEQVRIib3Vyw2EMBADULNdTP+9JWVkL0gIFMh87Phs6cknH601ZGNm/vJvD9N7T0pRBrlNCSYj5ZiwlGZiUoUJSEXGK9UZl0Rh1hKLWUhE5kviMq8SnZlLCmYiiZinpGNukpS5JDVzShsYAMcYYwOD0GtUGDPzSkUGzk11xiVRmLXEYhYSkfmSuMyrRGfmkoKZSCLmKemYmyRlLknNnNIGBsAflNtr9IJvuy8AAAAASUVORK5CYII=';
 
 function l(a) {
     var b = this;
@@ -38,7 +44,7 @@ function o(a) {
     n.call(b, a, t);
 }
 function p(a) {
-    n.call(this, a, function(a) {
+    n.call(this, a, function (a) {
         angular.element(a.documentElement).remove();
     });
 }
@@ -106,9 +112,9 @@ function x(b, c, d) {
         angular
             .element(c, b)
             .addBack(c)
-            .each(function(b, c) {
+            .each(function (b, c) {
                 (e = c.getAttribute(d)),
-                    e && (f.setAttribute(c, d, void 0), $timeout(f.setAttribute.bind(f), 0, true, c, d, e));
+                    e && (f.setAttribute(c, d, void 0), $timeout(f.setAttribute.bind(f), 0, !0, c, d, e));
             });
 }
 function y(a, b) {
@@ -144,8 +150,8 @@ function A(a) {
     }
 }
 function B(a) {
-    var documentElement = a.documentElement;
-    documentElement && a.removeChild(documentElement);
+    var b = a.documentElement;
+    b && a.removeChild(b);
 }
 function C(a, b) {
     var c = angular.element('base', a);
@@ -155,7 +161,7 @@ function D(a, b) {
     if (b) return b;
     var d = a.baseUrl;
     return (
-        I(a.snapshot, function(a) {
+        I(a.snapshot, function (a) {
             if (a && 'BASE' === a.tagName && a.attributes) return (d = E(a, 'href')), !1;
         }),
         d ? utils.evaluateAbsoluteUrl(a.origin, d) : a.origin
@@ -164,7 +170,7 @@ function D(a, b) {
 function E(a, b) {
     var c;
     return (
-        a.attributes.forEach(function(a) {
+        a.attributes.forEach(function (a) {
             a.name === b && (c = a.value);
         }),
         c
@@ -179,7 +185,7 @@ function G(a, b) {
     var c,
         d,
         e = this;
-    I(a, function(a) {
+    I(a, function (a) {
         (d = Y(a)),
             (c = d.nodeId),
             (d.frameElementId = b),
@@ -190,7 +196,7 @@ function G(a, b) {
 function H(a) {
     var b,
         c = this;
-    I(a, function(a) {
+    I(a, function (a) {
         (b = Y(a)),
             delete c.documentElementIndex[b.nodeId],
             a.shadowRoot && ((b = Y(a.shadowRoot)), delete c.adoptedStyleSheetNodes[b.nodeId]);
@@ -268,7 +274,7 @@ function S(a, b) {
         (h.frameElementId = b),
         a.styleRules && (h.styleRules = a.styleRules.slice()),
         a.attributes &&
-            a.attributes.forEach(function(a) {
+            a.attributes.forEach(function (a) {
                 c.setAttribute(g, a.name, a.value);
             }),
         g
@@ -314,19 +320,19 @@ function V(a, d) {
         var m = a.attributes[l];
         lodash.startsWith(m.name, 'on') && j.push(m.name);
     }
-    j.forEach(function(a) {
+    j.forEach(function (a) {
         g.removeAttr(a);
     });
 }
 function W(a) {
     this.settings.ignoreFormsAutofill() &&
         utils.matchesSelector(a, 'input') &&
-        ((a.readOnly = true),
-        (a.onfocus = function() {
+        ((a.readOnly = !0),
+        (a.onfocus = function () {
             a.readOnly = !1;
         }),
-        (a.onblur = function() {
-            a.readOnly = true;
+        (a.onblur = function () {
+            a.readOnly = !0;
         }));
 }
 function X(a, b, d) {
@@ -374,32 +380,32 @@ export class DocumentNode {
     }
 
     attach(b) {
-        var c = this;
-        c.isAttached = true;
-        o.call(c, void 0);
-        c.afterAttachCallbacks.push($timeout(b));
+        this.isAttached = true;
+        o.call(this, void 0);
+        this.afterAttachCallbacks.push($timeout(b));
     }
-
     detach() {
         var b = this;
-        angular.forEach(b.afterAttachCallbacks, function(b) {
+        angular.forEach(b.afterAttachCallbacks, function (b) {
             $timeout.cancel(b);
         });
         b.afterAttachCallbacks = [];
         b.isAttached && ((b.isAttached = !1), p.call(b, void 0));
     }
+
     getNode(a) {
         return this.documentElementIndex[a];
     }
     write(a, b, c) {
         var d = this;
-        angular.isUndefined(a.frameElementId) &&
-            angular.isUndefined(a.hostElementId) &&
-            (u(F.call(d), a.docType),
-            (d.documentElementIndex = []),
-            (d.documentsCollection = {}),
-            (d.styleRuleNodes = {}),
-            (d.adoptedStyleSheetNodes = {}));
+
+        if (angular.isUndefined(a.frameElementId) && angular.isUndefined(a.hostElementId)) {
+            u(F.call(d), a.docType);
+            this.documentElementIndex = [];
+            this.documentsCollection = {};
+            this.styleRuleNodes = {};
+            this.adoptedStyleSheetNodes = {};
+        }
 
         var f = D(a, b),
             g: any = {
@@ -410,10 +416,7 @@ export class DocumentNode {
                 hasContentElements: a.hasContentElements,
                 adoptedStyleSheets: a.adoptedStyleSheets,
             };
-
-        l.call(d, g);
-        g.documentElement = y.call(d, a, f);
-        if (a.adoptedStyleSheets) {
+        if ((l.call(d, g), (g.documentElement = y.call(d, a, f)), a.adoptedStyleSheets)) {
             var h = Y(g.documentElement);
             h.adoptedStyleSheets = a.adoptedStyleSheets;
         }
@@ -431,8 +434,8 @@ export class DocumentNode {
             (a.nodeType === Node.ELEMENT_NODE || a.nodeType === Node.DOCUMENT_FRAGMENT_NODE)
         ) {
             a.insertBefore(b, a.firstChild);
-            var frameElementId = Y(a).frameElementId;
-            G.call(this, b, frameElementId);
+            var d = Y(a).frameElementId;
+            G.call(this, b, d);
         }
     }
     replaceDocumentElement(a, b) {
@@ -471,9 +474,7 @@ export class DocumentNode {
     getNodeOffset(a) {
         for (var b = { top: 0, left: 0 }; a && a !== this.documentContainer; ) {
             var c = a.getBoundingClientRect();
-            b.top += c.top;
-            b.left += c.left;
-            a = K(a);
+            (b.top += c.top), (b.left += c.left), (a = K(a));
         }
         return b;
     }
@@ -509,7 +510,7 @@ export class DocumentNode {
         return DocumentNode.getNodePropertyObject(a);
     }
     getFrameElementIds() {
-        return lodash.map(this.documentsCollection, function(a) {
+        return lodash.map(this.documentsCollection, function (a) {
             return a.frameElementId;
         });
     }
@@ -531,7 +532,7 @@ export class DocumentNode {
             }
         }
     }
-    setSettings(settings) {
-        this.settings = settings;
+    setSettings(a) {
+        this.settings = a;
     }
 }

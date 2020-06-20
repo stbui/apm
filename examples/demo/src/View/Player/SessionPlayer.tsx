@@ -1,9 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { findLastIndex, last, noop } from 'lodash';
-import Viewer from './Viewer';
+import { last, noop } from 'lodash';
 import Console from './Console';
 import PlayerTimeline from '../PlayerTimeline';
-import { SessionDataClient } from './session';
 import { playerSettings } from './settings';
 import Controls from './Controls';
 import { PLAYER_CONFIG, TAB_VISIBILITY, UI_MODE, EVENT_TYPE, MOUSE_TYPE } from './constant';
@@ -14,18 +12,17 @@ import { Activities } from '../test/Activities';
 import { Activity, IActivity } from '../test/Activity';
 
 import mock from './mock';
-// const activities = mock.activities;
+import { a } from './mock2';
 
+const activitiesMock = a;
+// const activitiesMock = mock.activities;
+
+let timelineMax = 9329;
 let renderingProgress = 0;
-
-// let activities = activities;
-
-// tmp
 let containerWidth = 330;
 let containerHeight = 537;
 
 //
-let storeOnExecuteEvent;
 
 const activities = new Activities();
 let player: Player;
@@ -36,7 +33,7 @@ export const SessionPlayer = ({ session }) => {
     const [fireAttach, setFireAttach]: any = useState();
     const [onExecuteEvent, fireExecuteEvent]: any = useState();
 
-    const [timeline, setTimeline] = useState({ timelineMax: 9329, timelineMin: 0, timelineValue: 0 });
+    const [timeline, setTimeline] = useState({ timelineMax: timelineMax, timelineMin: 0, timelineValue: 0 });
     const [playState, setPlayState] = useState({
         hasFinished: false,
         isPlaying: false,
@@ -72,9 +69,7 @@ export const SessionPlayer = ({ session }) => {
         }
     };
 
-    // fixed:
     const updateExecuteEventState = newValue => {
-        storeOnExecuteEvent = newValue;
         fireExecuteEvent(newValue);
     };
 
@@ -95,9 +90,6 @@ export const SessionPlayer = ({ session }) => {
                 updateExecuteEventState(activities);
 
                 activities.forEach((activity: IActivity) => {
-                    // bug: 批量更新数据会丢失
-                    // bug：data嵌套数据会丢失
-
                     if (
                         Activity.isTabVisibilityChange(activity) ||
                         (Activity.isTopLevel(activity) && Activity.isSnapshot(activity))
@@ -118,7 +110,7 @@ export const SessionPlayer = ({ session }) => {
 
         player = new Player(activities, render, PLAYER_CONFIG);
         player.onTimeChanged(time => {
-            // console.log('onTimeChanged', timelineMax);
+            // console.log('onTimeChanged', time);
             setTimeline({
                 timelineValue: time,
                 timelineMax: timeline.timelineMax,
@@ -139,9 +131,9 @@ export const SessionPlayer = ({ session }) => {
             });
         });
         player.onPlaying(() => {
-            console.log('onPlaying');
+            // console.log('onPlaying');
             setPlayState({
-                arePlayerButtonsEnabled: false,
+                arePlayerButtonsEnabled: true,
                 hasFinished: false,
                 isPlaying: true,
                 isLive: false,
@@ -149,9 +141,9 @@ export const SessionPlayer = ({ session }) => {
             });
         });
         player.onPaused(() => {
-            console.log('onPaused');
+            // console.log('onPaused');
             setPlayState({
-                arePlayerButtonsEnabled: false,
+                arePlayerButtonsEnabled: true,
                 hasFinished: false,
                 isPlaying: false,
                 isLive: false,
@@ -170,14 +162,12 @@ export const SessionPlayer = ({ session }) => {
             });
         });
 
-        addActivities(mock.activities);
+        addActivities(activitiesMock);
         activities.setSessionLength(session.length);
         activities.finishLoading();
 
         start();
     }, [session]);
-
-    // console.log(timeline.timelineValue);
 
     return (
         <div>
@@ -210,7 +200,7 @@ export const SessionPlayer = ({ session }) => {
                         initialVisibilityState={session.visibilityState}
                         sessionId={session.id}
                         handleConsoleResize={true}
-                        currentActivity={storeOnExecuteEvent}
+                        currentActivity={onExecuteEvent}
                         fireClear={fireClear}
                         fireAttach={fireAttach}
                         isPlaying={playState.isPlaying}
@@ -231,7 +221,7 @@ export const SessionPlayer = ({ session }) => {
                     min={timeline.timelineMin}
                     max={timeline.timelineMax}
                     value={timeline.timelineValue}
-                    activities={mock.activities}
+                    activities={activitiesMock}
                     loadedTime={timeline.timelineMax}
                 ></PlayerTimeline>
             </Controls>
