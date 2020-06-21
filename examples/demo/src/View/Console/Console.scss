@@ -1,0 +1,200 @@
+.console-container {
+    background-color: #fff;
+    height: 0px;
+    border-left: 1px solid #ccc;
+}
+
+.console-container .tabs {
+    font-size: 14px;
+    margin-top: 10px;
+    border-bottom: 1px solid #ebedf3;
+}
+
+.console-container .tabs .tab {
+    padding: 6px 12px;
+    color: #7f8fa4;
+    cursor: pointer;
+}
+
+.console-container .tabs .tab.disabled {
+    cursor: default;
+}
+
+.console-container .tabs .tab.active {
+    background-color: #b1ddfa;
+    border-bottom: 3px solid #80c4f6;
+    padding-bottom: 3px;
+    color: #000;
+}
+
+.console-container .tabs .tab .label {
+    position: relative;
+    top: -10px;
+    left: -4px;
+    background-color: #f0f0f0;
+    color: #7f8fa4;
+    padding: 2px 4px;
+    border-radius: 6px;
+    font-size: 11px;
+}
+
+.console-container .filters-container {
+    border-bottom: 2px solid #ebedf3;
+    padding: 8px;
+}
+
+.console-container .filters-container > *,
+.console-container .filters-container div > * {
+    margin-right: 10px;
+}
+
+.console-container .filters-container .filter-input {
+    background-color: #f0f0f0;
+    color: #7f8fa4;
+    border-radius: 4px;
+    width: 20%;
+    min-width: 200px;
+    border: none;
+    padding: 8px;
+    font-size: 12px;
+}
+
+.console-container .filters-container .log-type {
+    font-size: 12px;
+    background-color: #f0f0f0;
+    color: #7f8fa4;
+    border-radius: 4px;
+    padding: 8px 14px;
+    cursor: pointer;
+    text-transform: capitalize;
+}
+
+.console-container .filters-container .log-type.active {
+    background-color: #2a6be7;
+    color: #fff;
+}
+
+.console-container .console-content .logs-container {
+    overflow-y: auto;
+    height: 215px;
+}
+
+.console-container .console-content .logs-container .log {
+    border-bottom: 1px solid #ebedf3;
+}
+
+.console-container .console-content .logs-container .log > * {
+    padding: 8px;
+    opacity: 0.5;
+}
+
+.console-container .console-content .logs-container .log:hover .time {
+    text-decoration: underline;
+    color: #0060c8;
+    opacity: 0.7;
+    cursor: pointer;
+}
+
+.console-container .console-content .logs-container .log.executed > * {
+    opacity: 1;
+}
+
+.console-container .console-content .logs-container .log .selected-log-marker {
+    padding: 4px 0 0 0;
+    width: 10px;
+    opacity: 1;
+}
+
+.console-container .console-content .logs-container .log .type-icon {
+    padding: 6px 0;
+}
+
+.console-container .console-content .logs-container .log .time {
+    color: #bec6d1;
+    font-size: 12px;
+    padding-left: 4px;
+}
+
+.console-container .console-content .logs-container .log .message-container i {
+    font-size: 14px;
+    color: #bec6d1;
+}
+
+.console-container .console-content .logs-container .log .message-container i.ion-ios-arrow-down {
+    margin-left: 1px;
+}
+
+.console-container .console-content .logs-container .log .message-container .message {
+    font-size: 12px;
+    word-wrap: break-word;
+}
+
+.console-container .console-content .logs-container .log .message-container .message:not(.expanded) {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.console-container .console-content .logs-container .log .message-container .message.expanded:not(.stack-frames) {
+    text-overflow: auto;
+    height: auto;
+}
+
+.console-container
+    .console-content
+    .logs-container
+    .log
+    .message-container
+    .message.expanded:not(.stack-frames).multiline {
+    margin: 0;
+    white-space: pre;
+}
+
+.console-container .console-content .logs-container .log .message-container .message .stack-frames .stack-frame {
+    text-indent: 10px;
+}
+
+.console-container .console-content .logs-container .log .message-container .message.warn {
+    color: #d6ae0b;
+}
+
+.console-container .console-content .logs-container .log .message-container .message.error {
+    color: #ff6d4a;
+}
+
+.console-container .console-content .logs-container .log .message-container .message.info {
+    color: #2a6be7;
+}
+
+.console-container .console-content .logs-container .log .message-container .message.debug {
+    color: #2a6be7;
+}
+
+.console-container .console-content .logs-container .log .logs-count {
+    color: #fff;
+    padding: 2px;
+    height: 10px;
+    min-width: 10px;
+    text-align: center;
+    font-size: 10px;
+    border-radius: 7px;
+    margin-top: 8px;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+.console-container .console-content .logs-container .log .logs-count.error {
+    background-color: #ff6d4a;
+}
+
+.console-container .console-content .logs-container .log .logs-count.warn {
+    background-color: #d6ae0b;
+}
+
+.console-container .console-content .logs-container .log .logs-count.info {
+    background-color: #2a6be7;
+}
+
+.console-container .console-content .logs-container .log .logs-count.debug {
+    background-color: #2a6be7;
+}

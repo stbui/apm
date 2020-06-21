@@ -1,21 +1,14 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { last, noop } from 'lodash';
-import Console from './Console';
 import PlayerTimeline from '../PlayerTimeline';
-import { playerSettings } from './settings';
-import Controls from './Controls';
-import { PLAYER_CONFIG, TAB_VISIBILITY, UI_MODE, EVENT_TYPE, MOUSE_TYPE } from './constant';
+import Controls from '../Player/Controls';
+import { PLAYER_CONFIG, TAB_VISIBILITY } from '../Player/constant';
 
 import SessionViewer from '../SessionViewer';
 import { Player } from '../test/player';
 import { Activities } from '../test/Activities';
 import { Activity, IActivity } from '../test/Activity';
-
-import mock from './mock';
-import { a } from './mock2';
-
-const activitiesMock = a;
-// const activitiesMock = mock.activities;
+import Console from '../Console';
 
 let timelineMax = 9329;
 let renderingProgress = 0;
@@ -23,11 +16,10 @@ let containerWidth = 330;
 let containerHeight = 537;
 
 //
-
 const activities = new Activities();
 let player: Player;
 
-export const SessionPlayer = ({ session }) => {
+export const SessionPlayer = ({ session, activitiesData }) => {
     // viewer
     const [fireClear, setFireClear] = useState(false);
     const [fireAttach, setFireAttach]: any = useState();
@@ -161,8 +153,10 @@ export const SessionPlayer = ({ session }) => {
                 isStreamingLive: false,
             });
         });
+    }, []);
 
-        addActivities(activitiesMock);
+    useEffect(() => {
+        addActivities(activitiesData);
         activities.setSessionLength(session.length);
         activities.finishLoading();
 
@@ -187,7 +181,7 @@ export const SessionPlayer = ({ session }) => {
                 handle-user-details-resize="handleUserDetailsResize"
                 hide-mask="hideStepsTimelineMask"
             ></StepsTimeline>*/}
-            <div style="overflow: hidden;background: #242628;">
+            <div className="viewer-wrap _md layout-row flex">
                 {onExecuteEvent ? (
                     <SessionViewer
                         maxWidth={containerWidth}
@@ -221,7 +215,7 @@ export const SessionPlayer = ({ session }) => {
                     min={timeline.timelineMin}
                     max={timeline.timelineMax}
                     value={timeline.timelineValue}
-                    activities={activitiesMock}
+                    activities={activitiesData}
                     loadedTime={timeline.timelineMax}
                 ></PlayerTimeline>
             </Controls>
@@ -236,3 +230,5 @@ export const SessionPlayer = ({ session }) => {
         </div>
     );
 };
+
+export default SessionPlayer;

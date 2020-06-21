@@ -44,7 +44,6 @@ export const ViewerOverlay = ({ width, height, scale, cursorPosition, scrollPosi
         f = angular.element('.click-elements-overlay');
         g = angular.element('.drawing-container');
         h = angular.element('.cursor');
-        // console.log(f, g, h);
     }, []);
 
     useEffect(() => {
@@ -65,7 +64,7 @@ export const ViewerOverlay = ({ width, height, scale, cursorPosition, scrollPosi
             class="viewer-overlay"
             style="overflow: hidden;"
             ng-style="{'width': width + 'px', 'height': height + 'px'}"
-            style="width: 1623px;height: 426px;"
+            style={{ width, height }}
         >
             <div class="viewer-overlay" ng-hide="shouldShowOfflineOverlay">
                 <div class="cursor">

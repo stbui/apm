@@ -50,7 +50,7 @@ export class IteratorFromClosestSnapshotToTime {
     }
 
     next(callback) {
-        var b = this;
+        let b = this;
 
         // if (this._done) {
         //     return callback({ done: true });
@@ -68,22 +68,22 @@ export class IteratorFromClosestSnapshotToTime {
 
         return b._done
             ? callback({ done: true })
-            : void b.peek(function(c) {
+            : void b.peek(function (c) {
                   return c.done
                       ? callback({ done: true })
-                      : void b._iterator.next(function(b) {
+                      : void b._iterator.next(function (b) {
                             callback(c);
                         });
               });
     }
     peek(a) {
-        var b = this;
+        let b = this;
 
         if (this._done) {
             return a({ done: true });
         }
 
-        this._iterator.peek(function(c) {
+        this._iterator.peek(function (c) {
             if (c.done) {
                 return a({ done: true });
             } else if (b._predicate(c.value)) {
@@ -136,7 +136,7 @@ export class Activities {
         });
 
         if (activities.length > 0) {
-            var length = Math.max(this.getSessionLength(), lodash.last(activities).time);
+            let length = Math.max(this.getSessionLength(), lodash.last(activities).time);
             this.setSessionLength(length);
         }
     }
@@ -157,23 +157,23 @@ export class Activities {
     }
 
     getIteratorFromClosestSnapshotToTime(timelineSelectedValue: number): IteratorFromClosestSnapshotToTime {
-        var activity = this._snapshots.findBefore(timelineSelectedValue);
-        var index = activity ? activity.playerIndex : 0;
+        let activity = this._snapshots.findBefore(timelineSelectedValue);
+        let index = activity ? activity.playerIndex : 0;
 
         this._asyncIterator.rewind(index);
 
-        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function(b) {
+        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function (b) {
             return b.time < timelineSelectedValue;
         });
     }
 
     getIteratorFromClosestSnapshotToActivity(selectedActivity): IteratorFromClosestSnapshotToTime {
-        var b = this._snapshots.findBeforeAcivity(selectedActivity.playerIndex),
+        let b = this._snapshots.findBeforeAcivity(selectedActivity.playerIndex),
             index = b ? b.playerIndex : 0;
 
         this._asyncIterator.rewind(index);
 
-        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function(b) {
+        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function (b) {
             return b.playerIndex < selectedActivity.playerIndex;
         });
     }
@@ -183,7 +183,7 @@ export class Activities {
         return this._asyncIterator;
     }
     getIteratorAfterEnd(): AsyncSliceIterator {
-        var a = this._asyncIterator.peekLast(),
+        let a = this._asyncIterator.peekLast(),
             index = a ? a.playerIndex : -1;
 
         this._asyncIterator.rewind(index + 1);
@@ -192,7 +192,7 @@ export class Activities {
     getIteratorBetween(lastRenderedActivity, endTime): IteratorFromClosestSnapshotToTime {
         this._asyncIterator.rewind(lastRenderedActivity.playerIndex + 1);
 
-        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function(a) {
+        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function (a) {
             return a.time < endTime;
         });
     }
@@ -201,13 +201,13 @@ export class Activities {
         lastRenderedActivity,
         timelineSelectedValue: number
     ): IteratorFromClosestSnapshotToTime {
-        var lastActivityIndex = lastRenderedActivity.playerIndex + 1,
+        let lastActivityIndex = lastRenderedActivity.playerIndex + 1,
             activity = this._snapshots.findBetween(lastActivityIndex, timelineSelectedValue),
             index = activity ? activity.playerIndex : lastActivityIndex;
 
         this._asyncIterator.rewind(index);
 
-        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function(a) {
+        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function (a) {
             return a.time < timelineSelectedValue;
         });
     }
@@ -216,13 +216,13 @@ export class Activities {
         lastRenderedActivity,
         selectedActivity
     ): IteratorFromClosestSnapshotToTime {
-        var lastActivityIndex = lastRenderedActivity.playerIndex + 1,
+        let lastActivityIndex = lastRenderedActivity.playerIndex + 1,
             activity = this._snapshots.findBetweenActivities(lastActivityIndex, selectedActivity.playerIndex),
             index = activity ? activity.playerIndex : lastActivityIndex;
 
         this._asyncIterator.rewind(index);
 
-        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function(a) {
+        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function (a) {
             return a.playerIndex < selectedActivity.playerIndex;
         });
     }
@@ -231,15 +231,15 @@ export class Activities {
         lastRenderedActivity,
         timelineSelectedValue: number
     ): IteratorFromClosestSnapshotToTime {
-        var lastActivityIndex = lastRenderedActivity.playerIndex + 1,
+        let lastActivityIndex = lastRenderedActivity.playerIndex + 1,
             f = this._snapshots.findBetween(lastActivityIndex, timelineSelectedValue);
 
         f ? f.playerIndex : lastActivityIndex;
 
         this._asyncIterator.rewind(lastRenderedActivity.playerIndex + 1);
-        var g = false;
+        let g = false;
 
-        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function(a) {
+        return new IteratorFromClosestSnapshotToTime(this._asyncIterator, function (a) {
             return (
                 !g &&
                 ((g = Activity.isTabVisible(a) || (Activity.isTopLevel(a) && Activity.isVisibleSnapshot(a))),

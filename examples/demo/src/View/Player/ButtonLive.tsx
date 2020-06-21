@@ -11,6 +11,7 @@ export const ButtonLive = props => {
             aria-label="Watch Live"
             ng-disabled="!isLive"
             ng-show="sessionWasInitiallyLive && !isStreamingLive"
+            {...props}
         >
             <div layout="row" layout-align="center center">
                 <div flex ng-switch="isLive">

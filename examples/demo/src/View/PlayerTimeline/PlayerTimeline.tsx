@@ -168,8 +168,13 @@ export const PlayerTimeline = ({
                 </div>
             </div>
 
-            <div class="timeline-value" layout-align="center center" layout="column" style={{ display: 'flex' }}>
-                <span layout="row">
+            <div
+                class="timeline-value layout-align-center-center layout-column"
+                layout-align="center center"
+                layout="column"
+                style={{ display: 'flex' }}
+            >
+                <span layout="row" className="layout-row">
                     <span>
                         {momentformat(value)} / {momentformat(max)}
                     </span>

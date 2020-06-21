@@ -6,6 +6,9 @@ import ButtonNext from './ButtonNext';
 import ButtonRepeat from './ButtonRepeat';
 import ButtonPlay from './ButtonPlay';
 import ButtonPause from './ButtonPause';
+import ButtonConsole from './ButtonConsole';
+import ButtonDownload from './ButtonDownload';
+import ButtonSettings from './ButtonSettings';
 
 const Controls = ({
     children,
@@ -99,7 +102,11 @@ const Controls = ({
                     </div>
                 </div>
             </Button>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>{children}</div>
+            <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>{children}</div>
+
+            <ButtonConsole />
+            <ButtonDownload />
+            <ButtonSettings />
         </div>
     );
 };

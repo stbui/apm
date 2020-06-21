@@ -5,6 +5,7 @@ import {
     SCROLL_POSITION_CHANGE,
     EVENT_TYPE,
     SESSIONSTACK_HOVER_CLASS,
+    ELEMENTS,
 } from '../test/constant';
 import { AsyncWhile } from '../test/AsyncWhile';
 import { utils } from '../test/common';
@@ -13,6 +14,7 @@ import { utils } from '../test/common';
 import { DocumentNode } from '../Player/DocumentNode';
 import { angular } from '../Player/angular';
 import ViewerOverlay from '../ViewerOverlay';
+import { timeout } from '../Player/timeout';
 
 const STYLESHEETS_SELECTOR = 'style, link[rel="stylesheet"]';
 const KEYSTROKE_OPTIONS = { END_USER_TYPE_DELAY_SECONDS: 2 };
@@ -23,7 +25,12 @@ let Da;
 let Aa = {};
 let Ea = {};
 let Ga = {};
-let Fa = {};
+let Fa: any = {};
+let Ba = {};
+let Ca = {};
+
+let screenWidth;
+let screenHeight;
 
 function ia(a) {
     var b;
@@ -90,7 +97,7 @@ function addedOrMoved(data: any[]) {
         angular.forEach(data, a => {
             var b;
             if (a.node) {
-                var c = ia(a),
+                var c: any = ia(a),
                     d = c ? c.hostElementId : null,
                     e = c ? c.frameElementId : null;
                 b = documentNode.createElement(a.node, d, e);
@@ -178,8 +185,7 @@ const getFrameElementOffset = function (frameElementId) {
 function registerClick(data) {}
 function setMouseOver(data) {}
 function setMouseOut(v) {}
-function setScrollPositionChange(data) {}
-function setWindowResize(data) {}
+
 function setRadioButtonChange(data) {}
 function setCheckboxChange(data) {}
 function setDomMutation(data) {
@@ -253,14 +259,135 @@ const Viewer = ({
     isPlaying,
 }) => {
     // iframe
+    const ref: any = useRef();
     const viewerRef: any = useRef();
     const viewerContainerRef: any = useRef();
 
     //
     const [cursorPosition, setCursorPosition] = useState();
     const [scrollPosition, setScrollPosition] = useState();
+    const [sessionScreen, setSessionScreen] = useState({ width: sessionScreenWidth, height: sessionScreenHeight });
+    const [viewerMargins, setViewerMargins] = useState({
+        marginLeft: VIEWER_MARGINS.HORIZONTAL,
+        marginTop: VIEWER_MARGINS.VERTICAL,
+    });
+    const [scale, setScale] = useState(1);
 
-    //
+    /**
+     *
+     * @param data
+     */
+    function setWindowResize(data: { height: 679; width: 1623 }) {
+        if (documentNode.isAttached) {
+            // setSessionScreenWidth(data.width);
+            // setSessionScreenHeight(data.height);
+            // $scope.viewerOverlay && $scope.viewerOverlay.setScrollPosition(Fa.top, Fa.left);
+
+            setSessionScreenWidthAndHeight(data.width, data.height);
+            setScrollPosition(Fa);
+        } else {
+            Ea[EVENT_TYPE.WINDOW_RESIZE] = data;
+        }
+    }
+
+    /**
+     * 页面滚动
+     * @param a
+     */
+    // ID 不存在返回当前根节点
+    function F(a?) {
+        return angular.isDefined(a) ? documentNode.getNode(a) : viewerRef.current;
+    }
+    function E(a) {
+        var b = F(a);
+        return b && b.shadowRoot ? b : ((b && b.contentWindow) || (b = F()), b.contentWindow);
+    }
+    function A(b) {
+        var c = Ca[b.id],
+            d = angular.element(E(b.id));
+
+        if (c) {
+            c.cancel();
+            delete Ca[b.id];
+        }
+
+        var condition = function () {
+                return d.scrollLeft() !== b.left || d.scrollTop() !== b.top;
+            },
+            body = function () {
+                timeout(function () {
+                    d.scrollTop(b.top);
+                    d.scrollLeft(b.left);
+                });
+            },
+            waitTimeConfig = {
+                maxIterations: SCROLL_POSITION_CHANGE.MAX_RETRIES,
+                waitTime: SCROLL_POSITION_CHANGE.TIMEOUT,
+            };
+
+        Ca[b.id] = new AsyncWhile(condition, body, waitTimeConfig);
+        Ca[b.id].start();
+    }
+    // 元素滚动
+    function B(b) {
+        var c = Ba[b.id],
+            d = angular.element(documentNode.getNode(b.id));
+
+        if (d && !d.is(ELEMENTS.HTML)) {
+            c && (c.cancel(), delete Ba[b.id]);
+
+            var e = function () {
+                    return d.scrollTop() !== b.top || d.scrollLeft() !== b.left;
+                },
+                f = function () {
+                    timeout(function () {
+                        d.scrollTop(b.top), d.scrollLeft(b.left);
+                    });
+                },
+                h = {
+                    maxIterations: SCROLL_POSITION_CHANGE.MAX_RETRIES,
+                    waitTime: SCROLL_POSITION_CHANGE.TIMEOUT,
+                };
+
+            Ba[b.id] = new AsyncWhile(e, f, h);
+            Ba[b.id].start();
+        }
+    }
+
+    function G(top, left?, id?) {
+        var e = { id: id, top: top, left: left, windowScroll: true };
+
+        if (documentNode.isAttached) {
+            A(e);
+
+            // if (angular.isUndefined(id) && $scope.viewerOverlay) {
+            //     $scope.viewerOverlay.setScrollPosition(top, left);
+            // }
+            if (angular.isUndefined(id)) {
+                setScrollPosition({ top, left });
+            }
+        }
+
+        if (angular.isUndefined(id)) {
+            Fa = { top: top || 0, left: left || 0 };
+        } else {
+            Ga[id] = e;
+        }
+    }
+
+    function setScrollPositionChange(data: { id?: number; left: 0; top: 1; windowScroll: true }) {
+        if (data.id) {
+            Ga[data.id] = data;
+        } else {
+            Fa = { top: data.top || 0, left: data.left || 0 };
+        }
+
+        if (documentNode.isAttached) {
+            data.id ? (data.windowScroll ? G(data.top, data.left, data.id) : B(data)) : G(data.top, data.left);
+        }
+    }
+
+    // 鼠标移动
     function setMouseMove(data) {
         if (documentNode.isAttached) {
             var c = getFrameElementOffset(data.frameElementId),
@@ -270,6 +397,67 @@ const Viewer = ({
             setCursorPosition({ top: top, left: left });
         } else {
             Ea[EVENT_TYPE.MOUSE_MOVE] = data;
+        }
+    }
+
+    /**
+     *
+     *
+     */
+
+    // 设置容器宽高
+    function setViewerContainerWidthAndHeight(maxWidth, maxHeight, sessionScreenWidth, sessionScreenHeight) {
+        var f = maxWidth - 2 * VIEWER_MARGINS.HORIZONTAL,
+            g = maxHeight - 2 * VIEWER_MARGINS.VERTICAL,
+            i = 1,
+            j = 1;
+
+        if (sessionScreenWidth !== 0) {
+            i = sessionScreenWidth < f ? 1 : f / sessionScreenWidth;
+        }
+        if (sessionScreenHeight !== 0) {
+            j = sessionScreenHeight < g ? 1 : g / sessionScreenHeight;
+        }
+
+        const _scale = Math.min(i, j);
+        setScale(_scale);
+
+        var k = sessionScreenWidth * scale,
+            l = sessionScreenHeight * scale;
+
+        let marginLeft;
+        let marginTop;
+        if (f > k) {
+            marginLeft = (maxWidth - k) / 2;
+        } else {
+            marginLeft = VIEWER_MARGINS.HORIZONTAL;
+        }
+
+        if (g > l) {
+            marginTop = (maxHeight - l) / 2;
+        } else {
+            marginTop = VIEWER_MARGINS.VERTICAL;
+        }
+        setViewerMargins({ marginLeft, marginTop });
+
+        viewerContainerRef.current.style.width = sessionScreenWidth + 'px';
+        viewerContainerRef.current.style.height = sessionScreenHeight + 'px';
+    }
+
+    function setSessionScreenWidthAndHeight(width: number, height: number) {
+        setSessionScreen({ width, height });
+        // 设置缩放
+        const { clientHeight } = ref.current.parentNode;
+
+        // debug
+        setViewerContainerWidthAndHeight(1623, 734, width, height);
+
+        if (!screenWidth) {
+            screenWidth = width;
+        }
+
+        if (!screenHeight) {
+            screenHeight = height;
         }
     }
 
@@ -296,14 +484,16 @@ const Viewer = ({
                     });
                 }
 
-                var screenWidth = data.screenWidth,
-                    screenHeight = data.screenHeight;
+                var screenWidth = data.screenWidth || screenWidth,
+                    screenHeight = data.screenHeight || screenHeight;
 
+                // 设置视窗口大小
                 if (documentNode.isAttached) {
                     // setSessionScreenWidth(screenWidth);
                     // setSessionScreenHeight(screenHeight);
                     // $scope.viewerOverlay && $scope.viewerOverlay.setScrollPosition(Fa.top, Fa.left);
 
+                    setSessionScreenWidthAndHeight(screenWidth, screenHeight);
                     setScrollPosition(Fa);
                 } else {
                     Ea[EVENT_TYPE.WINDOW_RESIZE] = { width: screenWidth, height: screenHeight };
@@ -320,15 +510,15 @@ const Viewer = ({
             // documentNode.write(data, customOrigin, sessionId);
             documentNode.write(data, sessionId);
             // w();
-            // G(data.top, data.left, data.hostElementId || data.frameElementId);
+            G(data.top, data.left, data.hostElementId || data.frameElementId);
 
-            // if (data.nodesScrollPositions) {
-            //     angular.forEach(data.nodesScrollPositions, function (a, b) {
-            //         Ga[b] = { id: b, top: a.top, left: a.left };
-            //     });
-            // }
+            if (data.nodesScrollPositions) {
+                angular.forEach(data.nodesScrollPositions, function (a, b) {
+                    Ga[b] = { id: b, top: a.top, left: a.left };
+                });
+            }
 
-            // $timeout(z);
+            // timeout(z);
             // ea(data.frameElementId, data.hostElementId);
         }
     }
@@ -366,12 +556,26 @@ const Viewer = ({
     }, [JSON.stringify(currentActivity)]);
 
     return (
-        <div ng-style="{'margin-left': marginLeft, 'margin-top': marginTop}" style="margin-left: 20px;margin-top:50px">
-            <div className="viewer-wrapper" style={{ transform: 'scale(0.7720271102895871)' }}>
-                <div id="viewer-container" style="width: 1623px;height: 680px;" ref={viewerContainerRef}>
+        <div
+            ng-style="{'margin-left': marginLeft, 'margin-top': marginTop}"
+            style={{ marginLeft: viewerMargins.marginLeft, marginTop: viewerMargins.marginTop }}
+            ref={ref}
+        >
+            <div
+                className="viewer-wrapper"
+                // style={{ transform: 'scale(0.7720271102895871)' }}
+                style={{
+                    transform: `scale(${scale})`,
+                }}
+            >
+                <div
+                    id="viewer-container"
+                    ref={viewerContainerRef}
+                    // style={{ width: sessionScreen.width, height: sessionScreen.height }}
+                >
                     <ViewerOverlay
-                        width="sessionScreenWidth"
-                        height="sessionScreenHeight"
+                        width={sessionScreen.width}
+                        height={sessionScreen.height}
                         scale="scale"
                         get-node="getNodeFromPoint"
                         get-scrollable-node="getScrollableNodeFromPoint"

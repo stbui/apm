@@ -2,9 +2,15 @@ import React, { useState, useRef, useEffect } from 'react';
 
 import { SessionDataClient } from './Player/session';
 
-import { SessionPlayer } from './Player/SessionPlayer';
 import { InitialSettings } from './Player/InitialSettings';
 import { playerSettings } from './test/playerSettings';
+import SessionPlayer from './SessionPlayer';
+
+import mock from './Player/mock';
+import { a } from './Player/mock2';
+
+// const activitiesMock = a;
+const activitiesMock = mock.activities;
 
 export default () => {
     let sessionWasInitiallyLive;
@@ -16,7 +22,7 @@ export default () => {
 
     const [session, setSession] = useState();
     const [isLive, setIsLive] = useState(false);
-    const [activities, setActivities] = useState([]);
+    const [activities, setActivities] = useState(activitiesMock);
 
     // this
     let autostart = true;
@@ -46,7 +52,7 @@ export default () => {
             {session ? (
                 <SessionPlayer
                     session={session}
-                    activities={activities}
+                    activitiesData={activities}
                     startTime={startTime}
                     autostart={autostart}
                     selectedLogId={selectedLogId}

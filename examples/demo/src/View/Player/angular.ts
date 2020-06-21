@@ -82,11 +82,12 @@ export const angular = {
                 //将获取到的元素放入实例对象中
                 this[i] = ele[i];
             }
+
             this.length = ele.length;
             this.context = context;
             return this;
         } else {
-            this.length = 0;
+            this.length = 1;
             this.context = context;
             return this;
         }
@@ -115,5 +116,18 @@ export const angular = {
 
     addBack() {
         return this;
+    },
+
+    scrollLeft() {
+        this.each(this, element => {
+            // element.scrollLeft = 100;
+        });
+        return 0;
+    },
+    scrollTop() {
+        this.each(this, element => {
+            // element.scrollTop = 100;
+        });
+        return 0;
     },
 };

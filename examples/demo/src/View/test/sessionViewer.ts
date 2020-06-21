@@ -130,7 +130,7 @@ angular
                             j = 1;
 
                         0 !== sessionScreenWidth && (i = sessionScreenWidth < f ? 1 : f / sessionScreenWidth);
-                        0 !== sessionScreenHeight && (j = $element < g ? 1 : g / sessionScreenHeight);
+                        0 !== sessionScreenHeight && (j = sessionScreenHeight < g ? 1 : g / sessionScreenHeight);
                         $scope.scale = Math.min(i, j);
 
                         var k = sessionScreenWidth * $scope.scale,
@@ -168,14 +168,16 @@ angular
                             });
                     }
                     function y() {
-                        C({ top: Fa.top, left: Fa.left }),
-                            angular.forEach(Ea, function (a, b) {
-                                var c = t(b);
-                                c(a);
-                            }),
-                            angular.forEach(Object.keys(Ga), function (a) {
-                                C(Ga[a]);
-                            });
+                        C({ top: Fa.top, left: Fa.left });
+
+                        angular.forEach(Ea, function (a, b) {
+                            var c = t(b);
+                            c(a);
+                        });
+
+                        angular.forEach(Object.keys(Ga), function (a) {
+                            C(Ga[a]);
+                        });
                     }
                     function z() {
                         if (documentNode.isAttached) {
@@ -258,9 +260,10 @@ angular
 
                         if (documentNode.isAttached) {
                             A(e);
-                            angular.isUndefined(id) &&
-                                $scope.viewerOverlay &&
+
+                            if (angular.isUndefined(id) && $scope.viewerOverlay) {
                                 $scope.viewerOverlay.setScrollPosition(top, left);
+                            }
                         }
 
                         if (angular.isUndefined(id)) {
@@ -643,8 +646,8 @@ angular
                         Ga = {};
 
                     $scope.scale = 1;
-                    $scope.marginLeft = SCROLL_POSITION_CHANGE.HORIZONTAL;
-                    $scope.marginTop = SCROLL_POSITION_CHANGE.VERTICAL;
+                    $scope.marginLeft = VIEWER_MARGINS.HORIZONTAL;
+                    $scope.marginTop = VIEWER_MARGINS.VERTICAL;
                     $scope.sessionScreenWidth = 0;
                     $scope.sessionScreenHeight = 0;
                     s(EVENT_TYPE.DOM_ELEMENT_VALUE_CHANGE, O);

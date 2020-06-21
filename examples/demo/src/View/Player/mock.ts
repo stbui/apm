@@ -13,6 +13,7 @@ export default {
                 pageUrl: 'http://127.0.0.1:8081/test.html',
                 referrer: null,
                 screenWidth: 1623,
+                screenHeight: 500,
                 top: 0,
                 visibilityState: 'visible',
                 snapshot: {
@@ -63,7 +64,10 @@ export default {
                                 { textContent: '\n\n    ', nodeType: 3, id: 104 },
                                 {
                                     tagName: 'SCRIPT',
-                                    attributes: [{ name: 'async', value: '' }, { name: 'src', value: 'apm.js' }],
+                                    attributes: [
+                                        { name: 'async', value: '' },
+                                        { name: 'src', value: 'apm.js' },
+                                    ],
                                     nodeType: 1,
                                     id: 119,
                                 },
