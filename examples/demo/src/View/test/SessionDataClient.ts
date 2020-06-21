@@ -22,7 +22,7 @@ function i(addActivities) {
                       eventsIndex: d.lastEventIndex,
                   })
                   .then(
-                      function(b) {
+                      function (b) {
                           // c = b
                           var c = k(b, d.timeLimit);
 
@@ -47,7 +47,7 @@ function i(addActivities) {
                           //         a(c.activities),
                           //         void f());
                       },
-                      function(a) {
+                      function (a) {
                           e.reject(a);
                       }
                   );
@@ -69,7 +69,7 @@ function l(activities, timeLimit) {
         lastEventIndex,
         newActivities: any = [];
 
-    lodash.forEach(activities, function(a, f) {
+    lodash.forEach(activities, function (a, f) {
         return (
             !(a.time > timeLimit) &&
             (newActivities.push(a), (lastEventTimestamp = a.timestamp), void (lastEventIndex = a.index))
@@ -84,17 +84,17 @@ function l(activities, timeLimit) {
 }
 
 export class SessionDataClient {
-    public sessionId;
-    public logId;
+    public sessionId: string;
+    public logId: string;
     public isLiveStream: boolean;
-    public lastEventTimestamp;
+    public lastEventTimestamp: number;
     public lastEventIndex;
     public timeLimit;
     public loadingActivitiesPromise;
 
     isLive;
 
-    constructor(sessionId, logId, isLiveStream: boolean) {
+    constructor(sessionId: string, logId: string, isLiveStream: boolean) {
         this.sessionId = sessionId;
         this.logId = logId;
         this.isLiveStream = isLiveStream;
@@ -108,17 +108,17 @@ export class SessionDataClient {
         var a,
             e = this,
             f = $q.defer(),
-            g = featureFlags.getSessionFeatureFlags(e.sessionId);
+            g = featureFlags.getSessionFeatureFlags(this.sessionId);
 
-        a = e.logId ? session.getSessionLog(e.sessionId, e.logId) : session.getSession(e.sessionId);
+        a = this.logId ? session.getSessionLog(this.sessionId, this.logId) : session.getSession(this.sessionId);
 
         $q.all([g, a]).then(
-            function(a) {
+            function (a) {
                 var b = { featureFlags: a[0], sessionData: a[1] };
                 e.isLive = b.sessionData.session.isLive;
                 f.resolve(b);
             },
-            function(a) {
+            function (a) {
                 f.reject(a);
             }
         );

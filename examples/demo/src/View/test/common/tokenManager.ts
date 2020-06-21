@@ -1,40 +1,39 @@
 import { utils } from './utils';
 import { BUILD_ENV } from './constant';
-
-// todo:
-const lodash: any = {};
-const $location: any = window.location;
-const $document = [document];
-const $window = window;
+import { $window, $document, $location } from './resource';
 
 export const $base64: any = {};
 export const $cookies: any = {};
 
 //
 var o,
-    p,
+    accessToken,
     q = 'authToken';
 
 function f(a) {
-    var c = new Date(),
-        d = new Date(c.getFullYear() + 1, c.getMonth(), c.getDate());
+    var now = new Date(),
+        d = new Date(now.getFullYear() + 1, now.getMonth(), now.getDate());
+
     $cookies.put(q, a, {
         expires: d,
     });
 }
 function g() {
     var a = $location.search().auth_token;
-    return (
-        a
-            ? $cookies.put(q, a, {
-                  path: '/',
-              })
-            : (a = $cookies.get(q)),
-        a
-    );
+
+    if (a) {
+        $cookies.put(q, a, {
+            path: '/',
+        });
+    } else {
+        a = $cookies.get(q);
+    }
+
+    return a;
 }
 function h() {
-    return (p = $location.search().access_token);
+    accessToken = $location.search().access_token;
+    return accessToken;
 }
 function setAuthToken(a) {
     clearAuthToken();
@@ -45,11 +44,11 @@ function getAuthToken() {
     return o ? o : g();
 }
 function getAccessToken() {
-    return p ? p : h();
+    return accessToken ? accessToken : h();
 }
 function hasAuthToken() {
-    var a = getAuthToken();
-    return !!a;
+    const authToken = getAuthToken();
+    return !!authToken;
 }
 function clearAuthToken() {
     o = null;
@@ -57,8 +56,8 @@ function clearAuthToken() {
     !BUILD_ENV.IS_DEV && BUILD_ENV.IS_SAAS && utils.removeCookieByName(q);
 }
 function generateBasicToken(b) {
-    var c = $base64.encode(b);
-    return 'Basic ' + c;
+    var auth = $base64.encode(b);
+    return 'Basic ' + auth;
 }
 
 export const tokenManager = {

@@ -41,6 +41,7 @@ export default () => {
         // 实例
         const sessionDataClient = new SessionDataClient(sessionId, logId, settings.settings.general.playLive);
 
+        // 页面快照
         sessionDataClient.loadSession().then(res => {
             setSession(res.session);
             setIsLive(res.session.isLive);

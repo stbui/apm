@@ -2,7 +2,7 @@ import { auth, utils, sessionstackManager, intercomManager, analytics, navigatio
 import { HTTP_STATUS, FRONTEND_URL } from './common';
 import { SessionDataClient } from './SessionDataClient';
 import { InitialSettings } from './InitialSettings';
-import { Player } from './player';
+import { player, Player } from './player';
 import { playerSettings } from './playerSettings';
 import { BrokerClient } from './BrokerClient';
 import { BrokerWebSocketClient } from './BrokerWebSocketClient';
@@ -31,7 +31,7 @@ let $scope: IScope;
 function loadActivitiesUntil(timeLimit: number) {
     // timeLimit:1591025627881
     // test: 循环拉取数据
-    sessionDataClient.loadActivitiesUntil(addActivities, timeLimit).then(function(b) {
+    sessionDataClient.loadActivitiesUntil(addActivities, timeLimit).then(function (b) {
         // b: undefined
         addActivities(b);
         $scope.sessionPlayerApi.finishLoadingActivities();
@@ -73,7 +73,7 @@ function addActivities(
     //     $scope.sessionPlayerApi.addActivities(activities));
 }
 function A(activities) {
-    angular.forEach(activities, function(activity) {
+    angular.forEach(activities, function (activity) {
         activity.time = activity.timestamp - timestamp;
     });
 }
@@ -99,20 +99,20 @@ function C() {
         source = initialSettings.getSource();
 
     auth.loadCurrentUser()
-        .then(function(a) {
+        .then(function (a) {
             b = a.id;
         })
-        ['finally'](function() {
+        ['finally'](function () {
             analytics.trackSessionOpened(b, $scope.sessionId, accessToken, source);
         });
 }
 function D() {
-    auth.loadCurrentUser().then(function(b) {
+    auth.loadCurrentUser().then(function (b) {
         analytics.trackLiveSessionOpened(b.id, $scope.sessionId);
     });
 }
 function loadCurrentUser() {
-    auth.loadCurrentUser().then(function(b) {
+    auth.loadCurrentUser().then(function (b) {
         analytics.trackLiveSessionStopped(b.id, $scope.sessionId);
     });
 }
@@ -130,7 +130,7 @@ if (!$scope.isBrowserNotSupported) {
     $scope.sessionId = $stateParams.sessionId;
     $scope.errors = {};
     $scope.activities = [];
-    $scope.playRecordedSession = function() {
+    $scope.playRecordedSession = function () {
         var session = $scope.initialSettings.getSession();
         navigation.openSessionInNewWindow(session.id, session.hasInaccessibleResources, 'player_offline_button');
     };
@@ -145,7 +145,7 @@ if (!$scope.isBrowserNotSupported) {
         N = new LiveConnectionMonitor(chatClient),
         time: number = -1;
 
-    auth.loadCurrentUser().then(function(user) {
+    auth.loadCurrentUser().then(function (user) {
         $scope.user = user;
         sessionstackManager.identify(user);
         pendoManager.initialize(user);
@@ -154,7 +154,7 @@ if (!$scope.isBrowserNotSupported) {
 
     // 页面快照
     // test:0
-    sessionDataClient.loadSession().then(function(b) {
+    sessionDataClient.loadSession().then(function (b) {
         initialSettings = new InitialSettings(
             b.sessionData.session,
             b.sessionData.log,
@@ -170,45 +170,45 @@ if (!$scope.isBrowserNotSupported) {
         initialSettings.shouldStartStreaming() && D();
     }, B);
 
-    liveConnectionMonitor.onStatusChange(function(b) {
+    liveConnectionMonitor.onStatusChange(function (b) {
         var c = b === CONNECTION_STATUSES.OFFLINE;
         $scope.sessionPlayerApi.setUserHasGoneOffline(c);
         c ? $scope.sessionPlayerApi.stopLiveStreaming() : $scope.sessionPlayerApi.startLiveStreaming();
     });
-    N.onStatusChange(function(b) {
+    N.onStatusChange(function (b) {
         var c = b === CONNECTION_STATUSES.OFFLINE;
         $scope.sessionPlayerApi.setUserHasGoneOffline(c);
         c && (chatClient.discardPendingRequests(), $scope.sessionPlayerApi.resetStreamingRequest(c));
     });
-    player.onUserPermissionRequestSend($scope, function() {
+    player.onUserPermissionRequestSend($scope, function () {
         N.start();
-        chatClient.onStreamingRequestDenied(function() {
+        chatClient.onStreamingRequestDenied(function () {
             N.stop();
             chatClient.disconnect();
             $scope.sessionPlayerApi.denyStreamingRequest();
         });
-        chatClient.onStreamingRequestApproved(function() {
+        chatClient.onStreamingRequestApproved(function () {
             N.stop();
             chatClient.disconnect();
             $scope.sessionPlayerApi.approveStreamingRequest();
         });
-        chatClient.onRecorderDisconnected(function() {
+        chatClient.onRecorderDisconnected(function () {
             N.stop();
             chatClient.disconnect();
             $scope.sessionPlayerApi.interruptStreamingRequest();
         });
-        chatClient.connect(function() {
+        chatClient.connect(function () {
             chatClient.sendStreamingRequest();
         });
     });
-    player.onUserPermissionRequestCanceled($scope, function() {
+    player.onUserPermissionRequestCanceled($scope, function () {
         N.stop();
         chatClient.sendStreamingRequestCanceled();
         chatClient.disconnect();
     });
     // firePlayerIsInitialized
     // test:2
-    player.onPlayerIsInitialized($scope, function() {
+    player.onPlayerIsInitialized($scope, function () {
         $scope.sessionPlayerApi.setFeatureFlags(initialSettings.featureFlags);
         $scope.sessionPlayerApi.setBrokerClient(brokerClient);
 
@@ -223,17 +223,17 @@ if (!$scope.isBrowserNotSupported) {
                 loadActivitiesUntil(session.clientStartMilliseconds + session.length);
             }
     });
-    player.onStartLiveStreaming($scope, function(b, c) {
+    player.onStartLiveStreaming($scope, function (b, c) {
         liveConnectionMonitor.start();
-        brokerClient.onAddData(function(b) {
+        brokerClient.onAddData(function (b) {
             z(b);
             $scope.sessionPlayerApi.setSessionLength(time);
         });
-        brokerClient.connect(function() {
+        brokerClient.connect(function () {
             c();
         });
     });
-    player.onStopLiveStreaming($scope, function() {
+    player.onStopLiveStreaming($scope, function () {
         brokerClient.disconnect();
         liveConnectionMonitor.stop();
         $scope.sessionPlayerApi.finishLoadingActivities();
