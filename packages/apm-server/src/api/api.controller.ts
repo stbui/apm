@@ -43,13 +43,21 @@ export class ApiController {
      * @param q
      * ?events_index=-1&events_timestamp=-1&logs_timestamp=0
      * ?events_index=2&events_timestamp=1495539033675&logs_timestamp=1495539033246
+     *
+     * ?events_index=0&events_timestamp=0&logs_timestamp=0
+     * ?events_index=-1&events_timestamp=-1
      */
     @Get('/sessions/:session_id/activities')
     async activities(
         @Param('session_id') sessionId,
         @Query('events_index', new ParseIntPipe()) eventsIndex,
     ) {
-        const activities = await this.service.getEvents(sessionId, eventsIndex);
+        const _eventsIndex = eventsIndex === -1 ? 0 : eventsIndex;
+
+        const activities = await this.service.getEvents(
+            sessionId,
+            _eventsIndex,
+        );
         const session = await this.service.getSession(sessionId);
 
         const result = {
@@ -57,7 +65,7 @@ export class ApiController {
             lastEventIndex: eventsIndex + 1,
             // 最后记录时间
             lastEventTimestamp: session.lastActive,
-            offset: 0,
+            // offset: 0,
         };
 
         return result;
