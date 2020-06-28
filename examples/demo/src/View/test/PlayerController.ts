@@ -31,9 +31,9 @@ let $scope: IScope;
 function loadActivitiesUntil(timeLimit: number) {
     // timeLimit:1591025627881
     // test: 循环拉取数据
-    sessionDataClient.loadActivitiesUntil(addActivities, timeLimit).then(function (b) {
+    sessionDataClient.loadActivitiesUntil(addActivities, timeLimit).then(activities => {
         // b: undefined
-        addActivities(b);
+        addActivities(activities);
         $scope.sessionPlayerApi.finishLoadingActivities();
     }, B);
 }
@@ -77,11 +77,13 @@ function A(activities) {
         activity.time = activity.timestamp - timestamp;
     });
 }
-function B(b) {
-    if (b)
-        switch (b.status) {
+
+// promise reject
+function B(err) {
+    if (err)
+        switch (err.status) {
             case HTTP_STATUS.FORBIDDEN:
-                F(b) || (window.location.href = FRONTEND_URL + '#/login');
+                F(err) || (window.location.href = FRONTEND_URL + '#/login');
                 break;
             case HTTP_STATUS.UNAUTHORIZED:
                 window.location.href = FRONTEND_URL + '#/login';
@@ -117,15 +119,17 @@ function loadCurrentUser() {
     });
 }
 
-function F(a) {
+function F(err) {
     // 当前用户使用已过期
-    return a.data && a.data.message === PLAN_EXPIRED;
+    return err.data && err.data.message === PLAN_EXPIRED;
 }
 
 $scope.isBrowserNotSupported = utils.isBrowserNotSupported();
 
 if (!$scope.isBrowserNotSupported) {
     // $scope.settings的值
+    // $scope.settings.general
+    // $scope.settings.analytics
     playerSettings.init($scope);
     $scope.sessionId = $stateParams.sessionId;
     $scope.errors = {};

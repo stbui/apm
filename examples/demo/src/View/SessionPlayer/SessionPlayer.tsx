@@ -10,22 +10,25 @@ import { Activities } from '../test/Activities';
 import { Activity, IActivity } from '../test/Activity';
 import Console from '../Console';
 
-let timelineMax = 9329;
 let renderingProgress = 0;
-let containerWidth = 330;
-let containerHeight = 537;
+let containerWidth = 1000;
+let containerHeight = 800;
 
 //
 const activities = new Activities();
 let player: Player;
 
-export const SessionPlayer = ({ session, activitiesData }) => {
+export const SessionPlayer = ({ session, activitiesData, startTime, settings, api }) => {
     // viewer
     const [fireClear, setFireClear] = useState(false);
     const [fireAttach, setFireAttach]: any = useState();
     const [onExecuteEvent, fireExecuteEvent]: any = useState();
 
-    const [timeline, setTimeline] = useState({ timelineMax: timelineMax, timelineMin: 0, timelineValue: 0 });
+    /**
+     * timelineMax: 总时长
+     * timelineMin：
+     */
+    const [timeline, setTimeline] = useState({ timelineMax: session.length, timelineMin: 0, timelineValue: startTime });
     const [playState, setPlayState] = useState({
         hasFinished: false,
         isPlaying: false,
@@ -39,11 +42,26 @@ export const SessionPlayer = ({ session, activitiesData }) => {
     };
 
     const start = () => {
-        player.jumpToTime(0);
+        console.log(settings);
+        player.jumpToTime(startTime);
+        setPlayState({
+            arePlayerButtonsEnabled: false,
+            hasFinished: false,
+            isPlaying: true,
+            isLive: false,
+            isStreamingLive: false,
+        });
     };
 
     const play = () => {
         player.play(timeline.timelineValue);
+        setPlayState({
+            arePlayerButtonsEnabled: false,
+            hasFinished: false,
+            isPlaying: true,
+            isLive: false,
+            isStreamingLive: false,
+        });
     };
     const pause = () => {
         player.pause();
@@ -153,16 +171,21 @@ export const SessionPlayer = ({ session, activitiesData }) => {
                 isStreamingLive: false,
             });
         });
+
+        api.setSessionLength();
     }, []);
 
     useEffect(() => {
         addActivities(activitiesData);
+    }, [activitiesData]);
+
+    useEffect(() => {
         activities.setSessionLength(session.length);
         activities.finishLoading();
 
         start();
     }, [session]);
-
+   
     return (
         <div className="player-container _md layout-column flex">
             {/*<UserIdentityDetails

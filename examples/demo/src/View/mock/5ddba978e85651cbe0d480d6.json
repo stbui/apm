@@ -1,0 +1,32 @@
+{
+    "log": null,
+    "session": {
+        "isLive": false,
+        "isWatched": true,
+        "id": "5ddba978e85651cbe0d480d6",
+        "browserName": "Chrome",
+        "browserVersion": "78.0.3904.108",
+        "docType": "<!DOCTYPE html>",
+        "layoutName": "Blink",
+        "origin": "http://127.0.0.1:8081/",
+        "os": "OS X 10.13.6 64-bit",
+        "pageUrl": "http://127.0.0.1:8081/#/kanban/myapp",
+        "referrer": "http://127.0.0.1:8081/",
+        "screenWidth": 1655,
+        "screenHeight": 612,
+        "timestamp": 1574676856251,
+        "left": 0,
+        "top": 0,
+        "sensitiveInputFields": false,
+        "version": "61",
+        "visibilityState": "visible",
+        "hostname": "127.0.0.1",
+        "start": 1574676856251,
+        "lastActive": 1574677000926,
+        "clientStartMilliseconds": 1574676856251,
+        "length": 144675
+    },
+    "customOrigin": null,
+    "askUserForStreamingPermission": false,
+    "lastActivityIndex": 83
+}

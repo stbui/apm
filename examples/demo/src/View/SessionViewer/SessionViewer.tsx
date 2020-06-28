@@ -263,7 +263,6 @@ const Viewer = ({
     const viewerRef: any = useRef();
     const viewerContainerRef: any = useRef();
 
-    //
     const [cursorPosition, setCursorPosition] = useState();
     const [scrollPosition, setScrollPosition] = useState();
     const [sessionScreen, setSessionScreen] = useState({ width: sessionScreenWidth, height: sessionScreenHeight });
@@ -422,8 +421,8 @@ const Viewer = ({
         const _scale = Math.min(i, j);
         setScale(_scale);
 
-        var k = sessionScreenWidth * scale,
-            l = sessionScreenHeight * scale;
+        var k = sessionScreenWidth * _scale,
+            l = sessionScreenHeight * _scale;
 
         let marginLeft;
         let marginTop;
@@ -438,8 +437,10 @@ const Viewer = ({
         } else {
             marginTop = VIEWER_MARGINS.VERTICAL;
         }
+        // 设置间距
         setViewerMargins({ marginLeft, marginTop });
 
+        // 将dom_snapshot宽度和高度设置给view
         viewerContainerRef.current.style.width = sessionScreenWidth + 'px';
         viewerContainerRef.current.style.height = sessionScreenHeight + 'px';
     }
@@ -447,10 +448,10 @@ const Viewer = ({
     function setSessionScreenWidthAndHeight(width: number, height: number) {
         setSessionScreen({ width, height });
         // 设置缩放
-        const { clientHeight } = ref.current.parentNode;
-
+        const { clientHeight, clientWidth } = ref.current.parentNode;
+        // console.log('clientHeight', clientHeight, clientWidth);
         // debug
-        setViewerContainerWidthAndHeight(1623, 734, width, height);
+        setViewerContainerWidthAndHeight(clientWidth, clientHeight, width, height);
 
         if (!screenWidth) {
             screenWidth = width;
@@ -484,8 +485,9 @@ const Viewer = ({
                     });
                 }
 
+                // debug:
                 var screenWidth = data.screenWidth || screenWidth,
-                    screenHeight = data.screenHeight || screenHeight;
+                    screenHeight = data.screenHeight || screenHeight || sessionScreenHeight;
 
                 // 设置视窗口大小
                 if (documentNode.isAttached) {

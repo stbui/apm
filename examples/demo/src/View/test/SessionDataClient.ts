@@ -14,43 +14,38 @@ function i(addActivities) {
         e = $q.defer();
 
     (function f() {
-        return d.lastEventTimestamp >= d.timeLimit
-            ? e.resolve([])
-            : void session
-                  .getActivities(d.sessionId, {
-                      eventsTimestamp: d.lastEventTimestamp,
-                      eventsIndex: d.lastEventIndex,
-                  })
-                  .then(
-                      function (b) {
-                          // c = b
-                          var c = k(b, d.timeLimit);
+        if (d.lastEventTimestamp >= d.timeLimit) {
+            return e.resolve([]);
+        }
 
-                          if (0 === c.activities.length) {
-                              return e.resolve(c.activities);
-                          }
+        session
+            .getActivities(d.sessionId, {
+                eventsTimestamp: d.lastEventTimestamp,
+                eventsIndex: d.lastEventIndex,
+            })
+            .then(
+                function (b) {
+                    // c = b
+                    var c = k(b, d.timeLimit);
 
-                          d.lastEventTimestamp = c.lastEventTimestamp;
-                          d.lastEventIndex = c.lastEventIndex;
+                    if (0 === c.activities.length) {
+                        return e.resolve(c.activities);
+                    }
 
-                          // PlayerController.z(c.activities)
-                          addActivities(c.activities);
+                    d.lastEventTimestamp = c.lastEventTimestamp;
+                    d.lastEventIndex = c.lastEventIndex;
 
-                          f();
+                    // PlayerController.z(c.activities)
+                    addActivities(c.activities);
 
-                          return;
+                    f();
 
-                          //   return 0 === c.activities.length
-                          //       ? e.resolve(c.activities)
-                          //       : ((d.lastEventTimestamp = c.lastEventTimestamp),
-                          //         (d.lastEventIndex = c.lastEventIndex),
-                          //         a(c.activities),
-                          //         void f());
-                      },
-                      function (a) {
-                          e.reject(a);
-                      }
-                  );
+                    return;
+                },
+                function (a) {
+                    e.reject(a);
+                }
+            );
     })();
 
     return e.promise;
@@ -88,7 +83,7 @@ export class SessionDataClient {
     public logId: string;
     public isLiveStream: boolean;
     public lastEventTimestamp: number;
-    public lastEventIndex;
+    public lastEventIndex: number;
     public timeLimit;
     public loadingActivitiesPromise;
 

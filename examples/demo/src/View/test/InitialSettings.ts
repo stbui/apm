@@ -1,6 +1,8 @@
+import { ISettingsGeneral, ISettingsAnalytics, ISettingsFeatureFlags } from './interface';
+
 const LOG_OFFSET = 5000;
 
-function c(session, index: number) {
+function c(session, index?: number) {
     if (index) {
         index = Math.max(index, 0);
         index = Math.min(index, session.length);
@@ -14,22 +16,22 @@ function c(session, index: number) {
 export class InitialSettings {
     public session: object;
     public selectedLog;
-    public askUserForStreamingPermission;
+    public askUserForStreamingPermission: boolean;
     public customOrigin;
-    public generalSettings;
-    public analytics;
-    public featureFlags;
+    public generalSettings: ISettingsGeneral;
+    public analytics: ISettingsAnalytics;
+    public featureFlags: ISettingsFeatureFlags;
     public pauseAt;
     public playFrom;
 
     constructor(
-        session,
+        session: object,
         selectedLog,
-        askUserForStreamingPermission,
+        askUserForStreamingPermission: boolean,
         customOrigin,
-        generalSettings,
-        analytics,
-        featureFlags
+        generalSettings: ISettingsGeneral,
+        analytics: ISettingsAnalytics,
+        featureFlags: ISettingsFeatureFlags
     ) {
         this.session = session;
         this.selectedLog = selectedLog;

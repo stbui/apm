@@ -47,3 +47,34 @@ export interface ISessionPlayerApi {
     stopLiveStreaming: Function;
     setUserHasGoneOffline: Function;
 }
+
+export interface ISettingsGeneral {
+    playFrom?: number;
+    pauseAt?: number;
+    playLive?: any;
+    uiMode?: string;
+    accessToken?: string;
+    isDemo?: boolean;
+    domSnapshotsEnabled?: boolean;
+    liveSeparatePipeline?: boolean;
+    isAssureCoWorkaroundEnabled?: boolean;
+}
+
+export interface ISettingsAnalytics {
+    source?: string;
+}
+
+export interface ISettingsPlayback {
+    shouldPauseOnMarker: boolean;
+    shouldSkipProlongedInactivity: boolean;
+    shouldVisualizeClicks: boolean;
+    speed: number;
+}
+
+export interface ISettingsFeatureFlags {
+    isToolkitEnabled: boolean;
+    isControlTakeoverEnabled: boolean;
+    captureMetadataOnly: any;
+    isAssureCoWorkaroundEnabled: boolean;
+    ignoreFormsAutofill: any;
+}

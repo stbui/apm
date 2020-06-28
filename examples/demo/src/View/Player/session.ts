@@ -91,7 +91,7 @@ export class SessionDataClient {
 
     isLive;
 
-    constructor(sessionId, logId) {
+    constructor(sessionId, logId,aaa) {
         this.sessionId = sessionId;
         this.logId = logId;
         this.lastEventTimestamp = 0;
