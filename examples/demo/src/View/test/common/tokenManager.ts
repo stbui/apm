@@ -1,9 +1,6 @@
 import { utils } from './utils';
 import { BUILD_ENV } from './constant';
-import { $window, $document, $location } from './resource';
-
-export const $base64: any = {};
-export const $cookies: any = {};
+import { $location, $base64, $cookies } from './resource';
 
 //
 var o,

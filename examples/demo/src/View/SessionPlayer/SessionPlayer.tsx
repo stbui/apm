@@ -18,7 +18,7 @@ let containerHeight = 800;
 const activities = new Activities();
 let player: Player;
 
-export const SessionPlayer = ({ session, activitiesData, startTime, settings, api }) => {
+export const SessionPlayer = ({ session, activitiesData, startTime, settings }) => {
     // viewer
     const [fireClear, setFireClear] = useState(false);
     const [fireAttach, setFireAttach]: any = useState();
@@ -42,7 +42,6 @@ export const SessionPlayer = ({ session, activitiesData, startTime, settings, ap
     };
 
     const start = () => {
-        console.log(settings);
         player.jumpToTime(startTime);
         setPlayState({
             arePlayerButtonsEnabled: false,
@@ -171,8 +170,6 @@ export const SessionPlayer = ({ session, activitiesData, startTime, settings, ap
                 isStreamingLive: false,
             });
         });
-
-        api.setSessionLength();
     }, []);
 
     useEffect(() => {
@@ -181,29 +178,14 @@ export const SessionPlayer = ({ session, activitiesData, startTime, settings, ap
 
     useEffect(() => {
         activities.setSessionLength(session.length);
-        activities.finishLoading();
+        // 结束加载activities
+        // activities.finishLoading();
 
         start();
     }, [session]);
-   
+
     return (
         <div className="player-container _md layout-column flex">
-            {/*<UserIdentityDetails
-                userIdentityData={session.userIdentity}
-                hideMask={hideUserDetailsMask}
-            ></UserIdentityDetails>
-            <StepsTimeline
-                add-new-steps="addNewSteps"
-                update-steps-timeline="updateStepsTimeline"
-                on-selected-step="onSelectedActivity"
-                select-next-step="selectNextStep"
-                enable="enableStepsTimeline"
-                disable="disableStepsTimeline"
-                selectedLogId="selectedLogId"
-                is-created="stepsTimelineIsCreated"
-                handle-user-details-resize="handleUserDetailsResize"
-                hide-mask="hideStepsTimelineMask"
-            ></StepsTimeline>*/}
             <div className="viewer-wrap _md layout-row flex">
                 {onExecuteEvent ? (
                     <SessionViewer

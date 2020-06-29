@@ -450,8 +450,6 @@ const Viewer = ({
         // 设置缩放
         const { clientHeight, clientWidth } = ref.current.parentNode;
         // console.log('clientHeight', clientHeight, clientWidth);
-        // debug
-        setViewerContainerWidthAndHeight(clientWidth, clientHeight, width, height);
 
         if (!screenWidth) {
             screenWidth = width;
@@ -460,6 +458,9 @@ const Viewer = ({
         if (!screenHeight) {
             screenHeight = height;
         }
+
+        // debug
+        setViewerContainerWidthAndHeight(clientWidth, clientHeight, screenWidth, screenHeight);
     }
 
     function domSnapshot(data) {
@@ -487,7 +488,7 @@ const Viewer = ({
 
                 // debug:
                 var screenWidth = data.screenWidth || screenWidth,
-                    screenHeight = data.screenHeight || screenHeight || sessionScreenHeight;
+                    screenHeight = data.screenHeight || screenHeight;
 
                 // 设置视窗口大小
                 if (documentNode.isAttached) {

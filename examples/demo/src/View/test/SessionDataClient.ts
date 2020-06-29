@@ -4,51 +4,42 @@ import { session, featureFlags } from './common';
 const ACTIVITIES_POLL_WAIT_TIME = 0;
 const NO_ACTIVITIES_POLL_WAIT_TIME = 500;
 
-//
-const $q: any = {};
-
-//
-
 function i(addActivities) {
-    var d = this,
-        e = $q.defer();
+    var that = this;
 
     (function f() {
-        if (d.lastEventTimestamp >= d.timeLimit) {
-            return e.resolve([]);
+        if (that.lastEventTimestamp >= that.timeLimit) {
+            // finishLoadingActivities
+            addActivities([]);
+            return;
         }
 
         session
-            .getActivities(d.sessionId, {
-                eventsTimestamp: d.lastEventTimestamp,
-                eventsIndex: d.lastEventIndex,
+            .getActivities(that.sessionId, {
+                eventsTimestamp: that.lastEventTimestamp,
+                eventsIndex: that.lastEventIndex,
             })
-            .then(
-                function (b) {
-                    // c = b
-                    var c = k(b, d.timeLimit);
+            .then(function (b) {
+                // c = b
+                var c = k(b, that.timeLimit);
 
-                    if (0 === c.activities.length) {
-                        return e.resolve(c.activities);
-                    }
-
-                    d.lastEventTimestamp = c.lastEventTimestamp;
-                    d.lastEventIndex = c.lastEventIndex;
-
-                    // PlayerController.z(c.activities)
+                if (c.activities.length === 0) {
+                    // finishLoadingActivities
                     addActivities(c.activities);
-
-                    f();
-
                     return;
-                },
-                function (a) {
-                    e.reject(a);
                 }
-            );
-    })();
 
-    return e.promise;
+                that.lastEventTimestamp = c.lastEventTimestamp;
+                that.lastEventIndex = c.lastEventIndex;
+
+                addActivities(c.activities);
+
+                f();
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    })();
 }
 function j(activities) {
     var b = lodash.last(activities);
@@ -100,38 +91,46 @@ export class SessionDataClient {
     }
 
     loadSession() {
-        var a,
-            e = this,
-            f = $q.defer(),
-            g = featureFlags.getSessionFeatureFlags(this.sessionId);
+        // var a;
+        // var e = this;
+        // var f = $q.defer();
+        // var f = Promise;
+        //
+        var sessionFeatureFlags = featureFlags.getSessionFeatureFlags(this.sessionId);
+        var a = this.logId ? session.getSessionLog(this.sessionId, this.logId) : session.getSession(this.sessionId);
 
-        a = this.logId ? session.getSessionLog(this.sessionId, this.logId) : session.getSession(this.sessionId);
+        // $q.all([g, a]).then(
+        //     function (a) {
+        //         var sessionData = { featureFlags: a[0], sessionData: a[1] };
+        //         e.isLive = sessionData.sessionData.session.isLive;
+        //         f.resolve(sessionData);
+        //     },
+        //     function (a) {
+        //         f.reject(a);
+        //     }
+        // );
 
-        $q.all([g, a]).then(
-            function (a) {
-                var b = { featureFlags: a[0], sessionData: a[1] };
-                e.isLive = b.sessionData.session.isLive;
-                f.resolve(b);
-            },
-            function (a) {
-                f.reject(a);
-            }
-        );
+        // return f.promise;
 
-        return f.promise;
+        return Promise.all([sessionFeatureFlags, a]).then(values => {
+            const sessionData = { featureFlags: values[0], sessionData: values[1] };
+            this.isLive = sessionData.sessionData.session.isLive;
+
+            return sessionData;
+        });
     }
 
     // callback = PlayerController.z(c.activities)
     loadActivitiesUntil(addActivities, timeLimit) {
         this.timeLimit = timeLimit;
 
-        if (!this.loadingActivitiesPromise) {
-            this.loadingActivitiesPromise = i.call(this, addActivities).then(b => {
-                this.loadingActivitiesPromise = null;
-                addActivities(b);
-            });
-        }
+        // if (!this.loadingActivitiesPromise) {
+        //     this.loadingActivitiesPromise = i.call(this, addActivities).then(b => {
+        //         this.loadingActivitiesPromise = null;
+        //         addActivities(b);
+        //     });
+        // }
 
-        return this.loadingActivitiesPromise;
+        return i.call(this, addActivities);
     }
 }

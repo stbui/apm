@@ -12,3 +12,6 @@ export const $location = {
         return [];
     },
 };
+
+export const $base64: any = {};
+export const $cookies: any = {};

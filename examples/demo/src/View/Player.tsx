@@ -1,9 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
-import { SessionDataClient } from './Player/session';
-
+import { angular } from './test/common/angular';
 import { InitialSettings } from './test/InitialSettings';
 import { playerSettings } from './test/playerSettings';
+import { SessionDataClient } from './test/SessionDataClient';
 import SessionPlayer from './SessionPlayer';
 
 import mock from './Player/mock';
@@ -12,25 +12,29 @@ import { a } from './Player/mock2';
 // const activitiesMock = a;
 const activitiesMock = mock.activities;
 
-let initialSettings;
+let initialSettings: InitialSettings;
+let sessionDataClient: SessionDataClient;
 const settings: any = {};
 
 // 从url上获取;
 // this.sessionId
-const sessionId = '5dda91504aea244982de72d1';
+const sessionId = '5ed51f8b33f0736bcdfd046a';
 let logId;
 
-// this
-let autostart = true;
 let startTime = 0;
 let errors = {};
 let isLive = false;
 let showGoLiveButton = false;
 let pauseActivity;
 
+var timestamp;
+var time: number = -1;
+
+var finishLoadingStatus = false;
+
 export default () => {
     const [session, setSession] = useState();
-    const [activities, setActivities] = useState(activitiesMock);
+    const [activities, setActivities] = useState([]);
 
     //
     const sessionPlayerApi = {
@@ -46,40 +50,84 @@ export default () => {
             //     settings.playback.shouldPauseOnMarker &&
             //     player.changePauseMarker(pauseActivity.time);
         },
-        setSessionLength: () => {
-            console.log('setSessionLength');
+        setSessionLength: length => {
+            console.log('setSessionLength', length);
         },
         finishLoadingActivities: () => {},
         addActivities: () => {},
+        startPlayback: () => {
+            console.log('start');
+        },
+    };
+
+    function A(activities) {
+        angular.forEach(activities, function (activity) {
+            activity.time = activity.timestamp - timestamp;
+        });
+    }
+
+    function addActivities(activities) {
+        // 假定加载完成
+        finishLoadingStatus = true;
+
+        if (activities && activities.length !== 0) {
+            timestamp = timestamp || activities[0].timestamp;
+            A(activities);
+            time = activities[activities.length - 1].time;
+
+            // 标志没有完成
+            finishLoadingStatus = false;
+
+            setActivities(activities);
+        } else {
+            // 可能数据加载完成
+            console.log(activities);
+            // 数据加载完毕
+            sessionPlayerApi.finishLoadingActivities();
+        }
+    }
+
+    const loadActivitiesUntil = timeLimit => {
+        console.log('loadActivitiesUntil', timeLimit);
+        sessionDataClient.loadActivitiesUntil(addActivities, timeLimit);
     };
 
     useEffect(() => {
         playerSettings.init(settings);
         // 实例
-        const sessionDataClient = new SessionDataClient(sessionId, logId, settings.settings.general.playLive);
+        sessionDataClient = new SessionDataClient(sessionId, logId, settings.settings.general.playLive);
 
         // 页面快照
-        sessionDataClient.loadSession().then(res => {
+        sessionDataClient.loadSession().then(data => {
             // 初始化配置参数
             initialSettings = new InitialSettings(
-                res.session,
-                res.log,
-                res.askUserForStreamingPermission,
-                res.customOrigin,
+                data.sessionData.session,
+                data.sessionData.log,
+                data.sessionData.askUserForStreamingPermission,
+                data.sessionData.customOrigin,
                 settings.settings.general,
                 settings.settings.analytics,
-                res.featureFlags
+                data.featureFlags
             );
 
             sessionPlayerApi.loadSession(initialSettings);
-
-            setSession(res.session);
+            sessionPlayerApi.setSessionLength(data.sessionData.session.length);
+            sessionPlayerApi.startPlayback();
+            setSession(data.sessionData.session);
         });
     }, []);
 
+    useEffect(() => {
+        if (session) {
+            loadActivitiesUntil(session.clientStartMilliseconds + session.length);
+        }
+    }, [session]);
+
+    // console.log(1,activities)
+
     return (
         <React.Fragment>
-            {session ? (
+            {activities.length ? (
                 <SessionPlayer
                     session={session}
                     activitiesData={activities}

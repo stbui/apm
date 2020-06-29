@@ -74,7 +74,7 @@ export interface ISettingsPlayback {
 export interface ISettingsFeatureFlags {
     isToolkitEnabled: boolean;
     isControlTakeoverEnabled: boolean;
-    captureMetadataOnly: any;
+    captureMetadataOnly: boolean;
     isAssureCoWorkaroundEnabled: boolean;
-    ignoreFormsAutofill: any;
+    ignoreFormsAutofill: boolean;
 }

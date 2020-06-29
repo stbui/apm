@@ -7,7 +7,8 @@ import { playerSettings } from './playerSettings';
 import { BrokerClient } from './BrokerClient';
 import { BrokerWebSocketClient } from './BrokerWebSocketClient';
 import { LiveConnectionMonitor } from './LiveConnectionMonitor';
-import { IRender, ISessionPlayerApi } from './interface';
+import { IRender, ISessionPlayerApi, IActivity } from './interface';
+import { angular } from './common/angular';
 
 const LIVE_MODE_CONFIGS = {
     GO_LIVE_OFFSET_TIME: 1000,
@@ -31,11 +32,14 @@ let $scope: IScope;
 function loadActivitiesUntil(timeLimit: number) {
     // timeLimit:1591025627881
     // test: 循环拉取数据
-    sessionDataClient.loadActivitiesUntil(addActivities, timeLimit).then(activities => {
-        // b: undefined
-        addActivities(activities);
-        $scope.sessionPlayerApi.finishLoadingActivities();
-    }, B);
+    sessionDataClient
+        .loadActivitiesUntil(addActivities, timeLimit)
+        .then(activities => {
+            // b: undefined
+            addActivities(activities);
+            $scope.sessionPlayerApi.finishLoadingActivities();
+        })
+        .catch(B);
 }
 
 // {
@@ -46,16 +50,8 @@ function loadActivitiesUntil(timeLimit: number) {
 //     timestamp: 1591025539170;
 //     type: 'dom_snapshot';
 // }
-function addActivities(
-    activities: {
-        data: object;
-        index: number;
-        time: number;
-        timestamp: number;
-        type: string;
-    }[]
-) {
-    if (activities && 0 !== activities.length) {
+function addActivities(activities: IActivity[]) {
+    if (activities && activities.length !== 0) {
         timestamp = timestamp || activities[0].timestamp;
         A(activities);
         time = activities[activities.length - 1].time;
@@ -139,15 +135,15 @@ if (!$scope.isBrowserNotSupported) {
         navigation.openSessionInNewWindow(session.id, session.hasInaccessibleResources, 'player_offline_button');
     };
 
-    var initialSettings: InitialSettings,
-        timestamp,
-        logId = $stateParams.logId,
-        sessionDataClient = new SessionDataClient($scope.sessionId, logId, $scope.settings.general.playLive),
-        brokerClient = new BrokerClient(BrokerWebSocketClient.createStreamingClient($scope.sessionId)),
-        chatClient = new BrokerClient(BrokerWebSocketClient.createChatClient($scope.sessionId)),
-        liveConnectionMonitor = new LiveConnectionMonitor(brokerClient),
-        N = new LiveConnectionMonitor(chatClient),
-        time: number = -1;
+    var initialSettings: InitialSettings;
+    var timestamp;
+    var logId = $stateParams.logId;
+    var sessionDataClient = new SessionDataClient($scope.sessionId, logId, $scope.settings.general.playLive);
+    var brokerClient = new BrokerClient(BrokerWebSocketClient.createStreamingClient($scope.sessionId));
+    var chatClient = new BrokerClient(BrokerWebSocketClient.createChatClient($scope.sessionId));
+    var liveConnectionMonitor = new LiveConnectionMonitor(brokerClient);
+    var N = new LiveConnectionMonitor(chatClient);
+    var time: number = -1;
 
     auth.loadCurrentUser().then(function (user) {
         $scope.user = user;

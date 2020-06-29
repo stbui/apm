@@ -11,7 +11,7 @@ export const ANALYTICS_EVENT_TYPES = {
     PROJECT_SETTINGS_OPENED: 'project_settings_opened',
 };
 
-export const SERVER_URL = 'https://127.0.0.1/api/';
+export const SERVER_URL = 'http://127.0.0.1:9000/api/';
 
 export const BROKER_URL = 'wss://127.0.0.1/api/';
 
@@ -22,7 +22,7 @@ export const BUILD_ENV = {
     USE_TESTING_INTERCOM: !1,
 };
 
-export const FRONTEND_URL = 'https://127.0.0.1/';
+export const FRONTEND_URL = 'http://127.0.0.1/';
 
 export const HTTP_STATUS = {
     BAD_REQUEST: 400,
