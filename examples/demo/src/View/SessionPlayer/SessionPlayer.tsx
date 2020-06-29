@@ -18,7 +18,7 @@ let containerHeight = 800;
 const activities = new Activities();
 let player: Player;
 
-export const SessionPlayer = ({ session, activitiesData, startTime, settings }) => {
+export const SessionPlayer = ({ session, activitiesData, startTime, settings, finishLoadingStatus }) => {
     // viewer
     const [fireClear, setFireClear] = useState(false);
     const [fireAttach, setFireAttach]: any = useState();
@@ -174,15 +174,20 @@ export const SessionPlayer = ({ session, activitiesData, startTime, settings }) 
 
     useEffect(() => {
         addActivities(activitiesData);
-    }, [activitiesData]);
+    }, activitiesData);
 
     useEffect(() => {
         activities.setSessionLength(session.length);
-        // 结束加载activities
-        // activities.finishLoading();
 
         start();
     }, [session]);
+
+    useEffect(() => {
+        // 结束加载activities
+        if (finishLoadingStatus) {
+            activities.finishLoading();
+        }
+    }, [finishLoadingStatus]);
 
     return (
         <div className="player-container _md layout-column flex">

@@ -19,20 +19,20 @@ function i(addActivities) {
                 eventsTimestamp: that.lastEventTimestamp,
                 eventsIndex: that.lastEventIndex,
             })
-            .then(function (b) {
-                // c = b
-                var c = k(b, that.timeLimit);
+            .then(data => {
+                // 原始数据
+                const newData = k(data, that.timeLimit);
 
-                if (c.activities.length === 0) {
+                if (newData.activities.length === 0) {
                     // finishLoadingActivities
-                    addActivities(c.activities);
+                    addActivities(newData.activities);
                     return;
                 }
 
-                that.lastEventTimestamp = c.lastEventTimestamp;
-                that.lastEventIndex = c.lastEventIndex;
+                that.lastEventTimestamp = newData.lastEventTimestamp;
+                that.lastEventIndex = newData.lastEventIndex;
 
-                addActivities(c.activities);
+                addActivities(newData.activities);
 
                 f();
             })
@@ -41,24 +41,27 @@ function i(addActivities) {
             });
     })();
 }
-function j(activities) {
-    var b = lodash.last(activities);
-    return b ? b.time : null;
+function getLastTime(activities) {
+    const activity = lodash.last(activities);
+    return activity ? activity.time : null;
 }
-function k(resove, timeLimit) {
-    var activities = resove.activities,
-        time = j(activities);
-    return time && time > timeLimit ? l(activities, timeLimit) : resove;
-}
-function l(activities, timeLimit) {
-    var lastEventTimestamp,
-        lastEventIndex,
-        newActivities: any = [];
+function k(data, timeLimit: number) {
+    const activities = data.activities;
+    const time = getLastTime(activities);
 
-    lodash.forEach(activities, function (a, f) {
+    return time && time > timeLimit ? l(activities, timeLimit) : data;
+}
+function l(activities, timeLimit: number) {
+    var lastEventTimestamp;
+    var lastEventIndex;
+    var newActivities: any = [];
+
+    lodash.forEach(activities, function (activity, f) {
         return (
-            !(a.time > timeLimit) &&
-            (newActivities.push(a), (lastEventTimestamp = a.timestamp), void (lastEventIndex = a.index))
+            !(activity.time > timeLimit) &&
+            (newActivities.push(activity),
+            (lastEventTimestamp = activity.timestamp),
+            void (lastEventIndex = activity.index))
         );
     });
 
@@ -78,7 +81,7 @@ export class SessionDataClient {
     public timeLimit;
     public loadingActivitiesPromise;
 
-    isLive;
+    public isLive;
 
     constructor(sessionId: string, logId: string, isLiveStream: boolean) {
         this.sessionId = sessionId;
@@ -87,36 +90,19 @@ export class SessionDataClient {
         this.lastEventTimestamp = -1;
         this.lastEventIndex = -1;
         this.timeLimit = null;
-        this.loadingActivitiesPromise;
     }
 
     loadSession() {
-        // var a;
-        // var e = this;
-        // var f = $q.defer();
-        // var f = Promise;
-        //
-        var sessionFeatureFlags = featureFlags.getSessionFeatureFlags(this.sessionId);
-        var a = this.logId ? session.getSessionLog(this.sessionId, this.logId) : session.getSession(this.sessionId);
+        const sessionFeatureFlags = featureFlags.getSessionFeatureFlags(this.sessionId);
+        const sessions = this.logId
+            ? session.getSessionLog(this.sessionId, this.logId)
+            : session.getSession(this.sessionId);
 
-        // $q.all([g, a]).then(
-        //     function (a) {
-        //         var sessionData = { featureFlags: a[0], sessionData: a[1] };
-        //         e.isLive = sessionData.sessionData.session.isLive;
-        //         f.resolve(sessionData);
-        //     },
-        //     function (a) {
-        //         f.reject(a);
-        //     }
-        // );
+        return Promise.all([sessionFeatureFlags, sessions]).then(([featureFlags, sessionData]) => {
+            const session = { featureFlags, sessionData };
+            this.isLive = sessionData.session.isLive;
 
-        // return f.promise;
-
-        return Promise.all([sessionFeatureFlags, a]).then(values => {
-            const sessionData = { featureFlags: values[0], sessionData: values[1] };
-            this.isLive = sessionData.sessionData.session.isLive;
-
-            return sessionData;
+            return session;
         });
     }
 

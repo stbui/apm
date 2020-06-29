@@ -130,4 +130,7 @@ export const angular = {
         });
         return 0;
     },
+    is() {
+        return false;
+    },
 };

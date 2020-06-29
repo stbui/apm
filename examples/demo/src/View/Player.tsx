@@ -30,11 +30,10 @@ let pauseActivity;
 var timestamp;
 var time: number = -1;
 
-var finishLoadingStatus = false;
-
 export default () => {
     const [session, setSession] = useState();
     const [activities, setActivities] = useState([]);
+    const [finishLoadingStatus, setFinishLoadingStatus] = useState(false);
 
     //
     const sessionPlayerApi = {
@@ -53,7 +52,9 @@ export default () => {
         setSessionLength: length => {
             console.log('setSessionLength', length);
         },
-        finishLoadingActivities: () => {},
+        finishLoadingActivities: () => {
+            setFinishLoadingStatus(true);
+        },
         addActivities: () => {},
         startPlayback: () => {
             console.log('start');
@@ -67,28 +68,20 @@ export default () => {
     }
 
     function addActivities(activities) {
-        // 假定加载完成
-        finishLoadingStatus = true;
-
         if (activities && activities.length !== 0) {
             timestamp = timestamp || activities[0].timestamp;
             A(activities);
             time = activities[activities.length - 1].time;
 
-            // 标志没有完成
-            finishLoadingStatus = false;
-
             setActivities(activities);
         } else {
             // 可能数据加载完成
-            console.log(activities);
             // 数据加载完毕
             sessionPlayerApi.finishLoadingActivities();
         }
     }
 
     const loadActivitiesUntil = timeLimit => {
-        console.log('loadActivitiesUntil', timeLimit);
         sessionDataClient.loadActivitiesUntil(addActivities, timeLimit);
     };
 
@@ -137,6 +130,7 @@ export default () => {
                     settings={settings.settings}
                     errors={errors}
                     api={sessionPlayerApi}
+                    finishLoadingStatus={finishLoadingStatus}
                 ></SessionPlayer>
             ) : null}
         </React.Fragment>
