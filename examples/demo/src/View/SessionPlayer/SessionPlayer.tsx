@@ -22,7 +22,7 @@ export const SessionPlayer = ({ session, activitiesData, startTime, settings, fi
     // viewer
     const [fireClear, setFireClear] = useState(false);
     const [fireAttach, setFireAttach]: any = useState();
-    const [onExecuteEvent, fireExecuteEvent]: any = useState();
+    const [currentActivity, fireExecuteEvent]: any = useState();
 
     /**
      * timelineMax: 总时长
@@ -192,19 +192,18 @@ export const SessionPlayer = ({ session, activitiesData, startTime, settings, fi
     return (
         <div className="player-container _md layout-column flex">
             <div className="viewer-wrap _md layout-row flex">
-                {onExecuteEvent ? (
+                {currentActivity ? (
                     <SessionViewer
                         maxWidth={containerWidth}
                         maxHeight={containerHeight}
                         sessionScreenWidth={session.screenWidth}
                         sessionScreenHeight={session.screenHeight}
-                        className="viewer-container"
                         isCreated={true}
                         renderingProgress={renderingProgress}
                         initialVisibilityState={session.visibilityState}
                         sessionId={session.id}
                         handleConsoleResize={true}
-                        currentActivity={onExecuteEvent}
+                        currentActivity={currentActivity}
                         fireClear={fireClear}
                         fireAttach={fireAttach}
                         isPlaying={playState.isPlaying}

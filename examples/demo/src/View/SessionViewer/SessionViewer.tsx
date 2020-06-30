@@ -9,7 +9,6 @@ import {
 } from '../test/constant';
 import { AsyncWhile } from '../test/AsyncWhile';
 import { utils } from '../test/common';
-// import {InitialSettings} './test/InitialSettings'
 
 import { DocumentNode } from '../Player/DocumentNode';
 import { angular } from '../Player/angular';
@@ -566,16 +565,11 @@ const Viewer = ({
         >
             <div
                 className="viewer-wrapper"
-                // style={{ transform: 'scale(0.7720271102895871)' }}
                 style={{
                     transform: `scale(${scale})`,
                 }}
             >
-                <div
-                    id="viewer-container"
-                    ref={viewerContainerRef}
-                    // style={{ width: sessionScreen.width, height: sessionScreen.height }}
-                >
+                <div id="viewer-container" ref={viewerContainerRef}>
                     <ViewerOverlay
                         width={sessionScreen.width}
                         height={sessionScreen.height}

@@ -50,14 +50,14 @@ export const PlayerTimeline = ({
     }
 
     function h(activityBlocks) {
-        var b: any = [],
-            c = timelineOffset() / getTrackWitdh(),
-            d = { time: 0 },
-            e = 0;
+        var b: any = [];
+        var c = timelineOffset() / getTrackWitdh();
+        var d = { time: 0 };
+        var e = 0;
 
         activityBlocks.forEach(activityBlock => {
             if (activityBlock.isFirstLiveActivity) {
-                var f: any = {
+                const f: any = {
                     unknown: true,
                     time: d.time,
                     duration: activityBlock.time - d.time,
@@ -76,11 +76,11 @@ export const PlayerTimeline = ({
         return b;
     }
 
-    const refresh = (isFinish, activities) => {
-        var _activityBlocks: any = activityBlocks;
+    const refresh = (isFinish, activities: any[]) => {
+        const _activityBlocks: object[] = activityBlocks;
 
         activities.forEach(activity => {
-            var times: any = { time: activity.time };
+            const times: object = { time: activity.time };
             isFirstLiveActivity && (isFinish.isFirstLiveActivity = true);
             _activityBlocks.push(times);
         });
@@ -104,7 +104,7 @@ export const PlayerTimeline = ({
 
     useEffect(() => {
         refresh(true, activities);
-    }, []);
+    }, [activities]);
 
     return (
         <div layout="row" style={{ display: 'flex', flexDirection: 'row' }}>

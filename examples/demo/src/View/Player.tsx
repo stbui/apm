@@ -27,8 +27,8 @@ let isLive = false;
 let showGoLiveButton = false;
 let pauseActivity;
 
-var timestamp;
-var time: number = -1;
+let timestamp;
+let time: number = -1;
 
 export default () => {
     const [session, setSession] = useState();
@@ -39,15 +39,17 @@ export default () => {
     const sessionPlayerApi = {
         loadSession: settings => {
             //    userPermissionRequest.ignore = !initialSettings.shouldWaitUserConfirmation();
-            //    session = initialSettings.getSession();
+            const session = initialSettings.getSession();
             isLive = settings.isLive();
-            // showGoLiveButton = settings.shouldShowGoLiveButton();
+            showGoLiveButton = settings.shouldShowGoLiveButton();
             startTime = settings.getStartTime();
             pauseActivity = settings.getPauseActivity();
             // sessionId = session.id;
             // pauseActivity &&
             //     settings.playback.shouldPauseOnMarker &&
             //     player.changePauseMarker(pauseActivity.time);
+
+            setSession(session);
         },
         setSessionLength: length => {
             console.log('setSessionLength', length);
@@ -55,7 +57,9 @@ export default () => {
         finishLoadingActivities: () => {
             setFinishLoadingStatus(true);
         },
-        addActivities: () => {},
+        addActivities: activities => {
+            setActivities(activities);
+        },
         startPlayback: () => {
             console.log('start');
         },
@@ -73,7 +77,7 @@ export default () => {
             A(activities);
             time = activities[activities.length - 1].time;
 
-            setActivities(activities);
+            sessionPlayerApi.addActivities(activities);
         } else {
             // 可能数据加载完成
             // 数据加载完毕
@@ -104,19 +108,16 @@ export default () => {
             );
 
             sessionPlayerApi.loadSession(initialSettings);
-            sessionPlayerApi.setSessionLength(data.sessionData.session.length);
-            sessionPlayerApi.startPlayback();
-            setSession(data.sessionData.session);
         });
     }, []);
 
     useEffect(() => {
         if (session) {
+            sessionPlayerApi.setSessionLength(session.length);
+            sessionPlayerApi.startPlayback();
             loadActivitiesUntil(session.clientStartMilliseconds + session.length);
         }
     }, [session]);
-
-    // console.log(1,activities)
 
     return (
         <React.Fragment>

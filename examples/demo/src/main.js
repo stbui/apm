@@ -14,7 +14,7 @@ import { WebSocketConnection } from './sdk/Connections';
 const renderModule = module => {
     switch (module) {
         case 0: {
-            return <View />;
+            return <Element />;
         }
         case 1: {
             return <Element />;
@@ -41,7 +41,7 @@ const renderModule = module => {
 };
 
 const tablistData = [
-    { label: 'View', width: 45 },
+    // { label: 'View', width: 45 },
     { label: 'Elements', width: 73 },
     { label: 'Console', width: 68 },
     { label: 'Sources', width: 68 },
@@ -66,6 +66,7 @@ const Home = () => {
                 <SplitWidget>
                     <SplitWidget.Main>
                         <div class="widget vbox">
+                        <View />
                             <div class="vbox flex-auto split-widget">
                                 <SplitWidget direction="vertical">
                                     <SplitWidget.Main>
