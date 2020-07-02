@@ -108,7 +108,7 @@ export default () => {
             );
 
             sessionPlayerApi.loadSession(initialSettings);
-        });
+        }).catch(error=>console.log(error));
     }, []);
 
     useEffect(() => {
