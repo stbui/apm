@@ -10,26 +10,17 @@ export default () => {
                     <div class="console-main-toolbar toolbar">
                         <div class="toolbar-shadow">
                             <ToolbarButton>
-                                <Icon
-                                    type="largeicons"
-                                    coordinates="-168px 120px"
-                                />
+                                <Icon type="largeicons" coordinates="-168px 120px" />
                             </ToolbarButton>
                             <ToolbarButton>
-                                <Icon
-                                    type="largeicons"
-                                    coordinates="0px 144px"
-                                />
+                                <Icon type="largeicons" coordinates="0px 144px" />
                             </ToolbarButton>
 
                             <div class="toolbar-divider toolbar-item"></div>
 
                             <div class="toolbar-divider toolbar-item"></div>
                             <ToolbarButton>
-                                <Icon
-                                    type="largeicons"
-                                    coordinates="-196px 216px"
-                                />
+                                <Icon type="largeicons" coordinates="-196px 216px" />
                             </ToolbarButton>
                             <div class="toolbar-divider toolbar-item"></div>
 
@@ -39,10 +30,7 @@ export default () => {
                                 role="button"
                                 aria-haspopup="true"
                             >
-                                <span
-                                    is="ui-icon"
-                                    class="toolbar-glyph hidden"
-                                ></span>
+                                <span is="ui-icon" class="toolbar-glyph hidden"></span>
                                 <div class="toolbar-text">Default levels</div>
                                 <span
                                     is="ui-icon"
@@ -57,9 +45,7 @@ export default () => {
                     <div class="toolbar">
                         <div class="toolbar-shadow">
                             <div class="toolbar-divider toolbar-item"></div>
-                            <div class="toolbar-text toolbar-item dimmed hidden">
-                                0 hidden
-                            </div>
+                            <div class="toolbar-text toolbar-item dimmed hidden">0 hidden</div>
                             <button
                                 class="toolbar-button toolbar-item toolbar-has-glyph toolbar-state-off"
                                 aria-label="Console settings"

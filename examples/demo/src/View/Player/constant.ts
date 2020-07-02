@@ -28,6 +28,7 @@ export const UI_MODE = { SIMPLE: 'simple' };
 
 export const EVENT_TYPE = {
     DOM_MUTATION: 'dom_mutation',
+    URL_CHANGE: 'url_change',
     DOM_ELEMENT_VALUE_CHANGE: 'dom_element_value_change',
     DOM_SNAPSHOT: 'dom_snapshot',
     MOUSE_MOVE: 'mouse_move',
@@ -41,10 +42,17 @@ export const EVENT_TYPE = {
     VISIBILITY_CHANGE: 'visibility_change',
     CSS_RULE_INSERT: 'css_rule_insert',
     CSS_RULE_DELETE: 'css_rule_delete',
+    ADOPTED_STYLE_SHEET_CHANGE: 'adopted_style_sheet_change',
+    FULL_SCREEN_ENTER: 'full_screen_enter',
+    FULL_SCREEN_LEAVE: 'full_screen_leave',
+    CONSOLE_ERROR: 'console_error',
+    CONSOLE_DEBUG: 'console_debug',
+    CONSOLE_WARN: 'console_warn',
+    CONSOLE_LOG: 'console_log',
+    NETWORK_REQUEST: 'network_request',
 };
 
 export const MOUSE_TYPE = [EVENT_TYPE.MOUSE_CLICK, EVENT_TYPE.MOUSE_MOVE, EVENT_TYPE.WINDOW_RESIZE];
-
 
 export const NAMESPACES = {
     HTML: 'http://www.w3.org/1999/xhtml',

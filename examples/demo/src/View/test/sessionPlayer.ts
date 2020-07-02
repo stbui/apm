@@ -262,9 +262,9 @@ angular.module('playerApp').directive('sessionPlayer', [
                     $scope.activities.push(activities);
                     // activities增加了playerIndex
 
-                    var newSteps: any = [],
-                        newLogs: any = [],
-                        newNetworkRequests: any = [];
+                    var newSteps: any = [];
+                    var newLogs: any = [];
+                    var newNetworkRequests: any = [];
 
                     activities.forEach((activity: IActivity) => {
                         var b: any = {

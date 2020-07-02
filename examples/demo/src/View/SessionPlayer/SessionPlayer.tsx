@@ -5,10 +5,14 @@ import Controls from '../Player/Controls';
 import { PLAYER_CONFIG, TAB_VISIBILITY } from '../Player/constant';
 
 import SessionViewer from '../SessionViewer';
+import { EVENT_TYPE } from '../test/constant';
 import { Player } from '../test/player';
 import { Activities } from '../test/Activities';
 import { Activity, IActivity } from '../test/Activity';
 import Console from '../Console';
+
+//
+import { Home } from '../../app';
 
 let renderingProgress = 0;
 let containerWidth = 1000;
@@ -18,10 +22,50 @@ let containerHeight = 800;
 const activities = new Activities();
 let player: Player;
 
+function eventIncludeAtConsole(activity: IActivity) {
+    return (
+        [EVENT_TYPE.CONSOLE_ERROR, EVENT_TYPE.CONSOLE_WARN, EVENT_TYPE.CONSOLE_DEBUG, EVENT_TYPE.CONSOLE_LOG].indexOf(
+            activity.type
+        ) > -1
+    );
+}
+
+function consoleEvent(activity: IActivity) {
+    var level = {};
+    level[EVENT_TYPE.CONSOLE_LOG] = 'info';
+    level[EVENT_TYPE.CONSOLE_ERROR] = 'error';
+    level[EVENT_TYPE.CONSOLE_WARN] = 'warn';
+    level[EVENT_TYPE.CONSOLE_DEBUG] = 'debug';
+
+    var obj: any = { id: activity.id, level: level[activity.type] };
+
+    if ('exception' === activity.data.type) {
+        var d = activity.data.exception;
+        obj.message = d.type ? d.type + ': ' : '';
+        obj.message += d.message;
+        obj.isMessageTrimmed = false;
+        obj.stackFrames = (d.stackFrames || []).map(function (a) {
+            return a.source || '';
+        });
+    } else {
+        var e = activity.data;
+        obj.message = e.message;
+        obj.isMessageTrimmed = e.isMessageTrimmed;
+        obj.stackFrames = null;
+    }
+
+    // data= object
+    // extension: null
+    // isMessageTrimmed: false
+    // isTrimmed: false
+    // level: "warn"
+    // message: "Warning: componentWillReceiveProps has been renamed, and is not recommended for use. See https://fb.me/react-unsafe-component-lifecycles for details.↵↵* Move data fetching code or side effects to componentDidUpdate.↵* If you're updating state whenever props change, refactor your code to use memoization techniques or move it to static getDerivedStateFromProps. Learn more at: https://fb.me/react-derived-state↵* Rename componentWillReceiveProps to UNSAFE_componentWillReceiveProps to suppress this warning in non-strict mode. In React 17.x, only the UNSAFE_ name will work. To rename all deprecated lifecycles to their new names, you can run `npx react-codemod rename-unsafe-lifecycles` in your project source folder.↵↵Please update the following components: %s"
+    // type: "string"
+    return obj;
+}
+
 export const SessionPlayer = ({ session, activitiesData, startTime, settings, finishLoadingStatus }) => {
     // viewer
-    const [fireClear, setFireClear] = useState(false);
-    const [fireAttach, setFireAttach]: any = useState();
     const [currentActivity, fireExecuteEvent]: any = useState();
 
     /**
@@ -36,9 +80,32 @@ export const SessionPlayer = ({ session, activitiesData, startTime, settings, fi
         isStreamingLive: false,
         arePlayerButtonsEnabled: false,
     });
+    const [addNewLogs, setAddNewLogs] = useState([]);
 
-    const addActivities = (as: IActivity[]) => {
-        activities.push(as);
+    const addActivities = (alias: IActivity[]) => {
+        activities.push(alias);
+
+        // 事件类型log
+        let newLogs: any = [];
+        alias.forEach((activity: IActivity) => {
+            let event: any = {
+                time: activity.time,
+                activityIndex: activity.playerIndex,
+                playerIndex: activity.playerIndex,
+                type: activity.type,
+                isLog: eventIncludeAtConsole(activity),
+            };
+
+            if (eventIncludeAtConsole(activity)) {
+                event.details = consoleEvent(activity);
+                newLogs.push(event);
+            }
+        });
+
+        // console.log(newLogs);
+
+        // addNewLogs(newLogs);
+        setAddNewLogs(addNewLogs.concat(newLogs));
     };
 
     const start = () => {
@@ -183,7 +250,7 @@ export const SessionPlayer = ({ session, activitiesData, startTime, settings, fi
     }, [session]);
 
     useEffect(() => {
-        // 结束加载activities
+        // 结束加载
         if (finishLoadingStatus) {
             activities.finishLoading();
         }
@@ -204,8 +271,6 @@ export const SessionPlayer = ({ session, activitiesData, startTime, settings, fi
                         sessionId={session.id}
                         handleConsoleResize={true}
                         currentActivity={currentActivity}
-                        fireClear={fireClear}
-                        fireAttach={fireAttach}
                         isPlaying={playState.isPlaying}
                     ></SessionViewer>
                 ) : null}
@@ -232,10 +297,11 @@ export const SessionPlayer = ({ session, activitiesData, startTime, settings, fi
                 open-console="openConsole"
                 close-console="closeConsole"
                 is-expanded="isConsoleExpanded"
-                add-new-logs="addNewLogs"
+                addNewLogs={addNewLogs}
                 on-selected-log="onSelectedActivity"
                 update-console="updateConsole"
             ></Console>
+            <Home addNewLogs={addNewLogs} />
         </div>
     );
 };

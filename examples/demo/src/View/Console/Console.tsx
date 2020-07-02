@@ -1,18 +1,20 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import ConsoleLog from './ConsoleLog';
 
+const networkRequests = [];
+
 const Console = ({ openConsole, closeConsole, isExpanded, addNewLogs, updateConsole, onSelectedLog }) => {
+    const [transformedLogs, setTransformedLogs] = useState([]);
+
+    console.log(addNewLogs);
+
     return (
         <div class="console-container">
             <div class="tabs" layout="row" style={{ display: 'flex', flexDirection: 'row' }}>
-                <div class="tab no-outline" ng-class="{'active': selectedTab === 0 }" ng-click="selectTab(0)">
-                    Console
-                </div>
-                <div class="tab disabled no-outline" ng-class="{'active': selectedTab === 1 }">
-                    <span>Network</span>
-                    <span class="label">soon</span>
-                </div>
+                <div class="tab no-outline" ng-class="{'active': selectedTab === TAB_INDEX.CONSOLE }" ng-click="selectTab(TAB_INDEX.CONSOLE)">Console</div>
+                <div class="tab no-outline" ng-class="{'active': selectedTab === TAB_INDEX.NETWORK }" ng-click="selectTab(TAB_INDEX.NETWORK)">Network</div>
             </div>
+    
             <div class="content-container">
                 <div class="console-content" ng-show="selectedTab === 0">
                     <div class="filters-container" layout="row" style={{ display: 'flex', flexDirection: 'row' }}>
@@ -35,7 +37,10 @@ const Console = ({ openConsole, closeConsole, isExpanded, addNewLogs, updateCons
                         </div>
                     </div>
                     <div class="logs-container">
-                        <div className="log" md-virtual-repeat="log in (filteredLogs = (transformedLogs | filter: { searchLabel: searchLog } | activityTypesFilter: logTypes))">
+                        <div
+                            className="log"
+                            md-virtual-repeat="log in (filteredLogs = (transformedLogs | filter: { searchLabel: searchLog } | activityTypesFilter: logTypes))"
+                        >
                             <ConsoleLog
                                 log="log"
                                 is-executed="lastPlayedActivityIndex >= log.activityIndex"

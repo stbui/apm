@@ -16,7 +16,8 @@ const Console = ({}) => {
                 </svg>
             </div>
             <div class="time no-outline" ng-click="selectLog()">
-                log.time | date: 'HH:mm:ss:sss' : 'UTC'
+                {/* log.time | date: 'HH:mm:ss:sss' : 'UTC' */}
+                00:00:22:792
             </div>
             <div ng-hide="log.count > 1" class="type-icon">
                 {/* <img ng-src="images/{{log.type.svg" /> */}
