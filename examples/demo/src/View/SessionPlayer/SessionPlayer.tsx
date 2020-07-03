@@ -30,6 +30,18 @@ function eventIncludeAtConsole(activity: IActivity) {
     );
 }
 
+function eventIncludeAtNetwork(activity: IActivity) {
+    return activity.type === EVENT_TYPE.NETWORK_REQUEST;
+}
+
+function networkEvent(activity: IActivity) {
+    return {
+        message: activity.data.message,
+        level: activity.data.level,
+        request: activity.data,
+    };
+}
+
 function consoleEvent(activity: IActivity) {
     var level = {};
     level[EVENT_TYPE.CONSOLE_LOG] = 'info';
@@ -81,12 +93,15 @@ export const SessionPlayer = ({ session, activitiesData, startTime, settings, fi
         arePlayerButtonsEnabled: false,
     });
     const [addNewLogs, setAddNewLogs] = useState([]);
+    const [addNewNetworkRequests, setAddNewNetworkRequests] = useState([]);
 
     const addActivities = (alias: IActivity[]) => {
         activities.push(alias);
 
         // 事件类型log
         let newLogs: any = [];
+        let newNetworkRequests: any = [];
+
         alias.forEach((activity: IActivity) => {
             let event: any = {
                 time: activity.time,
@@ -100,12 +115,18 @@ export const SessionPlayer = ({ session, activitiesData, startTime, settings, fi
                 event.details = consoleEvent(activity);
                 newLogs.push(event);
             }
+
+            if (eventIncludeAtNetwork(activity)) {
+                event.details = networkEvent(activity);
+                newNetworkRequests.push(event);
+            }
         });
 
         // console.log(newLogs);
 
         // addNewLogs(newLogs);
         setAddNewLogs(addNewLogs.concat(newLogs));
+        setAddNewNetworkRequests(addNewNetworkRequests.concat(newNetworkRequests));
     };
 
     const start = () => {
@@ -301,7 +322,7 @@ export const SessionPlayer = ({ session, activitiesData, startTime, settings, fi
                 on-selected-log="onSelectedActivity"
                 update-console="updateConsole"
             ></Console>
-            <Home addNewLogs={addNewLogs} />
+            <Home addNewLogs={addNewLogs} addNewNetworkRequests={addNewNetworkRequests} />
         </div>
     );
 };

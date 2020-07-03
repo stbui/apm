@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-    Widget,
-    TabbedPane,
-    Toolbar,
-    ToolbarButton,
-    Icon,
-    Checkbox,
-} from '../components';
+import { Widget, TabbedPane, Toolbar, ToolbarButton, Icon, Checkbox } from '../components';
 
 export default () => {
     return (
@@ -51,36 +44,20 @@ export default () => {
                 <div className="toolbar-divider toolbar-item"></div>
 
                 <span className="toolbar-select-container toolbar-item">
-                    <select
-                        class="toolbar-item"
-                        aria-label="Throttling"
-                        style="max-width: 160px;"
-                    >
+                    <select class="toolbar-item" aria-label="Throttling" style="max-width: 160px;">
                         <optgroup label="Disabled">
-                            <option
-                                value="Online"
-                                aria-label="Disabled: Online"
-                            >
+                            <option value="Online" aria-label="Disabled: Online">
                                 Online
                             </option>
                         </optgroup>
                         <optgroup label="Presets">
-                            <option
-                                value="Fast 3G"
-                                aria-label="Presets: Fast 3G"
-                            >
+                            <option value="Fast 3G" aria-label="Presets: Fast 3G">
                                 Fast 3G
                             </option>
-                            <option
-                                value="Slow 3G"
-                                aria-label="Presets: Slow 3G"
-                            >
+                            <option value="Slow 3G" aria-label="Presets: Slow 3G">
                                 Slow 3G
                             </option>
-                            <option
-                                value="Offline"
-                                aria-label="Presets: Offline"
-                            >
+                            <option value="Offline" aria-label="Presets: Offline">
                                 Offline
                             </option>
                         </optgroup>

@@ -2,7 +2,7 @@ import React from 'react';
 import { TabbedPane, Toolbar, ToolbarButton, Icon } from '../components';
 import ConsoleView from './ConsoleView';
 
-export default () => {
+export default ({ addNewLogs }) => {
     return (
         <div class="widget vbox panel console">
             <div class="widget vbox console-view">
@@ -66,7 +66,7 @@ export default () => {
                     <div className="widget shadow-split-widget hbox">
                         <div className="shadow-split-widget-contents shadow-split-widget-sidebar vbox hidden"></div>
                         <div className="shadow-split-widget-contents shadow-split-widget-main vbox maximized">
-                            <ConsoleView />
+                            <ConsoleView addNewLogs={addNewLogs} />
                         </div>
                     </div>
                 </div>

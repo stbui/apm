@@ -207,20 +207,18 @@ export default ({ data, columns, scrollTop, onMouseWheel }) => {
                         // style="background-color: rgb(221, 238, 255);"
                         return (
                             <tr
-                                class={`data-grid-data-grid-node revealed ${index % 2 === 1 ? 'odd' : ''}`}
-                                style={{
-                                    'background-color': index % 2 === 1 ? 'rgb(245, 245, 245)' : '',
-                                }}
+                                className={`data-grid-data-grid-node revealed ${index % 2 === 1 ? 'odd' : ''}`}
+                                style={{ backgroundColor: index % 2 === 1 ? 'rgb(245, 245, 245)' : '' }}
                             >
                                 {columns.map(column => {
                                     switch (column.id) {
                                         case 'name': {
                                             return (
-                                                <td class={`${column.id}-column`}>
-                                                    <img class={`icon document`} alt="Document" />
-                                                    <span class="hidden network-badge"></span>
+                                                <td className={`${column.id}-column`}>
+                                                    <img className={`icon document`} alt="Document" />
+                                                    <span className="hidden network-badge"></span>
                                                     {row[column.id]}
-                                                    <div class="network-cell-subtitle"></div>
+                                                    <div className="network-cell-subtitle"></div>
                                                 </td>
                                             );
                                         }
@@ -228,11 +226,12 @@ export default ({ data, columns, scrollTop, onMouseWheel }) => {
                                         case 'status': {
                                             return (
                                                 <td
-                                                    class={`${column.id}-column ${row[column.id] === 200 &&
-                                                        'network-dim-cell'}`}
+                                                    className={`${column.id}-column ${
+                                                        row[column.id] === 200 && 'network-dim-cell'
+                                                    }`}
                                                 >
                                                     {row[column.id]}
-                                                    <div class="network-cell-subtitle">
+                                                    <div className="network-cell-subtitle">
                                                         {row[column.id] === 200 ? 'OK' : 'Not Modified'}
                                                     </div>
                                                 </td>
@@ -240,7 +239,7 @@ export default ({ data, columns, scrollTop, onMouseWheel }) => {
                                         }
 
                                         case 'type': {
-                                            return <td class={`${column.id}-column`}>{row[column.id]}</td>;
+                                            return <td className={`${column.id}-column`}>{row[column.id]}</td>;
                                         }
 
                                         case 'initiator': {
@@ -255,7 +254,7 @@ export default ({ data, columns, scrollTop, onMouseWheel }) => {
                                             //         Script
                                             //     </div>
                                             // </td>;
-                                            return <td class={`${column.id}-column`}>{row[column.id]}</td>;
+                                            return <td className={`${column.id}-column`}>{row[column.id]}</td>;
                                         }
 
                                         case 'size': {
@@ -271,19 +270,23 @@ export default ({ data, columns, scrollTop, onMouseWheel }) => {
                                             //     </div>
                                             // </td>;
                                             return (
-                                                <td class="size-column right">
-                                                    238&nbsp;B
-                                                    <div class="network-cell-subtitle">626&nbsp;B</div>
+                                                <td className="size-column right">
+                                                    {row[column.id]}&nbsp;B
+                                                    <div className="network-cell-subtitle">626&nbsp;B</div>
                                                 </td>
                                             );
                                         }
                                         case 'time': {
                                             return (
-                                                <td class="time-column right">
-                                                    2&nbsp;ms
-                                                    <div class="network-cell-subtitle">2&nbsp;ms</div>
+                                                <td className="time-column right">
+                                                    {row[column.id]}&nbsp;ms
+                                                    <div className="network-cell-subtitle">2&nbsp;ms</div>
                                                 </td>
                                             );
+                                        }
+
+                                        default: {
+                                            return <td className={`${column.id}-column`}>{row[column.id]}</td>;
                                         }
                                     }
                                 })}

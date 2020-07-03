@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import NetworkToolbar from './NetworkToolbar';
 import FilterBar from './FilterBar';
@@ -10,16 +10,7 @@ import RequestTimingView from './RequestTimingView';
 
 import './networkPanel.scss';
 
-import {
-    Widget,
-    TabbedPane,
-    Toolbar,
-    ToolbarButton,
-    Icon,
-    Checkbox,
-    SplitWidget,
-    Treeoutline,
-} from '../components';
+import { Widget, TabbedPane, Toolbar, ToolbarButton, Icon, Checkbox, SplitWidget, Treeoutline } from '../components';
 
 const renderModule = module => {
     switch (module) {
@@ -48,7 +39,24 @@ const tablistData = [
     { label: 'Timing', width: 56 },
 ];
 
-export default () => {
+export default ({ addNewNetworkRequests }) => {
+    const [request, setRequest] = useState([]);
+
+    useEffect(() => {
+        const req = addNewNetworkRequests.map(d => ({
+            ...d.details.request,
+            name: 'stbui.js',
+            url: d.details.request.url,
+            status: d.details.request.statusCode,
+            type: 'script',
+            initiator: 'stbui.js:5',
+            time: d.details.request.endTime - d.details.request.timestamp,
+        }));
+        setRequest(request.concat(req));
+    }, addNewNetworkRequests);
+
+    console.log(request);
+
     return (
         <div className="widget vbox panel network">
             <div className="vbox flex-auto split-widget">
@@ -58,14 +66,14 @@ export default () => {
                             <NetworkToolbar />
                             <FilterBar />
                             <NetworkSettingsPane />
+
                             <div className="network-film-strip-placeholder"></div>
 
-                            <div
-                                class="widget vbox"
-                                id="network-overview-panel"
-                            >
-                                <NetworkOverviewPanel />
-                            </div>
+                            {/* <div>
+                                <div class="widget vbox" id="network-overview-panel">
+                                    <NetworkOverviewPanel />
+                                </div>
+                            </div> */}
 
                             <div className="vbox flex-auto split-widget">
                                 <SplitWidget>
@@ -74,19 +82,14 @@ export default () => {
                                         drag={true}
                                         // width={200}
                                     >
-                                        <NetworkLogView />
+                                        {request.length ? <NetworkLogView data={request} /> : <span></span>}
                                     </SplitWidget.Sidebar>
                                     {0 ? (
                                         <SplitWidget.Main>
-                                            <div
-                                                class="widget vbox network-details-view"
-                                                slot="insertion-point-main"
-                                            >
+                                            <div class="widget vbox network-details-view" slot="insertion-point-main">
                                                 <div class="vbox flex-auto tabbed-pane network-item-view">
                                                     <TabbedPane
-                                                        tablistData={
-                                                            tablistData
-                                                        }
+                                                        tablistData={tablistData}
                                                         headerLeft={
                                                             <div class="toolbar-shadow">
                                                                 <div

@@ -267,7 +267,7 @@ angular.module('playerApp').directive('sessionPlayer', [
                     var newNetworkRequests: any = [];
 
                     activities.forEach((activity: IActivity) => {
-                        var b: any = {
+                        var event: any = {
                             time: activity.time,
                             activityIndex: activity.playerIndex,
                             playerIndex: activity.playerIndex,
@@ -276,18 +276,18 @@ angular.module('playerApp').directive('sessionPlayer', [
                         };
 
                         if (C(activity)) {
-                            b.details = E(activity);
-                            newSteps.push(b);
+                            event.details = E(activity);
+                            newSteps.push(event);
                         }
 
                         if (A(activity)) {
-                            b.details = D(activity);
-                            newLogs.push(b);
+                            event.details = D(activity);
+                            newLogs.push(event);
                         }
 
                         if (B(activity)) {
-                            b.details = F(activity);
-                            newNetworkRequests.push(b);
+                            event.details = F(activity);
+                            newNetworkRequests.push(event);
                         }
                     });
 

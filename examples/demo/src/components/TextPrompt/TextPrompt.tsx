@@ -2,9 +2,9 @@ import React from 'react';
 
 export default ({ children }) => {
     return (
-        <div class="text-prompt-root">
+        <div className="text-prompt-root">
             <span
-                class="filter-input-field text-prompt"
+                className="filter-input-field text-prompt"
                 role="textbox"
                 contenteditable="plaintext-only"
                 data-placeholder="Filter"

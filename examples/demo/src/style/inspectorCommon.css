@@ -75,7 +75,7 @@ iframe.fill {
     width: 100%;
     height: 100%;
 }
-
+/* 
 .widget {
     position: relative;
     flex: auto;
@@ -92,7 +92,7 @@ iframe.fill {
     display: flex;
     flex-direction: column !important;
     position: relative;
-}
+} */
 
 .view-container > .toolbar {
     border-bottom: 1px solid #eee;

@@ -6,25 +6,23 @@ import View from './View';
 
 import './style/index.scss';
 
-window.onload = () => {
-    render(
-        <RootView>
-            <div class="vbox flex-auto split-widget">
-                <SplitWidget>
-                    <SplitWidget.Main>
-                        <div class="widget vbox">
-                            <div class="vbox flex-auto split-widget">
-                                <SplitWidget direction="vertical">
-                                    <SplitWidget.Main>
-                                        <View />
-                                    </SplitWidget.Main>
-                                </SplitWidget>
-                            </div>
+render(
+    <RootView>
+        <div class="vbox flex-auto split-widget">
+            <SplitWidget>
+                <SplitWidget.Main>
+                    <div class="widget vbox">
+                        <div class="vbox flex-auto split-widget">
+                            <SplitWidget direction="vertical">
+                                <SplitWidget.Main>
+                                    <View />
+                                </SplitWidget.Main>
+                            </SplitWidget>
                         </div>
-                    </SplitWidget.Main>
-                </SplitWidget>
-            </div>
-        </RootView>,
-        document.getElementById('apm')
-    );
-};
+                    </div>
+                </SplitWidget.Main>
+            </SplitWidget>
+        </div>
+    </RootView>,
+    document.getElementById('apm')
+);

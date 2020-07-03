@@ -1,6 +1,58 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import ConsolePrompt from '../ConsolePrompt';
+
+const Icon = ({ type }) => {
+    const spritesheet = {
+        warning: '-40px 10px;',
+        info: '-40px 10px',
+        error: '-40px 10px',
+        log: '-40px 10px',
+    };
+
+    return (
+        <span
+            class="command-result-icon spritesheet-smallicons smallicon-user-command"
+            style={{ width: '10px', height: '10px', '--spritesheet-position': spritesheet[type] }}
+        ></span>
+    );
+};
+Icon.defaultProps = { type: 'log' };
+
+const ErrorIcon = ({ type }) => {
+    const spritesheet = {
+        warning: '-40px 10px;',
+        info: '-40px 10px',
+        error: '-40px 10px',
+        log: '-40px 10px',
+    };
+
+    return (
+        <span
+            is="ui-icon"
+            class="message-level-icon spritesheet-smallicons smallicon-error"
+            aria-label="Error"
+            style="--spritesheet-position:-40px 70px; width: 10px; height: 10px;"
+        ></span>
+    );
+};
+const WarnIcon = ({ type }) => {
+    const spritesheet = {
+        warning: '-40px 10px;',
+        info: '-40px 10px',
+        error: '-40px 10px',
+        log: '-40px 10px',
+    };
+
+    return (
+        <span
+            is="ui-icon"
+            class="message-level-icon spritesheet-smallicons smallicon-warning"
+            aria-label="Warning"
+            style="--spritesheet-position:-60px 10px; width: 10px; height: 10px;"
+        ></span>
+    );
+};
 
 const DevtoolsLink = ({ children, ...other }) => (
     <span class="devtools-link" role="link" tabindex="-1" {...other}>
@@ -42,7 +94,7 @@ const MessageWrapper = ({ children, type, ...other }) => {
     );
 };
 
-const UserCommandResult = ({ children, type }) => {
+const UserCommandResult = ({ children }) => {
     return (
         <div class="console-message console-user-command-result">
             <span
@@ -69,7 +121,13 @@ const ConsoleItem = ({ text, anchor, children }) => {
     );
 };
 
-export default ({ children }) => {
+export default ({ children, addNewLogs }) => {
+    const [logs, setLogs] = useState([]);
+
+    useEffect(() => {
+        setLogs(logs.concat(addNewLogs));
+    }, addNewLogs);
+
     return (
         <div className="vbox flex-auto console-searchable-view">
             <div className="widget vbox">
@@ -78,7 +136,7 @@ export default ({ children }) => {
                         &#65279;
                     </div>
                     <div tabindex="0" class="console-group console-group-messages" style="">
-                        <ConsoleItem anchor="log.js?1afd:24">[HMR] Waiting for update signal from WDS...</ConsoleItem>
+                        {/* <ConsoleItem anchor="log.js?1afd:24">[HMR] Waiting for update signal from WDS...</ConsoleItem>
 
                         <ConsoleItem anchor="react-dom.development.js?61bb:27705">
                             <span style="contain: paint; display: inline-block; max-width: 100%; font-weight: bold;">
@@ -87,7 +145,7 @@ export default ({ children }) => {
                                     https://fb.me/react-devtools
                                 </DevtoolsLink>
                             </span>
-                        </ConsoleItem>
+                        </ConsoleItem> */}
 
                         {/* <div tabindex="-1" class="console-message-wrapper console-from-api console-info-level">
                             <div class="console-message">
@@ -116,22 +174,84 @@ export default ({ children }) => {
                         </div> */}
                     </div>
 
-                    <MessageWrapper>
-                        <UserCommand>
-                            <SourceCode>
-                                <span class="cm-js-variable">console</span>.<span class="cm-js-property">error</span>(
-                                <span class="cm-js-number">1</span>)
-                            </SourceCode>
-                        </UserCommand>
-                    </MessageWrapper>
-                    <MessageWrapper type="error">
+                    {logs.map(log => {
+                        if (log.type === 'console_warn') {
+                            return (
+                                <MessageWrapper type="warning">
+                                    <Message>
+                                        <WarnIcon />
+                                        <div class="console-message-stack-trace-toggle">
+                                            <div class="console-message-stack-trace-wrapper">
+                                                <div tabindex="-1">
+                                                    <span
+                                                        is="ui-icon"
+                                                        class="console-message-expand-icon spritesheet-smallicons smallicon-triangle-right icon-mask"
+                                                        style="--spritesheet-position:0px 10px; width: 10px; height: 10px;"
+                                                    ></span>
+                                                    <SourceCode>
+                                                        <MessageAnchor>
+                                                            <DevtoolsLink>{log.time}</DevtoolsLink>
+                                                        </MessageAnchor>
+                                                        <MessageText>{log.details.message}</MessageText>
+                                                    </SourceCode>
+                                                </div>
+                                                <div class="hidden">
+                                                    <span class="monospace" style="display: inline-block;"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </Message>
+                                </MessageWrapper>
+                            );
+                        }
+
+                        if (log.type === 'console_log') {
+                            return (
+                                <MessageWrapper type="info">
+                                    <Message>
+                                        <SourceCode>
+                                            <MessageAnchor>
+                                                <DevtoolsLink>{log.time}</DevtoolsLink>
+                                            </MessageAnchor>
+                                            <MessageText>{log.details.message}</MessageText>
+                                        </SourceCode>
+                                    </Message>
+                                </MessageWrapper>
+                            );
+                        }
+
+                        return (
+                            <MessageWrapper type="error">
+                                <Message>
+                                    <ErrorIcon />
+                                    <div class="console-message-stack-trace-toggle">
+                                        <div class="console-message-stack-trace-wrapper">
+                                            <div tabindex="-1">
+                                                <span
+                                                    is="ui-icon"
+                                                    class="console-message-expand-icon spritesheet-smallicons smallicon-triangle-right icon-mask"
+                                                    style="--spritesheet-position:0px 10px; width: 10px; height: 10px;"
+                                                ></span>
+                                                <SourceCode>
+                                                    <MessageAnchor>
+                                                        <DevtoolsLink>{log.time}</DevtoolsLink>
+                                                    </MessageAnchor>
+                                                    <MessageText>{log.details.message}</MessageText>
+                                                </SourceCode>
+                                            </div>
+                                            <div class="hidden">
+                                                <span class="monospace" style="display: inline-block;"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Message>
+                            </MessageWrapper>
+                        );
+                    })}
+
+                    {/* <MessageWrapper type="error">
                         <Message>
-                            <span
-                                is="ui-icon"
-                                class="message-level-icon spritesheet-smallicons smallicon-error"
-                                aria-label="Error"
-                                style="--spritesheet-position:-40px 70px; width: 10px; height: 10px;"
-                            ></span>
+                            <ErrorIcon />
                             <div class="console-message-stack-trace-toggle">
                                 <div class="console-message-stack-trace-wrapper">
                                     <div tabindex="-1">
@@ -185,7 +305,7 @@ export default ({ children }) => {
                                 <span class="cm-js-variable">apm</span>
                             </SourceCode>
                         </UserCommand>
-                    </MessageWrapper>
+                    </MessageWrapper> */}
 
                     {/* <div tabindex="-1" class="console-message-wrapper">
                         <div class="console-user-command">
@@ -265,12 +385,7 @@ export default ({ children }) => {
                         class="console-message-wrapper console-error-level console-adjacent-user-command-result"
                     >
                         <div class="console-message console-user-command-result">
-                            <span
-                                is="ui-icon"
-                                class="message-level-icon spritesheet-smallicons smallicon-error"
-                                aria-label="Error"
-                                style="--spritesheet-position:-40px 70px; width: 10px; height: 10px;"
-                            ></span>
+                            <ErrorIcon />
                             <div class="console-message-stack-trace-toggle">
                                 <div class="console-message-stack-trace-wrapper">
                                     <div tabindex="-1">

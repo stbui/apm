@@ -18,7 +18,7 @@ const settings: any = {};
 
 // 从url上获取;
 // this.sessionId
-const sessionId = '5ed51f8b33f0736bcdfd046a';
+// const sessionId = '5ed51f8b33f0736bcdfd046a';
 let logId;
 
 let startTime = 0;
@@ -30,7 +30,7 @@ let pauseActivity;
 let timestamp;
 let time: number = -1;
 
-export default () => {
+export default ({sessionId}) => {
     const [session, setSession] = useState();
     const [activities, setActivities] = useState([]);
     const [finishLoadingStatus, setFinishLoadingStatus] = useState(false);

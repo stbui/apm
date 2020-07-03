@@ -6,7 +6,7 @@ const networkRequests = [];
 const Console = ({ openConsole, closeConsole, isExpanded, addNewLogs, updateConsole, onSelectedLog }) => {
     const [transformedLogs, setTransformedLogs] = useState([]);
 
-    console.log(addNewLogs);
+    // console.log(addNewLogs);
 
     return (
         <div class="console-container">
