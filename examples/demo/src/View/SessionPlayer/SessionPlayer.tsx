@@ -122,11 +122,12 @@ export const SessionPlayer = ({ session, activitiesData, startTime, settings, fi
             }
         });
 
-        // console.log(newLogs);
-
-        // addNewLogs(newLogs);
-        setAddNewLogs(addNewLogs.concat(newLogs));
-        setAddNewNetworkRequests(addNewNetworkRequests.concat(newNetworkRequests));
+        if (newLogs.length) {
+            setAddNewLogs(addNewLogs.concat(newLogs));
+        }
+        if (newNetworkRequests.length) {
+            setAddNewNetworkRequests(addNewNetworkRequests.concat(newNetworkRequests));
+        }
     };
 
     const start = () => {

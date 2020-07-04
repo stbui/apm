@@ -2650,6 +2650,11 @@
     estree-walker "^1.0.1"
     picomatch "^2.2.2"
 
+"@scarf/scarf@^1.0.4":
+  version "1.0.6"
+  resolved "https://registry.npm.taobao.org/@scarf/scarf/download/@scarf/scarf-1.0.6.tgz#52011dfb19187b53b75b7b6eac20da0810ddd88f"
+  integrity sha1-UgEd+xkYe1O3W3turCDaCBDd2I8=
+
 "@schematics/angular@9.1.9":
   version "9.1.9"
   resolved "https://registry.npm.taobao.org/@schematics/angular/download/@schematics/angular-9.1.9.tgz#df9f30dd7b63856121fbb9ab5dda57b443802a33"
@@ -11474,6 +11479,11 @@ mem@^4.0.0:
     mimic-fn "^2.0.0"
     p-is-promise "^2.0.0"
 
+"memoize-one@>=3.1.1 <6":
+  version "5.1.1"
+  resolved "https://registry.npm.taobao.org/memoize-one/download/memoize-one-5.1.1.tgz#047b6e3199b508eaec03504de71229b8eb1d75c0"
+  integrity sha1-BHtuMZm1COrsA1BN5xIpuOsddcA=
+
 memoizee@^0.4.14:
   version "0.4.14"
   resolved "https://registry.npm.taobao.org/memoizee/download/memoizee-0.4.14.tgz#07a00f204699f9a95c2d9e77218271c7cd610d57"
@@ -14849,6 +14859,21 @@ react-scripts@3.1.2:
     workbox-webpack-plugin "4.3.1"
   optionalDependencies:
     fsevents "2.0.7"
+
+react-table@^7.2.1:
+  version "7.2.1"
+  resolved "https://registry.npm.taobao.org/react-table/download/react-table-7.2.1.tgz#d85f5a59b6441ccd9e0acddc93c288c54a7de7ee"
+  integrity sha1-2F9aWbZEHM2eCs3ck8KIxUp95+4=
+  dependencies:
+    "@scarf/scarf" "^1.0.4"
+
+react-window@^1.8.5:
+  version "1.8.5"
+  resolved "https://registry.npm.taobao.org/react-window/download/react-window-1.8.5.tgz#a56b39307e79979721021f5d06a67742ecca52d1"
+  integrity sha1-pWs5MH55l5chAh9dBqZ3QuzKUtE=
+  dependencies:
+    "@babel/runtime" "^7.0.0"
+    memoize-one ">=3.1.1 <6"
 
 react@^16.9.0:
   version "16.13.1"

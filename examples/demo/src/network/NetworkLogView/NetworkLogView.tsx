@@ -90,11 +90,11 @@ export default ({ data }) => {
     const onDataGridBodyMouseWheel = event => _onMouseWheel(event, true);
 
     return (
-        <div class="widget vbox" id="network-container">
-            <div class="vbox flex-auto split-widget">
+        <div className="widget vbox" id="network-container">
+            <div className="vbox flex-auto split-widget">
                 <SplitWidget drag>
                     <SplitWidget.Main>
-                        <div class="widget vbox">
+                        <div className="widget vbox">
                             <DataGrid columns={columns} data={data}>
                                 <DataGrid.Body
                                     columns={columns}
@@ -114,7 +114,7 @@ export default ({ data }) => {
                         >
                             <div ref={refWaterfallScroll} class="network-waterfall-v-scroll small">
                                 <div
-                                    class="network-waterfall-v-scroll-content"
+                                    className="network-waterfall-v-scroll-content"
                                     style={{
                                         height: waterfallContentHeight + 'px',
                                     }}

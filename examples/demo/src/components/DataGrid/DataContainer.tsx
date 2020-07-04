@@ -1,5 +1,90 @@
 import React, { useRef, useEffect, useState } from 'react';
 
+const Icon = ({ type }) => {
+    const iconClass = type ? ' document' : '';
+    return type ? <img className={`icon${iconClass}`} alt={iconClass} /> : null;
+};
+
+const Td: any = ({ id, children, align, subtitle, icon }) => {
+    const right = align === 'right' ? ' right' : '';
+    const a = 'network-dim-cell';
+
+    return (
+        <td className={`${id}-column${right}`}>
+            {children}
+            <div className="network-cell-subtitle">{subtitle}</div>
+        </td>
+    );
+};
+
+const Row = ({ columns, index, row, selected, onSelected }) => {
+    // select
+    // style="background-color: rgb(221, 238, 255);"
+    const onClick = () => onSelected(index);
+
+    return (
+        <tr
+            className={`data-grid-data-grid-node revealed ${index % 2 === 1 ? 'odd' : ''}${selected && 'selected'}`}
+            style={{ backgroundColor: index % 2 === 1 ? 'rgb(245, 245, 245)' : '' }}
+            onClick={onClick}
+        >
+            {columns.map(column => {
+                switch (column.id) {
+                    case 'name': {
+                        return (
+                            <Td id={column.id} subtitle={row[column.id]}>
+                                <Icon type="document" />
+                                {row[column.id]}
+                            </Td>
+                        );
+
+                        // return (
+                        //     <td className={`${column.id}-column`}>
+                        //         <img className={`icon document`} alt="Document" />
+                        //         <span className="hidden network-badge"></span>
+                        //         {row[column.id]}
+                        //         <div className="network-cell-subtitle"></div>
+                        //     </td>
+                        // );
+                    }
+
+                    case 'status': {
+                        return (
+                            <td className={`${column.id}-column ${row[column.id] === 200 && 'network-dim-cell'}`}>
+                                {row[column.id]}
+                                <div className="network-cell-subtitle">
+                                    {row[column.id] === 200 ? 'OK' : 'Not Modified'}
+                                </div>
+                            </td>
+                        );
+                    }
+
+                    case 'size': {
+                        return (
+                            <Td id={column.id} align="right" subtitle={`${row[column.id]}&nbsp;B`}>
+                                {row[column.id]}&nbsp;B
+                            </Td>
+                        );
+                    }
+                    case 'time': {
+                        return (
+                            <Td id={column.id} align="right" subtitle={`${row[column.id]}&nbsp;ms`}>
+                                {row[column.id]}&nbsp;ms
+                            </Td>
+                        );
+                    }
+
+                    default: {
+                        return <Td id={column.id}>{row[column.id]}</Td>;
+                    }
+                }
+            })}
+
+            <td className="corner"></td>
+        </tr>
+    );
+};
+
 const GridFilterRow = ({ columns = [], type = 'top', height = 0 }) => {
     const ref = useRef();
 
@@ -20,19 +105,20 @@ const GridFilterRow = ({ columns = [], type = 'top', height = 0 }) => {
     );
 };
 
+let _stickToBottom = false;
+let _updateIsFromUser = false;
+let _lastScrollTop = 0;
+let _firstVisibleIsStriped = false;
+let _isStriped = false;
+let _updateAnimationFrameId;
+
 export default ({ data, columns, scrollTop, onMouseWheel }) => {
-    const ref = useRef();
-    const refTopFiller = useRef();
+    const ref: any = useRef();
+    const refTopFiller: any = useRef();
     const [row, setRow] = useState([]);
     const [fillerRow, setFillerRow] = useState({ top: 0, bottom: '0px' });
 
-    let _stickToBottom = false;
-    let _updateIsFromUser = false;
-    let _lastScrollTop = 0;
-    let _firstVisibleIsStriped = false;
-    let _isStriped = false;
-
-    let _updateAnimationFrameId;
+    const [selectedRow, setSelectedRow] = useState();
 
     const topFillerRowElement = () => {
         return refTopFiller.current;
@@ -98,27 +184,38 @@ export default ({ data, columns, scrollTop, onMouseWheel }) => {
         const scrollContainer = ref.current;
         const clientHeight = scrollContainer.clientHeight;
         let scrollTop = scrollContainer.scrollTop;
+
         const currentScrollTop = scrollTop;
         const maxScrollTop = Math.max(0, _contentHeight() - clientHeight);
+
         if (!_updateIsFromUser && _stickToBottom) {
             scrollTop = maxScrollTop;
         }
         _updateIsFromUser = false;
         scrollTop = Math.min(maxScrollTop, scrollTop);
+
         const viewportState = _calculateVisibleNodes(clientHeight, scrollTop);
         const visibleNodes = viewportState.visibleNodes;
+        const visibleNodesSet = new Set(visibleNodes);
 
         let previousElement = topFillerRowElement();
         let offset = viewportState.offset;
-        let tBody = [];
+        let tBody: any = [];
+
+        if (visibleNodes.length) {
+            // const nodes = this.rootNode().flatChildren();
+            // const index = nodes.indexOf(visibleNodes[0]);
+            // this._updateStripesClass(!!(index % 2));
+            // if (this._stickToBottom && index !== -1 && !!(index % 2) !== this._firstVisibleIsStriped) {
+            //     offset += 1;
+            // }
+        }
+
+        _firstVisibleIsStriped = !!(offset % 2);
 
         for (let i = 0; i < visibleNodes.length; ++i) {
             const node = visibleNodes[i];
-            console.log(node);
             const element = node;
-            // if (element !== previousElement.nextSibling) {
-            //     tBody.insertBefore(element, previousElement.nextSibling);
-            // }
             tBody.push(element);
             previousElement = element;
         }
@@ -166,143 +263,53 @@ export default ({ data, columns, scrollTop, onMouseWheel }) => {
 
             const scrollContainer = ref.current;
             scrollContainer.scrollTop = scrollTop;
-
-            window.addEventListener(
-                'resize',
-                () => {
-                    // _update();
-                },
-                true
-            );
         }
     }, [ref, scrollTop]);
 
     return (
-        <div ref={ref} class="data-container" onMouseWheel={onMouseWheel} onScroll={onScroll}>
-            <table class="data">
+        <div ref={ref} className="data-container" onMouseWheel={onMouseWheel} onScroll={onScroll}>
+            <table className="data">
                 <colgroup>
                     {columns.map(column => (
                         <col style={{ width: column.width + 'px' }} />
                     ))}
 
-                    <col class="corner" />
+                    <col className="corner" />
                 </colgroup>
                 <tbody>
                     <tr
                         ref={refTopFiller}
-                        class="data-grid-filler-row revealed"
+                        className="data-grid-filler-row revealed"
                         style={{ height: fillerRow.top + 'px' }}
                     >
                         {columns.map(column => (
-                            <th class="top-filler-td" scope="col">
+                            <th className="top-filler-td" scope="col">
                                 {column.title}
                             </th>
                         ))}
 
-                        <th class="corner top-filler-td" scope="col"></th>
+                        <th className="corner top-filler-td" scope="col"></th>
                     </tr>
 
                     {row.map((row, index) => {
-                        // select
-                        // style="background-color: rgb(221, 238, 255);"
                         return (
-                            <tr
-                                className={`data-grid-data-grid-node revealed ${index % 2 === 1 ? 'odd' : ''}`}
-                                style={{ backgroundColor: index % 2 === 1 ? 'rgb(245, 245, 245)' : '' }}
-                            >
-                                {columns.map(column => {
-                                    switch (column.id) {
-                                        case 'name': {
-                                            return (
-                                                <td className={`${column.id}-column`}>
-                                                    <img className={`icon document`} alt="Document" />
-                                                    <span className="hidden network-badge"></span>
-                                                    {row[column.id]}
-                                                    <div className="network-cell-subtitle"></div>
-                                                </td>
-                                            );
-                                        }
-
-                                        case 'status': {
-                                            return (
-                                                <td
-                                                    className={`${column.id}-column ${
-                                                        row[column.id] === 200 && 'network-dim-cell'
-                                                    }`}
-                                                >
-                                                    {row[column.id]}
-                                                    <div className="network-cell-subtitle">
-                                                        {row[column.id] === 200 ? 'OK' : 'Not Modified'}
-                                                    </div>
-                                                </td>
-                                            );
-                                        }
-
-                                        case 'type': {
-                                            return <td className={`${column.id}-column`}>{row[column.id]}</td>;
-                                        }
-
-                                        case 'initiator': {
-                                            // <td class="initiator-column network-script-initiated">
-                                            //     <span
-                                            //         class="devtools-link"
-                                            //         role="link"
-                                            //     >
-                                            //         root.js:5
-                                            //     </span>
-                                            //     <div class="network-cell-subtitle">
-                                            //         Script
-                                            //     </div>
-                                            // </td>;
-                                            return <td className={`${column.id}-column`}>{row[column.id]}</td>;
-                                        }
-
-                                        case 'size': {
-                                            // <td class="initiator-column">
-                                            //     <span
-                                            //         class="devtools-link"
-                                            //         role="link"
-                                            //     >
-                                            //         inspector.html
-                                            //     </span>
-                                            //     <div class="network-cell-subtitle">
-                                            //         Parser
-                                            //     </div>
-                                            // </td>;
-                                            return (
-                                                <td className="size-column right">
-                                                    {row[column.id]}&nbsp;B
-                                                    <div className="network-cell-subtitle">626&nbsp;B</div>
-                                                </td>
-                                            );
-                                        }
-                                        case 'time': {
-                                            return (
-                                                <td className="time-column right">
-                                                    {row[column.id]}&nbsp;ms
-                                                    <div className="network-cell-subtitle">2&nbsp;ms</div>
-                                                </td>
-                                            );
-                                        }
-
-                                        default: {
-                                            return <td className={`${column.id}-column`}>{row[column.id]}</td>;
-                                        }
-                                    }
-                                })}
-
-                                <td class="corner"></td>
-                            </tr>
+                            <Row
+                                columns={columns}
+                                index={index}
+                                row={row}
+                                selected={selectedRow === index}
+                                onSelected={i => setSelectedRow(i)}
+                            ></Row>
                         );
                     })}
 
-                    <tr class="data-grid-filler-row revealed" style={{ height: fillerRow.bottom }}>
-                        <td class="bottom-filler-td"></td>
-                        <td class="bottom-filler-td"></td>
-                        <td class="bottom-filler-td"></td>
-                        <td class="bottom-filler-td"></td>
-                        <td class="bottom-filler-td"></td>
-                        <td class="corner bottom-filler-td"></td>
+                    <tr className="data-grid-filler-row revealed" style={{ height: fillerRow.bottom }}>
+                        <td className="bottom-filler-td"></td>
+                        <td className="bottom-filler-td"></td>
+                        <td className="bottom-filler-td"></td>
+                        <td className="bottom-filler-td"></td>
+                        <td className="bottom-filler-td"></td>
+                        <td className="corner bottom-filler-td"></td>
                     </tr>
                 </tbody>
             </table>

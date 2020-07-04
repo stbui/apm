@@ -183,26 +183,26 @@ import DataContainer from './DataContainer';
 
 export default ({ children, data, columns, onBodyScroll }) => {
     return (
-        <div class="data-grid small network-log-grid">
-            <div class="header-container">
-                <table class="header">
+        <div className="data-grid small network-log-grid">
+            <div className="header-container">
+                <table className="header">
                     <colgroup>
                         {columns.map(column => (
                             <col style={{ width: column.width + 'px' }} />
                         ))}
-                        <col class="corner" />
+                        <col className="corner" />
                     </colgroup>
                     <tbody>
                         <tr>
                             {columns.map(column => (
-                                <th class={`${column.id}-column sortable`}>
+                                <th className={`${column.id}-column sortable`}>
                                     <div>{column.title}</div>
-                                    <div class="sort-order-icon-container">
-                                        <span is="ui-icon" class="sort-order-icon"></span>
+                                    <div className="sort-order-icon-container">
+                                        <span is="ui-icon" className="sort-order-icon"></span>
                                     </div>
                                 </th>
                             ))}
-                            <th class="corner"></th>
+                            <th className="corner"></th>
                         </tr>
                     </tbody>
                 </table>
@@ -216,7 +216,7 @@ export default ({ children, data, columns, onBodyScroll }) => {
                 data={data}
             /> */}
 
-            <div class="data-grid-resizer" style={{ cursor: 'col-resize', left: columns[0].width + 'px' }}></div>
+            <div className="data-grid-resizer" style={{ cursor: 'col-resize', left: columns[0].width + 'px' }}></div>
         </div>
     );
 };

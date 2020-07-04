@@ -51,11 +51,11 @@ export default ({ addNewNetworkRequests }) => {
             type: 'script',
             initiator: 'stbui.js:5',
             time: d.details.request.endTime - d.details.request.timestamp,
+            size: 0,
         }));
-        setRequest(request.concat(req));
-    }, addNewNetworkRequests);
 
-    console.log(request);
+        setRequest(req);
+    }, addNewNetworkRequests);
 
     return (
         <div className="widget vbox panel network">
@@ -82,7 +82,7 @@ export default ({ addNewNetworkRequests }) => {
                                         drag={true}
                                         // width={200}
                                     >
-                                        {request.length ? <NetworkLogView data={request} /> : <span></span>}
+                                        {request.length ? <NetworkLogView data={request} /> : null}
                                     </SplitWidget.Sidebar>
                                     {0 ? (
                                         <SplitWidget.Main>
