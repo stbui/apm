@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { SplitWidget, DataGrid } from '../../components';
 import NetworkSummaryBar from '../NetworkSummaryBar';
 import NetworkWaterfallColumn from '../NetworkWaterfallColumn';
@@ -53,17 +53,17 @@ const data = [
     },
 ];
 
+let _lastWheelTime = 0;
+
 export default ({ data }) => {
-    const refWaterfallScroll = useRef();
+    const refWaterfallScroll: any = useRef();
     const [height, setHeigth] = useState(0);
-    const [waterfallContentHeight, setWaterfallContentHeigth] = useState(800);
+    const [waterfallContentHeight, setWaterfallContentHeigth] = useState(231);
     const [dataGridBodyScrollTop, setDataGridBodyScrollTop] = useState(0);
 
     const onRef = dom => {
         setHeigth(dom.offsetHeight);
     };
-
-    let _lastWheelTime = 0;
 
     const _updateScrollerWidthIfNeeded = () => {};
 
@@ -90,7 +90,7 @@ export default ({ data }) => {
     const onDataGridBodyMouseWheel = event => _onMouseWheel(event, true);
 
     return (
-        <div className="widget vbox" id="network-container">
+        <div className="widget vbox" id="network-container" slot="insertion-point-sidebar">
             <div className="vbox flex-auto split-widget">
                 <SplitWidget drag>
                     <SplitWidget.Main>
@@ -112,11 +112,11 @@ export default ({ data }) => {
                             height={height}
                             onMouseWheel={onWaterfallMouseWheel}
                         >
-                            <div ref={refWaterfallScroll} class="network-waterfall-v-scroll small">
+                            <div ref={refWaterfallScroll} className="network-waterfall-v-scroll small">
                                 <div
                                     className="network-waterfall-v-scroll-content"
                                     style={{
-                                        height: waterfallContentHeight + 'px',
+                                        height: height + 'px',
                                     }}
                                 ></div>
                             </div>
@@ -124,7 +124,7 @@ export default ({ data }) => {
                     </SplitWidget.Sidebar>
                 </SplitWidget>
             </div>
-            <NetworkSummaryBar />
+            <NetworkSummaryBar count={data.length} transferSize={0} resourceSize={0} />
             {/* <NetworkStatusPane /> */}
         </div>
     );

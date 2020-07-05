@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 
 export default ({ children, data, width, height, onMouseWheel }) => {
-    const ref = useRef();
+    const ref: any = useRef();
 
     const _buildRequestTimeRangeStyle = () => {
         const types = {
@@ -64,6 +64,7 @@ export default ({ children, data, width, height, onMouseWheel }) => {
         const downloadingStyleMap = new Map();
     };
 
+    // 模拟Row
     const drawCanvas = () => {
         const position = ref.current.getBoundingClientRect();
         const context = ref.current.getContext('2d');
@@ -99,20 +100,17 @@ export default ({ children, data, width, height, onMouseWheel }) => {
     }, [ref, width, height]);
 
     return (
-        <div
-            class="widget vbox network-waterfall-view"
-            onMouseWheel={onMouseWheel}
-        >
+        <div className="widget vbox network-waterfall-view" onMouseWheel={onMouseWheel}>
             <canvas ref={ref}></canvas>
 
             {children}
 
-            <div class="network-waterfall-header small">
+            <div className="network-waterfall-header small">
                 <div>Waterfall</div>
-                <div class="sort-order-icon-container">
+                <div className="sort-order-icon-container">
                     <span
                         is="ui-icon"
-                        class="sort-order-icon spritesheet-smallicons smallicon-triangle-up icon-mask"
+                        className="sort-order-icon spritesheet-smallicons smallicon-triangle-up icon-mask"
                         style="--spritesheet-position:-20px 10px; width: 10px; height: 10px;"
                     ></span>
                 </div>

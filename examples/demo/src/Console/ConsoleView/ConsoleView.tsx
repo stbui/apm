@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
 
 import ConsolePrompt from '../ConsolePrompt';
+import {
+    Error as ErrorIcon,
+    Warning as WarnIcon,
+    UserCommand as UserCommandIcon,
+    CommandResult as CommandResultIcon,
+} from '../../components/Icon';
 
 const Icon = ({ type }) => {
     const spritesheet = {
@@ -19,41 +25,6 @@ const Icon = ({ type }) => {
 };
 Icon.defaultProps = { type: 'log' };
 
-const ErrorIcon = ({ type }) => {
-    const spritesheet = {
-        warning: '-40px 10px;',
-        info: '-40px 10px',
-        error: '-40px 10px',
-        log: '-40px 10px',
-    };
-
-    return (
-        <span
-            is="ui-icon"
-            class="message-level-icon spritesheet-smallicons smallicon-error"
-            aria-label="Error"
-            style="--spritesheet-position:-40px 70px; width: 10px; height: 10px;"
-        ></span>
-    );
-};
-const WarnIcon = ({ type }) => {
-    const spritesheet = {
-        warning: '-40px 10px;',
-        info: '-40px 10px',
-        error: '-40px 10px',
-        log: '-40px 10px',
-    };
-
-    return (
-        <span
-            is="ui-icon"
-            class="message-level-icon spritesheet-smallicons smallicon-warning"
-            aria-label="Warning"
-            style="--spritesheet-position:-60px 10px; width: 10px; height: 10px;"
-        ></span>
-    );
-};
-
 const DevtoolsLink = ({ children, ...other }) => (
     <span class="devtools-link" role="link" tabindex="-1" {...other}>
         {children}
@@ -61,16 +32,7 @@ const DevtoolsLink = ({ children, ...other }) => (
 );
 
 const SourceCode = ({ children }) => <span class="source-code">{children}</span>;
-const UserCommand = ({ children }) => (
-    <div class="console-user-command">
-        <span
-            is="ui-icon"
-            class="command-result-icon spritesheet-smallicons smallicon-user-command"
-            style="--spritesheet-position:-40px 10px; width: 10px; height: 10px;"
-        ></span>
-        {children}
-    </div>
-);
+
 const MessageText = ({ children }) => <span class="console-message-text">{children}</span>;
 const MessageBadge = () => <span class="hidden console-message-badge"></span>;
 const MessageAnchor = ({ children }) => (
@@ -97,11 +59,7 @@ const MessageWrapper = ({ children, type, ...other }) => {
 const UserCommandResult = ({ children }) => {
     return (
         <div class="console-message console-user-command-result">
-            <span
-                is="ui-icon"
-                class="command-result-icon spritesheet-smallicons smallicon-command-result"
-                style="--spritesheet-position:0px 70px; width: 10px; height: 10px;"
-            ></span>
+            <CommandResultIcon />
             {children}
         </div>
     );

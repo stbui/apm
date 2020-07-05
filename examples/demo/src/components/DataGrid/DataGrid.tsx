@@ -1,5 +1,4 @@
 import React, { useRef, useEffect } from 'react';
-import DataContainer from './DataContainer';
 
 // const columns = [
 //     {
@@ -181,7 +180,7 @@ import DataContainer from './DataContainer';
 //     },
 // ];
 
-export default ({ children, data, columns, onBodyScroll }) => {
+const DataGrid: any = ({ children, data, columns, onBodyScroll }) => {
     return (
         <div className="data-grid small network-log-grid">
             <div className="header-container">
@@ -210,13 +209,9 @@ export default ({ children, data, columns, onBodyScroll }) => {
 
             {children}
 
-            {/* <DataContainer
-                onScroll={onBodyScroll}
-                columns={columns}
-                data={data}
-            /> */}
-
             <div className="data-grid-resizer" style={{ cursor: 'col-resize', left: columns[0].width + 'px' }}></div>
         </div>
     );
 };
+
+export default DataGrid;

@@ -167,6 +167,8 @@ export const SessionPlayer = ({ session, activitiesData, startTime, settings, fi
         }
     };
 
+    const onSelectNextStep = () => {};
+
     const updateExecuteEventState = newValue => {
         fireExecuteEvent(newValue);
     };
@@ -279,52 +281,55 @@ export const SessionPlayer = ({ session, activitiesData, startTime, settings, fi
     }, [finishLoadingStatus]);
 
     return (
-        <div className="player-container _md layout-column flex">
-            <div className="viewer-wrap _md layout-row flex">
-                {currentActivity ? (
-                    <SessionViewer
-                        maxWidth={containerWidth}
-                        maxHeight={containerHeight}
-                        sessionScreenWidth={session.screenWidth}
-                        sessionScreenHeight={session.screenHeight}
-                        isCreated={true}
-                        renderingProgress={renderingProgress}
-                        initialVisibilityState={session.visibilityState}
-                        sessionId={session.id}
-                        handleConsoleResize={true}
-                        currentActivity={currentActivity}
-                        isPlaying={playState.isPlaying}
-                    ></SessionViewer>
-                ) : null}
+        <React.Fragment>
+            <div className="player-container _md layout-column flex" style={{ display: 'none' }}>
+                <div className="viewer-wrap _md layout-row flex">
+                    {currentActivity ? (
+                        <SessionViewer
+                            maxWidth={containerWidth}
+                            maxHeight={containerHeight}
+                            sessionScreenWidth={session.screenWidth}
+                            sessionScreenHeight={session.screenHeight}
+                            isCreated={true}
+                            renderingProgress={renderingProgress}
+                            initialVisibilityState={session.visibilityState}
+                            sessionId={session.id}
+                            handleConsoleResize={true}
+                            currentActivity={currentActivity}
+                            isPlaying={playState.isPlaying}
+                        ></SessionViewer>
+                    ) : null}
+                </div>
+                <Controls
+                    hasFinished={playState.hasFinished}
+                    isStreamingLive={playState.isStreamingLive}
+                    isPlaying={playState.isPlaying}
+                    arePlayerButtonsEnabled={playState.arePlayerButtonsEnabled}
+                    isLive={playState.isLive}
+                    sessionWasInitiallyLive={false}
+                    onRepeat={onRepeat}
+                    onTogglePlaying={onTogglePlaying}
+                    onSelectNextStep={onSelectNextStep}
+                >
+                    <PlayerTimeline
+                        min={timeline.timelineMin}
+                        max={timeline.timelineMax}
+                        value={timeline.timelineValue}
+                        activities={activitiesData}
+                        loadedTime={timeline.timelineMax}
+                    ></PlayerTimeline>
+                </Controls>
+                <Console
+                    open-console="openConsole"
+                    close-console="closeConsole"
+                    is-expanded="isConsoleExpanded"
+                    addNewLogs={addNewLogs}
+                    on-selected-log="onSelectedActivity"
+                    update-console="updateConsole"
+                ></Console>
             </div>
-            <Controls
-                hasFinished={playState.hasFinished}
-                isStreamingLive={playState.isStreamingLive}
-                isPlaying={playState.isPlaying}
-                arePlayerButtonsEnabled={playState.arePlayerButtonsEnabled}
-                isLive={playState.isLive}
-                sessionWasInitiallyLive={false}
-                onRepeat={onRepeat}
-                onTogglePlaying={onTogglePlaying}
-            >
-                <PlayerTimeline
-                    min={timeline.timelineMin}
-                    max={timeline.timelineMax}
-                    value={timeline.timelineValue}
-                    activities={activitiesData}
-                    loadedTime={timeline.timelineMax}
-                ></PlayerTimeline>
-            </Controls>
-            <Console
-                open-console="openConsole"
-                close-console="closeConsole"
-                is-expanded="isConsoleExpanded"
-                addNewLogs={addNewLogs}
-                on-selected-log="onSelectedActivity"
-                update-console="updateConsole"
-            ></Console>
             <Home addNewLogs={addNewLogs} addNewNetworkRequests={addNewNetworkRequests} />
-        </div>
+        </React.Fragment>
     );
 };
 

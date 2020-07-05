@@ -17,15 +17,13 @@ const tablistData = [
     { label: 'Memory', width: 68 },
     { label: 'Application', width: 84 },
     { label: 'Security', width: 67 },
-    { label: 'Audits', width: 58 },
+    { label: 'Lighthouse', width: 83 },
 ];
 
 export const Home = ({ addNewLogs, addNewNetworkRequests }) => {
     const [module, setModule] = useState(4);
 
-    const onTabbedPaneChange = key => {
-        setModule(key);
-    };
+    const onTabbedPaneChange = key => setModule(key);
 
     const renderModule = module => {
         switch (module) {
@@ -82,7 +80,9 @@ export const Home = ({ addNewLogs, addNewNetworkRequests }) => {
                     </Toolbar>
                 }
             >
-                <div class="widget vbox flex-auto view-container overflow-auto">{renderModule(module)}</div>
+                <div class="widget vbox flex-auto view-container overflow-auto" aria-label={module}>
+                    {renderModule(module)}
+                </div>
             </TabbedPane>
         </div>
     );

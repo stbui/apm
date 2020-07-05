@@ -1,5 +1,13 @@
 import React from 'react';
-import { Widget, TabbedPane, Toolbar, ToolbarButton, Icon, Checkbox } from '../components';
+import { Toolbar, ToolbarButton, Icon, Checkbox } from '../components';
+import {
+    StopRecording as StopRecordingIcon,
+    Clear as ClearIcon,
+    Filter as FilterIcon,
+    SettingGear as SettingGearIcon,
+    Download as DownloadIcon,
+    TriangleDown as TriangleDownIcon,
+} from '../components/Icon';
 
 export default () => {
     return (
@@ -10,11 +18,7 @@ export default () => {
                     aria-label="Record network log"
                     aria-pressed="true"
                 >
-                    <span
-                        is="ui-icon"
-                        class="toolbar-glyph spritesheet-largeicons largeicon-stop-recording icon-mask"
-                        style="--spritesheet-position:-84px 24px; width: 28px; height: 24px;"
-                    ></span>
+                    <StopRecordingIcon />
                     <div className="toolbar-text hidden"></div>
                 </button>
 
@@ -23,13 +27,13 @@ export default () => {
         </ToolbarButton> */}
 
                 <ToolbarButton>
-                    <Icon type="largeicons" coordinates="0px 144px" />
+                    <ClearIcon />
                 </ToolbarButton>
 
                 <div className="toolbar-divider toolbar-item"></div>
 
                 <ToolbarButton state="on">
-                    <Icon type="largeicons" coordinates="-56px 120px" />
+                    <FilterIcon />
                 </ToolbarButton>
 
                 <ToolbarButton state="off">
@@ -67,11 +71,8 @@ export default () => {
                             </option>
                         </optgroup>
                     </select>
-                    <span
-                        is="ui-icon"
-                        class="toolbar-dropdown-arrow spritesheet-smallicons smallicon-triangle-down icon-mask"
-                        style="--spritesheet-position:-80px 30px; width: 10px; height: 10px;"
-                    ></span>
+
+                    <TriangleDownIcon />
                 </span>
                 <div class="toolbar-divider toolbar-item"></div>
 
@@ -79,7 +80,7 @@ export default () => {
                     <Icon type="largeicons" coordinates="-196px 120px" />
                 </ToolbarButton>
                 <ToolbarButton>
-                    <Icon type="largeicons" coordinates="-196px 144px" />
+                    <DownloadIcon />
                 </ToolbarButton>
             </Toolbar>
 
@@ -87,7 +88,7 @@ export default () => {
                 <div class="toolbar-item"></div>
                 <div class="toolbar-divider toolbar-item"></div>
                 <ToolbarButton>
-                    <Icon type="largeicons" coordinates="-168px 168px" />
+                    <SettingGearIcon />
                 </ToolbarButton>
             </Toolbar>
         </div>

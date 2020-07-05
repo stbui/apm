@@ -22,10 +22,13 @@ const Row = ({ columns, index, row, selected, onSelected }) => {
     // style="background-color: rgb(221, 238, 255);"
     const onClick = () => onSelected(index);
 
+    const errRow = row.statusCode === 500 ? 'network-error-row' : null;
+    const oddRow = index % 2 === 1 ? 'odd' : null;
+    const selectRow = selected ? 'selected' : null;
     return (
         <tr
-            className={`data-grid-data-grid-node revealed ${index % 2 === 1 ? 'odd' : ''}${selected && 'selected'}`}
-            style={{ backgroundColor: index % 2 === 1 ? 'rgb(245, 245, 245)' : '' }}
+            className={`data-grid-data-grid-node revealed ${errRow} ${oddRow} ${selectRow} `}
+            style={{ backgroundColor: index % 2 === 1 ? 'var(--network-grid-stripe-color)' : '' }}
             onClick={onClick}
         >
             {columns.map(column => {
