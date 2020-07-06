@@ -15,32 +15,6 @@ import RequestInitiatorView from '../RequestInitiatorView';
 import RequestTimingView from '../RequestTimingView';
 import RequestCookiesView from '../RequestCookiesView';
 
-const renderModule = module => {
-    switch (module) {
-        case 0: {
-            return <RequestHeadersView />;
-        }
-        case 1: {
-            return <RequestPreviewView />;
-        }
-        case 2: {
-            return <RequestResponseView />;
-        }
-        case 3: {
-            return <RequestInitiatorView />;
-        }
-        case 4: {
-            return <RequestTimingView />;
-        }
-        case 5: {
-            return <RequestCookiesView />;
-        }
-        default: {
-            return <RequestHeadersView />;
-        }
-    }
-};
-
 const tablistData = [
     { label: 'Headers', width: 65 },
     { label: 'Preview', width: 65 },
@@ -50,23 +24,52 @@ const tablistData = [
     { label: 'Cookies', width: 63 },
 ];
 
-export default () => {
+export default ({ onClose }) => {
     const [module, setModule] = useState(0);
 
     const onTabbedPaneChange = key => setModule(key);
 
+    const renderModule = React.useCallback(
+        module => {
+            switch (module) {
+                case 0: {
+                    return <RequestHeadersView />;
+                }
+                case 1: {
+                    return <RequestPreviewView />;
+                }
+                case 2: {
+                    return <RequestResponseView />;
+                }
+                case 3: {
+                    return <RequestInitiatorView />;
+                }
+                case 4: {
+                    return <RequestTimingView />;
+                }
+                case 5: {
+                    return <RequestCookiesView />;
+                }
+                default: {
+                    return <RequestHeadersView />;
+                }
+            }
+        },
+        [module]
+    );
+
     return (
-        <div class="widget vbox network-details-view" slot="insertion-point-main">
-            <div class="vbox flex-auto tabbed-pane network-item-view">
-                <div class="widget vbox tabbed-pane-shadow">
+        <div className="widget vbox network-details-view" slot="insertion-point-main">
+            <div className="vbox flex-auto tabbed-pane network-item-view">
+                <div className="widget vbox tabbed-pane-shadow">
                     <TabbedPane
                         tablistData={tablistData}
                         onChange={onTabbedPaneChange}
                         headerLeft={
-                            <div class="toolbar-shadow">
-                                <div is="dt-close-button" class="toolbar-item" style="margin: 0px 5px;">
-                                    <div class="close-button" aria-label="Close" role="button">
-                                        <CrossIcon />
+                            <div className="toolbar-shadow">
+                                <div is="dt-close-button" className="toolbar-item" style="margin: 0px 5px;">
+                                    <div className="close-button" aria-label="Close" role="button">
+                                        <CrossIcon onClick={onClose} />
                                         {/* <CrossRedHoverIcon /> */}
                                         {/* <CrossRedActiveIcon /> */}
                                     </div>

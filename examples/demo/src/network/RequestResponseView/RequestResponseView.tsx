@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { Widget, TabbedPane, Toolbar, ToolbarButton, Icon, Checkbox, Treeoutline } from '../../components';
+import { Widget, TabbedPane, Toolbar, ToolbarButton, Icon, Checkbox, Treeoutline, TextEditor } from '../../components';
 import { PrettyPrint as PrettyPrintIcon } from '../../components/Icon';
 
 export default () => {
@@ -9,7 +9,9 @@ export default () => {
                 <div className="widget vbox">
                     <div className="vbox flex-auto searchable-view">
                         <div className="widget vbox">
-                            <div className="widget vbox CodeMirror-readonly">1</div>
+                            <div className="widget vbox CodeMirror-readonly">
+                                <TextEditor className="source-code fill" value="123" />
+                            </div>
                         </div>
                     </div>
                     <Toolbar>

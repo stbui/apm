@@ -9,19 +9,7 @@ import './style/index.scss';
 render(
     <RootView>
         <div class="vbox flex-auto split-widget">
-            <SplitWidget>
-                <SplitWidget.Main>
-                    <div class="widget vbox">
-                        <div class="vbox flex-auto split-widget">
-                            <SplitWidget direction="vertical">
-                                <SplitWidget.Main>
-                                    <View />
-                                </SplitWidget.Main>
-                            </SplitWidget>
-                        </div>
-                    </div>
-                </SplitWidget.Main>
-            </SplitWidget>
+            <View />
         </div>
     </RootView>,
     document.getElementById('apm')

@@ -28,50 +28,39 @@ export const Main = ({ ref, children, maximized }) => {
     );
 };
 
-const Resizer = () => {
-    const ref = useRef();
-    const [position, setPositionn] = useState(200);
+export const Resizer = ({ onDrap, x = 0 }) => {
+    const [position, setPosition] = useState(x);
 
-    const onDrop = ({ clientX, clientY }) => {
-        console.log(clientX);
-    };
-    const dragEnter = ({ clientX, clientY }) => {
-        console.log(clientX);
-    };
-    const onDragStart = ({ clientX, clientY }) => {
-        console.log(clientX);
-    };
-    const onDragEnd = ({ clientX, clientY }) => {
-        console.log(clientX);
-        setPositionn(clientX);
-    };
-    const ondragleave = ({ clientX, clientY }) => {
-        console.log(clientX);
-    };
-    const ondragover = ({ clientX, clientY }) => {
-        console.log(clientX);
+    const onMousedown = () => {
+        document.onmousemove = ({ clientX }) => {
+            onDrap && onDrap(clientX);
+            setPosition(clientX);
+            return false;
+        };
+
+        document.onmouseup = () => {
+            document.onmousemove = null;
+            document.onmouseup = null;
+        };
+        return false;
     };
 
     return (
         <div
-            draggable
             className="shadow-split-widget-resizer"
-            style={{ cursor: 'ew-resize', left: position, marginRight: -3, background: '#f00' }}
-            onDrop={onDrop}
-            onDragEnter={dragEnter}
-            onDragStart={onDragStart}
-            onDragEnd={onDragEnd}
+            style={{ cursor: 'ew-resize', left: position, marginRight: -3,  }}
+            onMousedown={onMousedown}
         ></div>
     );
 };
 
-const SplitWidget: any = ({ children, direction, drag }) => {
+const SplitWidget: any = ({ children, direction, drag, onDrap, x }) => {
     const _direction = direction === 'vertical' ? 'vbox' : 'hbox';
 
     return (
         <div className={`widget shadow-split-widget ${_direction}`}>
             {children}
-            {drag ? <Resizer /> : null}
+            {drag ? <Resizer onDrap={onDrap} key={x} x={x} /> : null}
         </div>
     );
 };

@@ -5,37 +5,43 @@ const Icon = ({ type }) => {
     return type ? <img className={`icon${iconClass}`} alt={iconClass} /> : null;
 };
 
-const Td: any = ({ id, children, align, subtitle, icon }) => {
+const Td: any = ({ id, children, align, subtitle, icon, ...other }) => {
     const right = align === 'right' ? ' right' : '';
     const a = 'network-dim-cell';
 
     return (
-        <td className={`${id}-column${right}`}>
+        <td className={`${id}-column${right}`} {...other}>
             {children}
             <div className="network-cell-subtitle">{subtitle}</div>
         </td>
     );
 };
 
-const Row = ({ columns, index, row, selected, onSelected }) => {
+const Row = ({ columns, index, row, selected, onSelected, onCell }) => {
     // select
     // style="background-color: rgb(221, 238, 255);"
-    const onClick = () => onSelected(index);
+    const onRowClick = () => onSelected(index);
 
     const errRow = row.statusCode === 500 ? 'network-error-row' : null;
     const oddRow = index % 2 === 1 ? 'odd' : null;
     const selectRow = selected ? 'selected' : null;
+
     return (
         <tr
             className={`data-grid-data-grid-node revealed ${errRow} ${oddRow} ${selectRow} `}
             style={{ backgroundColor: index % 2 === 1 ? 'var(--network-grid-stripe-color)' : '' }}
-            onClick={onClick}
+            onClick={onRowClick}
         >
             {columns.map(column => {
                 switch (column.id) {
                     case 'name': {
                         return (
-                            <Td id={column.id} subtitle={row[column.id]}>
+                            <Td
+                                key={column.id}
+                                id={column.id}
+                                subtitle={row[column.id]}
+                                onClick={() => onCell && onCell(row[column.id])}
+                            >
                                 <Icon type="document" />
                                 {row[column.id]}
                             </Td>
@@ -53,7 +59,10 @@ const Row = ({ columns, index, row, selected, onSelected }) => {
 
                     case 'status': {
                         return (
-                            <td className={`${column.id}-column ${row[column.id] === 200 && 'network-dim-cell'}`}>
+                            <td
+                                key={column.id}
+                                className={`${column.id}-column ${row[column.id] === 200 && 'network-dim-cell'}`}
+                            >
                                 {row[column.id]}
                                 <div className="network-cell-subtitle">
                                     {row[column.id] === 200 ? 'OK' : 'Not Modified'}
@@ -64,21 +73,25 @@ const Row = ({ columns, index, row, selected, onSelected }) => {
 
                     case 'size': {
                         return (
-                            <Td id={column.id} align="right" subtitle={`${row[column.id]}&nbsp;B`}>
+                            <Td key={column.id} id={column.id} align="right" subtitle={`${row[column.id]}&nbsp;B`}>
                                 {row[column.id]}&nbsp;B
                             </Td>
                         );
                     }
                     case 'time': {
                         return (
-                            <Td id={column.id} align="right" subtitle={`${row[column.id]}&nbsp;ms`}>
+                            <Td key={column.id} id={column.id} align="right" subtitle={`${row[column.id]}&nbsp;ms`}>
                                 {row[column.id]}&nbsp;ms
                             </Td>
                         );
                     }
 
                     default: {
-                        return <Td id={column.id}>{row[column.id]}</Td>;
+                        return (
+                            <Td key={column.id} id={column.id}>
+                                {row[column.id]}
+                            </Td>
+                        );
                     }
                 }
             })}
@@ -88,22 +101,13 @@ const Row = ({ columns, index, row, selected, onSelected }) => {
     );
 };
 
-const GridFilterRow = ({ columns = [], type = 'top', height = 0 }) => {
-    const ref = useRef();
-
-    useEffect(() => {
-        // console.log(ref.current);
-    }, [ref]);
-
+const GridFilterRow = ({ cells, height = 0 }) => {
     return (
-        <tr ref={ref} class="data-grid-filler-row revealed" style={{ height: height + 'px' }}>
-            {columns.map(column => (
-                <th class={`${type}-filler-td`} scope="col">
-                    {column.title}
-                </th>
+        <tr className="data-grid-filler-row revealed" style={{ height }}>
+            {cells.map(cell => (
+                <td className="bottom-filler-td"></td>
             ))}
-
-            <th class={`corner ${type}-filler-td`} scope="col"></th>
+            <td className="corner bottom-filler-td"></td>
         </tr>
     );
 };
@@ -115,7 +119,7 @@ let _firstVisibleIsStriped = false;
 let _isStriped = false;
 let _updateAnimationFrameId;
 
-export default ({ data, columns, scrollTop, onMouseWheel }) => {
+export default ({ data, columns, scrollTop, onMouseWheel, onCell }) => {
     const ref: any = useRef();
     const refTopFiller: any = useRef();
     const [row, setRow] = useState([]);
@@ -302,18 +306,20 @@ export default ({ data, columns, scrollTop, onMouseWheel }) => {
                                 row={row}
                                 selected={selectedRow === index}
                                 onSelected={i => setSelectedRow(i)}
+                                onCell={onCell}
                             ></Row>
                         );
                     })}
 
-                    <tr className="data-grid-filler-row revealed" style={{ height: fillerRow.bottom }}>
+                    {/* <tr className="data-grid-filler-row revealed" style={{ height: fillerRow.bottom }}>
                         <td className="bottom-filler-td"></td>
                         <td className="bottom-filler-td"></td>
                         <td className="bottom-filler-td"></td>
                         <td className="bottom-filler-td"></td>
                         <td className="bottom-filler-td"></td>
                         <td className="corner bottom-filler-td"></td>
-                    </tr>
+                    </tr> */}
+                    <GridFilterRow height={fillerRow.bottom} cells={columns} />
                 </tbody>
             </table>
         </div>

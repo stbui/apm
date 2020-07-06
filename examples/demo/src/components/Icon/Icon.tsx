@@ -389,12 +389,13 @@ export const NavigatorFile = () => {
     );
 };
 
-export const Cross = () => {
+export const Cross = ({ ...other }) => {
     return (
         <span
             is="ui-icon"
             class="default-icon spritesheet-smallicons smallicon-cross"
             style="--spritesheet-position:-20px 70px; width: 10px; height: 10px;"
+            {...other}
         ></span>
     );
 };

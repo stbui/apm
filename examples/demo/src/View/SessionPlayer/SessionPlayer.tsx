@@ -11,6 +11,8 @@ import { Activities } from '../test/Activities';
 import { Activity, IActivity } from '../test/Activity';
 import Console from '../Console';
 
+import { SplitWidget } from '../../components';
+
 //
 import { Home } from '../../app';
 
@@ -94,6 +96,7 @@ export const SessionPlayer = ({ session, activitiesData, startTime, settings, fi
     });
     const [addNewLogs, setAddNewLogs] = useState([]);
     const [addNewNetworkRequests, setAddNewNetworkRequests] = useState([]);
+    const [position, setPosition] = useState(1000);
 
     const addActivities = (alias: IActivity[]) => {
         activities.push(alias);
@@ -282,53 +285,60 @@ export const SessionPlayer = ({ session, activitiesData, startTime, settings, fi
 
     return (
         <React.Fragment>
-            <div className="player-container _md layout-column flex" style={{ display: 'none' }}>
-                <div className="viewer-wrap _md layout-row flex">
-                    {currentActivity ? (
-                        <SessionViewer
-                            maxWidth={containerWidth}
-                            maxHeight={containerHeight}
-                            sessionScreenWidth={session.screenWidth}
-                            sessionScreenHeight={session.screenHeight}
-                            isCreated={true}
-                            renderingProgress={renderingProgress}
-                            initialVisibilityState={session.visibilityState}
-                            sessionId={session.id}
-                            handleConsoleResize={true}
-                            currentActivity={currentActivity}
+            <SplitWidget direction="hbox">
+                <SplitWidget.Sidebar width={position}>
+                    <div className="player-container _md layout-column flex">
+                        <div className="viewer-wrap _md layout-row flex">
+                            {currentActivity ? (
+                                <SessionViewer
+                                    maxWidth={containerWidth}
+                                    maxHeight={containerHeight}
+                                    sessionScreenWidth={session.screenWidth}
+                                    sessionScreenHeight={session.screenHeight}
+                                    isCreated={true}
+                                    renderingProgress={renderingProgress}
+                                    initialVisibilityState={session.visibilityState}
+                                    sessionId={session.id}
+                                    handleConsoleResize={true}
+                                    currentActivity={currentActivity}
+                                    isPlaying={playState.isPlaying}
+                                ></SessionViewer>
+                            ) : null}
+                        </div>
+                        <Controls
+                            hasFinished={playState.hasFinished}
+                            isStreamingLive={playState.isStreamingLive}
                             isPlaying={playState.isPlaying}
-                        ></SessionViewer>
-                    ) : null}
-                </div>
-                <Controls
-                    hasFinished={playState.hasFinished}
-                    isStreamingLive={playState.isStreamingLive}
-                    isPlaying={playState.isPlaying}
-                    arePlayerButtonsEnabled={playState.arePlayerButtonsEnabled}
-                    isLive={playState.isLive}
-                    sessionWasInitiallyLive={false}
-                    onRepeat={onRepeat}
-                    onTogglePlaying={onTogglePlaying}
-                    onSelectNextStep={onSelectNextStep}
-                >
-                    <PlayerTimeline
-                        min={timeline.timelineMin}
-                        max={timeline.timelineMax}
-                        value={timeline.timelineValue}
-                        activities={activitiesData}
-                        loadedTime={timeline.timelineMax}
-                    ></PlayerTimeline>
-                </Controls>
-                <Console
-                    open-console="openConsole"
-                    close-console="closeConsole"
-                    is-expanded="isConsoleExpanded"
-                    addNewLogs={addNewLogs}
-                    on-selected-log="onSelectedActivity"
-                    update-console="updateConsole"
-                ></Console>
-            </div>
-            <Home addNewLogs={addNewLogs} addNewNetworkRequests={addNewNetworkRequests} />
+                            arePlayerButtonsEnabled={playState.arePlayerButtonsEnabled}
+                            isLive={playState.isLive}
+                            sessionWasInitiallyLive={false}
+                            onRepeat={onRepeat}
+                            onTogglePlaying={onTogglePlaying}
+                            onSelectNextStep={onSelectNextStep}
+                        >
+                            <PlayerTimeline
+                                min={timeline.timelineMin}
+                                max={timeline.timelineMax}
+                                value={timeline.timelineValue}
+                                activities={activitiesData}
+                                loadedTime={timeline.timelineMax}
+                            ></PlayerTimeline>
+                        </Controls>
+                        <Console
+                            open-console="openConsole"
+                            close-console="closeConsole"
+                            is-expanded="isConsoleExpanded"
+                            addNewLogs={addNewLogs}
+                            on-selected-log="onSelectedActivity"
+                            update-console="updateConsole"
+                        ></Console>
+                    </div>
+                </SplitWidget.Sidebar>
+                <SplitWidget.Main>
+                    <Home addNewLogs={addNewLogs} addNewNetworkRequests={addNewNetworkRequests} />
+                </SplitWidget.Main>
+                <SplitWidget.Resizer x={position} onDrap={value => setPosition(value)}></SplitWidget.Resizer>
+            </SplitWidget>
         </React.Fragment>
     );
 };

@@ -6,12 +6,8 @@ export default () => {
         <div class="widget vbox request-headers-view">
             <div class="request-headers-tree">
                 <div class="tree-outline-disclosure">
-                    <Treeoutline>
-                        <li role="treeitem" class="parent expanded" aria-expanded="true">
-                            <div class="selection fill"></div>
-                            <span class="tree-element-title">General</span>
-                        </li>
-                        <ol class="children expanded" role="group">
+                    <Treeoutline type="dense">
+                        <Treeoutline.Item defaultExpanded title="General">
                             <li role="treeitem">
                                 <div class="selection fill"></div>
                                 <div class="header-name">Request URL: </div>
@@ -19,6 +15,7 @@ export default () => {
                                 <div class="header-value source-code">http://127.0.0.1:8081/inspector.html</div>
                             </li>
                             <ol class="children" role="group"></ol>
+
                             <li role="treeitem">
                                 <div class="selection fill"></div>
                                 <div class="header-name">Request Method: </div>
@@ -48,12 +45,17 @@ export default () => {
                                 <div class="header-value source-code">no-referrer-when-downgrade</div>
                             </li>
                             <ol class="children" role="group"></ol>
-                        </ol>
-                        <li role="treeitem" class="parent expanded" aria-expanded="true">
-                            Response Headers<span class="header-count">&nbsp;(7)</span>
-                            <span class="header-toggle">view source</span>
-                        </li>
-                        <ol class="children expanded" role="group">
+                        </Treeoutline.Item>
+
+                        <Treeoutline.Item
+                            defaultExpanded
+                            title={
+                                <React.Fragment>
+                                    Response Headers<span class="header-count">&nbsp;(7)</span>
+                                    <span class="header-toggle">view source</span>
+                                </React.Fragment>
+                            }
+                        >
                             <li role="treeitem">
                                 <div class="selection fill"></div>
                                 <div class="header-name">cache-control: </div>
@@ -103,12 +105,17 @@ export default () => {
                                 <div class="header-value source-code">ecstatic-3.3.0</div>
                             </li>
                             <ol class="children" role="group"></ol>
-                        </ol>
-                        <li role="treeitem" class="parent expanded" aria-expanded="true">
-                            Request Headers<span class="header-count">&nbsp;(13)</span>
-                            <span class="header-toggle">view source</span>
-                        </li>
-                        <ol class="children expanded" role="group">
+                        </Treeoutline.Item>
+
+                        <Treeoutline.Item
+                            defaultExpanded
+                            title={
+                                <React.Fragment>
+                                    Request Headers<span class="header-count">&nbsp;(13)</span>
+                                    <span class="header-toggle">view source</span>
+                                </React.Fragment>
+                            }
+                        >
                             <li role="treeitem">
                                 <div class="selection fill"></div>
                                 <div class="header-name">Accept: </div>
@@ -205,22 +212,9 @@ export default () => {
                                 </div>
                             </li>
                             <ol class="children" role="group"></ol>
-                        </ol>
-                        <li role="treeitem" class="parent hidden expanded" aria-expanded="true">
-                            <div class="selection fill"></div>
-                            <span class="tree-element-title"></span>
-                        </li>
-                        <ol class="children hidden expanded" role="group"></ol>
-                        <li role="treeitem" class="parent hidden expanded" aria-expanded="true">
-                            <div class="selection fill"></div>
-                            <span class="tree-element-title"></span>
-                        </li>
-                        <ol class="children hidden expanded" role="group"></ol>
-                        <li role="treeitem" class="parent hidden expanded" aria-expanded="true">
-                            <div class="selection fill"></div>
-                            <span class="tree-element-title">Request Payload</span>
-                        </li>
-                        <ol class="children hidden expanded" role="group"></ol>
+                        </Treeoutline.Item>
+
+                        {/* <Treeoutline.Item defaultExpanded title="Request Payload"></Treeoutline.Item> */}
                     </Treeoutline>
                 </div>
             </div>

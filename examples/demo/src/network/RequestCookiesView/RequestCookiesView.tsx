@@ -14,7 +14,7 @@ export default () => {
                 <span class="request-cookies-title">Request Cookies</span>
                 <span is="dt-checkbox"></span>
             </div>
-            widget vbox cookies-table cookie-table cookies-panel-item
+           
             <div class="cookies-panel-item hidden">No request cookies were sent.</div>
 
             <div class="request-cookies-title">Response Cookies</div>
