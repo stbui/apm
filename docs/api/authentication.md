@@ -10,14 +10,14 @@
 
 获取 API 密钥之后需要在调用 REST API 时将密钥通过请求发送给服务器，目前系统支持两种方式发送 API 密钥：
 
-- 通过 Header 发送 API 密钥
-- 通过传参发送 API 密钥
+-   通过 Header 发送 API 密钥
+-   通过传参发送 API 密钥
 
 如果身份认证成功，返回 HTTP 200，如果身份验证失败，返回 HTTP 401。
 
 ### 通过 Header 发送 API 密钥
 
-使用 Header 方法送 API 密钥需要在发起请求时将密钥放到 X-SS-API-KEY Header 中：
+使用 Header 方法送 API 密钥需要在发起请求时将密钥放到 Authorization Header 中：
 
 请求
 
@@ -28,7 +28,7 @@ GET https://example.com/api/v1/node
 请求 Header
 
 ```
-X-SS-API-KEY: 5c32ea3a-adbb-4434-aa3f-dc49a40d07e8
+Authorization: Basic 5c32ea3a-adbb-4434-aa3f-dc49a40d07e8
 
 ```
 

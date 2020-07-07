@@ -12,13 +12,13 @@
 ### npm
 
 ```
-npm install @stbui/apm-js --save
+npm install @stbui/apmjs --save
 ```
 
 # 配置
 
 ```js
-import apmjs from '@bugsnag/apm-js';
+import apmjs from '@stbui/apmjs';
 
 apmjs.start({
     apiKey: '申请的key',
@@ -74,12 +74,12 @@ module.exports = {
 # React
 
 ```
-npm install --save @stbui/apm-js @stbui/apm-plugin-react
+npm install --save @stbui/apmjs @stbui/apmjs-plugin-react
 ```
 
 ```js
-import apm from '@stbui/apm-js';
-import apmPluginReact from '@stbui/apm-plugin-react';
+import apm from '@stbui/apmjs';
+import apmPluginReact from '@stbui/apmjs-plugin-react';
 ```
 
 ```js

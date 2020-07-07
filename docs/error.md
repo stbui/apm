@@ -53,5 +53,5 @@ Promise.reject('hello');
 若 WebSocket 后端出现错误时，WebSockect 连接错误则有可能出错：
 
 ```js
-var ws = new WebSocket('wss://ap.stbui.com/test');
+var ws = new WebSocket('wss://api.stbui.com/test');
 ```

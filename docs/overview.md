@@ -1,9 +1,0 @@
-https://sentry.io/
-https://www.bugsnag.com/
-https://instabug.com/
-https://backlog.com/
-https://logrocket.com/
-https://trackjs.com/
-https://raygun.com/
-https://github.com/kisslove/web-monitoring
-https://www.frontjs.com/

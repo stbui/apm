@@ -1,1 +1,0 @@
-# Pipeable Operators

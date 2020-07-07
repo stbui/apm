@@ -2,25 +2,25 @@
 
 API 相关的关键概念和术语：
 
-- RESTful
-- URL
-- 请求
-- 响应
+-   RESTful
+-   URL
+-   请求
+-   响应
 
 ## RESTful
 
 API 采用 RESTful 作为 API 标准，其具体实现遵循四个基本设计原则：
 
-- 显式地使用 HTTP 方法（GET、PUT、POST 、DELETE）
-- 无状态
-- 公开目录结构式的 URI
-- 传输 JavaScript Object Notation (JSON)
+-   显式地使用 HTTP 方法（GET、PUT、POST 、DELETE）
+-   无状态
+-   公开目录结构式的 URI
+-   传输 JavaScript Object Notation (JSON)
 
 ## URL
 
-URL 是访问 API 的最终地址，URL 由域名 + api + 版本 + 路径组成，访问不同的 URL 将获取或修改不同的数据。
+URL 是访问 API 的最终地址，URL 由域名 + api + 路径组成，访问不同的 URL 将获取或修改不同的数据。
 
-例如，通过 URL http://example.com/api/v1/node 可以获取到站点的列表，其中域名为 http://example.com/ ，版本为 v1，路径为/node。
+例如，通过 URL http://example.com/api/node 可以获取到站点的列表，其中域名为 http://example.com/ ，路径为/node。
 
 ## 请求
 

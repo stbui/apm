@@ -4,9 +4,9 @@
 
 #### 为什么需要转换代码？
 
--   压缩，减小体积。比如 jQuery 1.9 的源码，压缩前是 252KB，压缩后是 32KB。
+-   压缩，减小体积。
 -   多个文件合并，减少 HTTP 请求数。
--   其他语言编译成 JavaScript。最常见的例子就是 CoffeeScript。
+-   其他语言编译成 JavaScript。
 
 #### 什么是 Source Map?
 
@@ -58,43 +58,34 @@ Grunt 是 JavaScript 项目构建工具。
 1. 使用 grunt-contrib-uglify 压缩 JavaScript 代码时
    配置 grunt-contrib-uglify 插件以生成 Source Map
 
-```
-grunt.initConfig(
-{
-    uglify:
-    {
-        options:
-        {
-            sourceMap: true
-        }
-    }
+```js
+grunt.initConfig({
+    uglify: {
+        options: {
+            sourceMap: true,
+        },
+    },
 });
 ```
 
 2. 使用 grunt-usemin 打包源码时
    grunt-usemin 会依次调用 grunt-contrib-concat 与 grunt-contrib-uglify 对源码进行打包和压缩。因此都需要进行配置:
 
-```
-grunt.initConfig(
-{
-    concat:
-    {
-        options:
-        {
-            sourceMap: true
-        }
-    },
-    uglify:
-    {
-        options:
-        {
+```js
+grunt.initConfig({
+    concat: {
+        options: {
             sourceMap: true,
-            sourceMapIn: function(uglifySource)
-            {
+        },
+    },
+    uglify: {
+        options: {
+            sourceMap: true,
+            sourceMapIn: function (uglifySource) {
                 return uglifySource + '.map';
             },
-        }
-    }
+        },
+    },
 });
 ```
 
@@ -103,19 +94,19 @@ grunt.initConfig(
 Gulp 是 JavaScript 项目构建工具。
 使用 gulp-sourcemaps 生成 Source Map:
 
-```
+```js
 var gulp = require('gulp');
 var plugin1 = require('gulp-plugin1');
 var plugin2 = require('gulp-plugin2');
 var sourcemaps = require('gulp-sourcemaps');
 
-gulp.task('javascript', function() {
-  gulp.src('src/**/*.js')
-    .pipe(sourcemaps.init())
-      .pipe(plugin1())
-      .pipe(plugin2())
-    .pipe(sourcemaps.write('../maps'))
-    .pipe(gulp.dest('dist'));
+gulp.task('javascript', function () {
+    gulp.src('src/**/*.js')
+        .pipe(sourcemaps.init())
+        .pipe(plugin1())
+        .pipe(plugin2())
+        .pipe(sourcemaps.write('../maps'))
+        .pipe(gulp.dest('dist'));
 });
 ```
 
@@ -123,16 +114,16 @@ gulp.task('javascript', function() {
 
 Webpack 是前端打包工具。在其配置文件 webpack.config.js 中设置 devtool 即可生成 Source Map 文件：
 
-```
+```js
 const path = require('path');
 
 module.exports = {
-  entry: './src/index.js',
-  output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist')
-  },
-  devtool: "source-map"
+    entry: './src/index.js',
+    output: {
+        filename: 'bundle.js',
+        path: path.resolve(__dirname, 'dist'),
+    },
+    devtool: 'source-map',
 };
 ```
 
@@ -142,11 +133,10 @@ SystemJS 是模块加载器。
 
 使用 SystemJS Build Tool 生成 Source Map:
 
-```
-builder.bundle('myModule.js', 'outfile.js',
-{
-minify: true,
-sourceMaps: true
+```js
+builder.bundle('myModule.js', 'outfile.js', {
+    minify: true,
+    sourceMaps: true,
 });
 ```
 
