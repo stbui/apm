@@ -59,7 +59,7 @@ export default ({ addNewNetworkRequests }) => {
     useEffect(() => {
         const req = addNewNetworkRequests.map(d => ({
             ...d.details.request,
-            name: 'stbui.js',
+            name: d.details.request.url.split('/').pop(),
             url: d.details.request.url,
             status: d.details.request.statusCode,
             type: 'script',

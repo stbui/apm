@@ -6,7 +6,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 module.exports = {
-    mode: 'development',
+    mode: isDevelopment ? 'development' : 'production',
     devtool: 'source-map',
     entry: {
         main: path.join(__dirname, 'src', 'main.js'),

@@ -11,7 +11,7 @@ export const ANALYTICS_EVENT_TYPES = {
     PROJECT_SETTINGS_OPENED: 'project_settings_opened',
 };
 
-export const SERVER_URL = 'http://127.0.0.1:9000/api/';
+export const SERVER_URL = 'api/';
 
 export const BROKER_URL = 'wss://127.0.0.1/api/';
 

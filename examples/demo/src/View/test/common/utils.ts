@@ -43,14 +43,18 @@ function m(a) {
 function n(a) {
     return IS_ABSOLUTE_URL.test(a);
 }
-function o(a, b) {
-    var c = angular.element('<iframe class="ng-hide"></iframe>');
-    angular.element('body').append(c);
-    var d = c[0].contentDocument;
-    angular.element('head', d).append('<base href="' + a + '">'),
-        angular.element('body', d).append('<a href="' + b + '"></a>');
-    var e = angular.element('a', d)[0];
-    return angular.element(c).remove(), e.href;
+function evaluateAbsoluteUrl(a, b) {
+    // var c = angular.element('<iframe class="ng-hide"></iframe>');
+    // angular.element('body').append(c);
+    // var d = c[0].contentDocument;
+    // angular.element('head', d).append('<base href="' + a + '">'),
+    //     angular.element('body', d).append('<a href="' + b + '"></a>');
+    // var e = angular.element('a', d)[0];
+    // angular.element(c).remove();
+    // return e.href;
+
+    // FIXME:
+    return window.location.href;
 }
 function p(a, b, c?) {
     var d = '<' + a;
@@ -63,16 +67,18 @@ function p(a, b, c?) {
     );
 }
 function q(a, b) {
-    return (a = lodash.trim(a)), b > 1 && (a += 's'), a;
+    a = lodash.trim(a);
+    b > 1 && (a += 's');
+    return a;
 }
 function r(a) {
     var b = '?';
-    return (
-        angular.forEach(a, function (a, c) {
-            b += c + '=' + a + '&';
-        }),
-        lodash.trimEnd(b, '&')
-    );
+
+    angular.forEach(a, function (a, c) {
+        b += c + '=' + a + '&';
+    });
+
+    return lodash.trimEnd(b, '&');
 }
 function s(a) {
     return t(a) || null === a;
@@ -216,7 +222,7 @@ export const utils = {
     concatenateArrays: l,
     isAbsoluteUrl: n,
     getUrlProtocol: m,
-    evaluateAbsoluteUrl: o,
+    evaluateAbsoluteUrl: evaluateAbsoluteUrl,
     buildHtmlString: p,
     pluralize: q,
     getQueryString: r,

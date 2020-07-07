@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "start": "cross-env NODE_ENV=development webpack-dev-server --hot --config webpack.config.js",
-        "build": "webpack"
+        "build": "cross-env NODE_ENV=production webpack --config webpack.config.js"
     },
     "license": "MIT",
     "devDependencies": {

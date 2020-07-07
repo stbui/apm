@@ -579,6 +579,11 @@ function P(element, name: string, value: string): boolean {
     // var d = angular.element(element);
     const matches = document.documentElement.matches;
 
+    // FIXME:
+    if (!element) {
+        return true;
+    }
+
     return (
         (matches.call(element, 'script') && 'src' === name) ||
         (matches.call(element, 'iframe') && 'src' === name) ||
@@ -595,7 +600,6 @@ interface nodeProperty {
     frameElementId: number;
     styleRules: any;
 
-    // 不确定
     top?: number;
     left?: number;
 }
@@ -757,6 +761,7 @@ export class DocumentNode {
         const parentNode = getParentNode(referenceNode);
         const matches = document.documentElement.matches;
 
+        // FIXME:
         if (
             (!matches.call(parentNode, 'script') || newNode.nodeType !== Node.TEXT_NODE) &&
             parentNode &&

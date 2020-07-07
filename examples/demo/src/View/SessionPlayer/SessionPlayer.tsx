@@ -94,7 +94,8 @@ export const SessionPlayer = ({ session, activitiesData, startTime, settings, fi
     });
     const [addNewLogs, setAddNewLogs] = useState([]);
     const [addNewNetworkRequests, setAddNewNetworkRequests] = useState([]);
-    const [position, setPosition] = useState(1000);
+    const [position, setPosition] = useState(600);
+    const [mode, setMode] = useState(true);
 
     const addActivities = (alias: IActivity[]) => {
         activities.push(alias);
@@ -172,6 +173,11 @@ export const SessionPlayer = ({ session, activitiesData, startTime, settings, fi
 
     const updateExecuteEventState = newValue => {
         fireExecuteEvent(newValue);
+    };
+
+    //
+    const onChangeMode = () => {
+        setMode(!mode);
     };
 
     useEffect(() => {
@@ -283,7 +289,7 @@ export const SessionPlayer = ({ session, activitiesData, startTime, settings, fi
 
     return (
         <React.Fragment>
-            <SplitWidget direction="hbox">
+            <SplitWidget direction={mode ? 'vertical' : 'hbox'}>
                 <SplitWidget.Sidebar width={position}>
                     <div className="player-container _md layout-column flex">
                         <div className="viewer-wrap _md layout-row flex">
@@ -333,7 +339,11 @@ export const SessionPlayer = ({ session, activitiesData, startTime, settings, fi
                     </div>
                 </SplitWidget.Sidebar>
                 <SplitWidget.Main>
-                    <Home addNewLogs={addNewLogs} addNewNetworkRequests={addNewNetworkRequests} />
+                    <Home
+                        addNewLogs={addNewLogs}
+                        addNewNetworkRequests={addNewNetworkRequests}
+                        onChangeMode={onChangeMode}
+                    />
                 </SplitWidget.Main>
                 <SplitWidget.Resizer x={position} onDrap={value => setPosition(value)}></SplitWidget.Resizer>
             </SplitWidget>

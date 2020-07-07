@@ -20,8 +20,8 @@ const tablistData = [
     { label: 'Lighthouse', width: 83 },
 ];
 
-export const Home = ({ addNewLogs, addNewNetworkRequests }) => {
-    const [module, setModule] = useState(4);
+export const Home = ({ addNewLogs, addNewNetworkRequests, onChangeMode }) => {
+    const [module, setModule] = useState(3);
 
     const onTabbedPaneChange = key => setModule(key);
 
@@ -66,7 +66,7 @@ export const Home = ({ addNewLogs, addNewNetworkRequests }) => {
                             <Icon type="largeicons" coordinates="-140px 96px" />
                         </ToolbarButton>
                         <ToolbarButton>
-                            <Icon type="largeicons" coordinates="-112px 72px" />
+                            <Icon type="largeicons" coordinates="-112px 72px" onClick={onChangeMode} />
                         </ToolbarButton>
                         <div class="toolbar-divider toolbar-item"></div>
                     </Toolbar>

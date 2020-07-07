@@ -7,12 +7,13 @@ export const SpriteSheets = {
     arrowicons: { width: 19, height: 19, padding: 0 },
 };
 
-export default ({ type, mask, coordinates }) => {
+export default ({ type, mask, coordinates, ...other }) => {
     return (
         <span
             is="ui-icon"
             class={`toolbar-glyph spritesheet-${type} ${type}-node-search icon-mask`}
             style={`--spritesheet-position:${coordinates}; width: 28px; height: 24px;`}
+            {...other}
         ></span>
     );
 };

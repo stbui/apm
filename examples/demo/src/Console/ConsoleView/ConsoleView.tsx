@@ -79,6 +79,21 @@ const ConsoleItem = ({ text, anchor, children }) => {
     );
 };
 
+const formatUTCDate = date => {
+    const now = new Date(date);
+    let hh = now.getUTCHours();
+    let mm = now.getUTCMinutes();
+    let ss = now.getUTCSeconds();
+    let sss = now.getUTCMilliseconds();
+
+    hh = hh <= 9 ? `0${hh}` : hh;
+    mm = mm <= 9 ? `0${mm}` : mm;
+    ss = ss <= 9 ? `0${ss}` : ss;
+    sss = sss <= 9 ? `0${sss}` : sss;
+
+    return `${hh}:${mm}:${ss}:${sss}`;
+};
+
 export default ({ children, addNewLogs }) => {
     const [logs, setLogs] = useState([]);
 
@@ -93,8 +108,8 @@ export default ({ children, addNewLogs }) => {
                     <div aria-hidden="true" style="height: 0px; color: transparent;">
                         &#65279;
                     </div>
-                    <div tabindex="0" class="console-group console-group-messages" style="">
-                        {/* <ConsoleItem anchor="log.js?1afd:24">[HMR] Waiting for update signal from WDS...</ConsoleItem>
+                    {/* <div tabindex="0" class="console-group console-group-messages" style=""> */}
+                    {/* <ConsoleItem anchor="log.js?1afd:24">[HMR] Waiting for update signal from WDS...</ConsoleItem>
 
                         <ConsoleItem anchor="react-dom.development.js?61bb:27705">
                             <span style="contain: paint; display: inline-block; max-width: 100%; font-weight: bold;">
@@ -105,7 +120,7 @@ export default ({ children, addNewLogs }) => {
                             </span>
                         </ConsoleItem> */}
 
-                        {/* <div tabindex="-1" class="console-message-wrapper console-from-api console-info-level">
+                    {/* <div tabindex="-1" class="console-message-wrapper console-from-api console-info-level">
                             <div class="console-message">
                                 <span class="source-code">
                                     <span class="console-message-anchor">
@@ -130,12 +145,13 @@ export default ({ children, addNewLogs }) => {
                                 </span>
                             </div>
                         </div> */}
-                    </div>
+                    {/* </div> */}
 
                     {logs.map(log => {
                         if (log.type === 'console_warn') {
                             return (
                                 <MessageWrapper type="warning">
+                                    {formatUTCDate(log.time)}
                                     <Message>
                                         <WarnIcon />
                                         <div class="console-message-stack-trace-toggle">
@@ -166,6 +182,7 @@ export default ({ children, addNewLogs }) => {
                         if (log.type === 'console_log') {
                             return (
                                 <MessageWrapper type="info">
+                                    {formatUTCDate(log.time)}
                                     <Message>
                                         <SourceCode>
                                             <MessageAnchor>
@@ -180,6 +197,7 @@ export default ({ children, addNewLogs }) => {
 
                         return (
                             <MessageWrapper type="error">
+                                {formatUTCDate(log.time)}
                                 <Message>
                                     <ErrorIcon />
                                     <div class="console-message-stack-trace-toggle">
@@ -338,7 +356,7 @@ export default ({ children, addNewLogs }) => {
                             </span>
                         </div>
                     </div> */}
-                    <div
+                    {/* <div
                         tabindex="-1"
                         class="console-message-wrapper console-error-level console-adjacent-user-command-result"
                     >
@@ -372,7 +390,7 @@ export default ({ children, addNewLogs }) => {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
 
                     <div aria-hidden="true" style="height: 0px; color: transparent;">
                         &#65279;
