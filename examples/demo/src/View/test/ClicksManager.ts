@@ -1,6 +1,6 @@
 import lodash from 'lodash';
 import { UserClick } from './UserClick';
-import { angular } from '../Player/angular';
+import { angular } from '../test/common/angular';
 
 function c(clicksManager: ClicksManager, click: UserClick) {
     lodash.remove(clicksManager.clicksQueue, function (a) {

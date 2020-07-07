@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { angular } from '../Player/angular';
+import { angular } from '../test/common/angular';
 import { ClicksManager } from '../test/ClicksManager';
 
 var clicksManager = new ClicksManager();

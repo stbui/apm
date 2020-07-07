@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { last, noop } from 'lodash';
-import PlayerTimeline from '../PlayerTimeline';
-import Controls from '../Player/Controls';
-import { PLAYER_CONFIG, TAB_VISIBILITY } from '../Player/constant';
-
-import SessionViewer from '../SessionViewer';
-import { EVENT_TYPE } from '../test/constant';
+import { EVENT_TYPE, TAB_VISIBILITY, PLAYER_CONFIG } from '../test/constant';
 import { Player } from '../test/player';
 import { Activities } from '../test/Activities';
 import { Activity, IActivity } from '../test/Activity';
+import PlayerTimeline from '../PlayerTimeline';
+import SessionViewer from '../SessionViewer';
+import Controls from '../Controls';
 import Console from '../Console';
 
 import { SplitWidget } from '../../components';

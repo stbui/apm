@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import './Controls.scss';
 
-import Button from './Button';
-import ButtonNext from './ButtonNext';
-import ButtonRepeat from './ButtonRepeat';
-import ButtonPlay from './ButtonPlay';
-import ButtonPause from './ButtonPause';
-import ButtonConsole from './ButtonConsole';
-import ButtonDownload from './ButtonDownload';
-import ButtonSettings from './ButtonSettings';
+import Button, {
+    ButtonNext,
+    ButtonRepeat,
+    ButtonPlay,
+    ButtonPause,
+    ButtonConsole,
+    ButtonDownload,
+    ButtonSettings,
+} from '../Button';
 
 const Controls = ({
     children,

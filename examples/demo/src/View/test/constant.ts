@@ -60,3 +60,23 @@ export const CONSOLE_CONSTANTS = {
     HEIGHT: 300,
     STEP_HEIGHT: 32,
 };
+
+export const PLAYER_CONFIG = {
+    PLAY_SPEED: 50,
+    MAX_INACTIVITY_TIME: 3000,
+    EVENTS_BATCH_SIZE: 50,
+    EVENTS_BATCH_WAIT_TIME: 0,
+    TAB_HIDDEN_MESSAGE_TIME: 1000,
+    GO_LIVE_DELAY_TIME: 1500,
+    LAG_TIME: 500,
+    MILLISECONDS_PER_FRAME: 33,
+};
+
+export const NAMESPACES = {
+    HTML: 'http://www.w3.org/1999/xhtml',
+    SVG: 'http://www.w3.org/2000/svg',
+};
+
+export const PROPERTY_OBJECT_KEY = '__sessionstack_player__';
+
+export const ALLOWED_SRC_PROTOCOLS = ['http', 'https', 'ftp', 'data'];

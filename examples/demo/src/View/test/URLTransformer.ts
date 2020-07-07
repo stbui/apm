@@ -1,3 +1,8 @@
+import lodash from 'lodash';
+import { SERVER_URL } from './common/constant';
+
+var h = SERVER_URL + 'resources';
+
 function encodedBaseUrl(baseUrl: string): string {
     return encodeURIComponent(encodeURIComponent(baseUrl));
 }
@@ -10,14 +15,13 @@ function f(b) {
 function g(b) {
     return lodash.startsWith(b, h);
 }
-var h = SERVER_URL + 'resources';
 
 export class URLTransformer {
     public encodedBaseUrl: string;
-    public sessionId;
+    public sessionId: string;
     public timestamp;
 
-    constructor(baseUrl: string, sessionId) {
+    constructor(baseUrl: string, sessionId: string) {
         this.encodedBaseUrl = encodedBaseUrl(baseUrl);
         this.sessionId = sessionId;
         this.timestamp = 0;
@@ -29,11 +33,12 @@ export class URLTransformer {
         var b = this,
             c = h;
 
-        return (
-            (c += '/' + b.sessionId),
-            (c += '/' + b.timestamp),
-            (c += '/' + b.encodedBaseUrl),
-            (c += '/' + encodedBaseUrl(a))
-        );
+        c += '/' + b.sessionId;
+        c += '/' + b.timestamp;
+        c += '/' + b.encodedBaseUrl;
+
+        c += '/' + encodedBaseUrl(a);
+
+        return c;
     };
 }

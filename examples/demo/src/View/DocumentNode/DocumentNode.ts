@@ -1,8 +1,13 @@
-import { URLTransformer } from './URLTransformer';
-import { angular } from './angular';
-import { timeout } from './timeout';
-import utils from './utils';
-import { NAMESPACES, CROSS_ORIGIN_FRAME_BACKGROUND, PROPERTY_OBJECT_KEY, ALLOWED_SRC_PROTOCOLS } from './constant';
+import { URLTransformer } from '../test/URLTransformer';
+import { angular } from '../test/common/angular';
+import { timeout } from '../test/timeout';
+import { utils } from '../test/common/utils';
+import {
+    CROSS_ORIGIN_FRAME_BACKGROUND,
+    NAMESPACES,
+    PROPERTY_OBJECT_KEY,
+    ALLOWED_SRC_PROTOCOLS,
+} from '../test/constant';
 
 interface attributes {
     name: string;

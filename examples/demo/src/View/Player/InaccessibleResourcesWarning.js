@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+// import React, { useState, useRef, useEffect } from 'react';
 
-const InaccessibleResourcesWarning = ({ sessionId }) => {
-    return <div></div>;
-};
+// const InaccessibleResourcesWarning = ({ sessionId }) => {
+//     return <div></div>;
+// };
 
-export default InaccessibleResourcesWarning;
+// export default InaccessibleResourcesWarning;

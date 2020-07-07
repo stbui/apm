@@ -1,74 +1,74 @@
-import { tokenManager } from './tokenManager';
-import { SERVER_URL } from './constant'
+// import { tokenManager } from './tokenManager';
+// import { SERVER_URL } from './constant'
 
-export function restSettings() {
-    function buildUrl(path) {
-        return SERVER_URL + path;
-    }
-    function formatUrl(a, b, c) {
-        var d = '{' + b + '}';
-        return a.replace(d, c);
-    }
-    return {
-        buildUrl,
-        formatUrl,
-    };
-}
+// export function restSettings() {
+//     function buildUrl(path) {
+//         return SERVER_URL + path;
+//     }
+//     function formatUrl(a, b, c) {
+//         var d = '{' + b + '}';
+//         return a.replace(d, c);
+//     }
+//     return {
+//         buildUrl,
+//         formatUrl,
+//     };
+// }
 
-export function auth() {
-    let D = null;
-    const loggedIn = 'loggedIn';
-    const loggedOut = 'loggedOut';
-    const loginUrl = restSettings().buildUrl('login');
-    const meUrl = restSettings().buildUrl('me');
+// export function auth() {
+//     let D = null;
+//     const loggedIn = 'loggedIn';
+//     const loggedOut = 'loggedOut';
+//     const loginUrl = restSettings().buildUrl('login');
+//     const meUrl = restSettings().buildUrl('me');
 
-    // todo
+//     // todo
 
-    const passwordReset = restSettings().buildUrl('password_reset/:token');
-    const acceptInvitation = restSettings().buildUrl('accept_invitation/:token');
-    const registerTrial = restSettings().buildUrl('register/trial');
-    const registerValidation = restSettings().buildUrl('register/validation');
+//     const passwordReset = restSettings().buildUrl('password_reset/:token');
+//     const acceptInvitation = restSettings().buildUrl('accept_invitation/:token');
+//     const registerTrial = restSettings().buildUrl('register/trial');
+//     const registerValidation = restSettings().buildUrl('register/validation');
 
-    function login(username, password) {
-        const headers = { Authorization: tokenManager.generateBasicToken(username + ':' + password) };
+//     function login(username, password) {
+//         const headers = { Authorization: tokenManager.generateBasicToken(username + ':' + password) };
 
-        return fetch(loginUrl, { headers }).then(res => {
-            return res;
-        });
-    }
+//         return fetch(loginUrl, { headers }).then(res => {
+//             return res;
+//         });
+//     }
 
-    function logout() {
-        D = null;
-        tokenManager.clearAuthToken();
-        // loggedOut
-    }
+//     function logout() {
+//         D = null;
+//         tokenManager.clearAuthToken();
+//         // loggedOut
+//     }
 
-    function loadCurrentUser() {
-        return new Promise((resolve, reject) => {
-            resolve([]);
-        });
-    }
+//     function loadCurrentUser() {
+//         return new Promise((resolve, reject) => {
+//             resolve([]);
+//         });
+//     }
 
-    return {
-        login,
-        logout,
-        isCurrentUserLoaded: () => { },
-        isLoggedIn: () => { },
-        loadCurrentUser,
-        getCurrentUser: () => { },
-        clearCurrentUser: () => { },
-        getAuthToken: () => { },
-        hasAuthToken: () => { },
-        getAccessToken: () => { },
-        onLoggedIn: () => { },
-        onLoggedOut: () => { },
-        resetPassword: () => { },
-        getPasswordResetEmail: () => { },
-        setNewPassword: () => { },
-        updateProfile: () => { },
-        onAuthenticate: () => { },
-        acceptInvitation: () => { },
-        register: () => { },
-        validateUser: () => { },
-    };
-}
+//     return {
+//         login,
+//         logout,
+//         isCurrentUserLoaded: () => { },
+//         isLoggedIn: () => { },
+//         loadCurrentUser,
+//         getCurrentUser: () => { },
+//         clearCurrentUser: () => { },
+//         getAuthToken: () => { },
+//         hasAuthToken: () => { },
+//         getAccessToken: () => { },
+//         onLoggedIn: () => { },
+//         onLoggedOut: () => { },
+//         resetPassword: () => { },
+//         getPasswordResetEmail: () => { },
+//         setNewPassword: () => { },
+//         updateProfile: () => { },
+//         onAuthenticate: () => { },
+//         acceptInvitation: () => { },
+//         register: () => { },
+//         validateUser: () => { },
+//     };
+// }

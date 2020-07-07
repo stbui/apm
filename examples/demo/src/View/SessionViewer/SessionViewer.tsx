@@ -9,11 +9,11 @@ import {
 } from '../test/constant';
 import { AsyncWhile } from '../test/AsyncWhile';
 import { utils } from '../test/common';
+import { angular } from '../test/common/angular';
+import { timeout } from '../test/timeout';
 
-import { DocumentNode } from '../Player/DocumentNode';
-import { angular } from '../Player/angular';
+import DocumentNode from '../DocumentNode';
 import ViewerOverlay from '../ViewerOverlay';
-import { timeout } from '../Player/timeout';
 
 const STYLESHEETS_SELECTOR = 'style, link[rel="stylesheet"]';
 const KEYSTROKE_OPTIONS = { END_USER_TYPE_DELAY_SECONDS: 2 };
