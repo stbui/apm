@@ -3,57 +3,57 @@ import { BUILD_ENV } from './constant';
 import { $location, $base64, $cookies } from './resource';
 
 //
-var o,
-    accessToken,
-    q = 'authToken';
+let TOKEN;
+let accessToken;
+let cookiesKey = 'authToken';
 
-function f(a) {
-    var now = new Date(),
-        d = new Date(now.getFullYear() + 1, now.getMonth(), now.getDate());
+function _setAuthToken(token) {
+    const now = new Date();
+    const expires = new Date(now.getFullYear() + 1, now.getMonth(), now.getDate());
 
-    $cookies.put(q, a, {
-        expires: d,
+    $cookies.put(cookiesKey, token, {
+        expires: expires,
     });
 }
-function g() {
-    var a = $location.search().auth_token;
+function _getAuthToken() {
+    let authToken = $location.search().auth_token;
 
-    if (a) {
-        $cookies.put(q, a, {
+    if (authToken) {
+        $cookies.put(cookiesKey, authToken, {
             path: '/',
         });
     } else {
-        a = $cookies.get(q);
+        authToken = $cookies.get(cookiesKey);
     }
 
-    return a;
+    return authToken;
 }
-function h() {
+function _getAccessToken() {
     accessToken = $location.search().access_token;
     return accessToken;
 }
-function setAuthToken(a) {
+function setAuthToken(token) {
     clearAuthToken();
-    o = a;
-    f(a);
+    TOKEN = token;
+    _setAuthToken(token);
 }
 function getAuthToken() {
-    return o ? o : g();
+    return TOKEN ? TOKEN : _getAuthToken();
 }
 function getAccessToken() {
-    return accessToken ? accessToken : h();
+    return accessToken ? accessToken : _getAccessToken();
 }
 function hasAuthToken() {
     const authToken = getAuthToken();
     return !!authToken;
 }
 function clearAuthToken() {
-    o = null;
-    $cookies.remove(q);
-    !BUILD_ENV.IS_DEV && BUILD_ENV.IS_SAAS && utils.removeCookieByName(q);
+    TOKEN = null;
+    $cookies.remove(cookiesKey);
+    !BUILD_ENV.IS_DEV && BUILD_ENV.IS_SAAS && utils.removeCookieByName(cookiesKey);
 }
 function generateBasicToken(b) {
-    var auth = $base64.encode(b);
+    const auth = $base64.encode(b);
     return 'Basic ' + auth;
 }
 

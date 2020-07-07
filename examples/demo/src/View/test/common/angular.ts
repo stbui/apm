@@ -133,4 +133,10 @@ export const angular = {
     is() {
         return false;
     },
+
+    isString(val) {
+        return typeof val === 'string';
+    },
+
+    noop() {},
 };

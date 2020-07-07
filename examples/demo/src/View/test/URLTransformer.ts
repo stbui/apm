@@ -30,12 +30,11 @@ export class URLTransformer {
     transform = function (a) {
         if (!e(a)) return a;
 
-        var b = this,
-            c = h;
+        var c = h;
 
-        c += '/' + b.sessionId;
-        c += '/' + b.timestamp;
-        c += '/' + b.encodedBaseUrl;
+        c += '/' + this.sessionId;
+        c += '/' + this.timestamp;
+        c += '/' + this.encodedBaseUrl;
 
         c += '/' + encodedBaseUrl(a);
 

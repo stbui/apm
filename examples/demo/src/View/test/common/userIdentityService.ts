@@ -1,9 +1,9 @@
 import lodash from 'lodash';
 import { utils } from './utils';
 
-function c(c) {
+function formatCustomFields(c) {
     return c
-        ? lodash.map(c, function(c) {
+        ? lodash.map(c, function (c) {
               var d = lodash.lowerCase(c.key);
               return {
                   label: lodash.upperFirst(d),
@@ -15,5 +15,5 @@ function c(c) {
 }
 
 export const userIdentityService = {
-    formatCustomFields: c,
+    formatCustomFields: formatCustomFields,
 };

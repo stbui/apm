@@ -149,20 +149,19 @@ function L(a) {
 function M(a, b, c) {
     if (!a && !b) return !1;
     if (!a || !b) return !0;
-    var d = N(a, c),
-        e = N(b, c);
+    var d = N(a, c);
+    var e = N(b, c);
     return !G(d, e);
 }
 function N(a, b) {
     var c = shallowClone(a);
-    return (
-        delete c.details.id,
-        {
-            time: b ? b(c.time) : c.time,
-            type: c.type,
-            details: c.details,
-        }
-    );
+    delete c.details.id;
+
+    return {
+        time: b ? b(c.time) : c.time,
+        type: c.type,
+        details: c.details,
+    };
 }
 function O(a, b) {
     if (!a) return !1;
@@ -196,11 +195,12 @@ function R(a, b) {
     f.replaceSync(b), (a.adoptedStyleSheets = [f]);
 }
 function S(a) {
-    var b = '(\\d+(?:px|em|%)|auto|inherit|initial|unset)',
-        c = new RegExp('inset:\\s*' + b + '\\s*;'),
-        d = new RegExp('inset:\\s*' + b + '\\s*' + b + ';'),
-        e = new RegExp('inset:\\s*' + b + '\\s*' + b + '\\s*' + b + ';'),
-        f = new RegExp('inset:\\s*' + b + '\\s*' + b + '\\s*' + b + '\\s*' + b + ';');
+    var b = '(\\d+(?:px|em|%)|auto|inherit|initial|unset)';
+    var c = new RegExp('inset:\\s*' + b + '\\s*;');
+    var d = new RegExp('inset:\\s*' + b + '\\s*' + b + ';');
+    var e = new RegExp('inset:\\s*' + b + '\\s*' + b + '\\s*' + b + ';');
+    var f = new RegExp('inset:\\s*' + b + '\\s*' + b + '\\s*' + b + '\\s*' + b + ';');
+
     return (
         (a = a.replace(c, 'top: $1; left: $1; right: $1; bottom: $1;')),
         (a = a.replace(d, 'top: $1; left: $2; right: $2; bottom: $1;')),

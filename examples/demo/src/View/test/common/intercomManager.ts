@@ -1,27 +1,8 @@
-import { utils } from './utils';
+const EVENTS = {
+    REACHED_50_PERCENT: '50%-daily-sessions-reached',
+    REACHED_90_PERCENT: '90%-daily-sessions-reached',
+};
 
-const APP_ID = 'h9g5kdue';
-
-var i = {
-        REACHED_50_PERCENT: '50%-daily-sessions-reached',
-        REACHED_90_PERCENT: '90%-daily-sessions-reached',
-    },
-    j = utils.isFunction(window.Intercom);
-
-function c() {}
-function d(a) {
-    j && window.Intercom('trackEvent', a);
-}
-function e(a) {
-    if (j)
-        if (a) {
-            var b = g(a);
-            window.Intercom('update', b);
-        } else window.Intercom('update');
-}
-function f() {
-    j && window.Intercom('shutdown');
-}
 function g(a) {
     return {
         name: a.firstName + ' ' + a.lastName,
@@ -33,15 +14,19 @@ function g(a) {
         organization_role: a.organizationRole,
     };
 }
-function h(a) {
-    j && window.Intercom('showNewMessage', a);
-}
+
+function boot() {}
+function trackEvent(a) {}
+function update(a) {}
+function shutDown() {}
+
+function showNewMessage(a) {}
 
 export const intercomManager = {
-    boot: c,
-    update: e,
-    shutDown: f,
-    trackEvent: d,
-    showNewMessage: h,
-    EVENTS: i,
+    boot: boot,
+    update: update,
+    shutDown: shutDown,
+    trackEvent: trackEvent,
+    showNewMessage: showNewMessage,
+    EVENTS: EVENTS,
 };

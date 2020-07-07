@@ -9,60 +9,58 @@ const $rootScope: any = {};
 
 //
 
-var I = null,
-    J = 'loggedIn',
-    K = 'loggedOut',
-    L = restSettings.buildUrl('login'),
-    M = restSettings.buildUrl('auth_method/:organization'),
-    N = $resource(M),
-    O = restSettings.buildUrl('auth_settings/:organization'),
-    P = $resource(O),
-    Q = restSettings.buildUrl('me'),
-    R = $resource(Q, null, {
-        update: {
-            method: 'PUT',
-        },
-    }),
-    S = restSettings.buildUrl('password_reset/:token'),
-    T = $resource(S, null, {
-        update: {
-            method: 'PUT',
-        },
-    }),
-    U = restSettings.buildUrl('accept_invitation/:token'),
-    V = $resource(U),
-    W = restSettings.buildUrl('register/trial'),
-    X = $resource(W),
-    Y = restSettings.buildUrl('register/validation/user'),
-    Z = $resource(Y),
-    $ = restSettings.buildUrl('register/validation/email'),
-    _ = $resource($),
-    aa = restSettings.buildUrl('organization_url'),
-    ba = $resource(aa);
+var I = null;
+var J = 'loggedIn';
+var K = 'loggedOut';
+var loginUrl = restSettings.buildUrl('login');
+var M = restSettings.buildUrl('auth_method/:organization');
+var N = $resource(M);
+var O = restSettings.buildUrl('auth_settings/:organization');
+var P = $resource(O);
+var Q = restSettings.buildUrl('me');
+var R = $resource(Q, null, {
+    update: {
+        method: 'PUT',
+    },
+});
+var S = restSettings.buildUrl('password_reset/:token');
+var T = $resource(S, null, {
+    update: {
+        method: 'PUT',
+    },
+});
+var U = restSettings.buildUrl('accept_invitation/:token');
+var V = $resource(U);
+var W = restSettings.buildUrl('register/trial');
+var X = $resource(W);
+var Y = restSettings.buildUrl('register/validation/user');
+var Z = $resource(Y);
+var $ = restSettings.buildUrl('register/validation/email');
+var _ = $resource($);
+var aa = restSettings.buildUrl('organization_url');
+var ba = $resource(aa);
 
-function login(c, d) {
-    var e = $q.defer(),
-        g = tokenManager.generateBasicToken(c + ':' + d),
-        h = {
-            headers: {
-                Authorization: g,
-            },
-        };
-    return (
-        $http
-            .get(L, h)
-            .success(function (a, b, c, d) {
-                z(a), e.resolve(a);
-            })
-            .error(function (a, b, c, d) {
-                j(),
-                    e.reject({
-                        data: a,
-                        status: b,
-                    });
-            }),
-        e.promise
-    );
+function login(username: string, password: string) {
+    const Authorization = tokenManager.generateBasicToken(username + ':' + password);
+    const headers = {
+        headers: {
+            Authorization: Authorization,
+        },
+    };
+
+    return fetch(loginUrl, headers)
+        .then(res => res.json())
+        .then(res => {
+            z(res);
+            return res;
+        })
+        .catch(error => {
+            j();
+            return {
+                data: error,
+                status: error,
+            };
+        });
 }
 function i(a) {
     return promise.execute(N.get, {
@@ -149,12 +147,12 @@ function y(a, b, c) {
         }
     );
 }
-function z(a) {
-    tokenManager.setAuthToken(a.token),
-        l(a),
-        s(a, {
-            hasLoggedFromLogin: !0,
-        });
+function z(data) {
+    tokenManager.setAuthToken(data.token);
+    l(data);
+    s(data, {
+        hasLoggedFromLogin: !0,
+    });
 }
 function A(a, b) {
     return promise.execute(

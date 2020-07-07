@@ -4,5 +4,5 @@ import Player from './Player';
 import './index.scss';
 
 export default () => {
-    return <Player sessionId="5eef8c0a034ee93c3dde1034" />;
+    return <Player sessionId="5ed51f8b33f0736bcdfd046a" />;
 };

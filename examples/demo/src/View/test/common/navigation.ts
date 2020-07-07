@@ -9,42 +9,49 @@ const URL_PROTOCOL = {
 function e() {
     return FRONTEND_URL + 'player';
 }
-function f(b, c, d) {
+function openSessionInNewWindow(b, c, d) {
     var e = i({
         sessionId: b,
         forceHttp: c,
     });
-    (e += j({
+    e += j({
         source: d,
-    })),
-        $window.open(e);
+    });
+    $window.open(e);
 }
-function g(b, c) {
+function openLiveSessionInNewWindow(b, c) {
     var d = i({
         sessionId: b,
         forceHttp: c,
     });
-    (d += j({
+
+    d += j({
         play_live: !0,
         source: 'online_users_dashboard',
-    })),
-        $window.open(d);
+    });
+
+    $window.open(d);
 }
-function h(b, c, d) {
+function openLogInNewWindow(b, c, d) {
     var e = k(b, c, d);
-    (e += j({
+    e += j({
         source: 'events_and_errors_dashboard',
-    })),
-        $window.open(e);
+    });
+    $window.open(e);
 }
 function i(a) {
     var b = e() + '/#/sessions/' + a.sessionId;
-    return a.forceHttp && b.startsWith(URL_PROTOCOL.HTTPS) && (b = b.replace(URL_PROTOCOL.HTTPS, URL_PROTOCOL.HTTP)), b;
+
+    a.forceHttp && b.startsWith(URL_PROTOCOL.HTTPS) && (b = b.replace(URL_PROTOCOL.HTTPS, URL_PROTOCOL.HTTP));
+
+    return b;
 }
 function j(a) {
-    var b = '',
-        c = 0;
+    var b = '';
+    var c = 0;
+
     for (var d in a) (b += 0 === c ? '?' : '&'), (b += d + '=' + a[d]), c++;
+
     return b;
 }
 function k(a, b, c) {
@@ -56,7 +63,7 @@ function k(a, b, c) {
 }
 
 export const navigation = {
-    openSessionInNewWindow: f,
-    openLiveSessionInNewWindow: g,
-    openLogInNewWindow: h,
+    openSessionInNewWindow: openSessionInNewWindow,
+    openLiveSessionInNewWindow: openLiveSessionInNewWindow,
+    openLogInNewWindow: openLogInNewWindow,
 };

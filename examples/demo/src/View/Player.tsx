@@ -6,20 +6,9 @@ import { playerSettings } from './test/playerSettings';
 import { SessionDataClient } from './test/SessionDataClient';
 import SessionPlayer from './SessionPlayer';
 
-import mock from './Player/mock';
-import { a } from './Player/mock2';
-
-// const activitiesMock = a;
-const activitiesMock = mock.activities;
-
 let initialSettings: InitialSettings;
 let sessionDataClient: SessionDataClient;
 const settings: any = {};
-
-// 从url上获取;
-// this.sessionId
-// const sessionId = '5ed51f8b33f0736bcdfd046a';
-let logId;
 
 let startTime = 0;
 let errors = {};
@@ -30,7 +19,7 @@ let pauseActivity;
 let timestamp;
 let time: number = -1;
 
-export default ({sessionId}) => {
+export default ({ sessionId, logId }) => {
     const [session, setSession] = useState();
     const [activities, setActivities] = useState([]);
     const [finishLoadingStatus, setFinishLoadingStatus] = useState(false);
@@ -95,20 +84,23 @@ export default ({sessionId}) => {
         sessionDataClient = new SessionDataClient(sessionId, logId, settings.settings.general.playLive);
 
         // 页面快照
-        sessionDataClient.loadSession().then(data => {
-            // 初始化配置参数
-            initialSettings = new InitialSettings(
-                data.sessionData.session,
-                data.sessionData.log,
-                data.sessionData.askUserForStreamingPermission,
-                data.sessionData.customOrigin,
-                settings.settings.general,
-                settings.settings.analytics,
-                data.featureFlags
-            );
+        sessionDataClient
+            .loadSession()
+            .then(data => {
+                // 初始化配置参数
+                initialSettings = new InitialSettings(
+                    data.sessionData.session,
+                    data.sessionData.log,
+                    data.sessionData.askUserForStreamingPermission,
+                    data.sessionData.customOrigin,
+                    settings.settings.general,
+                    settings.settings.analytics,
+                    data.featureFlags
+                );
 
-            sessionPlayerApi.loadSession(initialSettings);
-        }).catch(error=>console.log(error));
+                sessionPlayerApi.loadSession(initialSettings);
+            })
+            .catch(error => console.log(error));
     }, []);
 
     useEffect(() => {

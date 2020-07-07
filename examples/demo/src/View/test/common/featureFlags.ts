@@ -1,19 +1,11 @@
 import { restSettings } from './restSettings';
 import { utils } from './utils';
 import { tokenManager } from './tokenManager';
-
-import { $resource } from './resource';
 import { angular } from './angular';
 
-//
-var i = restSettings.buildUrl('features/:id'),
-    j = $resource(i);
-
 function getSessionFeatureFlags(sessionId) {
-    var b = h({
-        id: sessionId,
-    });
-    // return promise.execute(j.get, b);
+    // const url = restSettings.buildUrl(`sessions/${sessionId}`);
+    // return fetch(url).then(res => res.json());
 
     // debug:
     return Promise.resolve({
@@ -25,9 +17,8 @@ function getSessionFeatureFlags(sessionId) {
     });
 }
 function getWebsiteFeatureFlags(id) {
-    // return promise.execute(j.get, {
-    //     id: id,
-    // });
+    // const url = restSettings.buildUrl(`sessions/${id}`);
+    // return fetch(url).then(res => res.json());
 
     // debug:
     return Promise.resolve({
@@ -38,13 +29,14 @@ function getWebsiteFeatureFlags(id) {
         captureMetadataOnly: true,
     });
 }
-function h(a) {
-    var b = tokenManager.getAccessToken();
-    return b && angular.isObject(a)
-        ? utils.mergeObjects(a, {
-              access_token: b,
+function h(obj) {
+    const token = tokenManager.getAccessToken();
+
+    return token && angular.isObject(obj)
+        ? utils.mergeObjects(obj, {
+              access_token: token,
           })
-        : a;
+        : obj;
 }
 
 export const featureFlags = {
