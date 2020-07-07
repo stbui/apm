@@ -28744,6 +28744,19 @@ const ConsoleItem = (_ref9) => {
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(MessageWrapper, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(Message, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(SourceCode, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(MessageAnchor, null, "log.js?1afd:24"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(MessageBadge, null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(MessageText, null, text || children))));
 };
 
+const formatUTCDate = date => {
+  const now = new Date(date);
+  let hh = now.getUTCHours();
+  let mm = now.getUTCMinutes();
+  let ss = now.getUTCSeconds();
+  let sss = now.getUTCMilliseconds();
+  hh = hh <= 9 ? "0".concat(hh) : hh;
+  mm = mm <= 9 ? "0".concat(mm) : mm;
+  ss = ss <= 9 ? "0".concat(ss) : ss;
+  sss = sss <= 9 ? "0".concat(sss) : sss;
+  return "".concat(hh, ":").concat(mm, ":").concat(ss, ":").concat(sss);
+};
+
 /* harmony default export */ __webpack_exports__["default"] = ((_ref10) => {
   let {
     children,
@@ -28764,15 +28777,11 @@ const ConsoleItem = (_ref9) => {
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement("div", {
     "aria-hidden": "true",
     style: "height: 0px; color: transparent;"
-  }, "\uFEFF"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement("div", {
-    tabindex: "0",
-    class: "console-group console-group-messages",
-    style: ""
-  }), logs.map(log => {
+  }, "\uFEFF"), logs.map(log => {
     if (log.type === 'console_warn') {
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(MessageWrapper, {
         type: "warning"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(Message, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(_components_Icon__WEBPACK_IMPORTED_MODULE_2__["Warning"], null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement("div", {
+      }, formatUTCDate(log.time), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(Message, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(_components_Icon__WEBPACK_IMPORTED_MODULE_2__["Warning"], null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement("div", {
         class: "console-message-stack-trace-toggle"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement("div", {
         class: "console-message-stack-trace-wrapper"
@@ -28793,12 +28802,12 @@ const ConsoleItem = (_ref9) => {
     if (log.type === 'console_log') {
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(MessageWrapper, {
         type: "info"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(Message, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(SourceCode, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(MessageAnchor, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(DevtoolsLink, null, log.time)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(MessageText, null, log.details.message))));
+      }, formatUTCDate(log.time), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(Message, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(SourceCode, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(MessageAnchor, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(DevtoolsLink, null, log.time)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(MessageText, null, log.details.message))));
     }
 
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(MessageWrapper, {
       type: "error"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(Message, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(_components_Icon__WEBPACK_IMPORTED_MODULE_2__["Error"], null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement("div", {
+    }, formatUTCDate(log.time), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(Message, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(_components_Icon__WEBPACK_IMPORTED_MODULE_2__["Error"], null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement("div", {
       class: "console-message-stack-trace-toggle"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement("div", {
       class: "console-message-stack-trace-wrapper"
@@ -28815,38 +28824,6 @@ const ConsoleItem = (_ref9) => {
       style: "display: inline-block;"
     }))))));
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement("div", {
-    tabindex: "-1",
-    class: "console-message-wrapper console-error-level console-adjacent-user-command-result"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement("div", {
-    class: "console-message console-user-command-result"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(_components_Icon__WEBPACK_IMPORTED_MODULE_2__["Error"], null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement("div", {
-    class: "console-message-stack-trace-toggle"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement("div", {
-    class: "console-message-stack-trace-wrapper"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement("div", {
-    tabindex: "-1"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement("span", {
-    is: "ui-icon",
-    class: "console-message-expand-icon spritesheet-smallicons smallicon-triangle-right icon-mask",
-    style: "--spritesheet-position:0px 10px; width: 10px; height: 10px;"
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement("span", {
-    class: "source-code"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement("span", {
-    class: "console-message-anchor"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement("span", {
-    class: "devtools-link",
-    role: "link",
-    tabindex: "-1"
-  }, "VM3366:1")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement("span", {
-    class: "console-message-text"
-  }, "Uncaught", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement("span", {
-    class: "object-value-error source-code"
-  }, "ReferenceError: apm is not defined at <anonymous>:1:1")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement("div", {
-    class: "hidden"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement("span", {
-    class: "monospace",
-    style: "display: inline-block;"
-  })))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement("div", {
     "aria-hidden": "true",
     style: "height: 0px; color: transparent;"
   }, "\uFEFF"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(_ConsolePrompt__WEBPACK_IMPORTED_MODULE_1__["default"], null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement("div", {
@@ -36547,7 +36524,8 @@ const SessionPlayer = (_ref) => {
   });
   const [addNewLogs, setAddNewLogs] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])([]);
   const [addNewNetworkRequests, setAddNewNetworkRequests] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])([]);
-  const [position, setPosition] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(1000);
+  const [position, setPosition] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(600);
+  const [mode, setMode] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(true);
 
   const addActivities = alias => {
     activities.push(alias); // 事件类型log
@@ -36625,6 +36603,11 @@ const SessionPlayer = (_ref) => {
 
   const updateExecuteEventState = newValue => {
     fireExecuteEvent(newValue);
+  }; //
+
+
+  const onChangeMode = () => {
+    setMode(!mode);
   };
 
   Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(() => {
@@ -36726,7 +36709,7 @@ const SessionPlayer = (_ref) => {
     }
   }, [finishLoadingStatus]);
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(react__WEBPACK_IMPORTED_MODULE_0__["default"].Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(_components__WEBPACK_IMPORTED_MODULE_10__["SplitWidget"], {
-    direction: "hbox"
+    direction: mode ? 'vertical' : 'hbox'
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(_components__WEBPACK_IMPORTED_MODULE_10__["SplitWidget"].Sidebar, {
     width: position
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement("div", {
@@ -36770,7 +36753,8 @@ const SessionPlayer = (_ref) => {
     "update-console": "updateConsole"
   }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(_components__WEBPACK_IMPORTED_MODULE_10__["SplitWidget"].Main, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(_app__WEBPACK_IMPORTED_MODULE_11__["Home"], {
     addNewLogs: addNewLogs,
-    addNewNetworkRequests: addNewNetworkRequests
+    addNewNetworkRequests: addNewNetworkRequests,
+    onChangeMode: onChangeMode
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(_components__WEBPACK_IMPORTED_MODULE_10__["SplitWidget"].Resizer, {
     x: position,
     onDrap: value => setPosition(value)
@@ -37671,7 +37655,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ __webpack_exports__["default"] = (() => {
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(_Player__WEBPACK_IMPORTED_MODULE_1__["default"], {
-    sessionId: "5ed51f8b33f0736bcdfd046a"
+    sessionId: "5eef8c0a034ee93c3dde1034"
   });
 });
 
@@ -40002,7 +39986,7 @@ const ANALYTICS_EVENT_TYPES = {
   PROJECT_OPENED: 'project_opened',
   PROJECT_SETTINGS_OPENED: 'project_settings_opened'
 };
-const SERVER_URL = 'http://127.0.0.1:9000/api/';
+const SERVER_URL = 'api/';
 const BROKER_URL = 'wss://127.0.0.1/api/';
 const BUILD_ENV = {
   IS_DEV: !1,
@@ -41718,9 +41702,10 @@ const tablistData = [{
 const Home = (_ref) => {
   let {
     addNewLogs,
-    addNewNetworkRequests
+    addNewNetworkRequests,
+    onChangeMode
   } = _ref;
-  const [module, setModule] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(4);
+  const [module, setModule] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(3);
 
   const onTabbedPaneChange = key => setModule(key);
 
@@ -41789,7 +41774,8 @@ const Home = (_ref) => {
       coordinates: "-140px 96px"
     })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(_components__WEBPACK_IMPORTED_MODULE_1__["ToolbarButton"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement(_components__WEBPACK_IMPORTED_MODULE_1__["Icon"], {
       type: "largeicons",
-      coordinates: "-112px 72px"
+      coordinates: "-112px 72px",
+      onClick: onChangeMode
     })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement("div", {
       class: "toolbar-divider toolbar-item"
     })),
@@ -42601,6 +42587,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "../../node_modules/preact/compat/dist/compat.module.js");
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
+function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
 
 const SpriteSheets = {
   smallicons: {
@@ -42629,12 +42619,14 @@ const SpriteSheets = {
     type,
     mask,
     coordinates
-  } = _ref;
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement("span", {
+  } = _ref,
+      other = _objectWithoutProperties(_ref, ["type", "mask", "coordinates"]);
+
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement("span", _extends({
     is: "ui-icon",
     class: "toolbar-glyph spritesheet-".concat(type, " ").concat(type, "-node-search icon-mask"),
     style: "--spritesheet-position:".concat(coordinates, "; width: 28px; height: 24px;")
-  });
+  }, other));
 });
 const StopRecording = () => {
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["default"].createElement("span", {
