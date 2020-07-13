@@ -1,16 +1,16 @@
-import { ApiModelProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 
 export class Users {
-    @ApiModelProperty()
+    @ApiProperty()
     @IsNotEmpty()
     username: string;
 
-    @ApiModelProperty()
+    @ApiProperty()
     @IsNotEmpty()
     password: string;
 
-    @ApiModelProperty()
+    @ApiProperty()
     @IsNotEmpty()
     email: string;
 }

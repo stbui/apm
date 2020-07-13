@@ -1,5 +1,5 @@
 import * as lodash from 'lodash';
-import { ReflectMetadata, HttpStatus } from '@nestjs/common';
+import { SetMetadata, HttpStatus } from '@nestjs/common';
 
 // 构造器参数
 interface IBuildDecoratorOption {
@@ -25,19 +25,19 @@ const buildHttpDecorator = (options: IBuildDecoratorOption): MethodDecorator => 
     const { errMessage, successMessage, errCode, successCode, usePaginate } = options;
     return (_, __, descriptor: PropertyDescriptor) => {
         if (errCode) {
-            ReflectMetadata('META.HTTP_ERROR_CODE', errCode)(descriptor.value);
+            SetMetadata('META.HTTP_ERROR_CODE', errCode)(descriptor.value);
         }
         if (successCode) {
-            ReflectMetadata('META.HTTP_SUCCESS_CODE', successCode)(descriptor.value);
+            SetMetadata('META.HTTP_SUCCESS_CODE', successCode)(descriptor.value);
         }
         if (errMessage) {
-            ReflectMetadata('META.HTTP_ERROR_MESSAGE', errMessage)(descriptor.value);
+            SetMetadata('META.HTTP_ERROR_MESSAGE', errMessage)(descriptor.value);
         }
         if (successMessage) {
-            ReflectMetadata('META.HTTP_SUCCESS_MESSAGE', successMessage)(descriptor.value);
+            SetMetadata('META.HTTP_SUCCESS_MESSAGE', successMessage)(descriptor.value);
         }
         if (usePaginate) {
-            ReflectMetadata('META.HTTP_RES_TRANSFORM_PAGINATE', true)(descriptor.value);
+            SetMetadata('META.HTTP_RES_TRANSFORM_PAGINATE', true)(descriptor.value);
         }
         return descriptor;
     };

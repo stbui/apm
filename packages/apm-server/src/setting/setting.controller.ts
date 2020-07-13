@@ -1,10 +1,10 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
-import { ApiUseTags, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { CrudController } from '../common/crud/crud.controller';
 import { SettingService } from './setting.service';
 import { SettingEntity } from './setting.entity';
 
-@ApiUseTags('setting')
+@ApiTags('setting')
 @Controller('setting')
 export class SettingController extends CrudController<SettingEntity> {
     constructor(protected service: SettingService) {

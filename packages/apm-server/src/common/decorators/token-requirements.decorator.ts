@@ -1,7 +1,7 @@
-import { ReflectMetadata } from '@nestjs/common';
+import { SetMetadata } from '@nestjs/common';
 
 export const TokenRequirements = (requiredTokenType: any, requiredUserRoles: any[]) =>
-    ReflectMetadata('tokenrequirements', new TokenRequirementsHelper(requiredTokenType, requiredUserRoles));
+    SetMetadata('tokenrequirements', new TokenRequirementsHelper(requiredTokenType, requiredUserRoles));
 
 export class TokenRequirementsHelper {
     private requiredTokenType: any;

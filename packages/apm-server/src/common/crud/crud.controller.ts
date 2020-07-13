@@ -5,7 +5,7 @@
 
 import { Get, Post, Body, Put, Patch, Param, Delete, ParseIntPipe, UseInterceptors, Query } from '@nestjs/common';
 import { BaseEntity, DeleteResult, DeepPartial } from 'typeorm';
-import { ApiUseTags, ApiBearerAuth, ApiOperation, ApiImplicitQuery, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { CrudService } from './crud.service';
 import { TransformInterceptor } from '../interceptors/transform.interceptor';
 
@@ -14,31 +14,31 @@ export class CrudController<T extends BaseEntity> {
 
     @Get()
     @UseInterceptors(TransformInterceptor)
-    @ApiImplicitQuery({
+    @ApiQuery({
         name: 'q',
         required: false,
         type: String,
         description: 'Text for search (default: empty)',
     })
-    @ApiImplicitQuery({
+    @ApiQuery({
         name: 'sort',
         required: false,
         type: String,
         description: 'Column name for sort (default: -id)',
     })
-    @ApiImplicitQuery({
+    @ApiQuery({
         name: 'per_page',
         required: false,
         type: Number,
         description: 'Number of results to return per page. (default: 10)',
     })
-    @ApiImplicitQuery({
+    @ApiQuery({
         name: 'cur_page',
         required: false,
         type: Number,
         description: 'A page number within the paginated result set. (default: 1)',
     })
-    @ApiImplicitQuery({
+    @ApiQuery({
         name: 'group',
         required: false,
         type: Number,
