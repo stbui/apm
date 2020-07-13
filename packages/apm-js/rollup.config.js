@@ -59,7 +59,7 @@ const bundleConfig = {
         ...plugins,
         license({
             sourcemap: true,
-            banner: `/*! @apm/js <%= pkg.version %> (${commitHash}) | https://github.com/stbui/apm */`,
+            banner: `/*! @stbui/apmjs <%= pkg.version %> (${commitHash}) | https://github.com/stbui/apm */`,
         }),
     ],
 };

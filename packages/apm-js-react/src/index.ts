@@ -1,4 +1,4 @@
-import { Plugin } from '@apm/js';
+import { Plugin } from '@stbui/apmjs';
 
 export class ReactjsPlugin extends Plugin {
     static pluginName: string = 'ReactjsPlugin';

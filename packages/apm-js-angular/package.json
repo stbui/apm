@@ -1,5 +1,5 @@
 {
-    "name": "@apm/js-angular",
+    "name": "@stbui/apmjs-angular",
     "version": "1.0.0",
     "description": "apm",
     "author": "stbui <w431106@163.com>",
@@ -29,7 +29,7 @@
         "@angular/compiler": "^9.1.4",
         "@angular/compiler-cli": "^9.1.4",
         "@angular/core": "^9.1.4",
-        "@apm/js": "^1.0.0",
+        "@stbui/apmjs": "^1.0.0",
         "rxjs": "^6.5.4",
         "typescript": "^3.8.3",
         "zone.js": "^0.10.3"
