@@ -12,7 +12,7 @@ export const Config = {
         secret: process.env.APP_SESSION_SECRET || '123456',
         timeout: parseInt(process.env.APP_SESSION_TIMEOUT, 10),
     },
-    port: parseInt(process.env.APP_PORT, 10) || 3000,
+    port: parseInt(process.env.APP_PORT, 10) || 9000,
     host: process.env.APP_HOST,
     database: {
         type: (process.env.APP_DATABASE_TYPE as any) || 'mongodb',

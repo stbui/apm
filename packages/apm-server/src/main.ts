@@ -15,6 +15,7 @@ async function bootstrap() {
 
     app.useGlobalFilters(new TypeormExceptionFilter());
 
+    // 允许跨域请求
     app.enableCors({
         origin: '*',
         methods: '*',

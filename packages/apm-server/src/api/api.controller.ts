@@ -226,4 +226,63 @@ export class ApiController {
     analytics(@Param('id') id) {
         return {};
     }
+
+    @Get('login')
+    login() {
+        return {
+            hasActivePlan: true,
+            verificationToken: '5050f71368cf465bbaecadba4cdec022',
+            specialOffer: null,
+            token:
+                'eyJhbGciOiJIUzI1NiIsImlhdCI6MTU5Mjc4OTQyMiwiZXhwIjoxNjI0MzI1NDIyfQ.eyJ1c2VyX2lkIjo2MzA5fQ.W_Rsx8jmY4VWh-QsFHTufxLvt_Ws3VZOM_Hk4PZmJdU',
+            id: 6309,
+            organizationUrl: 'stbui',
+            firstName: 'stb',
+            isTrial: true,
+            email: 'stbui@stbui.com',
+            created: 1592746402.0,
+            lastName: 'ui',
+            isAdmin: false,
+            organizationRole: 'Product Management',
+            trialDaysLeft: 13,
+            isVerified: false,
+        };
+    }
+
+    @Get('me')
+    me() {
+        return {
+            created: 1591023516.0,
+            email: 'clusterhub@aliyun.com',
+            isVerified: false,
+            organizationUrl: 'clusterhub',
+            isAdmin: false,
+            verificationToken: 'da7d7bf92c2d4479999bc8509e493c7c',
+            hasActivePlan: true,
+            trialDaysLeft: 7,
+            organizationName: 'clusterhub@aliyun.com',
+            specialOffer: null,
+            timezoneName: 'UTC',
+            organizationRole: 'Product Management',
+            firstName: 'G',
+            id: 6265,
+            lastName: 'B',
+            isTrial: true,
+            role: 'user',
+        };
+    }
+
+    @Get('subscription')
+    subscription() {
+        return {
+            userSeats: 3,
+            nextBillingDate: null,
+            planName: 'Free Trial',
+            subscriptionId: null,
+            isFree: true,
+            hasCustomPlan: false,
+            monthlySessions: 1000,
+            planEndDate: '05 July 2020',
+        };
+    }
 }

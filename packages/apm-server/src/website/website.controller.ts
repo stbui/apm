@@ -4,11 +4,31 @@ import { CrudController } from '../common/crud/crud.controller';
 import { WebsiteService } from './website.service';
 import { WebsiteEntity } from './website.entity';
 
-@ApiTags('website')
-@Controller('website')
+@ApiTags('api/websites')
+@Controller('api/websites')
 export class WebsiteController extends CrudController<WebsiteEntity> {
     constructor(protected service: WebsiteService) {
         super();
+    }
+
+    @Get()
+    websites() {
+        return [
+            {
+                sessionsCount: 3,
+                isOwner: true,
+                name: 'Yqb',
+                id: 10679,
+                inactiveFor: 31844.36382,
+            },
+            {
+                sessionsCount: 0,
+                isOwner: true,
+                name: 'test1',
+                id: 10680,
+                inactiveFor: null,
+            },
+        ];
     }
 
     @ApiOperation({ summary: '说明' })
@@ -244,7 +264,153 @@ export class WebsiteController extends CrudController<WebsiteEntity> {
 
     @Get(':website_id/sessions')
     sessions() {
-        return this.service.getSessionns();
+        // return this.service.getSessionns();
+        return {
+            hasSessions: true,
+            data: [
+                {
+                    browserName: 'Chrome',
+                    isLive: false,
+                    lastActive: 1592791779835.0,
+                    city: 'Central District',
+                    country: 'Hong Kong',
+                    left: null,
+                    isWatched: true,
+                    userIdentity: {
+                        displayName: 'User 3',
+                        customFields: [],
+                        identifier: '56f518a3-fbfa-4f15-8f85-6b4ac3844345',
+                        email: null,
+                    },
+                    screenWidth: 1623,
+                    product: null,
+                    regionName: null,
+                    referrer: null,
+                    start: 1592791432458.0,
+                    browserVersion: '83.0.4103.61',
+                    hasInaccessibleResources: true,
+                    screenHeight: 916,
+                    origin: null,
+                    version: null,
+                    id: '5ef01188b3c730061d03eb0e',
+                    layoutName: 'Blink',
+                    manufacturer: null,
+                    ip: '112.118.176.78',
+                    length: 348854,
+                    clientStartMilliseconds: null,
+                    visibilityState: null,
+                    os: 'OS X 10.14.6 64-bit',
+                    pageUrl: 'http://localhost:4200/',
+                    top: null,
+                },
+                {
+                    browserName: 'Chrome',
+                    isLive: false,
+                    lastActive: 1592757579565.0,
+                    city: 'Central District',
+                    country: 'Hong Kong',
+                    left: null,
+                    isWatched: true,
+                    userIdentity: {
+                        displayName: 'User 2',
+                        customFields: [],
+                        identifier: '8aa66f45-ec9f-49fa-8ede-530ce14b88ee',
+                        email: null,
+                    },
+                    screenWidth: 1623,
+                    product: null,
+                    regionName: null,
+                    referrer: 'http://example.jepaas.com/index.html',
+                    start: 1592757496850.0,
+                    browserVersion: '83.0.4103.61',
+                    hasInaccessibleResources: true,
+                    screenHeight: 733,
+                    origin: null,
+                    version: null,
+                    id: '5eef8cf8f263083b88a3d79e',
+                    layoutName: 'Blink',
+                    manufacturer: null,
+                    ip: '112.118.176.78',
+                    length: 80903,
+                    clientStartMilliseconds: null,
+                    visibilityState: null,
+                    os: 'OS X 10.14.6 64-bit',
+                    pageUrl: 'http://example.jepaas.com/index.html',
+                    top: null,
+                },
+                {
+                    browserName: 'Chrome',
+                    isLive: false,
+                    lastActive: 1592757427557.0,
+                    city: 'Central District',
+                    country: 'Hong Kong',
+                    left: null,
+                    isWatched: false,
+                    userIdentity: {
+                        displayName: 'User 2',
+                        customFields: [],
+                        identifier: '8aa66f45-ec9f-49fa-8ede-530ce14b88ee',
+                        email: null,
+                    },
+                    screenWidth: 1623,
+                    product: null,
+                    regionName: null,
+                    referrer: 'http://example.jepaas.com/',
+                    start: 1592757258621.0,
+                    browserVersion: '83.0.4103.61',
+                    hasInaccessibleResources: true,
+                    screenHeight: 733,
+                    origin: null,
+                    version: null,
+                    id: '5eef8c0a034ee93c3dde1034',
+                    layoutName: 'Blink',
+                    manufacturer: null,
+                    ip: '112.118.176.78',
+                    length: 169585,
+                    clientStartMilliseconds: null,
+                    visibilityState: null,
+                    os: 'OS X 10.14.6 64-bit',
+                    pageUrl: 'http://example.jepaas.com/login.html',
+                    top: null,
+                },
+                {
+                    browserName: 'Chrome',
+                    isLive: false,
+                    lastActive: 1592746871949.0,
+                    city: 'Central District',
+                    country: 'Hong Kong',
+                    left: null,
+                    isWatched: true,
+                    userIdentity: {
+                        displayName: 'User 1',
+                        customFields: [],
+                        identifier: '03bdf19b-ee1c-4501-a578-e16c0b5a981a',
+                        email: null,
+                    },
+                    screenWidth: 1623,
+                    product: null,
+                    regionName: null,
+                    referrer: 'http://www.chanpin100.com/',
+                    start: 1592746778893.0,
+                    browserVersion: '83.0.4103.61',
+                    hasInaccessibleResources: true,
+                    screenHeight: 674,
+                    origin: null,
+                    version: null,
+                    id: '5eef631a6a34b55e211114cb',
+                    layoutName: 'Blink',
+                    manufacturer: null,
+                    ip: '112.118.176.78',
+                    length: 88557,
+                    clientStartMilliseconds: null,
+                    visibilityState: null,
+                    os: 'OS X 10.14.6 64-bit',
+                    pageUrl: 'http://www.chanpin100.com/pm',
+                    top: null,
+                },
+            ],
+            total: 4,
+        };
     }
 
     @Get(':website_id/sessions/:session_id')

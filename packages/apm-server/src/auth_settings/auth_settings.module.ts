@@ -10,4 +10,4 @@ import { AccountProviders } from './account.providers';
     providers: [AccountService, ...AccountProviders],
     exports: [AccountService],
 })
-export class AccountModule {}
+export class AuthAettingsModule {}

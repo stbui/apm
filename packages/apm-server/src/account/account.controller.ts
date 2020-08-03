@@ -4,8 +4,8 @@ import { CrudController } from '../common/crud/crud.controller';
 import { AccountService } from './account.service';
 import { AccountEntity } from './account.entity';
 
-@ApiTags('account')
-@Controller('account')
+@ApiTags('api/account')
+@Controller('api/account')
 export class AccountController extends CrudController<AccountEntity> {
     constructor(protected service: AccountService) {
         super();

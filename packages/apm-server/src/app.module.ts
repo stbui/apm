@@ -19,6 +19,9 @@ import { SettingModule } from './setting/setting.module';
 import { SessionModule } from './session/session.module';
 import { WebsiteModule } from './website/website.module';
 import { ApiModule } from './api/api.module';
+import { AccountModule } from './account/account.module';
+import { AuthMethodModule } from './auth_method/auth_method.module';
+import { AuthAettingsModule } from './auth_settings/auth_settings.module';
 
 @Module({
     imports: [
@@ -38,6 +41,9 @@ import { ApiModule } from './api/api.module';
         SessionModule,
         WebsiteModule,
         ApiModule,
+        AccountModule,
+        AuthMethodModule,
+        AuthAettingsModule,
     ],
     controllers: [AppController],
     providers: [AppService],
