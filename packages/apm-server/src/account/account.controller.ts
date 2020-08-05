@@ -14,39 +14,24 @@ export class AccountController extends CrudController<AccountEntity> {
     @ApiOperation({ summary: 'profile' })
     @Get('profile')
     profile() {
-        return {
-            lastName: 'ui',
-            organizationName: 'stbui',
-            firstName: 'stb',
-            timezoneName: 'UTC',
-            email: 'stbui@stbui.com',
-        };
+        return this.service.profile();
     }
 
     @ApiOperation({ summary: 'projects' })
     @Get('projects')
     projects() {
-        return [
-            {
-                isOwner: true,
-                isSubscribeForReportsEnabled: true,
-                name: 'stbui',
-                id: 10679,
-                isSubscribedForReports: true,
-                isSubscribedForAlerts: true,
-            },
-        ];
+        return this.service.projects();
     }
 
     @ApiOperation({ summary: 'tokens' })
     @Get('tokens')
     tokens() {
-        return [];
+        return this.service.tokens();
     }
 
     @ApiOperation({ summary: 'tokens' })
     @Get('stats/sessions')
     stats_sessions() {
-        return { sessionsLimitForPlan: 1000, sessionsCountForCurrentPeriod: 1 };
+        return this.service.stats_sessions();
     }
 }

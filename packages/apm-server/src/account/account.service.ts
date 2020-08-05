@@ -12,4 +12,35 @@ export class AccountService extends CrudService<AccountEntity> {
     ) {
         super();
     }
+
+    profile() {
+        return {
+            lastName: 'ui',
+            organizationName: 'stbui',
+            firstName: 'stb',
+            timezoneName: 'UTC',
+            email: 'stbui@stbui.com',
+        };
+    }
+
+    projects() {
+        return [
+            {
+                isOwner: true,
+                isSubscribeForReportsEnabled: true,
+                name: 'stbui',
+                id: 10679,
+                isSubscribedForReports: true,
+                isSubscribedForAlerts: true,
+            },
+        ];
+    }
+
+    tokens() {
+        return [];
+    }
+
+    stats_sessions() {
+        return { sessionsLimitForPlan: 1000, sessionsCountForCurrentPeriod: 1 };
+    }
 }

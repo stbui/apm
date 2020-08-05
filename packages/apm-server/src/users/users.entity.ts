@@ -8,7 +8,14 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import { IsArray, IsEmail, IsString, MinLength, Validate, IsEmpty } from 'class-validator';
+import {
+    IsArray,
+    IsEmail,
+    IsString,
+    MinLength,
+    Validate,
+    IsEmpty,
+} from 'class-validator';
 import * as crypto from 'crypto';
 import { IsUserAlreadyExist } from './users.validator';
 import { USER_ROLE } from './users.constants';
@@ -31,25 +38,29 @@ export class UsersEntity extends BaseEntity {
 
     @BeforeInsert()
     hashPassword() {
-        this.password = crypto.createHmac('sha256', this.password).digest('hex');
+        this.password = crypto
+            .createHmac('sha256', this.password)
+            .digest('hex');
     }
 
-    @Column() pricingPlan: string = 'free';
-    @Column() ip: string;
     @CreateDateColumn() created: Date;
     @UpdateDateColumn() modifiedAt: Date;
     @Column() lastLogin: Date;
-    @Column({ comment: '组织' }) organizationName: string;
-    @Column({ comment: '组织' }) organizationRole: string;
-    @Column({ comment: '组织path' }) organizationUrl: string;
+    @Column({ comment: '组织名称' }) organizationName: string;
+    @Column({ comment: '组织角色' }) organizationRole: string;
+    @Column({ comment: '组织url' }) organizationUrl: string;
     @Column() specialOffer: string;
-    @Column() trialDaysLeft: number;
-    @Column() verificationToken: string;
-    @Column() accountIsSettingUp: number;
+    @Column({ comment: '试用天数' }) trialDaysLeft: number;
+    @Column({ comment: '令牌' }) verificationToken: string;
     @Column() hasActivePlan: number;
     @Column() isAdmin: number;
     @Column() isTrial: number;
     @Column() isVerified: number;
+
+    // 即将移除
+    @Column() pricingPlan: string = 'free';
+    @Column() ip: string;
+    @Column() accountIsSettingUp: number;
 
     @IsArray()
     @Column({

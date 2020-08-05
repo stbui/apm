@@ -15,13 +15,15 @@ import { PerformanceModule } from './performance/performance.module';
 import { SnapshotModule } from './snapshot/snapshot.module';
 import { ScriptModule } from './script/script.module';
 import { ProjectModule } from './project/project.module';
-import { SettingModule } from './setting/setting.module';
 import { SessionModule } from './session/session.module';
-import { WebsiteModule } from './website/website.module';
 import { ApiModule } from './api/api.module';
+import { WebsiteModule } from './website/website.module';
+//
+import { SettingModule } from './setting/setting.module';
 import { AccountModule } from './account/account.module';
 import { AuthMethodModule } from './auth_method/auth_method.module';
 import { AuthAettingsModule } from './auth_settings/auth_settings.module';
+import { SubscriptionModule } from './subscription/subscription.module';
 
 @Module({
     imports: [
@@ -44,6 +46,7 @@ import { AuthAettingsModule } from './auth_settings/auth_settings.module';
         AccountModule,
         AuthMethodModule,
         AuthAettingsModule,
+        SubscriptionModule,
     ],
     controllers: [AppController],
     providers: [AppService],

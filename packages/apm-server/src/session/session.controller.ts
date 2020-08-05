@@ -112,4 +112,9 @@ export class SessionController extends CrudController<SessionEntity> {
     status(@Param('id') id) {
         return {};
     }
+
+    @Get(':session_id/logs')
+    logs(@Param('session_id') session_id) {
+        return this.service.logs(session_id);
+    }
 }

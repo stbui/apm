@@ -1,7 +1,7 @@
 import { Connection } from 'typeorm';
 import { DB_CON_TOKEN } from '../common/database/database.constants';
-import { AccountEntity } from './account.entity';
-import { ACCOUNT_TOKEN } from './account.constants';
+import { AccountEntity } from './analytics.entity';
+import { ACCOUNT_TOKEN } from './analytics.constants';
 
 export const AccountProviders = [
     {

@@ -1,4 +1,11 @@
-import { Controller, Get, Query, Body, Post, BadRequestException } from '@nestjs/common';
+import {
+    Controller,
+    Get,
+    Query,
+    Body,
+    Post,
+    BadRequestException,
+} from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { CrudController } from '../common/crud/crud.controller';
 import { UsersService } from './users.service';
