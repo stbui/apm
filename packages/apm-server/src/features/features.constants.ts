@@ -1,1 +1,1 @@
-export const ACCOUNT_TOKEN = 'FeaturesRepositoryToken';
+export const featuresRepositoryToken = 'FeaturesRepositoryToken';

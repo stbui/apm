@@ -24,6 +24,8 @@ import { AccountModule } from './account/account.module';
 import { AuthMethodModule } from './auth_method/auth_method.module';
 import { AuthAettingsModule } from './auth_settings/auth_settings.module';
 import { SubscriptionModule } from './subscription/subscription.module';
+import { FeaturesModule } from './features/features.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
     imports: [
@@ -47,6 +49,8 @@ import { SubscriptionModule } from './subscription/subscription.module';
         AuthMethodModule,
         AuthAettingsModule,
         SubscriptionModule,
+        FeaturesModule,
+        AnalyticsModule,
     ],
     controllers: [AppController],
     providers: [AppService],

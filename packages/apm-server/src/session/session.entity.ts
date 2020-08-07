@@ -1,8 +1,20 @@
 import { BaseEntity, Entity, Column, ObjectID, ObjectIdColumn } from 'typeorm';
 
+import {
+    IsArray,
+    IsEmail,
+    IsString,
+    MinLength,
+    Validate,
+    IsEmpty,
+} from 'class-validator';
+
 @Entity('apm_sessions')
 export class SessionEntity extends BaseEntity {
     @ObjectIdColumn() id: ObjectID;
+
+    @Column({ comment: '项目Id' })
+    websiteId: string;
 
     // 设备
     @Column({ comment: '浏览器名称' }) browserName: string;

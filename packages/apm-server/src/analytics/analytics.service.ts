@@ -1,14 +1,14 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { CrudService } from '../common/crud/crud.service';
-import { AccountEntity } from './analytics.entity';
-import { ACCOUNT_TOKEN } from './analytics.constants';
+import { AnalyticsEntity } from './analytics.entity';
+import { AnalyticsRepositoryToken } from './analytics.constants';
 
 @Injectable()
-export class AccountService extends CrudService<AccountEntity> {
+export class AnalyticsService extends CrudService<AnalyticsEntity> {
     constructor(
-        @Inject(ACCOUNT_TOKEN)
-        protected readonly repository: Repository<AccountEntity>,
+        @Inject(AnalyticsRepositoryToken)
+        protected readonly repository: Repository<AnalyticsEntity>,
     ) {
         super();
     }

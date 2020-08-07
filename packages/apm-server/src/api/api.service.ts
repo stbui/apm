@@ -3,63 +3,13 @@ import { Repository } from 'typeorm';
 import { CrudService } from '../common/crud/crud.service';
 import { ApiEntity } from './api.entity';
 import { API_TOKEN } from './api.constants';
-import { SnapshotService } from '../snapshot/snapshot.service';
-import { WebsiteService } from '../website/website.service';
-import { SessionService } from '../session/session.service';
 
 @Injectable()
 export class ApiService extends CrudService<ApiEntity> {
     constructor(
         @Inject(API_TOKEN) protected readonly repository: Repository<ApiEntity>,
-        public readonly snapshotService: SnapshotService,
-        public readonly websiteService: WebsiteService,
-        public readonly sessionService: SessionService
     ) {
         super();
-    }
-
-    getEvents(serverSessionId: number, eventsIndex: number) {
-        return this.snapshotService.find({
-            take: 100,
-            skip: eventsIndex * 100,
-            where: { serverSessionId: serverSessionId },
-            order: { timestamp: 1 },
-        });
-    }
-
-    saveSession(session) {
-        return this.sessionService.create(session);
-    }
-
-    getSession(id: string) {
-        return this.sessionService.findOneById(id);
-    }
-
-    updateSession(id, entity) {
-        return this.sessionService.update(id, entity);
-    }
-    updateLiveStatus(id: string, isLive: boolean) {
-        return this.sessionService.update(id, { isLive });
-    }
-
-    findWebsite(id: string | number) {
-        return this.websiteService.findOneById(id);
-    }
-
-    createSnapshot(data) {
-        // return this.snapshotService.create(data);
-        return this.snapshotService.insertMany(data);
-    }
-
-    getSnapshot(serverSessionId) {
-        return this.snapshotService.find({
-            where: { serverSessionId: serverSessionId },
-        });
-    }
-
-    // accessToken -> serverSessionId
-    accessTokenToServerSessionId(token) {
-        return this.websiteService.findOneById('5d3d95106e562d4d018e8a38');
     }
 
     findMappings() {
@@ -91,51 +41,126 @@ export class ApiService extends CrudService<ApiEntity> {
         for (let mapping in mappings) {
             switch (mapping) {
                 case 'dm':
-                    sessions.push(...this.proccessMappings(mappings[mapping], 'dom_mutation'));
+                    sessions.push(
+                        ...this.proccessMappings(
+                            mappings[mapping],
+                            'dom_mutation',
+                        ),
+                    );
                     break;
                 case 'mc':
-                    sessions.push(...this.proccessMappings(mappings[mapping], 'mouse_click'));
+                    sessions.push(
+                        ...this.proccessMappings(
+                            mappings[mapping],
+                            'mouse_click',
+                        ),
+                    );
                     break;
                 case 'uc':
-                    sessions.push(...this.proccessMappings(mappings[mapping], 'url_change'));
+                    sessions.push(
+                        ...this.proccessMappings(
+                            mappings[mapping],
+                            'url_change',
+                        ),
+                    );
                     break;
                 case 'mov':
-                    sessions.push(...this.proccessMappings(mappings[mapping], 'mouse_over'));
+                    sessions.push(
+                        ...this.proccessMappings(
+                            mappings[mapping],
+                            'mouse_over',
+                        ),
+                    );
                     break;
                 case 'mm':
-                    sessions.push(...this.proccessMappings(mappings[mapping], 'mouse_move'));
+                    sessions.push(
+                        ...this.proccessMappings(
+                            mappings[mapping],
+                            'mouse_move',
+                        ),
+                    );
                     break;
                 case 'mou':
-                    sessions.push(...this.proccessMappings(mappings[mapping], 'mouse_out'));
+                    sessions.push(
+                        ...this.proccessMappings(
+                            mappings[mapping],
+                            'mouse_out',
+                        ),
+                    );
                     break;
 
                 case 'crd':
-                    sessions.push(...this.proccessMappings(mappings[mapping], 'css_rule_delete'));
+                    sessions.push(
+                        ...this.proccessMappings(
+                            mappings[mapping],
+                            'css_rule_delete',
+                        ),
+                    );
                     break;
                 case 'cri':
-                    sessions.push(...this.proccessMappings(mappings[mapping], 'css_rule_insert'));
+                    sessions.push(
+                        ...this.proccessMappings(
+                            mappings[mapping],
+                            'css_rule_insert',
+                        ),
+                    );
                     break;
                 case 'vc':
-                    sessions.push(...this.proccessMappings(mappings[mapping], 'visibility_change'));
+                    sessions.push(
+                        ...this.proccessMappings(
+                            mappings[mapping],
+                            'visibility_change',
+                        ),
+                    );
                     break;
                 case 'cbc':
-                    sessions.push(...this.proccessMappings(mappings[mapping], 'checkbox_change'));
+                    sessions.push(
+                        ...this.proccessMappings(
+                            mappings[mapping],
+                            'checkbox_change',
+                        ),
+                    );
                     break;
                 case 'rbc':
-                    sessions.push(...this.proccessMappings(mappings[mapping], 'radio_button_change'));
+                    sessions.push(
+                        ...this.proccessMappings(
+                            mappings[mapping],
+                            'radio_button_change',
+                        ),
+                    );
                     break;
                 case 'spc':
-                    sessions.push(...this.proccessMappings(mappings[mapping], 'scroll_position_change'));
+                    sessions.push(
+                        ...this.proccessMappings(
+                            mappings[mapping],
+                            'scroll_position_change',
+                        ),
+                    );
                     break;
                 case 'ds':
-                    sessions.push(...this.proccessMappings(mappings[mapping], 'dom_snapshot'));
+                    sessions.push(
+                        ...this.proccessMappings(
+                            mappings[mapping],
+                            'dom_snapshot',
+                        ),
+                    );
                     break;
                 case 'wr':
-                    sessions.push(...this.proccessMappings(mappings[mapping], 'window_resize'));
+                    sessions.push(
+                        ...this.proccessMappings(
+                            mappings[mapping],
+                            'window_resize',
+                        ),
+                    );
                     break;
 
                 case 'evc':
-                    sessions.push(...this.proccessMappings(mappings[mapping], 'dom_element_value_change'));
+                    sessions.push(
+                        ...this.proccessMappings(
+                            mappings[mapping],
+                            'dom_element_value_change',
+                        ),
+                    );
                     break;
                 case 'la':
                     lastActive = mappings[mapping];

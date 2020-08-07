@@ -1,1 +1,1 @@
-export const ACCOUNT_TOKEN = 'AccountRepositoryToken';
+export const AnalyticsRepositoryToken = 'AnalyticsRepositoryToken';

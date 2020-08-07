@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { CrudService } from '../common/crud/crud.service';
 import { WebsiteEntity } from './website.entity';
@@ -18,7 +18,7 @@ export class WebsiteService extends CrudService<WebsiteEntity> {
         super();
     }
 
-    getSessions(website_id, options?) {
+    getSessions(options?) {
         return this.sessionService.findAll(options);
     }
     getSession(website_id, id) {
@@ -55,48 +55,50 @@ export class WebsiteService extends CrudService<WebsiteEntity> {
     }
     exportSessonsById(website_id, session_id) {}
 
-    online_users(website_id) {
-        return {
-            data: [
-                {
-                    country: 'China',
-                    pageUrl: 'http://localhost:4200/',
-                    top: null,
-                    clientStartMilliseconds: null,
-                    os: 'OS X 10.14.6 64-bit',
-                    regionName: null,
-                    browserName: 'Chrome',
-                    origin: null,
-                    screenHeight: 916,
-                    browserVersion: '83.0.4103.61',
-                    layoutName: 'Blink',
-                    isLive: true,
-                    ip: '127.0.0.1',
-                    visibilityState: null,
-                    id: '5ef01188b3c730061d03eb0e',
-                    manufacturer: null,
-                    referrer: null,
-                    length: 119451,
-                    hasInaccessibleResources: true,
-                    userIdentity: {
-                        displayName: 'User 3',
-                        identifier: '56f518a3-fbfa-4f15-8f85-6b4ac3844345',
-                        customFields: [],
-                        email: null,
-                    },
-                    left: null,
-                    version: null,
-                    isWatched: false,
-                    screenWidth: 1623,
-                    lastActive: 1592791547955.0,
-                    product: null,
-                    start: 1592791432458.0,
-                    city: 'Central District',
-                },
-            ],
-            hasSessions: true,
-            total: 1,
-        };
+    online_users(options?) {
+        return this.sessionService.findAll(options);
+
+        // return {
+        //     data: [
+        //         {
+        //             country: 'China',
+        //             pageUrl: 'http://localhost:4200/',
+        //             top: null,
+        //             clientStartMilliseconds: null,
+        //             os: 'OS X 10.14.6 64-bit',
+        //             regionName: null,
+        //             browserName: 'Chrome',
+        //             origin: null,
+        //             screenHeight: 916,
+        //             browserVersion: '83.0.4103.61',
+        //             layoutName: 'Blink',
+        //             isLive: true,
+        //             ip: '127.0.0.1',
+        //             visibilityState: null,
+        //             id: '5ef01188b3c730061d03eb0e',
+        //             manufacturer: null,
+        //             referrer: null,
+        //             length: 119451,
+        //             hasInaccessibleResources: true,
+        //             userIdentity: {
+        //                 displayName: 'User 3',
+        //                 identifier: '56f518a3-fbfa-4f15-8f85-6b4ac3844345',
+        //                 customFields: [],
+        //                 email: null,
+        //             },
+        //             left: null,
+        //             version: null,
+        //             isWatched: false,
+        //             screenWidth: 1623,
+        //             lastActive: 1592791547955.0,
+        //             product: null,
+        //             start: 1592791432458.0,
+        //             city: 'Central District',
+        //         },
+        //     ],
+        //     hasSessions: true,
+        //     total: 1,
+        // };
     }
 
     createLogs(entity) {
@@ -105,7 +107,7 @@ export class WebsiteService extends CrudService<WebsiteEntity> {
 
     async logs_aggregated(websiteId: string) {
         const [data, total] = await this.logsService.findAndCount({
-            where: { sessionId: websiteId },
+            where: { websiteId: websiteId },
             select: [
                 'message',
                 'level',
@@ -116,15 +118,6 @@ export class WebsiteService extends CrudService<WebsiteEntity> {
             ],
         });
 
-        // {
-        //     message: ':',
-        //     level: 'info',
-        //     usersAffected: 1,
-        //     firstOccurrence: 1592757344110,
-        //     lastOccurrence: 1592757556198,
-        //     totalOccurrences: 12,
-        // }
-
         return {
             data: data,
             total: total,
@@ -133,8 +126,21 @@ export class WebsiteService extends CrudService<WebsiteEntity> {
     }
 
     async logs_newest(websiteId: string) {
-        const session = await this.sessionService.findOneById(websiteId);
-        const log = await this.logsService.findOneOrFail(websiteId);
+        const session = await this.sessionService.findOne({
+            websiteId: websiteId,
+        });
+
+        const log = await this.logsService.findOneOrFail(websiteId, {
+            where: { websiteId: websiteId },
+            select: [
+                'request',
+                'sessionId',
+                'message',
+                'level',
+                'isMessageTrimmed',
+                'time',
+            ],
+        });
 
         return {
             log: {
@@ -181,12 +187,19 @@ export class WebsiteService extends CrudService<WebsiteEntity> {
     async userCode(websiteId: string) {
         const res = await this.findOneById(websiteId);
 
+        // return {
+        //     name: res.name,
+        //     identifyUsersCode:
+        //         "apmjs.identify({\n    userId: 'USER-ID', // Replace the USER-ID with the user id from your app\n    email: 'user@example.com', // Not required\n    displayName: 'John Smith', // Not required\n\n    // Add your own custom user variables here.\n    role: 'user',\n    pricingPlan: 'free'\n});",
+        //     code: `<!-- Begin apmjs code -->\n<script type="text/javascript">\n!function(a,b){var c=window;c.apmjsKey=a,c[a]=c[a]||{t:b,\nq:[]};for(var d=["start","stop","identify","getSessionId","log","setOnDataCallback"],e=0;e<d.length;e++)!function(b){\nc[a][b]=c[a][b]||function(){c[a].q.push([b].concat([].slice.call(arguments,0)));\n}}(d[e]);var f=document.createElement("script");f.async=1,f.crossOrigin="anonymous",\nf.src="https://cdn.apmjs.com/apmjs.js";var g=document.getElementsByTagName("script")[0];\ng.parentNode.insertBefore(f,g)}("apmjs","${websiteId}");\n</script>\n<!-- End apmjs Code -->`,
+        // };
+
         return {
-            name: res.name,
+            name: 'Yqb',
             identifyUsersCode:
-                "apmjs.identify({\n    userId: 'USER-ID', // Replace the USER-ID with the user id from your app\n    email: 'user@example.com', // Not required\n    displayName: 'John Smith', // Not required\n\n    // Add your own custom user variables here.\n    role: 'user',\n    pricingPlan: 'free'\n});",
+                "SessionStack.identify({\n    userId: 'USER-ID', // Replace the USER-ID with the user id from your app\n    email: 'user@example.com', // Not required\n    displayName: 'John Smith', // Not required\n\n    // Add your own custom user variables here.\n    role: 'user',\n    pricingPlan: 'free'\n});",
             code:
-                '<!-- Begin apmjs code -->\n<script type="text/javascript">\n!function(a,b){var c=window;c.apmjsKey=a,c[a]=c[a]||{t:b,\nq:[]};for(var d=["start","stop","identify","getSessionId","log","setOnDataCallback"],e=0;e<d.length;e++)!function(b){\nc[a][b]=c[a][b]||function(){c[a].q.push([b].concat([].slice.call(arguments,0)));\n}}(d[e]);var f=document.createElement("script");f.async=1,f.crossOrigin="anonymous",\nf.src="https://cdn.apmjs.com/apmjs.js";var g=document.getElementsByTagName("script")[0];\ng.parentNode.insertBefore(f,g)}("apmjs","bf8813d3f71c4ef9bf851fbfc2fd0def");\n</script>\n<!-- End apmjs Code -->',
+                '<!-- Begin SessionStack code -->\n<script type="text/javascript">\n!function(a,b){var c=window;c.SessionStackKey=a,c[a]=c[a]||{t:b,\nq:[]};for(var d=["start","stop","identify","getSessionId","log","setOnDataCallback"],e=0;e<d.length;e++)!function(b){\nc[a][b]=c[a][b]||function(){c[a].q.push([b].concat([].slice.call(arguments,0)));\n}}(d[e]);var f=document.createElement("script");f.async=1,f.crossOrigin="anonymous",\nf.src="https://cdn.sessionstack.com/sessionstack.js";var g=document.getElementsByTagName("script")[0];\ng.parentNode.insertBefore(f,g)}("SessionStack","bf8813d3f71c4ef9bf851fbfc2fd0def");\n</script>\n<!-- End SessionStack Code -->',
         };
     }
 }

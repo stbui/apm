@@ -5,8 +5,10 @@ import { SettingController } from './setting.controller';
 import { SettingService } from './setting.service';
 import { SettingProviders } from './setting.providers';
 
+import { SessionModule } from '../session/session.module';
+
 @Module({
-    imports: [DatabaseModule],
+    imports: [DatabaseModule, SessionModule],
     controllers: [SettingController],
     providers: [SettingService, ...SettingProviders],
     exports: [SettingService],

@@ -49,13 +49,16 @@ export class UsersEntity extends BaseEntity {
     @Column({ comment: '组织名称' }) organizationName: string;
     @Column({ comment: '组织角色' }) organizationRole: string;
     @Column({ comment: '组织url' }) organizationUrl: string;
-    @Column() specialOffer: string;
+    @Column({ nullable: true }) specialOffer: string;
     @Column({ comment: '试用天数' }) trialDaysLeft: number;
     @Column({ comment: '令牌' }) verificationToken: string;
-    @Column() hasActivePlan: number;
-    @Column() isAdmin: number;
-    @Column() isTrial: number;
-    @Column() isVerified: number;
+    @Column() hasActivePlan: boolean;
+    @Column() isAdmin: boolean;
+    @Column({ comment: '试用状态' }) isTrial: boolean;
+    @Column() isVerified: boolean;
+    @Column({ comment: '姓名' }) firstName: string;
+    @Column({ comment: '姓名' }) lastName: string;
+    @Column({ comment: '时区' }) timezoneName: string;
 
     // 即将移除
     @Column() pricingPlan: string = 'free';
@@ -68,7 +71,7 @@ export class UsersEntity extends BaseEntity {
         enum: USER_ROLE,
         default: USER_ROLE.DEFAULT,
     })
-    roles: USER_ROLE;
+    role: USER_ROLE;
 
     @Column({ type: 'jsonb', default: {} })
     profile: {

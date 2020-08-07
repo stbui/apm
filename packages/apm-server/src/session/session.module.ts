@@ -6,8 +6,10 @@ import { SessionController } from './session.controller';
 import { SessionService } from './session.service';
 import { SessionProviders } from './session.providers';
 
+import { SnapshotModule } from '../snapshot/snapshot.module';
+
 @Module({
-    imports: [DatabaseModule, AuthModule],
+    imports: [DatabaseModule, AuthModule, SnapshotModule],
     controllers: [SessionController],
     providers: [SessionService, ...SessionProviders],
     exports: [SessionService],

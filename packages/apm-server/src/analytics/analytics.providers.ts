@@ -1,12 +1,13 @@
 import { Connection } from 'typeorm';
 import { DB_CON_TOKEN } from '../common/database/database.constants';
-import { AccountEntity } from './analytics.entity';
-import { ACCOUNT_TOKEN } from './analytics.constants';
+import { AnalyticsEntity } from './analytics.entity';
+import { AnalyticsRepositoryToken } from './analytics.constants';
 
-export const AccountProviders = [
+export const AnalyticsProviders = [
     {
-        provide: ACCOUNT_TOKEN,
-        useFactory: (connection: Connection) => connection.getRepository(AccountEntity),
+        provide: AnalyticsRepositoryToken,
+        useFactory: (connection: Connection) =>
+            connection.getRepository(AnalyticsEntity),
         inject: [DB_CON_TOKEN],
     },
 ];

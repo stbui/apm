@@ -25,6 +25,11 @@ export class WebsiteController extends CrudController<WebsiteEntity> {
         return this.service.find();
     }
 
+    @Get('cancreate')
+    cancreate() {
+        return {};
+    }
+
     // @Get()
     // websites() {
     //     return [
@@ -142,17 +147,27 @@ export class WebsiteController extends CrudController<WebsiteEntity> {
     }
 
     @Get(':website_id/online_users')
-    online_users(@Param('website_id') website_id) {
-        return this.service.online_users(website_id);
+    async online_users(@Param('website_id') website_id, @Query() query) {
+        const [data, total] = await this.service.online_users({
+            take: query.take,
+            skip: parseInt(query.skip),
+            where: { isLive: true, websiteId: website_id },
+        });
+
+        return {
+            hasSessions: true,
+            data: data,
+            total: total,
+        };
     }
 
     @Get(':website_id/sessions')
     async sessions(@Param('website_id') website_id, @Query() query) {
         // websiteId->sessionId
-        const [result, total] = await this.service.getSessions(website_id, {
+        const [result, total] = await this.service.getSessions({
             take: query.take,
             skip: parseInt(query.skip),
-            where: { website_id: website_id },
+            where: { websiteId: website_id },
         });
 
         return {

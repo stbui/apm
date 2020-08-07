@@ -10,6 +10,9 @@ import {
     ParseIntPipe,
 } from '@nestjs/common';
 import { ApiService } from './api.service';
+import { SessionService } from '../session/session.service';
+import { SnapshotService } from '../snapshot/snapshot.service';
+import { setInterval } from 'timers';
 
 @Controller('api')
 export class ApiController {
@@ -17,63 +20,15 @@ export class ApiController {
     clientOnline: boolean = true;
     clientUnOnlineTimer: NodeJS.Timer;
 
-    constructor(private service: ApiService) {}
-
-    /**
-     * 播放页面
-     * ?with_last_activity_index=true
-     */
-    @Get('/sessions/:id')
-    async sessions(@Param('id') id) {
-        const session = await this.service.getSession(id);
-
-        return {
-            log: null,
-            session: session,
-            customOrigin: null,
-            askUserForStreamingPermission: false,
-            lastActivityIndex: 83,
-        };
-    }
-
-    // 播放列表
-    /**
-     *
-     * @param session_id
-     * @param q
-     * ?events_index=-1&events_timestamp=-1&logs_timestamp=0
-     * ?events_index=2&events_timestamp=1495539033675&logs_timestamp=1495539033246
-     *
-     * ?events_index=0&events_timestamp=0&logs_timestamp=0
-     * ?events_index=-1&events_timestamp=-1
-     */
-    @Get('/sessions/:session_id/activities')
-    async activities(
-        @Param('session_id') sessionId,
-        @Query('events_index', new ParseIntPipe()) eventsIndex,
-    ) {
-        const _eventsIndex = eventsIndex === -1 ? 0 : eventsIndex;
-
-        const activities = await this.service.getEvents(
-            sessionId,
-            _eventsIndex,
-        );
-        const session = await this.service.getSession(sessionId);
-
-        const result = {
-            activities: activities,
-            lastEventIndex: eventsIndex + 1,
-            // 最后记录时间
-            lastEventTimestamp: session.lastActive,
-            // offset: 0,
-        };
-
-        return result;
-    }
+    constructor(
+        private service: ApiService,
+        private readonly sessionService: SessionService,
+        public readonly snapshotService: SnapshotService,
+    ) {}
 
     // 建立页面快照
     @Post('/session')
-    async session(@Body() body, @Headers('authorization') accessToken) {
+    async session(@Body() body, @Headers('authorization') websiteId) {
         const data = {
             docType: body.docType,
             left: body.left,
@@ -84,14 +39,17 @@ export class ApiController {
             top: body.top,
             visibilityState: body.visibilityState,
             snapshot: body.snapshot,
+            websiteId: websiteId,
         };
 
-        const session = {
+        const sessionModel = {
             ...body,
             start: body.timestamp,
             clientStartMilliseconds: body.timestamp,
+            websiteId: websiteId,
         };
-        const result = await this.service.saveSession(session);
+
+        const result = await this.sessionService.create(sessionModel);
 
         const model = {
             data,
@@ -99,89 +57,61 @@ export class ApiController {
             time: -1,
             timestamp: body.timestamp,
             type: 'dom_snapshot',
-            serverSessionId: result.id + '',
+            serverSessionId: result.id,
         };
 
-        await this.service.createSnapshot(model);
+        await this.snapshotService.insertMany(model);
         const mappings = this.service.findMappings();
 
         return {
             id: result.id,
             mappings,
-            serverSessionId: 1,
+            serverSessionId: websiteId,
             nr: false,
-        };
-    }
-
-    // 配置字段
-    @Get('/settings')
-    async settings(@Query() q, @Headers('authorization') accessToken) {
-        // const website = await this.service.findWebsite(
-        //     '5d3d95106e562d4d018e8a38',
-        // );
-
-        const mappings = this.service.findMappings();
-
-        return {
-            website: {
-                autoLogErrors: 1,
-                autoStartRecording: 1,
-                sensitiveInputFields: 0,
-                autoLogFailedNetworkRequests: 1,
-                autoLogConsoleLog: 1,
-                autoLogConsoleError: 1,
-                autoLogConsoleWarn: 1,
-                autoLogConsoleInfo: 1,
-                autoLogConsoleDebug: 1,
-                maxLogMessageLength: 1000,
-                storeStaticResources: 1,
-                origin: null,
-                sensitiveElementsSelector: '',
-                shouldRecordPage: true,
-            },
-            session: {
-                isActive: false,
-                sessionId: q.session_id,
-                hasEvents: false,
-                maxSessionInactivityMinutes: 1,
-            },
-            mappings,
         };
     }
 
     /**
      * 实时接收dom变化数据
-     * @param sessionn_id
-     * @param b
-     * @param serverSessionId
+     * ?batch_id=125&tab_id=1596770000471
+     * ?batch_id=137&tab_id=1596770000471
      */
-    @Post('/session/:sessionn_id/data')
+    @Post('/session/:session_id/data')
     async data(
-        @Param('sessionn_id') sessionnId,
+        @Param('session_id') sessionId,
+        @Headers('authorization') websiteId,
         @Body() body,
-        @Query('server_session_id') serverSessionId,
     ) {
+        // 客户端在推送事件
+        this.clientOnline = true;
+
+        clearInterval(this.clientUnOnlineTimer);
+        this.clientUnOnlineTimer = setInterval(() => {
+            this.clientOnline = false;
+        }, 1000);
+
         let { lastActive, sessions } = this.service.convertMappings(body);
-        const se = await this.service.getSession(sessionnId);
+
+        const se = await this.sessionService.findOneById(sessionId);
 
         let newSessions = sessions.map((session, index) => {
             const data = {
                 ...session,
                 data: session.data,
                 time: session.timestamp - se.timestamp,
-                serverSessionId: sessionnId,
+                serverSessionId: sessionId,
             };
 
-            this.service.createSnapshot(data);
+            this.snapshotService.create(data);
             return data;
         });
 
-        this.service.updateSession(sessionnId, {
-            lastActive: lastActive,
-            length: newSessions[newSessions.length - 1].time,
-        });
+        // this.snapshotService.update(sessionId, {
+        //     lastActive: lastActive,
+        //     length: newSessions[newSessions.length - 1].time,
+        // });
 
-        return newSessions;
+        return { hasRequestedLive: false };
     }
 
     @Post('/session/:id/identity')
@@ -189,42 +119,17 @@ export class ApiController {
         return { identifier: '79deb911-198e-4265-aad4-492246beef22' };
     }
 
-    // 客户端与服务端是否同时在线
-    // server_session_id
-    @Put('/session/:id/ping')
-    ping(@Param('id') id, @Query('server_session_id') serverSessionId) {
+    // 客户端与服务端是否保存在线状态
+    @Put('/session/:session_id/ping')
+    ping(@Param() param, @Headers('authorization') websiteId) {
         console.log('在线状态检查');
-        this.clientOnline = true;
-        return {};
+        this.clientOnline = false;
+        return false;
     }
 
     @Put('/session/:id/server_session/:i')
     server_session() {
         return { id: '5b154cb1455b11537d0baa84' };
-    }
-
-    @Get('/sessions/:id/status')
-    async status(@Param('id') id) {
-        // const result = await this.snapshotService.findById(id);
-        // const { isLive, length } = result;
-        return {};
-    }
-
-    //
-    @Get('/features/:id')
-    features(@Param('id') id) {
-        return {
-            isAssureCoWorkaroundEnabled: false,
-            isToolkitEnabled: true,
-            isControlTakeoverEnabled: true,
-            ignoreFormsAutofill: false,
-            captureMetadataOnly: true,
-        };
-    }
-    //
-    @Post('/analytics/sessions/:id')
-    analytics(@Param('id') id) {
-        return {};
     }
 
     @Get('login')
@@ -244,7 +149,7 @@ export class ApiController {
             lastName: 'ui',
             isAdmin: false,
             organizationRole: 'Product Management',
-            trialDaysLeft: 13,
+            trialDaysLeft: 365,
             isVerified: false,
         };
     }
@@ -253,7 +158,7 @@ export class ApiController {
     me() {
         return {
             created: 1591023516.0,
-            email: 'clusterhub@aliyun.com',
+            email: 'stbui@stbui.com',
             isVerified: false,
             organizationUrl: 'clusterhub',
             isAdmin: false,

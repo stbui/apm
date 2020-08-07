@@ -1,24 +1,41 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query, Headers } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { CrudController } from '../common/crud/crud.controller';
 import { SettingService } from './setting.service';
 import { SettingEntity } from './setting.entity';
 
-@ApiTags('setting')
-@Controller('setting')
+import { SessionService } from '../session/session.service';
+
+interface q {
+    url: any;
+    session_id: any;
+}
+
+@ApiTags('api/settings')
+@Controller('api/settings')
 export class SettingController extends CrudController<SettingEntity> {
-    constructor(protected service: SettingService) {
+    constructor(
+        protected service: SettingService,
+        private sessionService: SessionService,
+    ) {
         super();
     }
 
+    /**
+     *
+     * @param query
+     * @param websiteId
+     */
     @Get()
-    async setting() {
+    async settings(@Query() query: q, @Headers('authorization') websiteId) {
+        let sessionId = query.session_id;
+
         return {
             website: {
                 autoLogErrors: 1,
                 autoStartRecording: 1,
                 sensitiveInputFields: 0,
-                autoLogNetworkRequests: 'failed',
+                autoLogNetworkRequests: 'all',
                 autoLogConsoleLog: 1,
                 autoLogConsoleError: 1,
                 autoLogConsoleWarn: 1,
@@ -33,15 +50,16 @@ export class SettingController extends CrudController<SettingEntity> {
                 maxNodesCount: null,
                 liveSessionsEnabled: 1,
                 inactivityThreshold: 1800000,
+                useStrongerHoverSelector: 0,
                 sensitiveElementsSelector: '',
                 shouldRecordPage: true,
             },
             session: {
                 maxSessionInactivityMinutes: 1,
-                isActive: true,
-                hasEvents: true,
-                sensitiveInputFields: false,
-                sessionId: '5eddfe31d0308854dcd1f267',
+                isActivex: false,
+                hasEvents: false,
+                hasRequestedLive: false,
+                sessionId: sessionId,
             },
             mappings: {
                 lastActive: 'la',
