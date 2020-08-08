@@ -1,5 +1,5 @@
 {
-    "name": "apm",
+    "name": "@stbui/apmjs",
     "version": "0.0.0",
     "description": "demo",
     "main": "index.js",
