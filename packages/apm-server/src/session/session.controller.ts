@@ -8,7 +8,7 @@ import {
     Query,
     ParseIntPipe,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiParam } from '@nestjs/swagger';
 import { CrudController } from '../common/crud/crud.controller';
 import { SessionService } from './session.service';
 import { SessionEntity } from './session.entity';
@@ -184,4 +184,52 @@ export class SessionController extends CrudController<SessionEntity> {
     // logs(@Param('session_id') session_id) {
     //     return this.service.logs(session_id);
     // }
+
+    // "headers": {
+    //     "Authorization": "Basic " + btoa("user@example.com:d4ee759a2c1d4fa5ab789018f1d4b802")
+    // },
+    @ApiOperation({
+        description:
+            'Creating an access token for a session and putting it as a query parameter named access_token in the URL of the session will give access to the session to anyone who has the URL.',
+    })
+    @ApiParam({
+        name: 'session_id',
+        required: true,
+        type: String,
+    })
+    @Post(':session_id/access_tokens')
+    post_access_tokens(@Param('session_id') session_id) {
+        return {
+            id: '5832ce33c93f8e1d665f15e6',
+            name: 'public',
+            access_token: '779aef3287e54966b4f15e214761e12f',
+        };
+    }
+
+    // @ApiOperation({
+    //     description:
+    //         'Creating an access token for a session and putting it as a query parameter named access_token in the URL of the session will give access to the session to anyone who has the URL.',
+    // })
+    @ApiParam({
+        name: 'session_id',
+        required: true,
+        type: String,
+    })
+    @Get(':session_id/access_tokens')
+    get_access_tokens(@Param('session_id') session_id) {
+        return {
+            data: [
+                {
+                    id: '5832ce33c93f8e1d665f15e6',
+                    name: 'public',
+                    access_token: '779aef3287e54966b4f15e214761e12f',
+                },
+                {
+                    id: '5831641bc93f8e731ff5565b',
+                    name: 'other token',
+                    access_token: '819770cf05df434cba31b7dbc9267112',
+                },
+            ],
+        };
+    }
 }

@@ -126,9 +126,9 @@ export class WebsiteService extends CrudService<WebsiteEntity> {
     }
 
     async logs_newest(websiteId: string) {
-        const session = await this.sessionService.findOne({
-            websiteId: websiteId,
-        });
+        // const session = await this.sessionService.findOne({
+        //     websiteId: websiteId,
+        // });
 
         const log = await this.logsService.findOneOrFail(websiteId, {
             where: { websiteId: websiteId },
@@ -187,19 +187,18 @@ export class WebsiteService extends CrudService<WebsiteEntity> {
     async userCode(websiteId: string) {
         const res = await this.findOneById(websiteId);
 
-        // return {
-        //     name: res.name,
-        //     identifyUsersCode:
-        //         "apmjs.identify({\n    userId: 'USER-ID', // Replace the USER-ID with the user id from your app\n    email: 'user@example.com', // Not required\n    displayName: 'John Smith', // Not required\n\n    // Add your own custom user variables here.\n    role: 'user',\n    pricingPlan: 'free'\n});",
-        //     code: `<!-- Begin apmjs code -->\n<script type="text/javascript">\n!function(a,b){var c=window;c.apmjsKey=a,c[a]=c[a]||{t:b,\nq:[]};for(var d=["start","stop","identify","getSessionId","log","setOnDataCallback"],e=0;e<d.length;e++)!function(b){\nc[a][b]=c[a][b]||function(){c[a].q.push([b].concat([].slice.call(arguments,0)));\n}}(d[e]);var f=document.createElement("script");f.async=1,f.crossOrigin="anonymous",\nf.src="https://cdn.apmjs.com/apmjs.js";var g=document.getElementsByTagName("script")[0];\ng.parentNode.insertBefore(f,g)}("apmjs","${websiteId}");\n</script>\n<!-- End apmjs Code -->`,
-        // };
+        const id = res.access_tokens;
+        const userId = '1';
+        const email = 'user@example.com';
+        const displayName = 'stbui';
+        const name = res.name;
 
         return {
-            name: 'Yqb',
-            identifyUsersCode:
-                "SessionStack.identify({\n    userId: 'USER-ID', // Replace the USER-ID with the user id from your app\n    email: 'user@example.com', // Not required\n    displayName: 'John Smith', // Not required\n\n    // Add your own custom user variables here.\n    role: 'user',\n    pricingPlan: 'free'\n});",
-            code:
-                '<!-- Begin SessionStack code -->\n<script type="text/javascript">\n!function(a,b){var c=window;c.SessionStackKey=a,c[a]=c[a]||{t:b,\nq:[]};for(var d=["start","stop","identify","getSessionId","log","setOnDataCallback"],e=0;e<d.length;e++)!function(b){\nc[a][b]=c[a][b]||function(){c[a].q.push([b].concat([].slice.call(arguments,0)));\n}}(d[e]);var f=document.createElement("script");f.async=1,f.crossOrigin="anonymous",\nf.src="https://cdn.sessionstack.com/sessionstack.js";var g=document.getElementsByTagName("script")[0];\ng.parentNode.insertBefore(f,g)}("SessionStack","bf8813d3f71c4ef9bf851fbfc2fd0def");\n</script>\n<!-- End SessionStack Code -->',
+            name,
+            identifyUsersCode: `SessionStack.identify({\n    userId: '${userId}', // 将userId替换为用户ID\n    email: '${email}', // 可选\n    displayName: '${displayName}', // 可选\n\n    // 这里可以添加自定义变量.\n    role: 'user',\n    pricingPlan: 'free'\n});`,
+            code: `<!-- Begin code -->
+<script type="text/javascript">\n!function(a,b){var c=window;c.SessionStackKey=a,c[a]=c[a]||{t:b,\nq:[]};for(var d=["start","stop","identify","getSessionId","log","setOnDataCallback"],e=0;e<d.length;e++)!function(b){\nc[a][b]=c[a][b]||function(){c[a].q.push([b].concat([].slice.call(arguments,0)));\n}}(d[e]);var f=document.createElement("script");f.async=1,f.crossOrigin="anonymous",\nf.src="https://cdn.stbui.com/apmjs.js";var g=document.getElementsByTagName("script")[0];\ng.parentNode.insertBefore(f,g)}("SessionStack","${id}");\n</script>
+<!-- End Code -->`,
         };
     }
 }

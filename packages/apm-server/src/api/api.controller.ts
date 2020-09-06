@@ -1,18 +1,17 @@
 import {
     Controller,
     Get,
-    Query,
     Post,
     Body,
     Param,
     Put,
     Headers,
-    ParseIntPipe,
 } from '@nestjs/common';
 import { ApiService } from './api.service';
 import { SessionService } from '../session/session.service';
 import { SnapshotService } from '../snapshot/snapshot.service';
-import { setInterval } from 'timers';
+import { SubscriptionService } from '../subscription/subscription.service';
+import { v4 as uuidv4 } from 'uuid';
 
 @Controller('api')
 export class ApiController {
@@ -23,12 +22,17 @@ export class ApiController {
     constructor(
         private service: ApiService,
         private readonly sessionService: SessionService,
-        public readonly snapshotService: SnapshotService,
+        private readonly snapshotService: SnapshotService,
+        private readonly SubscriptionService: SubscriptionService,
     ) {}
 
-    // 建立页面快照
+    /**
+     * 建立页面快照
+     * @param body
+     * @param websiteId
+     */
     @Post('/session')
-    async session(@Body() body, @Headers('authorization') websiteId) {
+    async session(@Body() body, @Headers('authorization') accessToken) {
         const data = {
             docType: body.docType,
             left: body.left,
@@ -39,14 +43,14 @@ export class ApiController {
             top: body.top,
             visibilityState: body.visibilityState,
             snapshot: body.snapshot,
-            websiteId: websiteId,
+            accessToken: accessToken,
         };
 
         const sessionModel = {
             ...body,
             start: body.timestamp,
             clientStartMilliseconds: body.timestamp,
-            websiteId: websiteId,
+            accessToken: accessToken,
         };
 
         const result = await this.sessionService.create(sessionModel);
@@ -64,9 +68,9 @@ export class ApiController {
         const mappings = this.service.findMappings();
 
         return {
+            // sessionId
             id: result.id,
             mappings,
-            serverSessionId: websiteId,
             nr: false,
         };
     }
@@ -114,14 +118,25 @@ export class ApiController {
         return { hasRequestedLive: false };
     }
 
-    @Post('/session/:id/identity')
-    async identity(@Body() b, @Param() p) {
-        return { identifier: '79deb911-198e-4265-aad4-492246beef22' };
+    /**
+     * 分配客户端标志
+     * @param b
+     * @param p
+     */
+    @Post('/session/:sessionId/identity')
+    async identity(
+        @Body('identityData') identityData,
+        @Param('sessionId') sessionId,
+    ) {
+        if (identityData) {
+            return { identifier: identityData.userId };
+        }
+        return { identifier: uuidv4() };
     }
 
     // 客户端与服务端是否保存在线状态
     @Put('/session/:session_id/ping')
-    ping(@Param() param, @Headers('authorization') websiteId) {
+    ping(@Param('session_id') sessionId, @Headers('authorization') websiteId) {
         console.log('在线状态检查');
         this.clientOnline = false;
         return false;
@@ -179,15 +194,6 @@ export class ApiController {
 
     @Get('subscription')
     subscription() {
-        return {
-            userSeats: 3,
-            nextBillingDate: null,
-            planName: 'Free Trial',
-            subscriptionId: null,
-            isFree: true,
-            hasCustomPlan: false,
-            monthlySessions: 1000,
-            planEndDate: '05 July 2020',
-        };
+        return this.SubscriptionService.getSubscript();
     }
 }

@@ -1,5 +1,5 @@
-import { Controller, Get, Param, Query, Headers } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { Controller, Get, Query, Headers } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { CrudController } from '../common/crud/crud.controller';
 import { SettingService } from './setting.service';
 import { SettingEntity } from './setting.entity';
@@ -27,8 +27,12 @@ export class SettingController extends CrudController<SettingEntity> {
      * @param websiteId
      */
     @Get()
-    async settings(@Query() query: q, @Headers('authorization') websiteId) {
-        let sessionId = query.session_id;
+    async settings(
+        @Query() query: q,
+        @Headers('authorization') accessToken: string,
+    ) {
+        // 如果session_id存在，将返回的数据包含session_id
+        const sessionId = query.session_id;
 
         return {
             website: {

@@ -13,8 +13,7 @@ import {
 export class SessionEntity extends BaseEntity {
     @ObjectIdColumn() id: ObjectID;
 
-    @Column({ comment: '项目Id' })
-    websiteId: string;
+    @Column({ comment: 'jssdk' }) accessToken: string;
 
     // 设备
     @Column({ comment: '浏览器名称' }) browserName: string;

@@ -12,4 +12,17 @@ export class SubscriptionService extends CrudService<SubscriptionEntity> {
     ) {
         super();
     }
+
+    getSubscript() {
+        return {
+            userSeats: 3,
+            nextBillingDate: null,
+            planName: 'Free Trial',
+            subscriptionId: null,
+            isFree: true,
+            hasCustomPlan: false,
+            monthlySessions: 1000,
+            planEndDate: '05 July 2020',
+        };
+    }
 }

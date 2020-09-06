@@ -1,6 +1,6 @@
 import { BaseEntity, Entity, Column, ObjectID, ObjectIdColumn } from 'typeorm';
 
-@Entity()
+@Entity('apm_website')
 export class WebsiteEntity extends BaseEntity {
     @ObjectIdColumn() id: ObjectID;
 
@@ -26,5 +26,5 @@ export class WebsiteEntity extends BaseEntity {
     // @Column() storeStaticResources: boolean = true;
 
     //
-    // @Column() access_tokens: string;
+    @Column() access_tokens: string;
 }

@@ -1,5 +1,5 @@
 {
-    "name": "@stbui/apmjs",
+    "name": "@stbui/apmjs-demo",
     "version": "0.0.0",
     "description": "demo",
     "main": "index.js",
@@ -36,6 +36,6 @@
     "dependencies": {
         "lodash": "^4.17.15",
         "preact": "^10.4.4",
-        "codemirror":"^5.55.0"
+        "codemirror": "^5.55.0"
     }
 }
