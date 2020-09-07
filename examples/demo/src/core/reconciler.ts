@@ -244,7 +244,7 @@ export const some = (v: any) => v != null && v !== false && v !== true;
 const hs = (i: number, j: string | number | null, k?: string): string =>
     k != null && j != null ? '.' + i + '.' + k : j != null ? '.' + i + '.' + j : k != null ? '.' + k : '.' + i;
 
-export enum Flag {
+export const enum Flag {
     NOWORK = 0,
     PLACE = 1,
     UPDATE = 2,

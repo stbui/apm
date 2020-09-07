@@ -6,12 +6,15 @@ import {
     Param,
     Put,
     Headers,
+    Query,
 } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
 import { ApiService } from './api.service';
 import { SessionService } from '../session/session.service';
 import { SnapshotService } from '../snapshot/snapshot.service';
 import { SubscriptionService } from '../subscription/subscription.service';
-import { v4 as uuidv4 } from 'uuid';
+import { UsersService } from '../users/users.service';
+import { WebsiteService } from '../website/website.service';
 
 @Controller('api')
 export class ApiController {
@@ -23,7 +26,9 @@ export class ApiController {
         private service: ApiService,
         private readonly sessionService: SessionService,
         private readonly snapshotService: SnapshotService,
-        private readonly SubscriptionService: SubscriptionService,
+        private readonly subscriptionService: SubscriptionService,
+        private readonly usersService: UsersService,
+        private readonly websiteService: WebsiteService,
     ) {}
 
     /**
@@ -32,7 +37,11 @@ export class ApiController {
      * @param websiteId
      */
     @Post('/session')
-    async session(@Body() body, @Headers('authorization') accessToken) {
+    async updateSession(@Body() body, @Headers('authorization') accessToken) {
+        const website = await this.websiteService.findOne({
+            access_tokens: accessToken,
+        });
+
         const data = {
             docType: body.docType,
             left: body.left,
@@ -44,6 +53,7 @@ export class ApiController {
             visibilityState: body.visibilityState,
             snapshot: body.snapshot,
             accessToken: accessToken,
+            websiteId: website.id,
         };
 
         const sessionModel = {
@@ -51,9 +61,11 @@ export class ApiController {
             start: body.timestamp,
             clientStartMilliseconds: body.timestamp,
             accessToken: accessToken,
+            websiteId: website.id,
         };
 
-        const result = await this.sessionService.create(sessionModel);
+        //
+        const session = await this.sessionService.create(sessionModel);
 
         const model = {
             data,
@@ -61,15 +73,16 @@ export class ApiController {
             time: -1,
             timestamp: body.timestamp,
             type: 'dom_snapshot',
-            serverSessionId: result.id,
+            sessionId: session.id,
+            accessToken: accessToken,
+            websiteId: website.id,
         };
 
         await this.snapshotService.insertMany(model);
         const mappings = this.service.findMappings();
 
         return {
-            // sessionId
-            id: result.id,
+            id: session.id,
             mappings,
             nr: false,
         };
@@ -83,8 +96,9 @@ export class ApiController {
     @Post('/session/:session_id/data')
     async data(
         @Param('session_id') sessionId,
-        @Headers('authorization') websiteId,
+        @Headers('authorization') accessToken,
         @Body() body,
+        @Query() query,
     ) {
         // 客户端在推送事件
         this.clientOnline = true;
@@ -96,13 +110,13 @@ export class ApiController {
 
         let { lastActive, sessions } = this.service.convertMappings(body);
 
-        const se = await this.sessionService.findOneById(sessionId);
+        const session = await this.sessionService.findOneById(sessionId);
 
         let newSessions = sessions.map((session, index) => {
             const data = {
                 ...session,
                 data: session.data,
-                time: session.timestamp - se.timestamp,
+                time: session.timestamp - session.timestamp,
                 serverSessionId: sessionId,
             };
 
@@ -119,9 +133,9 @@ export class ApiController {
     }
 
     /**
-     * 分配客户端标志
-     * @param b
-     * @param p
+     * 分配客户端身份标志,不存在生产新的UUID
+     * @param identityData
+     * @param sessionId
      */
     @Post('/session/:sessionId/identity')
     async identity(
@@ -136,9 +150,18 @@ export class ApiController {
 
     // 客户端与服务端是否保存在线状态
     @Put('/session/:session_id/ping')
-    ping(@Param('session_id') sessionId, @Headers('authorization') websiteId) {
+    async ping(
+        @Param('session_id') sessionId,
+        @Headers('authorization') websiteId,
+    ) {
         console.log('在线状态检查');
         this.clientOnline = false;
+
+        const session = await this.sessionService.update(
+            { id: sessionId },
+            { isLive: true },
+        );
+
         return false;
     }
 
@@ -149,51 +172,16 @@ export class ApiController {
 
     @Get('login')
     login() {
-        return {
-            hasActivePlan: true,
-            verificationToken: '5050f71368cf465bbaecadba4cdec022',
-            specialOffer: null,
-            token:
-                'eyJhbGciOiJIUzI1NiIsImlhdCI6MTU5Mjc4OTQyMiwiZXhwIjoxNjI0MzI1NDIyfQ.eyJ1c2VyX2lkIjo2MzA5fQ.W_Rsx8jmY4VWh-QsFHTufxLvt_Ws3VZOM_Hk4PZmJdU',
-            id: 6309,
-            organizationUrl: 'stbui',
-            firstName: 'stb',
-            isTrial: true,
-            email: 'stbui@stbui.com',
-            created: 1592746402.0,
-            lastName: 'ui',
-            isAdmin: false,
-            organizationRole: 'Product Management',
-            trialDaysLeft: 365,
-            isVerified: false,
-        };
+        return this.usersService.test_login();
     }
 
     @Get('me')
     me() {
-        return {
-            created: 1591023516.0,
-            email: 'stbui@stbui.com',
-            isVerified: false,
-            organizationUrl: 'clusterhub',
-            isAdmin: false,
-            verificationToken: 'da7d7bf92c2d4479999bc8509e493c7c',
-            hasActivePlan: true,
-            trialDaysLeft: 7,
-            organizationName: 'clusterhub@aliyun.com',
-            specialOffer: null,
-            timezoneName: 'UTC',
-            organizationRole: 'Product Management',
-            firstName: 'G',
-            id: 6265,
-            lastName: 'B',
-            isTrial: true,
-            role: 'user',
-        };
+        return this.usersService.test();
     }
 
     @Get('subscription')
     subscription() {
-        return this.SubscriptionService.getSubscript();
+        return this.subscriptionService.getSubscript();
     }
 }

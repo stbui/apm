@@ -3,23 +3,30 @@ import { some, isStr } from './reconciler';
 
 // Supported and simplify jsx2
 // * https://github.com/reactjs/rfcs/blob/createlement-rfc/text/0000-create-element-changes.md
-export const h = function<P extends Attributes = {}>(type: FC<P>, attrs: P): Partial<IFiber> {
+export const h = function <P extends Attributes = {}>(type: FC<P>, attrs: P): Partial<IFiber> {
     let props = attrs || ({} as P);
     let key = props.key || null;
     let ref = props.ref || null;
+
     let children: FreNode[] = [];
-    for (let i = 2; i < arguments.length; i++) {
-        let vnode = arguments[i];
-        if (some(vnode)) {
-            // if vnode is a nest array, flat them first
-            while (isArr(vnode) && vnode.some(v => isArr(v))) {
-                vnode = [].concat(...vnode);
-            }
-            if (isStr(vnode)) {
-                vnode = createText(vnode as string);
-            }
-            children.push(vnode);
+    let simple = '';
+    const len = arguments.length;
+    for (let i = 2; i < len; i++) {
+        let child = arguments[i];
+        const end = i === len - 1;
+        // if vnode is a nest array, flat them first
+        while (isArr(child) && child.some(v => isArr(v))) {
+            child = [].concat(...child);
         }
+        let vnode = some(child) ? child : '';
+        const str = isStr(vnode);
+        // merge simple nodes
+        if (str) simple += String(vnode);
+        if (simple && (!str || end)) {
+            children.push(createText(simple));
+            simple = '';
+        }
+        if (!str) children.push(vnode);
     }
 
     if (children.length) {
@@ -28,7 +35,6 @@ export const h = function<P extends Attributes = {}>(type: FC<P>, attrs: P): Par
     }
     // delete them to reduce loop performance
     delete props.key;
-    delete props.ref;
 
     return { type, props, key, ref } as Partial<IFiber>;
 };

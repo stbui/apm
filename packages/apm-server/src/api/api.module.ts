@@ -6,6 +6,8 @@ import { ApiProviders } from './api.providers';
 import { SnapshotModule } from '../snapshot/snapshot.module';
 import { SessionModule } from '../session/session.module';
 import { SubscriptionModule } from '../subscription/subscription.module';
+import { UsersModule } from '../users/users.module';
+import { WebsiteModule } from '../website/website.module';
 
 @Module({
     imports: [
@@ -13,6 +15,8 @@ import { SubscriptionModule } from '../subscription/subscription.module';
         SnapshotModule,
         SessionModule,
         SubscriptionModule,
+        UsersModule,
+        WebsiteModule,
     ],
     controllers: [ApiController],
     providers: [ApiService, ...ApiProviders],

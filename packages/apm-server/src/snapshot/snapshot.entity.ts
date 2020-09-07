@@ -4,7 +4,7 @@ import { BaseEntity, Entity, Column, ObjectID, ObjectIdColumn } from 'typeorm';
 export class SnapshotEntity extends BaseEntity {
     @ObjectIdColumn({ name: 'id' }) sid: ObjectID;
     @Column() index: number;
-    @Column() serverSessionId: string;
+    @Column() sessionId: string;
     @Column() time: number;
     @Column() timestamp: Date;
     @Column() type: string;
