@@ -13,16 +13,6 @@ export class AccountService extends CrudService<AccountEntity> {
         super();
     }
 
-    profile() {
-        return {
-            lastName: 'ui',
-            organizationName: 'stbui',
-            firstName: 'stb',
-            timezoneName: 'UTC',
-            email: 'stbui@stbui.com',
-        };
-    }
-
     projects() {
         return [
             {
@@ -30,6 +20,14 @@ export class AccountService extends CrudService<AccountEntity> {
                 isSubscribeForReportsEnabled: true,
                 name: 'stbui',
                 id: 10679,
+                isSubscribedForReports: true,
+                isSubscribedForAlerts: true,
+            },
+            {
+                isOwner: true,
+                isSubscribeForReportsEnabled: true,
+                name: '2stbui',
+                id: 10680,
                 isSubscribedForReports: true,
                 isSubscribedForAlerts: true,
             },

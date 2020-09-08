@@ -38,7 +38,8 @@
         "rxjs": "^6.6.0",
         "swagger-ui-express": "^4.1.4",
         "typeorm": "^0.2.25",
-        "uuid": "^8.3.0"
+        "uuid": "^8.3.0",
+        "cookie-parser": "^1.4.5"
     },
     "devDependencies": {
         "@nestjs/cli": "^7.4.1",

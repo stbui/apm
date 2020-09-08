@@ -6,8 +6,8 @@ export class WebsiteEntity extends BaseEntity {
 
     @Column() name: string;
     @Column() inactiveFor: number;
-    @Column() isOwner: boolean = true;
-    @Column() sessionsCount: number;
+    @Column({ comment: '站点拥有者' }) isOwner: boolean = true;
+    @Column({ comment: 'session使用总数' }) sessionsCount: number;
 
     // @Column() autoLogConsoleDebug: boolean = true;
     // @Column() autoLogConsoleError: boolean = true;
@@ -27,4 +27,11 @@ export class WebsiteEntity extends BaseEntity {
 
     //
     @Column() access_tokens: string;
+
+    @Column({ comment: '报告' }) isSubscribeForReportsEnabled: boolean;
+    @Column({ comment: '报告' }) isSubscribedForReports: boolean;
+    @Column({ comment: '告警通知状态' }) isSubscribedForAlerts: boolean;
+
+    @Column({ comment: '分配使用量' }) sessionsLimitForPlan: number;
+    @Column({ comment: '当前使用量' }) sessionsCountForCurrentPeriod: number;
 }

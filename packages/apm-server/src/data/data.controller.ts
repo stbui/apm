@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { CrudController } from '../common/crud/crud.controller';
 import { DataService } from './data.service';
 import { DataEntity } from './data.entity';
+import { mock } from './countries';
 
 @ApiTags('data')
 @Controller('data')
@@ -12,5 +13,7 @@ export class DataController extends CrudController<DataEntity> {
     }
 
     @Get('countries')
-    countries() {}
+    countries() {
+        return mock;
+    }
 }

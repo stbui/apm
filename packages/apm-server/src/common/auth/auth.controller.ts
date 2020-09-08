@@ -1,29 +1,37 @@
-/**
- * Auth controller.
- * @file 权限模块控制器
- * @module common/auth/controller
- * @author Stbui <https://github.com/stbui>
- */
+import {
+    Controller,
+    Get,
+    Post,
+    UseGuards,
+    Body,
+    Headers,
+    Request,
+} from '@nestjs/common';
 
-import { Controller, Get, Post, UseGuards, Body, Headers } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { Credentials } from './auth.dto';
 
-@ApiTags('auth')
+@ApiTags('authentication')
 @Controller('auth')
 export class AuthController {
     constructor(private readonly authService: AuthService) {}
 
+    @ApiResponse({ status: 201, description: 'Successful Login' })
+    @ApiResponse({ status: 400, description: 'Bad Request' })
+    @ApiResponse({ status: 401, description: 'Unauthorized' })
     @Post('signin')
-    signIn(@Body() body: Credentials) {
-        return this.authService.signIn(body);
+    signIn(@Body() payload: Credentials) {
+        return this.authService.signIn(payload);
     }
 
+    @ApiResponse({ status: 201, description: 'Successful Registration' })
+    @ApiResponse({ status: 400, description: 'Bad Request' })
+    @ApiResponse({ status: 401, description: 'Unauthorized' })
     @Post('register')
-    register(@Body() body: any) {
-        return this.authService.register(body);
+    register(@Body() payload: Credentials) {
+        return this.authService.register(payload);
     }
 
     @Get('signout')
@@ -40,5 +48,14 @@ export class AuthController {
     @UseGuards(AuthGuard())
     async verify(@Headers('Authorization') token: string) {
         return this.authService.validateAccessToken(token);
+    }
+
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard())
+    @Get('me')
+    @ApiResponse({ status: 200, description: 'Successful Response' })
+    @ApiResponse({ status: 401, description: 'Unauthorized' })
+    async getLoggedInUser(@Request() request): Promise<any> {
+        return request.user;
     }
 }

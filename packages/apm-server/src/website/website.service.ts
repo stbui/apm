@@ -105,81 +105,36 @@ export class WebsiteService extends CrudService<WebsiteEntity> {
         return this.logsService.create(entity);
     }
 
-    async logs_aggregated(websiteId: string) {
-        const [data, total] = await this.logsService.findAndCount({
-            where: { websiteId: websiteId },
-            select: [
-                'message',
-                'level',
-                'usersAffected',
-                'firstOccurrence',
-                'lastOccurrence',
-                'totalOccurrences',
-            ],
-        });
-
-        return {
-            data: data,
-            total: total,
-            hasLogs: true,
-        };
+    logs_aggregated(options) {
+        return this.logsService.findAndCount(options);
     }
 
-    async logs_newest(websiteId: string) {
-        // const session = await this.sessionService.findOne({
-        //     websiteId: websiteId,
-        // });
+    async logs_newest(websiteId: string, query) {
+        const log = await this.logsService.findOne(
+            { websiteId },
+            {
+                select: [
+                    'request',
+                    'sessionId',
+                    'message',
+                    'level',
+                    'isMessageTrimmed',
+                    'time',
+                ],
+            },
+        );
 
-        const log = await this.logsService.findOneOrFail(websiteId, {
-            where: { websiteId: websiteId },
-            select: [
-                'request',
-                'sessionId',
-                'message',
-                'level',
-                'isMessageTrimmed',
-                'time',
-            ],
+        // bug: 找出Events中的session
+        // time: query.fromDate, level: query.level
+        const session = await this.sessionService.findOne({
+            websiteId,
+            start: query.fromDate,
         });
 
         return {
-            log: {
-                request: null,
-                sessionId: '5eef8cf8f263083b88a3d79e',
-                message:
-                    '\u6253\u5f00 \u56fe\u62a5\u8868\u5f15\u64ce \u529f\u80fd\u8017\u65f6',
-                isMessageTrimmed: false,
-                level: 'info',
-                time: 1592757556198,
-                id: '5eef8d47342e916aa5634096',
-            },
+            log,
+            session,
             hasPrevious: false,
-            session: {
-                length: 80903,
-                browserName: 'Chrome',
-                product: null,
-                lastActive: 'Sun, 21 Jun 2020 16:39:39 GMT',
-                start: 'Sun, 21 Jun 2020 16:38:16 GMT',
-                regionName: null,
-                ip: '112.118.176.78',
-                os: 'OS X 10.14.6 64-bit',
-                pageUrl: 'http://example.jepaas.com/index.html',
-                id: '5eef8cf8f263083b88a3d79e',
-                referrer: 'http://example.jepaas.com/index.html',
-                screenWidth: 1623,
-                city: 'Central District',
-                country: 'China',
-                layoutName: 'Blink',
-                browserVersion: '83.0.4103.61',
-                manufacturer: null,
-                userIdentity: {
-                    displayName: 'User 2',
-                    customFields: [],
-                    identifier: '8aa66f45-ec9f-49fa-8ede-530ce14b88ee',
-                    email: null,
-                },
-                screenHeight: 733,
-            },
             hasNext: false,
         };
     }

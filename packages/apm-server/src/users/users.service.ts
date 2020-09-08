@@ -9,7 +9,6 @@ import * as crypto from 'crypto';
 import { CrudService } from '../common/crud/crud.service';
 import { UsersEntity } from './users.entity';
 import { USER_TOKEN } from './users.constants';
-import { User } from './users.interface';
 
 @Injectable()
 export class UsersService extends CrudService<UsersEntity> {
@@ -20,7 +19,21 @@ export class UsersService extends CrudService<UsersEntity> {
         super();
     }
 
-    async findOne(loginUser): Promise<UsersEntity> {
+    async getByEmailAndPass(email: string, password: string) {
+        const passHash = crypto.createHmac('sha256', password).digest('hex');
+        return await this.repository
+            .createQueryBuilder('users')
+            .where('users.email = :email and users.password = :password')
+            .setParameter('email', email)
+            .setParameter('password', passHash)
+            .getOne();
+    }
+
+    /**
+     * 查询是否有该用户
+     * @param loginUser
+     */
+    findOne(loginUser): Promise<UsersEntity> {
         const findOneOptions = {
             email: loginUser.email,
             password: crypto
@@ -28,7 +41,7 @@ export class UsersService extends CrudService<UsersEntity> {
                 .digest('hex'),
         };
 
-        return await this.repository.findOne(findOneOptions);
+        return this.repository.findOne(findOneOptions);
     }
 
     async login(credentials) {
@@ -44,15 +57,29 @@ export class UsersService extends CrudService<UsersEntity> {
         return user;
     }
 
+    /**
+     * 注册新用户
+     * @param data
+     */
     async register(data) {
-        const { username } = data;
-        let user = await this.repository.findOne({ where: { username } });
-        if (user) {
-            throw new BadRequestException('User already exists');
+        const { email, password, repassword } = data;
+        if (password !== repassword) {
+            throw new BadRequestException('两次密码输入不一致');
         }
 
-        user = await this.create(data);
-        return user;
+        let user = await this.repository.findOne({ where: { email } });
+        if (user) {
+            throw new BadRequestException('用户已存在');
+        }
+
+        // 制作密码盐
+        const hashPasswrod = crypto
+            .createHmac('sha256', password)
+            .digest('hex');
+
+        const model = { email, password: hashPasswrod };
+
+        return this.create(model);
     }
 
     /**
@@ -74,7 +101,11 @@ export class UsersService extends CrudService<UsersEntity> {
      * @returns User 单个用户
      */
     public async findOneByEmail(email: string): Promise<any> {
-        return await this.findOne({ email: email });
+        return await this.repository
+            .createQueryBuilder('users')
+            .where('users.email = :email')
+            .setParameter('email', email)
+            .getOne();
     }
 
     /**
@@ -114,6 +145,13 @@ export class UsersService extends CrudService<UsersEntity> {
         };
     }
 
+    // 前端写入cookie： authToken:token
+    // sessionstack-organization：organizationUrl
+
+    // api/login 接口header上的j
+    // authorization: Basic b3BlbnZwc0BhbGl5dW4uY29tOiFAI1FXRTEyM3F3ZQ==
+    // header上添加字段，后面接口需要带上
+    // authorization: Basic ZXlKbGVIQWlPakUyTXpFd09UVXlPVGNzSW1Gc1p5STZJa2hUTWpVMklpd2lhV0YwSWpveE5UazVOVFU1TWprM2ZRLmV5SjFjMlZ5WDJsa0lqbzJNekE1ZlEuWG0xaVByZlFkaGhnd0RxaFB4T1VqLW1UZXFsWEpNWGVDSGxFTW91TnNrMDo=
     test_login() {
         return {
             hasActivePlan: true,

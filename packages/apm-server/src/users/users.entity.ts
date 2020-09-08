@@ -16,9 +16,10 @@ import {
     Validate,
     IsEmpty,
 } from 'class-validator';
-import * as crypto from 'crypto';
+import { Exclude } from 'class-transformer';
 import { IsUserAlreadyExist } from './users.validator';
 import { USER_ROLE } from './users.constants';
+import { PasswordTransformer } from './password.transformer';
 
 @Entity('apm_users')
 export class UsersEntity extends BaseEntity {
@@ -29,19 +30,16 @@ export class UsersEntity extends BaseEntity {
     //     message: 'User already exists'
     // })
     @IsEmail()
-    @Column({ unique: true })
+    @Column({ unique: true, nullable: true })
     email: string;
 
-    @Column()
-    @MinLength(6)
+    @Column({
+        name: 'password',
+        length: 255,
+        transformer: new PasswordTransformer(),
+    })
+    @Exclude()
     password: string;
-
-    @BeforeInsert()
-    hashPassword() {
-        this.password = crypto
-            .createHmac('sha256', this.password)
-            .digest('hex');
-    }
 
     @CreateDateColumn() created: Date;
     @UpdateDateColumn() modifiedAt: Date;
@@ -56,8 +54,8 @@ export class UsersEntity extends BaseEntity {
     @Column() isAdmin: boolean;
     @Column({ comment: '试用状态' }) isTrial: boolean;
     @Column() isVerified: boolean;
-    @Column({ comment: '姓名' }) firstName: string;
-    @Column({ comment: '姓名' }) lastName: string;
+    @Column({ comment: '姓名', length: 30 }) firstName: string;
+    @Column({ comment: '姓名', length: 50 }) lastName: string;
     @Column({ comment: '时区' }) timezoneName: string;
 
     // 即将移除
@@ -90,4 +88,24 @@ export class UsersEntity extends BaseEntity {
             userId: string;
         };
     };
+
+    // @Column() userIdentity: any = {
+    //     displayName: 'stbui',
+    //     email: 'stbui',
+    //     identifier: '123',
+    //     customFields: [
+    //         {
+    //             value: '899元/月',
+    //             key: 'pricingPlan',
+    //         },
+    //         {
+    //             value: 'user',
+    //             key: 'role',
+    //         },
+    //         {
+    //             value: 'True',
+    //             key: 'subscribedToEmail',
+    //         },
+    //     ],
+    // };
 }

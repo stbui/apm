@@ -15,10 +15,12 @@ import {
     ApiQuery,
     ApiParam,
     ApiBearerAuth,
+    ApiBody,
 } from '@nestjs/swagger';
 import { CrudController } from '../common/crud/crud.controller';
 import { WebsiteService } from './website.service';
 import { WebsiteEntity } from './website.entity';
+import { CreateWebsiteDto } from './website.dto';
 import { v4 as uuidv4 } from 'uuid';
 
 @ApiBearerAuth()
@@ -35,24 +37,27 @@ export class WebsiteController extends CrudController<WebsiteEntity> {
         return this.service.find();
     }
 
+    @ApiOperation({ summary: '新建站点名称' })
+    @ApiBody({ type: CreateWebsiteDto })
     @Post()
-    public async create(@Body() data: object): Promise<any> {
+    public async create(
+        @Body() data: CreateWebsiteDto,
+    ): Promise<WebsiteEntity> {
         return this.service.create({
             ...data,
             access_tokens: uuidv4().split('-').join(''),
         });
     }
 
-    @ApiOperation({ summary: '名称是否存在' })
+    @ApiOperation({ summary: '站点名称是否存在' })
     @Get('cancreate')
     cancreate() {
         return {};
     }
 
-    @ApiOperation({ summary: '项目名称' })
+    @ApiOperation({ summary: '返回站点名称' })
     @ApiParam({
         name: 'website_id',
-        required: true,
         type: String,
         description: '站点id',
     })
@@ -65,25 +70,79 @@ export class WebsiteController extends CrudController<WebsiteEntity> {
     @ApiOperation({ summary: '说明' })
     @ApiParam({
         name: 'website_id',
-        required: true,
-        type: String,
         description: '站点id',
+    })
+    @ApiQuery({
+        name: 'fromDate',
+        example: 1592757344110,
+    })
+    @ApiQuery({
+        name: 'level',
+        example: 'info',
+    })
+    @ApiQuery({
+        name: 'message',
     })
     @Get(':website_id/logs/newest')
-    logs_newest(@Param('website_id') website_id) {
-        return this.service.logs_newest(website_id);
+    logs_newest(@Param('website_id') websiteId, @Query() query) {
+        return this.service.logs_newest(websiteId, query);
     }
 
-    @ApiOperation({ summary: '说明' })
+    @ApiOperation({ summary: 'Events & Errors' })
     @ApiParam({
         name: 'website_id',
-        required: true,
         type: String,
-        description: '站点id',
+    })
+    @ApiQuery({
+        name: 'levels',
+        type: [String],
+        isArray: true,
+        enum: ['info', 'debug', 'warn', 'error'],
+        // example: ['info', 'debug', 'warn', 'error'],
+    })
+    @ApiQuery({
+        name: 'period',
+        type: String,
+        required: false,
+        enum: [3600, 86400, 604800, 2592000],
+    })
+    @ApiQuery({
+        required: false,
+        name: 'search',
+        type: String,
+    })
+    @ApiQuery({
+        name: 'limit',
+        type: String,
+        example: 10,
+    })
+    @ApiQuery({
+        name: 'skip',
+        type: String,
+        example: 0,
     })
     @Get(':website_id/logs/aggregated')
-    logs_aggregated(@Param('website_id') website_id) {
-        return this.service.logs_aggregated(website_id);
+    async logs_aggregated(@Param('website_id') websiteId, @Query() query) {
+        const [data, total] = await this.service.logs_aggregated({
+            take: parseInt(query.limit),
+            skip: parseInt(query.skip),
+
+            where: { websiteId },
+            select: [
+                'message',
+                'level',
+                'usersAffected',
+                'firstOccurrence',
+                'lastOccurrence',
+                'totalOccurrences',
+            ],
+        });
+
+        return {
+            data: data,
+            total: total,
+            hasLogs: true,
+        };
     }
 
     @ApiOperation({ summary: '说明' })
@@ -283,12 +342,10 @@ export class WebsiteController extends CrudController<WebsiteEntity> {
     })
     @Get(':website_id/sessions')
     async sessions(@Param('website_id') websiteId, @Query() query) {
-        const website = await this.service.findOneById(websiteId);
-
         const [result, total] = await this.service.getSessions({
             take: query.take,
             skip: parseInt(query.skip),
-            where: { accessToken: website.access_tokens },
+            where: { websiteId: websiteId },
         });
 
         return {

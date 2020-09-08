@@ -4,6 +4,9 @@ import { BaseEntity, Entity, Column, ObjectID, ObjectIdColumn } from 'typeorm';
 export class LogsEntity extends BaseEntity {
     @ObjectIdColumn() id: ObjectID;
 
+    @Column({ nullable: false }) websiteId: string;
+    @Column({ nullable: false }) sessionId: string;
+
     @Column({ comment: '消息' }) message: string;
     @Column({ comment: '级别' }) level: string;
     @Column() usersAffected: number;
@@ -12,7 +15,7 @@ export class LogsEntity extends BaseEntity {
     @Column() totalOccurrences: number;
 
     @Column({ nullable: true }) request: string;
-    @Column({ nullable: false }) sessionId: string;
+
     @Column() isMessageTrimmed: boolean;
     @Column({ comment: '时间' }) time: number;
 }

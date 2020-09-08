@@ -14,6 +14,7 @@ export class SessionEntity extends BaseEntity {
     @ObjectIdColumn() id: ObjectID;
 
     @Column({ comment: 'jssdk' }) accessToken: string;
+    @Column({ nullable: false }) websiteId: string;
 
     // 设备
     @Column({ comment: '浏览器名称' }) browserName: string;
@@ -39,7 +40,7 @@ export class SessionEntity extends BaseEntity {
     @Column() version: string;
     @Column() visibilityState: string;
     @Column() hostname: string;
-    // server更新
+
     @Column({ comment: '开始时间' }) start: number;
     @Column({ comment: '结束时间' }) lastActive: number;
 
@@ -54,27 +55,7 @@ export class SessionEntity extends BaseEntity {
     @Column() isWatched: boolean = true;
     @Column({ comment: '时长' }) length: number;
 
-    // 关联用户
-    // @Column() userIdentity: Object;
-    // @Column() userIdentity: any = {
-    //     displayName: 'stbui',
-    //     email: 'stbui',
-    //     identifier: '123',
-    //     customFields: [
-    //         {
-    //             value: '899元/月',
-    //             key: 'pricingPlan',
-    //         },
-    //         {
-    //             value: 'user',
-    //             key: 'role',
-    //         },
-    //         {
-    //             value: 'True',
-    //             key: 'subscribedToEmail',
-    //         },
-    //     ],
-    // };
+    @Column({ comment: '用户自定义变量' }) userIdentity: Object;
 
     // 关联表
     // @Column({ comment: '设备' }) device: Object;

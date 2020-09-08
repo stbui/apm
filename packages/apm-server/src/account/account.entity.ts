@@ -4,6 +4,10 @@ import { BaseEntity, Entity, Column, ObjectID, ObjectIdColumn } from 'typeorm';
 export class AccountEntity extends BaseEntity {
     @ObjectIdColumn() id: ObjectID;
 
-    //
-    @Column() name: string;
+    @Column() lastName: string;
+    @Column() firstName: string;
+    @Column() organizationName: string;
+    @Column() timezoneName: string;
+    @Column() email: string;
+    @Column() password: string;
 }
