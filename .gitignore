@@ -127,3 +127,4 @@ lib
 *.tgz
 .rpt2_cache
 dist
+.umi
