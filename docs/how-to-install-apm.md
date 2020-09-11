@@ -8,13 +8,13 @@
 下载代码
 
 ```
-git clone https://github.com/Apm
+git clone https://github.com/stbui/apm
 ```
 
 安装依赖
 
 ```
-npm install
+yarn
 ```
 
 导入数据
@@ -22,13 +22,13 @@ npm install
 启动项目
 
 ```
-npm run prod
+yarn start
 ```
 
 后台登录
 
 ```
-
+http://127.0.0.1
 ```
 
 ## 部署
