@@ -8,13 +8,12 @@
     "scripts": {
         "build": "lerna run build",
         "release": "yarn run build && lerna publish --exact --conventional-commits",
-        "start": "cd packages/apm-server && yarn run start:dev",
-        "demo": "cd examples/demo && yarn start",
+        "start": "lerna run start --scope @stbui/apmjs-server",
+        "demo": "lerna run start --scope @stbui/apmjs-demo",
         "docs": "dumi dev",
         "docs:deploy": "dumi build && gh-pages -d dist",
         "prettier": "prettier --config ./.prettierrc.js --write --list-different \"packages/*/src/**/*.{js,json,ts,tsx}\"",
-        "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
-        "lint": "eslint --ext .js,.ts,.tsx \"./packages/**/src/**/*.{js,ts,tsx}\""
+        "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0"
     },
     "author": "stbui",
     "license": "ISC",
