@@ -9,4 +9,9 @@ export class CreateWebsiteDto {
     readonly name: string;
 }
 
-export class UpdateWebsiteDto extends PartialType(CreateWebsiteDto) {}
+export class UpdateWebsiteDto extends PartialType(CreateWebsiteDto) {
+    @ApiProperty({
+        description: 'origin',
+    })
+    readonly origin: string;
+}

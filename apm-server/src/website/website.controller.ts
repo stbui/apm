@@ -20,7 +20,7 @@ import {
 import { CrudController } from '../common/crud/crud.controller';
 import { WebsiteService } from './website.service';
 import { WebsiteEntity } from './website.entity';
-import { CreateWebsiteDto } from './website.dto';
+import { CreateWebsiteDto, UpdateWebsiteDto } from './website.dto';
 import { v4 as uuidv4 } from 'uuid';
 
 @ApiBearerAuth()
@@ -47,6 +47,13 @@ export class WebsiteController extends CrudController<WebsiteEntity> {
             ...data,
             access_tokens: uuidv4().split('-').join(''),
         });
+    }
+
+    @ApiOperation({ summary: '更新站点名称' })
+    @ApiBody({ type: UpdateWebsiteDto })
+    @Put(':id')
+    public async update(@Body() data: any, @Param('id') id): Promise<any> {
+        return {};
     }
 
     @ApiOperation({ summary: '站点名称是否存在' })
@@ -145,7 +152,7 @@ export class WebsiteController extends CrudController<WebsiteEntity> {
         };
     }
 
-    @ApiOperation({ summary: '说明' })
+    @ApiOperation({ summary: 'Recording' })
     @ApiParam({
         name: 'website_id',
         required: true,
@@ -166,6 +173,11 @@ export class WebsiteController extends CrudController<WebsiteEntity> {
         };
     }
 
+    /**
+     *
+     * @param websiteId
+     * @param body {"blockedIps":[{"name":"name","ip":"ip"}],"autoStartRecording":false,"targetPages":[{"matchingMethod":"simple_match","value":1}]}
+     */
     @ApiOperation({ summary: 'Recording' })
     @ApiParam({
         name: 'website_id',
@@ -174,7 +186,7 @@ export class WebsiteController extends CrudController<WebsiteEntity> {
         description: '站点id',
     })
     @Put(':website_id/settings/recording')
-    settings_recording_update(@Param('website_id') website_id, @Body() body) {
+    settings_recording_update(@Param('website_id') websiteId, @Body() body) {
         return {
             blockedIps: [{ name: 'name', ip: 'ip' }],
             autoStartRecording: true,
@@ -203,6 +215,11 @@ export class WebsiteController extends CrudController<WebsiteEntity> {
         };
     }
 
+    /**
+     * @param websiteId
+     * @param body
+     * {"notificationsDeliveryPeriod":420,"logLevels":["error","warn"],"ignoreList":[]}
+     */
     @ApiOperation({ summary: 'Notifications' })
     @ApiParam({
         name: 'website_id',
@@ -212,7 +229,7 @@ export class WebsiteController extends CrudController<WebsiteEntity> {
     })
     @Put(':website_id/settings/notifications')
     settings_notifications_update(
-        @Param('website_id') website_id,
+        @Param('website_id') websiteId,
         @Body() body,
     ) {
         return {
@@ -222,7 +239,7 @@ export class WebsiteController extends CrudController<WebsiteEntity> {
         };
     }
 
-    @ApiOperation({ summary: '说明' })
+    @ApiOperation({ summary: 'Co-Browsing' })
     @ApiParam({
         name: 'website_id',
         required: true,
@@ -230,11 +247,11 @@ export class WebsiteController extends CrudController<WebsiteEntity> {
         description: '站点id',
     })
     @Get(':website_id/settings/co_browsing')
-    settings_co_browsing(@Param('website_id') website_id) {
+    settings_co_browsing(@Param('website_id') websiteId: string) {
         return { askUserForStreamingPermission: false };
     }
 
-    @ApiOperation({ summary: '说明' })
+    @ApiOperation({ summary: 'Co-Browsing' })
     @ApiParam({
         name: 'website_id',
         required: true,
@@ -242,7 +259,10 @@ export class WebsiteController extends CrudController<WebsiteEntity> {
         description: '站点id',
     })
     @Put(':website_id/settings/co_browsing')
-    settings_co_browsing_update(@Param('website_id') website_id, @Body() body) {
+    settings_co_browsing_update(
+        @Param('website_id') websiteId,
+        @Body() body: { askUserForStreamingPermission: boolean },
+    ) {
         return { askUserForStreamingPermission: false };
     }
 

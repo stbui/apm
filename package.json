@@ -8,7 +8,7 @@
     "scripts": {
         "build": "lerna run build",
         "release": "yarn run build && lerna publish --exact --conventional-commits",
-        "start": "lerna run start --scope @stbui/apmjs-server",
+        "start": "cd apm-server &&  yarn start:dev",
         "demo": "lerna run start --scope @stbui/apmjs-demo",
         "docs": "dumi dev",
         "docs:deploy": "dumi build && gh-pages -d dist",
