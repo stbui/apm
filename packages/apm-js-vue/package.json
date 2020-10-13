@@ -2,7 +2,7 @@
     "name": "@stbui/apmjs-vue",
     "version": "1.0.0",
     "description": "apm",
-    "author": "stbui <w431106@163.com>",
+    "author": "stbui <stbui@stbui.com>",
     "homepage": "https://github.com/stbui/apm#readme",
     "license": "ISC",
     "main": "lib/index",
@@ -21,5 +21,7 @@
     "bugs": {
         "url": "https://github.com/stbui/apm/issues"
     },
-    "dependencies": {}
+    "dependencies": {
+        "@stbui/apmjs":"1.0.0"
+    }
 }

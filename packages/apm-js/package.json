@@ -2,7 +2,7 @@
     "name": "@stbui/apmjs",
     "version": "1.0.0",
     "description": "apm",
-    "author": "stbui <w431106@163.com>",
+    "author": "stbui <stbui@stbui.com>",
     "homepage": "https://github.com/stbui/apm#readme",
     "license": "ISC",
     "main": "lib/index",
@@ -24,21 +24,16 @@
     "bugs": {
         "url": "https://github.com/stbui/apm/issues"
     },
-    "dependencies": {
-        "reflect-metadata": "^0.1.12",
-        "@apm/core": "*",
-        "@apm/http": "*",
-        "@apm/common": "*"
-    },
+    "dependencies": {},
     "devDependencies": {
-        "prettier": "^2.0.5",
+        "prettier": "^2.1.2",
         "rimraf": "^3.0.2",
-        "rollup": "^2.26.11",
-        "rollup-plugin-commonjs": "^10.1.0",
+        "rollup": "^2.29.0",
+        "@rollup/plugin-commonjs": "15.1.0",
+        "@rollup/plugin-node-resolve": "9.0.0",
         "rollup-plugin-license": "^2.2.0",
-        "rollup-plugin-node-resolve": "^5.2.0",
-        "rollup-plugin-terser": "^7.0.0",
-        "rollup-plugin-typescript2": "^0.27.0",
+        "rollup-plugin-terser": "^7.0.2",
+        "rollup-plugin-typescript2": "^0.27.3",
         "typescript": "4.0.2"
     }
 }

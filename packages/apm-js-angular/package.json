@@ -2,7 +2,7 @@
     "name": "@stbui/apmjs-angular",
     "version": "1.0.0",
     "description": "apm",
-    "author": "stbui <w431106@163.com>",
+    "author": "stbui <stbui@stbui.com>",
     "homepage": "https://github.com/stbui/apm#readme",
     "license": "ISC",
     "main": "lib/index",
@@ -22,16 +22,17 @@
         "url": "https://github.com/stbui/apm/issues"
     },
     "dependencies": {
-        "@angular/core": "^10.1.1"
+        "@angular/core": "^10.1.5",
+        "@stbui/apmjs":"1.0.0"
     },
     "devDependencies": {
-        "@angular/cli": "^10.1.1",
-        "@angular/compiler": "^10.1.1",
-        "@angular/compiler-cli": "^10.1.1",
-        "@angular/core": "^10.1.1",
+        "@angular/cli": "^10.1.6",
+        "@angular/compiler": "^10.1.5",
+        "@angular/compiler-cli": "^10.1.5",
+        "@angular/core": "^10.1.5",
         "@stbui/apmjs": "^1.0.0",
         "rxjs": "^6.6.3",
-        "typescript": "^4.0.2",
+        "typescript": "^4.0.3",
         "zone.js": "^0.11.1"
     }
 }
