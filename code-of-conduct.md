@@ -1,7 +1,7 @@
 # 代码贡献规范
 
-有任何疑问，欢迎提交 [issue](https://github.com/stbui/angular-material-app/issues)，
-或者直接修改提交 [PR](https://github.com/stbui/angular-material-app/pulls)!
+有任何疑问，欢迎提交 [issue](https://github.com/stbui/apm/issues)，
+或者直接修改提交 [PR](https://github.com/stbui/apm/pulls)!
 
 ## 提交 issue
 
@@ -51,7 +51,7 @@ $ git commit -m "fix(role): role.use must xxx"
 $ git push origin branch-name
 ```
 
-提交后就可以在 [angular-material-app](https://github.com/stbui/angular-material-app/pulls) 创建 Pull Request 了。
+提交后就可以在 [apm](https://github.com/stbui/apm/pulls) 创建 Pull Request 了。
 
 由于谁也无法保证过了多久之后还记得多少，为了后期回溯历史的方便，请在提交 MR 时确保提供了以下信息。
 
@@ -138,7 +138,7 @@ BREAKING CHANGE:
 - 只维护两个版本，除非有安全问题，否则修复只会 patch 到 `master` 和 `next` 分支，其他更新推动上层框架升级到稳定大版本的最新版本。
 - 所有 API 的废弃都需要在当前的稳定版本上 `deprecate` 提示，并保证在当前的稳定版本上一直兼容到新版本的发布。
 - `master` 分支不设置 publish tag，上层框架基于 semver 依赖稳定版本。
-- `next` 分支设置 tag 为 `next`，上层框架可以通过 `angular-material-app@next` 引用开发中的版本进行测试。
+- `next` 分支设置 tag 为 `next`，上层框架可以通过 `apm@next` 引用开发中的版本进行测试。
 
 ### 发布策略
 
