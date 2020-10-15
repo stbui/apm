@@ -1,15 +1,17 @@
-import { Plugin } from './plugin';
+/**
+ * @license
+ * Copyright Stbui All Rights Reserved.
+ * https://github.com/stbui/apm
+ */
 
 /**
  * Promise 错误拦截
  * 当Promise 被 reject 且没有 reject 处理器的时候，会触发 unhandledrejection 事件；这可能发生在 window 下，但也可能发生在 Worker 中。 这对于调试回退错误处理非常有用。
  */
-export class UnnHanndledRejectionExcaption extends Plugin {
+export class UnnHanndledRejectionExcaption {
     static pluginName: string = 'UnnHanndledRejectionExcaption';
 
-    constructor(kernel) {
-        super(kernel);
-    }
+    constructor(public kernel) {}
 
     apply() {
         window.addEventListener('unhandledrejection', ({ reason }) => {
@@ -23,7 +25,7 @@ export class UnnHanndledRejectionExcaption extends Plugin {
                 type: 'unhandledPromiseRejection',
             };
 
-            this.dispatcher.dispatch('notify', event);
+            this.kernel.hooks.trigger('notify', event);
         });
     }
 }

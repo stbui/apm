@@ -5,29 +5,26 @@
     "author": "stbui <stbui@stbui.com>",
     "homepage": "https://github.com/stbui/apm#readme",
     "license": "ISC",
-    "main": "lib/index",
-    "module": "esm/public_api.js",
-    "types": "esm/public_api.d.ts",
+    "main": "dist/apmjs.cjs.js",
+    "module": "dist/apmjs.esm.js",
+    "browser": "dist/apmjs.umd.js",
+    "typings": "dist/index.d.ts",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/stbui/apm.git"
     },
     "scripts": {
-        "build:bundle": "rollup --config",
-        "build:bundle:watch": "rollup --config --watch",
-        "build": "yarn run build-cjs && yarn run build-esm",
-        "build-cjs": "rimraf ./lib && tsc",
-        "build-esm": "rimraf ./esm && tsc --outDir esm --module es2015",
-        "watch": "rimraf ./lib && tsc --watch",
-        "prettier": "prettier --write \"{src,test}/**/*.ts\""
+        "build:watch": "rollup --config --watch",
+        "build": "rollup --config"
     },
     "bugs": {
         "url": "https://github.com/stbui/apm/issues"
     },
-    "dependencies": {},
+    "dependencies": {
+        "@stbui/apmjs-core": "1.0.0",
+        "@stbui/apmjs-plugin-onerror": "1.0.0"
+    },
     "devDependencies": {
-        "prettier": "^2.1.2",
-        "rimraf": "^3.0.2",
         "rollup": "^2.29.0",
         "@rollup/plugin-commonjs": "15.1.0",
         "@rollup/plugin-node-resolve": "9.0.0",

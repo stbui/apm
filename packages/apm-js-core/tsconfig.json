@@ -1,10 +1,11 @@
 {
     "extends": "../../tsconfig.json",
     "compilerOptions": {
-        "sourceMap": false,
-        "target": "es5",
         "outDir": "lib",
-        "rootDir": "src"
+        "rootDir": "src",
+        "paths": {
+            "@stbui/apmjs": ["../apm-js/src"]
+        }
     },
     "include": ["src"]
 }

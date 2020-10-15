@@ -1,11 +1,15 @@
-import { Plugin } from './plugin';
+/**
+ * @license
+ * Copyright Stbui All Rights Reserved.
+ * https://github.com/stbui/apm
+ */
 
-export class OnErroExcaption extends Plugin {
+import { Kernal, Plugin } from '@stbui/apmjs-core';
+
+export class OnErroExcaption implements Plugin {
     static pluginName: string = 'OnErroExcaption';
 
-    constructor(kernel) {
-        super(kernel);
-    }
+    constructor(public kernel: Kernal) {}
 
     apply() {
         window.onerror = (messageOrEvent: any, url: string, lineNo, charNo, error) => {
@@ -26,7 +30,7 @@ export class OnErroExcaption extends Plugin {
                     type: 'unhandledException',
                 };
 
-                this.dispatcher.dispatch('notify', event);
+                this.kernel.hooks.trigger('notify', event);
             }
         };
     }

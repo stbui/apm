@@ -1,3 +1,9 @@
+/**
+ * @license
+ * Copyright Stbui All Rights Reserved.
+ * https://github.com/stbui/apm
+ */
+
 export class Breadcrumb {
     private type: string;
     private name: string;

@@ -1,3 +1,9 @@
+/**
+ * @license
+ * Copyright Stbui All Rights Reserved.
+ * https://github.com/stbui/apm
+ */
+
 export function mergeConfig(target = {}, source) {
     const _source = typeof source === 'string' ? { apiKey: source } : source;
 

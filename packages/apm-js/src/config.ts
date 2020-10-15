@@ -1,4 +1,18 @@
+/**
+ * @license
+ * Copyright Stbui All Rights Reserved.
+ * https://github.com/stbui/apm
+ */
+
 import { SDK_NAME, SDK_VERSION } from './version';
+
+export interface IConfig {
+    [key: string]: any;
+
+    endpoint: string;
+    apiKey: string;
+    appVersion: string;
+}
 
 export const defaultConfig = {
     endpoint: 'http://stbui.com',
@@ -23,4 +37,4 @@ export const defaultConfig = {
     sdk_version: SDK_VERSION,
 };
 
-export default Config;
+export default defaultConfig;

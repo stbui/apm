@@ -1,11 +1,7 @@
-import { Plugin } from '@stbui/apmjs';
-
-export class ReactjsPlugin extends Plugin {
+export class ReactjsPlugin {
     static pluginName: string = 'ReactjsPlugin';
 
-    constructor(kernel) {
-        super(kernel);
-    }
+    constructor(kernel) {}
 
     apply() {
         // @ts-ignore
@@ -13,8 +9,7 @@ export class ReactjsPlugin extends Plugin {
             throw new Error('Error');
         }
 
-        const dispatcher = this.dispatcher;
-
+        const hooks = this.kernel;
         // @ts-ignore
         class ErrorBoundary extends window.React.Component {
             constructor(props) {
@@ -33,7 +28,7 @@ export class ReactjsPlugin extends Plugin {
                     type: 'unhandledException',
                 };
 
-                dispatcher.dispatch('notify', event);
+                hooks.trigger('notify', event);
             }
 
             render() {

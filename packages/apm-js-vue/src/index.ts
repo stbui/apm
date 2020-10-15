@@ -1,11 +1,7 @@
-import { Plugin } from '@stbui/apmjs';
-
-export class VuejsPlugin extends Plugin {
+export class VuejsPlugin {
     static pluginName: string = 'VuejsPlugin';
 
-    constructor(kernel) {
-        super(kernel);
-    }
+    constructor(public kernel) {}
 
     apply() {
         // @ts-ignore
@@ -23,7 +19,7 @@ export class VuejsPlugin extends Plugin {
                 type: 'unhandledException',
             };
 
-            this.dispatcher.dispatch('notify', event);
+            this.kernel.hooks.trigger('notify', event);
         };
     }
 }

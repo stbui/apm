@@ -1,3 +1,9 @@
+/**
+ * @license
+ * Copyright Stbui All Rights Reserved.
+ * https://github.com/stbui/apm
+ */
+
 export class Dispatcher {
     private events: object;
 
@@ -40,7 +46,7 @@ export class Dispatcher {
         });
     }
 
-    dispatch(event: string, details?: any) {
+    trigger(event: string, details?: any) {
         if (this.events[event] === undefined) {
             console.warn(`This event: ${event} does not exist`);
             return false;
