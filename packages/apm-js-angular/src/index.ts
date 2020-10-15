@@ -1,14 +1,13 @@
 import { ErrorHandler, Injectable } from '@angular/core';
-import { Plugin } from '@apm/js';
 
 @Injectable()
 export class AngularErrorHandler extends ErrorHandler {
-    public client;
+    public kernel;
 
-    constructor(client?) {
+    constructor(kernel?) {
         super();
 
-        this.client = client;
+        this.kernel = kernel;
     }
 
     public handleError(error: any): void {
@@ -18,18 +17,16 @@ export class AngularErrorHandler extends ErrorHandler {
             type: 'unhandledException',
         };
 
-        this.client.dispatcher.dispatch('notify', event);
+        this.kernel.hooks.trigger('notify', event);
 
         ErrorHandler.prototype.handleError.call(this, error);
     }
 }
 
-export class AngularPlugin extends Plugin {
+export class AngularPlugin {
     static pluginName: string = 'AngularPlugin';
 
-    constructor(kernel) {
-        super(kernel);
-    }
+    constructor(public kernel) {}
 
     apply() {
         new AngularErrorHandler(this);

@@ -1,11 +1,13 @@
-import { Plugin } from './plugin';
+/**
+ * @license
+ * Copyright Stbui All Rights Reserved.
+ * https://github.com/stbui/apm
+ */
 
-export class WindowPerformance extends Plugin {
+export class WindowPerformance {
     static pluginName: string = 'WindowPerformance';
 
-    constructor(kernel) {
-        super(kernel);
-    }
+    constructor(public kernel) {}
 
     apply() {
         let time = window.performance.timing;
@@ -49,7 +51,7 @@ export class WindowPerformance extends Plugin {
             type: 'performance',
         };
 
-        this.dispatcher.dispatch('notify', event);
+        this.kernel.hooks.trigger('notify', event);
     }
 
     getResource() {

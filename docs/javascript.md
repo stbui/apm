@@ -3,7 +3,7 @@
 ### CDN
 
 ```html
-<script src="http://apm.stbui.com/apm.min.js"></script>
+<script src="http://apm.stbui.com/apmjs.min.js"></script>
 <script>
     apmjs.start('申请的key');
 </script>
@@ -69,36 +69,4 @@ module.exports = {
         }),
     ],
 };
-```
-
-# React
-
-```
-npm install --save @stbui/apmjs @stbui/apmjs-plugin-react
-```
-
-```js
-import apm from '@stbui/apmjs';
-import apmPluginReact from '@stbui/apmjs-plugin-react';
-```
-
-```js
-apm.start({
-    apiKey: '申请的key',
-    plugins: [new apmPluginReact(React)],
-});
-```
-
-```js
-import React from 'react';
-import ReactDOM from 'react-dom';
-
-const ErrorBoundary = apm.getPlugin('react');
-
-ReactDOM.render(
-    <ErrorBoundary>
-        <App />
-    </ErrorBoundary>,
-    document.getElementById('app')
-);
 ```

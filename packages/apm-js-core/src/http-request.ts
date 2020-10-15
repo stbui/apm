@@ -1,4 +1,20 @@
-export class HttpRequest {
+/**
+ * @license
+ * Copyright Stbui All Rights Reserved.
+ * https://github.com/stbui/apm
+ */
+
+export abstract class HttpHander {
+    abstract send(data: object): void;
+}
+
+export interface IParams {
+    endpoint: string;
+    apiKey: string;
+    payloadVersion: string;
+}
+
+export class HttpRequest implements HttpHander {
     // api数据上传地址
     public endpoint: string = window.location.origin;
     // 项目Key
@@ -6,13 +22,13 @@ export class HttpRequest {
     // 指定数据版本
     public payloadVersion: string = '1.0.0';
 
-    constructor(endpoint: string, apiKey: string, payloadVersion: string) {
+    constructor({ endpoint, apiKey, payloadVersion }: IParams) {
         this.endpoint = endpoint;
         this.apiKey = apiKey;
         this.payloadVersion = payloadVersion;
     }
 
-    send(data: object, callback) {
+    send(data: object) {
         try {
             const req = new XMLHttpRequest();
 

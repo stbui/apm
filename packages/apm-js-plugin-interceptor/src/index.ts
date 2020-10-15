@@ -1,14 +1,13 @@
-import { Plugin } from './plugin';
-
 /**
- * ajax请求拦截
+ * @license
+ * Copyright Stbui All Rights Reserved.
+ * https://github.com/stbui/apm
  */
-export class Interceptor extends Plugin {
+
+export class Interceptor {
     static pluginName: string = 'Interceptor';
 
-    constructor(kernel) {
-        super(kernel);
-    }
+    constructor(public kernel) {}
 
     apply() {
         let self = this;
@@ -24,7 +23,7 @@ export class Interceptor extends Plugin {
                     status: 200,
                 };
 
-                self.dispatcher.dispatch('notify', event);
+                this.kernel.hooks.trigger('notify', event);
             }
 
             return open.apply(this, arguments);
