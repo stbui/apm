@@ -6,6 +6,12 @@ import { playerSettings } from './test/playerSettings';
 import { SessionDataClient } from './test/SessionDataClient';
 import SessionPlayer from './SessionPlayer';
 
+interface ISession {
+    isLive?: any;
+    length?: any;
+    clientStartMilliseconds?: any;
+}
+
 let initialSettings: InitialSettings;
 let sessionDataClient: SessionDataClient;
 const settings: any = {};
@@ -20,7 +26,7 @@ let timestamp;
 let time: number = -1;
 
 export default ({ sessionId, logId }) => {
-    const [session, setSession] = useState();
+    const [session, setSession] = useState<ISession>();
     const [activities, setActivities] = useState([]);
     const [finishLoadingStatus, setFinishLoadingStatus] = useState(false);
 
