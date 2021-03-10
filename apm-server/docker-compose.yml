@@ -1,9 +1,17 @@
-version: "3"
+version: '3.9'
 
 services:
-  mongodb:
-    image: mongo:latest
-    environment:
-      - MONGODB_DATABASE="apm"
-    ports:
-      - 27017:27017
+    web:
+        build: .
+        environment:
+            - APP_DATABASE_HOST:mongodb
+        ports:
+            - '9000:9000'
+        links:
+            - mongodb
+    mongodb:
+        image: mongo:latest
+        environment:
+            - MONGODB_DATABASE="apm"
+        ports:
+            - 27017:27017

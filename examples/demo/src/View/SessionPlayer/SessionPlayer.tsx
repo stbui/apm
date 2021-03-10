@@ -13,6 +13,7 @@ import { SplitWidget } from '../../components';
 
 //
 import { Home } from '../../app';
+import Resize from '../Resize'
 
 let renderingProgress = 0;
 let containerWidth = 1000;
@@ -339,6 +340,7 @@ export const SessionPlayer = ({ session, activitiesData, startTime, settings, fi
                     </div>
                 </SplitWidget.Sidebar>
                 <SplitWidget.Main>
+                    <Resize />
                     <Home
                         addNewLogs={addNewLogs}
                         addNewNetworkRequests={addNewNetworkRequests}

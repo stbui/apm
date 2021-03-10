@@ -1,33 +1,50 @@
 {
     "name": "apm",
     "version": "1.0.0",
+    "description": "专注于前端用户行为产生的数据采集，分析和监控等解决方案",
     "homepage": "https://github.com/stbui/apm",
     "bugs": "https://github.com/stbui/apm/issues",
-    "main": "index.js",
     "private": true,
     "scripts": {
+        "preinstall": "node ./scripts/checkYarn.js",
+        "bootstrap:ci": "lerna bootstrap",
         "build": "lerna run build",
         "release": "yarn run build && lerna publish --exact --conventional-commits",
         "start": "cd apm-server &&  yarn start:dev",
-        "demo": "lerna run start --scope @stbui/apmjs-demo",
+        "demo": "cd examples/demo && yarn start",
         "docs": "dumi dev",
         "docs:deploy": "dumi build && gh-pages -d dist",
-        "prettier": "prettier --config ./.prettierrc.js --write --list-different \"packages/*/src/**/*.{js,json,ts,tsx}\"",
-        "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0"
+        "prettier": "prettier --config ./.prettierrc.js --write --list-different \"packages/*/src/**/*.{js,json,ts,tsx}\""
     },
     "author": "stbui",
     "license": "ISC",
-    "description": "",
+    "engines": {
+        "node": ">=10.0.0"
+    },
     "workspaces": [
         "examples/*",
         "packages/*"
     ],
+    "lint-staged": {
+        "*.ts?(x)": [
+            "prettier --parser=typescript --write",
+            "git add"
+        ],
+        "*.{js,jsx,less,md,json}": [
+            "prettier --write",
+            "git add"
+        ]
+    },
+    "gitHooks": {
+        "pre-commit": "lint-staged",
+        "commit-msg": "node scripts/verifyCommit.js"
+    },
     "devDependencies": {
-        "dumi": "^1.0.34",
+        "lint-staged": "^10.5.4",
+        "dumi": "^1.1.7",
         "gh-pages": "^3.1.0",
-        "lerna": "^3.22.1",
-        "prettier": "^2.1.2",
-        "typescript": "^4.0.3",
-        "conventional-changelog-cli": "^2.1.0"
+        "lerna": "^4.0.0",
+        "prettier": "^2.2.1",
+        "typescript": "^4.2.3"
     }
 }
