@@ -34,14 +34,14 @@ function g(playerController) {
     playerController.settings.analytics = { source: utils.getQueryParameter('source') };
 }
 function h(playerController) {
-    var b = i(),
-        c = j();
+    var fromUrl = getSettingPlayerFromUrl();
+    let fromLocal = getSettingPlayerFromlocalStorage();
 
     playerController.settings.playback = {};
 
-    l(playerController, b, c);
+    l(playerController, fromUrl, fromLocal);
 }
-function i() {
+function getSettingPlayerFromUrl() {
     return {
         shouldSkipProlongedInactivity: utils.getQueryParameter('skip_inactivity'),
         shouldVisualizeClicks: utils.getQueryParameter('visualize_mouse_clicks'),
@@ -49,7 +49,7 @@ function i() {
         speed: utils.getQueryParameter('speed'),
     };
 }
-function j() {
+function getSettingPlayerFromlocalStorage() {
     return {
         shouldSkipProlongedInactivity: k('shouldSkipProlongedInactivity', true),
         shouldVisualizeClicks: k('shouldVisualizeClicks', true),
@@ -60,23 +60,29 @@ function j() {
 function k(type, value) {
     return settings.get(type, value);
 }
-function l(playerController, c, d) {
-    utils.forEach(d, function(d, e) {
-        var f = c[e];
+/**
+ * 合并url&local的配置
+ * @param playerController
+ * @param queryParameter
+ * @param local
+ */
+function l(playerController, queryParameter, local: object) {
+    utils.forEach(local, function (value, key) {
+        var params = queryParameter[key];
 
         if (utils.isDefined(f)) {
-            playerController.settings.playback[e] = f;
+            playerController.settings.playback[key] = params;
         } else {
-            playerController.settings.playback[e] = d;
-            m(playerController, e, playerController.settings.playback[e]);
+            playerController.settings.playback[key] = value;
+            m(playerController, key, playerController.settings.playback[key]);
         }
     });
 }
-function m(playerController, c, d) {
-    var e = 'settings.playback.' + c,
-        f = 'settings.' + c;
+function m(playerController, key: string, value) {
+    let e = 'settings.playback.' + key;
+    let f = 'settings.' + key;
 
-    settings.bind(playerController, e, d, f);
+    settings.bind(playerController, e, value, f);
 }
 function getActivitiesFilterFromUrl(): any[] {
     const activities: string = utils.getQueryParameter('activities');
@@ -91,7 +97,7 @@ function getActivitiesFilterFromUrl(): any[] {
 function o(a) {
     var e: any = [];
 
-    utils.forEach(a, function(a) {
+    utils.forEach(a, function (a) {
         a === PAGE_LOAD ? e.push(EVENT_TYPE.DOM_SNAPSHOT) : e.push(a);
     });
 
@@ -100,7 +106,7 @@ function o(a) {
 function getActivitiesFromUrl(activities: string): any[] {
     var c: any = [];
 
-    utils.forEach(activities.split(','), function(a) {
+    utils.forEach(activities.split(','), function (a) {
         c.push(a.trim());
     });
 

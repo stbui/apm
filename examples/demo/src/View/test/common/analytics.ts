@@ -2,41 +2,41 @@ import { restSettings } from './restSettings';
 import { $resource, promise } from './resource';
 import { ANALYTICS_EVENT_TYPES } from './constant';
 
-var l = restSettings.buildUrl('analytics'),
-    m = restSettings.buildUrl('analytics/sessions/:session_id'),
-    n = restSettings.buildUrl('analytics/live_sessions'),
-    o = $resource(l),
-    p = $resource(m),
-    q = $resource(n);
+var l = restSettings.buildUrl('analytics');
+var m = restSettings.buildUrl('analytics/sessions/:session_id');
+var n = restSettings.buildUrl('analytics/live_sessions');
+var o = $resource(l);
+var p = $resource(m);
+var q = $resource(n);
 
-function f(a, b, d, e?, f?) {
+function trackEvent(userId, eventType, eventProperties, userProperties?, time?) {
     return promise.execute(o.save, {
-        userId: a,
-        eventType: b,
-        eventProperties: d,
-        userProperties: e,
-        time: f,
+        userId: userId,
+        eventType: eventType,
+        eventProperties: eventProperties,
+        userProperties: userProperties,
+        time: time,
     });
 }
-function g(a, b, d, f) {
+function trackSessionOpened(userId, session_id, access_token, source) {
     return promise.execute(
         p.save,
         {
-            session_id: b,
-            access_token: d,
+            session_id: session_id,
+            access_token: access_token,
         },
         {
-            userId: a,
+            userId: userId,
             eventType: ANALYTICS_EVENT_TYPES.SESSION_OPENED,
             eventProperties: {
-                session_id: b,
-                access_token: d,
-                source: f,
+                session_id: session_id,
+                access_token: access_token,
+                source: source,
             },
         }
     );
 }
-function h(a, b) {
+function trackLiveSessionOpened(a, b) {
     return promise.execute(q.save, {
         userId: a,
         eventType: ANALYTICS_EVENT_TYPES.LIVE_SESSION_OPENED,
@@ -45,33 +45,33 @@ function h(a, b) {
         },
     });
 }
-function i(a, b) {
+function trackLiveSessionStopped(userId, sessionId) {
     return promise.execute(q.save, {
-        userId: a,
+        userId: userId,
         eventType: ANALYTICS_EVENT_TYPES.LIVE_SESSION_STOPPED,
         eventProperties: {
-            session_id: b,
+            session_id: sessionId,
         },
     });
 }
-function j(a, b, c) {
-    return f(a, ANALYTICS_EVENT_TYPES.PROJECT_OPENED, {
-        project_id: b,
-        project_name: c,
+function trackProjectOpened(userId, projectId, projectName) {
+    return trackEvent(userId, ANALYTICS_EVENT_TYPES.PROJECT_OPENED, {
+        project_id: projectId,
+        project_name: projectName,
     });
 }
-function k(a, b, c) {
-    return f(a, ANALYTICS_EVENT_TYPES.PROJECT_SETTINGS_OPENED, {
-        project_id: b,
-        project_name: c,
+function trackProjectSettingsOpened(userId, projectId, projectName) {
+    return trackEvent(userId, ANALYTICS_EVENT_TYPES.PROJECT_SETTINGS_OPENED, {
+        project_id: projectId,
+        project_name: projectName,
     });
 }
 
 export const analytics = {
-    trackEvent: f,
-    trackSessionOpened: g,
-    trackLiveSessionOpened: h,
-    trackLiveSessionStopped: i,
-    trackProjectOpened: j,
-    trackProjectSettingsOpened: k,
+    trackEvent: trackEvent,
+    trackSessionOpened: trackSessionOpened,
+    trackLiveSessionOpened: trackLiveSessionOpened,
+    trackLiveSessionStopped: trackLiveSessionStopped,
+    trackProjectOpened: trackProjectOpened,
+    trackProjectSettingsOpened: trackProjectSettingsOpened,
 };

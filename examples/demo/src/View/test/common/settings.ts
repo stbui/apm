@@ -3,10 +3,14 @@ const localStorageService = {
     storageType: 'localStorage',
     cookie: { expiry: 30, path: '/' },
     get: name => {
-        return 0;
+        return localStorage.getItem(name);
     },
-    set: (name, value) => {},
-    remove: name => {},
+    set: (name, value) => {
+        localStorage.setItem(name, value);
+    },
+    remove: name => {
+        localStorage.removeItem(name);
+    },
     bind: (b, c, d, e) => {},
 };
 
@@ -18,7 +22,7 @@ function get(name, value) {
 
     if (currentValue === null) return;
 
-    return currentValue === 0 ? value : currentValue;
+    return currentValue === undefined ? value : currentValue;
 }
 function set(name, value) {
     return localStorageService.set(name, value);

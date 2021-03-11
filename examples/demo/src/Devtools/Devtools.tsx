@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 
-import { RootView, TabbedPane, Toolbar, ToolbarButton, Icon, SplitWidget } from './components';
-import Element from './Element';
-import Network from './Network';
-import Console from './Console';
-import Timeline from './Timeline';
-import Resources from './Resources';
+import { RootView, TabbedPane, Toolbar, ToolbarButton, Icon, SplitWidget } from '../components';
+import Element from '../Element';
+import Network from '../Network';
+import Console from '../Console';
+import Timeline from '../Timeline';
+import Resources from '../Resources';
 
 const tablistData = [
     { label: 'View', width: 45 },
@@ -20,7 +20,7 @@ const tablistData = [
     { label: 'Lighthouse', width: 83 },
 ];
 
-export const Home = ({ addNewLogs, addNewNetworkRequests, onChangeMode }) => {
+export const Devtools = ({ addNewLogs, addNewNetworkRequests, onChangeMode }) => {
     const [module, setModule] = useState(3);
 
     const onTabbedPaneChange = key => setModule(key);
@@ -87,3 +87,5 @@ export const Home = ({ addNewLogs, addNewNetworkRequests, onChangeMode }) => {
         </div>
     );
 };
+
+export default Devtools;

@@ -74,7 +74,7 @@ function l(activities, timeLimit: number) {
 
 export class SessionDataClient {
     public sessionId: string;
-    public logId: string;
+    public logId: string | undefined;
     public isLiveStream: boolean;
     public lastEventTimestamp: number;
     public lastEventIndex: number;

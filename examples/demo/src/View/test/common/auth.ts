@@ -3,42 +3,39 @@ import { tokenManager } from './tokenManager';
 import { $resource, promise } from './resource';
 
 //
-const $q: any = {};
-const $http: any = {};
+// const $q: any = {};
+// const $http: any = {};
 const $rootScope: any = {};
 
 //
 
-var I = null;
-var J = 'loggedIn';
-var K = 'loggedOut';
-var loginUrl = restSettings.buildUrl('login');
-var M = restSettings.buildUrl('auth_method/:organization');
-var N = $resource(M);
-var O = restSettings.buildUrl('auth_settings/:organization');
-var P = $resource(O);
-var Q = restSettings.buildUrl('me');
-var R = $resource(Q, null, {
+// CurrentUser
+let I = null;
+
+let J = 'loggedIn';
+let K = 'loggedOut';
+let loginUrl = restSettings.buildUrl('login');
+let M = restSettings.buildUrl('auth_method/:organization');
+let N = $resource(M);
+let O = restSettings.buildUrl('auth_settings/:organization');
+let P = $resource(O);
+let loadCurrentUserUrl = restSettings.buildUrl('me');
+
+let S = restSettings.buildUrl('password_reset/:token');
+let T = $resource(S, null, {
     update: {
         method: 'PUT',
     },
 });
-var S = restSettings.buildUrl('password_reset/:token');
-var T = $resource(S, null, {
-    update: {
-        method: 'PUT',
-    },
-});
-var U = restSettings.buildUrl('accept_invitation/:token');
-var V = $resource(U);
-var W = restSettings.buildUrl('register/trial');
-var X = $resource(W);
-var Y = restSettings.buildUrl('register/validation/user');
-var Z = $resource(Y);
-var $ = restSettings.buildUrl('register/validation/email');
-var _ = $resource($);
-var aa = restSettings.buildUrl('organization_url');
-var ba = $resource(aa);
+let U = restSettings.buildUrl('accept_invitation/:token');
+let V = $resource(U);
+let W = restSettings.buildUrl('register/trial');
+let X = $resource(W);
+let Y = restSettings.buildUrl('register/validation/user');
+let Z = $resource(Y);
+let validateEmailUrl = restSettings.buildUrl('register/validation/email');
+let aa = restSettings.buildUrl('organization_url');
+let ba = $resource(aa);
 
 function login(username: string, password: string) {
     const Authorization = tokenManager.generateBasicToken(username + ':' + password);
@@ -51,66 +48,75 @@ function login(username: string, password: string) {
     return fetch(loginUrl, headers)
         .then(res => res.json())
         .then(res => {
-            z(res);
+            onAuthenticate(res);
             return res;
         })
         .catch(error => {
-            j();
+            logout();
             return {
                 data: error,
                 status: error,
             };
         });
 }
-function i(a) {
+function getAuthMethod(organization) {
     return promise.execute(N.get, {
-        organization: a,
+        organization: organization,
     });
 }
-function j() {
-    (I = null), tokenManager.clearAuthToken(), t();
+function logout() {
+    I = null;
+    tokenManager.clearAuthToken();
+    t();
 }
-function k() {
-    var b = $q.defer();
-    return (
-        I
-            ? b.resolve(I)
-            : r()
-            ? promise.execute(R.get).then(
-                  function (a) {
-                      l(a),
-                          s(a, {
-                              hasLoggedFromLogin: !1,
-                          }),
-                          b.resolve(a);
-                  },
-                  function (a) {
-                      b.reject(a), 403 === a.status && j();
-                  }
-              )
-            : b.reject(),
-        b.promise
-    );
+function loadCurrentUser() {
+    return new Promise((resolve, reject) => {
+        if (I) {
+            resolve(I);
+        } else {
+            if (hasAuthToken()) {
+                fetch(loadCurrentUserUrl)
+                    .then(res => res.json())
+                    .then(res => {
+                        // res => user => "stbui"
+                        l(res);
+                        s(res, {
+                            hasLoggedFromLogin: false,
+                        });
+                        resolve(res);
+                    })
+                    .catch(err => {
+                        reject(err);
+
+                        if (403 === err.status) {
+                            logout();
+                        }
+                    });
+            } else {
+                reject();
+            }
+        }
+    });
 }
-function l(a) {
-    I = a;
+function l(user) {
+    I = user;
 }
-function m() {
+function clearCurrentUser() {
     I = null;
 }
 function getCurrentUser() {
     return I;
 }
-function o() {
+function isLoggedIn() {
     return !!I;
 }
-function p() {
+function getAuthToken() {
     return tokenManager.getAuthToken();
 }
-function q() {
+function getAccessToken() {
     return tokenManager.getAccessToken();
 }
-function r() {
+function hasAuthToken() {
     return tokenManager.hasAuthToken();
 }
 function s(a, b) {
@@ -119,46 +125,46 @@ function s(a, b) {
 function t(a?) {
     $rootScope.$broadcast(K, a);
 }
-function u(a) {
+function onLoggedIn(a) {
     $rootScope.$on(J, a);
 }
-function v(a) {
+function onLoggedOut(a) {
     $rootScope.$on(K, a);
 }
-function w(a) {
+function resetPassword(email) {
     return promise.execute(T.save, {
-        email: a,
+        email: email,
     });
 }
-function x(a) {
+function getPasswordResetEmail(token) {
     return promise.execute(T.get, {
-        token: a,
+        token: token,
     });
 }
-function y(a, b, c) {
-    return promise.execute(
-        T.update,
-        {
-            token: a,
+function setNewPassword(token, newPassword, passwordConfirmation) {
+    return fetch('T.update', {
+        method: 'PUT',
+        headers: {
+            token: token,
         },
-        {
-            newPassword: b,
-            passwordConfirmation: c,
-        }
-    );
+        body: JSON.stringify({
+            newPassword: newPassword,
+            passwordConfirmation: passwordConfirmation,
+        }),
+    }).then(res => res.json());
 }
-function z(data) {
+function onAuthenticate(data) {
     tokenManager.setAuthToken(data.token);
     l(data);
     s(data, {
-        hasLoggedFromLogin: !0,
+        hasLoggedFromLogin: true,
     });
 }
-function A(a, b) {
+function acceptInvitation(a, token) {
     return promise.execute(
         V.save,
         {
-            token: b,
+            token: token,
         },
         {
             email: a.email,
@@ -169,7 +175,7 @@ function A(a, b) {
         }
     );
 }
-function B(a, b, c) {
+function register(a, referrer, redeem) {
     return promise.execute(X.save, {
         email: a.email,
         password: a.password,
@@ -180,20 +186,24 @@ function B(a, b, c) {
         organizationRole: a.organizationRole,
         supportTeamSize: a.supportTeamSize,
         requestedDemo: a.requestedDemo,
-        referrer: b,
-        redeem: c,
+        referrer: referrer,
+        redeem: redeem,
         organizationUrl: a.organizationUrl,
     });
 }
-function C(a, b, c, d) {
-    return promise.execute(R.update, {
-        email: a,
-        firstName: b,
-        lastName: c,
-        organizationName: d,
-    });
+function updateProfile(email, firstName, lastName, organizationName) {
+    return fetch('R.update', {
+        method: 'PUT',
+
+        body: JSON.stringify({
+            email: email,
+            firstName: firstName,
+            lastName: lastName,
+            organizationName: organizationName,
+        }),
+    }).then(res => res.json());
 }
-function D(a) {
+function validateUser(a) {
     return promise.execute(Z.save, {
         email: a.email,
         firstName: a.firstName,
@@ -205,60 +215,60 @@ function D(a) {
         supportTeamSize: a.supportTeamSize,
     });
 }
-function E(a) {
-    return promise.execute(_.save, {
-        email: a.email,
-    });
+function validateEmail(data) {
+    return fetch(validateEmailUrl, { method: 'POST', body: JSON.stringify({ email: data.email }) }).then(res =>
+        res.json()
+    );
 }
-function F(a) {
+function getAuthSettings(organization) {
     return promise.execute(P.get, {
-        organization: a,
+        organization: organization,
     });
 }
-function G(a, b) {
-    return promise.execute(
-        P.save,
-        {
-            organization: a,
+function saveAuthSettings(organization, b) {
+    return fetch('P.save', {
+        method: 'POST',
+        headers: {
+            organization: organization,
         },
-        {
+        body: JSON.stringify({
             authMethod: b.authMethod,
             entityId: b.entityId,
             ssoURL: b.ssoURL,
             certificateFingerprint: b.certificateFingerprint,
-        }
-    );
+        }),
+    }).then(res => res.json());
 }
-function H(a) {
+function setUserOrganizationUrl(organizationUrl) {
     return promise.execute(ba.save, {
-        organizationUrl: a,
+        organizationUrl: organizationUrl,
     });
 }
 
 export const auth = {
     login: login,
-    getAuthMethod: i,
-    logout: j,
-    isCurrentUserLoaded: o,
-    isLoggedIn: o,
-    loadCurrentUser: k,
+    getAuthMethod: getAuthMethod,
+    logout: logout,
+    isCurrentUserLoaded: isLoggedIn,
+    isLoggedIn: isLoggedIn,
+    loadCurrentUser: loadCurrentUser,
     getCurrentUser: getCurrentUser,
-    clearCurrentUser: m,
-    getAuthToken: p,
-    hasAuthToken: r,
-    getAccessToken: q,
-    onLoggedIn: u,
-    onLoggedOut: v,
-    resetPassword: w,
-    getPasswordResetEmail: x,
-    setNewPassword: y,
-    updateProfile: C,
-    onAuthenticate: z,
-    acceptInvitation: A,
-    register: B,
-    validateUser: D,
-    validateEmail: E,
-    getAuthSettings: F,
-    saveAuthSettings: G,
-    setUserOrganizationUrl: H,
+    clearCurrentUser: clearCurrentUser,
+    getAuthToken: getAuthToken,
+    hasAuthToken: hasAuthToken,
+    getAccessToken: getAccessToken,
+    onLoggedIn: onLoggedIn,
+    onLoggedOut: onLoggedOut,
+    resetPassword: resetPassword,
+    getPasswordResetEmail: getPasswordResetEmail,
+    setNewPassword: setNewPassword,
+    updateProfile: updateProfile,
+    onAuthenticate: onAuthenticate,
+    acceptInvitation: acceptInvitation,
+    register: register,
+    validateUser: validateUser,
+    validateEmail: validateEmail,
+    getAuthSettings: getAuthSettings,
+    saveAuthSettings: saveAuthSettings,
+    setUserOrganizationUrl: setUserOrganizationUrl,
 };

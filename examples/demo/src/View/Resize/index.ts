@@ -1,4 +1,6 @@
-import Resize from './Resize';
-import './Resize.scss';
+import SplitPane from './SplitPane';
+import Pane from './Pane';
+import './Resizer.scss';
 
-export default Resize;
+export default SplitPane;
+export { Pane };

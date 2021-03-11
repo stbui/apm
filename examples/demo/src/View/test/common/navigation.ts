@@ -9,57 +9,62 @@ const URL_PROTOCOL = {
 function e() {
     return FRONTEND_URL + 'player';
 }
-function openSessionInNewWindow(b, c, d) {
-    var e = i({
-        sessionId: b,
-        forceHttp: c,
+function openSessionInNewWindow(sessionId, forceHttp, source) {
+    let url = i({
+        sessionId: sessionId,
+        forceHttp: forceHttp,
     });
-    e += j({
-        source: d,
+    url += stringify({
+        source: source,
     });
-    $window.open(e);
+    $window.open(url);
 }
-function openLiveSessionInNewWindow(b, c) {
-    var d = i({
-        sessionId: b,
-        forceHttp: c,
+function openLiveSessionInNewWindow(sessionId, forceHttp) {
+    let url = i({
+        sessionId: sessionId,
+        forceHttp: forceHttp,
     });
 
-    d += j({
-        play_live: !0,
+    url += stringify({
+        play_live: true,
         source: 'online_users_dashboard',
     });
 
-    $window.open(d);
+    $window.open(url);
 }
-function openLogInNewWindow(b, c, d) {
-    var e = k(b, c, d);
-    e += j({
+function openLogInNewWindow(sessionId, logId, forceHttp) {
+    let url = log(sessionId, logId, forceHttp);
+    url += stringify({
         source: 'events_and_errors_dashboard',
     });
-    $window.open(e);
+    $window.open(url);
 }
-function i(a) {
-    var b = e() + '/#/sessions/' + a.sessionId;
+function i(a: { sessionId: string | number; forceHttp: string }) {
+    let url = e() + '/#/sessions/' + a.sessionId;
 
-    a.forceHttp && b.startsWith(URL_PROTOCOL.HTTPS) && (b = b.replace(URL_PROTOCOL.HTTPS, URL_PROTOCOL.HTTP));
+    if (a.forceHttp && url.startsWith(URL_PROTOCOL.HTTPS)) {
+        url = url.replace(URL_PROTOCOL.HTTPS, URL_PROTOCOL.HTTP);
+    }
 
-    return b;
+    return url;
 }
-function j(a) {
-    var b = '';
-    var c = 0;
+function stringify(a) {
+    let b = '';
+    let c = 0;
 
     for (var d in a) (b += 0 === c ? '?' : '&'), (b += d + '=' + a[d]), c++;
 
     return b;
 }
-function k(a, b, c) {
-    var d = i({
-        sessionId: a,
-        forceHttp: c,
+function log(sessionId, logId, forceHttp) {
+    var url = i({
+        sessionId: sessionId,
+        forceHttp: forceHttp,
     });
-    return (d += '/logs/' + b);
+
+    url += '/logs/' + logId;
+
+    return url;
 }
 
 export const navigation = {

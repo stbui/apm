@@ -9,11 +9,9 @@ import SessionViewer from '../SessionViewer';
 import Controls from '../Controls';
 import Console from '../Console';
 
-import { SplitWidget } from '../../components';
-
 //
-import { Home } from '../../app';
-import Resize from '../Resize'
+import Devtools from '../../Devtools';
+import Resize from '../Resize';
 
 let renderingProgress = 0;
 let containerWidth = 1000;
@@ -50,20 +48,20 @@ function consoleEvent(activity: IActivity) {
     level[EVENT_TYPE.CONSOLE_WARN] = 'warn';
     level[EVENT_TYPE.CONSOLE_DEBUG] = 'debug';
 
-    var obj: any = { id: activity.id, level: level[activity.type] };
+    let obj: any = { id: activity.id, level: level[activity.type] };
 
     if ('exception' === activity.data.type) {
-        var d = activity.data.exception;
-        obj.message = d.type ? d.type + ': ' : '';
-        obj.message += d.message;
+        const { exception } = activity.data;
+        obj.message = exception.type ? exception.type + ': ' : '';
+        obj.message += exception.message;
         obj.isMessageTrimmed = false;
-        obj.stackFrames = (d.stackFrames || []).map(function (a) {
-            return a.source || '';
+        obj.stackFrames = (exception.stackFrames || []).map(function (stackFrame) {
+            return stackFrame.source || '';
         });
     } else {
-        var e = activity.data;
-        obj.message = e.message;
-        obj.isMessageTrimmed = e.isMessageTrimmed;
+        const { data } = activity;
+        obj.message = data.message;
+        obj.isMessageTrimmed = data.isMessageTrimmed;
         obj.stackFrames = null;
     }
 
@@ -290,65 +288,71 @@ export const SessionPlayer = ({ session, activitiesData, startTime, settings, fi
 
     return (
         <React.Fragment>
-            <SplitWidget direction={mode ? 'vertical' : 'hbox'}>
-                <SplitWidget.Sidebar width={position}>
-                    <div className="player-container _md layout-column flex">
-                        <div className="viewer-wrap _md layout-row flex">
-                            {currentActivity ? (
-                                <SessionViewer
-                                    maxWidth={containerWidth}
-                                    maxHeight={containerHeight}
-                                    sessionScreenWidth={session.screenWidth}
-                                    sessionScreenHeight={session.screenHeight}
-                                    isCreated={true}
-                                    renderingProgress={renderingProgress}
-                                    initialVisibilityState={session.visibilityState}
-                                    sessionId={session.id}
-                                    handleConsoleResize={true}
-                                    currentActivity={currentActivity}
-                                    isPlaying={playState.isPlaying}
-                                ></SessionViewer>
-                            ) : null}
-                        </div>
-                        <Controls
-                            hasFinished={playState.hasFinished}
-                            isStreamingLive={playState.isStreamingLive}
-                            isPlaying={playState.isPlaying}
-                            arePlayerButtonsEnabled={playState.arePlayerButtonsEnabled}
-                            isLive={playState.isLive}
-                            sessionWasInitiallyLive={false}
-                            onRepeat={onRepeat}
-                            onTogglePlaying={onTogglePlaying}
-                            onSelectNextStep={onSelectNextStep}
-                        >
-                            <PlayerTimeline
-                                min={timeline.timelineMin}
-                                max={timeline.timelineMax}
-                                value={timeline.timelineValue}
-                                activities={activitiesData}
-                                loadedTime={timeline.timelineMax}
-                            ></PlayerTimeline>
-                        </Controls>
-                        <Console
-                            open-console="openConsole"
-                            close-console="closeConsole"
-                            is-expanded="isConsoleExpanded"
-                            addNewLogs={addNewLogs}
-                            on-selected-log="onSelectedActivity"
-                            update-console="updateConsole"
-                        ></Console>
+            <Resize
+                split={mode ? 'vertical' : 'horizontal'}
+                minSize={mode ? 800 : 200}
+                defaultSize={mode ? 1200 : 600}
+                pane1ClassName="shadow-split-widget-sidebar vbox"
+                pane2ClassName="shadow-split-widget-main vbox"
+            >
+                <div className="player-container _md layout-column flex">
+                    <div className="viewer-wrap _md layout-row flex">
+                        {currentActivity ? (
+                            <SessionViewer
+                                maxWidth={containerWidth}
+                                maxHeight={containerHeight}
+                                sessionScreenWidth={session.screenWidth}
+                                sessionScreenHeight={session.screenHeight}
+                                isCreated={true}
+                                renderingProgress={renderingProgress}
+                                initialVisibilityState={session.visibilityState}
+                                sessionId={session.id}
+                                handleConsoleResize={true}
+                                currentActivity={currentActivity}
+                                isPlaying={playState.isPlaying}
+                            ></SessionViewer>
+                        ) : null}
                     </div>
-                </SplitWidget.Sidebar>
-                <SplitWidget.Main>
-                    <Resize />
-                    <Home
+                    <Controls
+                        hasFinished={playState.hasFinished}
+                        isStreamingLive={playState.isStreamingLive}
+                        isPlaying={playState.isPlaying}
+                        arePlayerButtonsEnabled={playState.arePlayerButtonsEnabled}
+                        isLive={playState.isLive}
+                        sessionWasInitiallyLive={false}
+                        onRepeat={onRepeat}
+                        onTogglePlaying={onTogglePlaying}
+                        onSelectNextStep={onSelectNextStep}
+                    >
+                        <PlayerTimeline
+                            min={timeline.timelineMin}
+                            max={timeline.timelineMax}
+                            value={timeline.timelineValue}
+                            activities={activitiesData}
+                            loadedTime={timeline.timelineMax}
+                        ></PlayerTimeline>
+                    </Controls>
+                    <Console
+                        open-console="openConsole"
+                        close-console="closeConsole"
+                        is-expanded="isConsoleExpanded"
                         addNewLogs={addNewLogs}
-                        addNewNetworkRequests={addNewNetworkRequests}
-                        onChangeMode={onChangeMode}
-                    />
-                </SplitWidget.Main>
+                        on-selected-log="onSelectedActivity"
+                        update-console="updateConsole"
+                    ></Console>
+                </div>
+
+                <Devtools
+                    addNewLogs={addNewLogs}
+                    addNewNetworkRequests={addNewNetworkRequests}
+                    onChangeMode={onChangeMode}
+                />
+            </Resize>
+            {/* <SplitWidget direction={mode ? 'vertical' : 'hbox'}>
+                <SplitWidget.Sidebar width={position}>1</SplitWidget.Sidebar>
+                <SplitWidget.Main>2</SplitWidget.Main>
                 <SplitWidget.Resizer x={position} onDrap={value => setPosition(value)}></SplitWidget.Resizer>
-            </SplitWidget>
+            </SplitWidget> */}
         </React.Fragment>
     );
 };

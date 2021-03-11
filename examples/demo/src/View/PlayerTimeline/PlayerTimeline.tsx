@@ -1,25 +1,25 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { momentformat } from '../test/common';
 
+export interface IPlayerTimeline {
+    value: number;
+    max: number;
+    min: number;
+    activities: any[];
+    loadedTime: number;
+    isTimelineSelectionInProgress?: boolean;
+    isFirstLiveActivity?: boolean;
+}
+
 export const PlayerTimeline = ({
     value,
-    selectedValue,
-    valueSelectionInProgress,
     max,
-    enable,
-    disable,
-    pauseActivity,
-    isLive,
-    // refresh,
-    isCreated,
-
     activities,
-    onSelect,
     min,
     loadedTime,
     isTimelineSelectionInProgress,
     isFirstLiveActivity,
-}) => {
+}: IPlayerTimeline) => {
     const timelineTrackRef: any = useRef();
     const timelineProgressHandleRef: any = useRef();
     const timelinePauseActivityWrapperRef: any = useRef();
@@ -107,74 +107,67 @@ export const PlayerTimeline = ({
     }, [activities]);
 
     return (
-        <div layout="row" style={{ display: 'flex', flexDirection: 'row' }}>
-            <div
-                class="timeline-progress-wrapper"
-                layout="column"
-                flex
-                style={{ display: 'flex', flexDirection: 'column' }}
-            >
-                <div class="timeline-track" ref={timelineTrackRef}>
-                    <div class="timeline-track-hover-area"></div>
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <div className="timeline-progress-wrapper" style={{ display: 'flex', flexDirection: 'column' }}>
+                <div className="timeline-track" ref={timelineTrackRef}>
+                    <div className="timeline-track-hover-area"></div>
 
                     <div
                         draggable
-                        axis="x"
                         enable-handle="enableTimelineHandle"
                         disable-handle="disableTimelineHandle"
                         ng-style="{'left': handleOffset + '%'}"
-                        class="timeline-progress-handle"
+                        className="timeline-progress-handle"
                         ref={timelineProgressHandleRef}
                         style={{ left: handleOffset + '%' }}
                     ></div>
 
-                    <div class="timeline-activity-wrapper">
-                        {activityBlocks.map(block => {
+                    <div className="timeline-activity-wrapper">
+                        {activityBlocks.map((block: any) => {
                             return (
                                 <div
-                                    class="timeline-activity"
+                                    className="timeline-activity"
                                     style={{ left: timelineValueToPercentage(block.time) + '%', width: '1px' }}
                                 ></div>
                             );
                         })}
                     </div>
                     <div
-                        class="timeline-pause-activity-wrapper"
+                        className="timeline-pause-activity-wrapper"
                         ng-style="{'left': pauseActivityOffset + '%'}"
                         ng-show="pauseActivity"
                         ref={timelinePauseActivityWrapperRef}
                         style={{ left: pauseActivityOffset + '%' }}
                     >
-                        <div class="timeline-pause-activity"></div>
-                        <i class="icon ion-android-arrow-dropdown timeline-pause-activity-marker"></i>
+                        <div className="timeline-pause-activity"></div>
+                        <i className="icon ion-android-arrow-dropdown timeline-pause-activity-marker"></i>
                     </div>
                     <div
-                        class="timeline-progress-background"
+                        className="timeline-progress-background"
                         ng-style="{'width': loadedTimePercentage + '%'}"
                         style={{ width: loadedTimePercentage + '%' }}
                     ></div>
                     <div
-                        class="timeline-progress-bar"
+                        className="timeline-progress-bar"
                         ng-style="{'width': renderedTimePercentage + '%'}"
                         ref={timelineBufferingBar}
                         style={{ width: renderedTimePercentage + '%' }}
                     ></div>
                     <div
-                        class="timeline-buffering-animation"
+                        className="timeline-buffering-animation"
                         ng-show="value > loadedTime"
                         style={{ display: value > loadedTime ? 'block' : 'none' }}
                     ></div>
-                    <div class="timeline-buffering-bar"></div>
+                    <div className="timeline-buffering-bar"></div>
                 </div>
             </div>
 
             <div
-                class="timeline-value layout-align-center-center layout-column"
+                className="timeline-value layout-align-center-center layout-column"
                 layout-align="center center"
-                layout="column"
                 style={{ display: 'flex' }}
             >
-                <span layout="row" className="layout-row">
+                <span className="layout-row">
                     <span>
                         {momentformat(value)} / {momentformat(max)}
                     </span>

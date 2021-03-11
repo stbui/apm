@@ -12,6 +12,11 @@ interface ISession {
     clientStartMilliseconds?: any;
 }
 
+interface IPlayer {
+    sessionId: string;
+    logId?: string | undefined;
+}
+
 let initialSettings: InitialSettings;
 let sessionDataClient: SessionDataClient;
 const settings: any = {};
@@ -25,7 +30,7 @@ let pauseActivity;
 let timestamp;
 let time: number = -1;
 
-export default ({ sessionId, logId }) => {
+export default ({ sessionId, logId }: IPlayer) => {
     const [session, setSession] = useState<ISession>();
     const [activities, setActivities] = useState([]);
     const [finishLoadingStatus, setFinishLoadingStatus] = useState(false);

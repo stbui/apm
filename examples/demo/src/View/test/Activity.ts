@@ -1,8 +1,25 @@
 const TAB_VISIBILITY = { VISIBLE: 'visible', HIDDEN: 'hidden' };
 const EVENT_TYPE: any = {};
 
+export interface IException {
+    type?: string;
+    message?: string;
+    stackFrames?: string[];
+}
+
+export interface IActivityData {
+    message: string;
+    level: string;
+    frameElementId: string;
+    hostElementId: string;
+    type: string;
+    isMessageTrimmed: boolean;
+    exception: IException;
+    visibilityState: 'visible' | 'hidden';
+}
+
 export interface IActivity {
-    data: object;
+    data: IActivityData;
     index: number;
     time: number;
     timestamp: number;
@@ -10,6 +27,7 @@ export interface IActivity {
     type: string;
     // Activities.push
     playerIndex?: number;
+    id?: any;
 }
 
 export const Activity = {

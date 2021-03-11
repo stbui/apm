@@ -16,10 +16,10 @@ export const SERVER_URL = 'http://127.0.0.1:8080/api/';
 export const BROKER_URL = 'wss://127.0.0.1/api/';
 
 export const BUILD_ENV = {
-    IS_DEV: !1,
-    PLAYER_ONLINE_MODE: !0,
-    IS_SAAS: !0,
-    USE_TESTING_INTERCOM: !1,
+    IS_DEV: false,
+    PLAYER_ONLINE_MODE: true,
+    IS_SAAS: true,
+    USE_TESTING_INTERCOM: false,
 };
 
 export const FRONTEND_URL = 'http://127.0.0.1/';
