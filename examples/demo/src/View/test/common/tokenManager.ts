@@ -32,7 +32,7 @@ function _getAccessToken() {
     accessToken = $location.search().access_token;
     return accessToken;
 }
-function setAuthToken(token) {
+function setAuthToken(token: string) {
     clearAuthToken();
     TOKEN = token;
     _setAuthToken(token);

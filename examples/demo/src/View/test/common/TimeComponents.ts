@@ -1,4 +1,4 @@
-export function TimeComponents(time) {
+export function TimeComponents(time: number) {
     const ms = Math.floor(time / 1000);
     this.hours = Math.floor(ms / 3600);
     this.minutes = Math.floor((ms - 3600 * this.hours) / 60);

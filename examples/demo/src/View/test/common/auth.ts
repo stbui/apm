@@ -1,43 +1,19 @@
 import { restSettings } from './restSettings';
 import { tokenManager } from './tokenManager';
-import { $resource, promise } from './resource';
 
 //
 // const $q: any = {};
 // const $http: any = {};
 const $rootScope: any = {};
 
-//
-
 // CurrentUser
 let I = null;
-
-let J = 'loggedIn';
-let K = 'loggedOut';
-let loginUrl = restSettings.buildUrl('login');
-let M = restSettings.buildUrl('auth_method/:organization');
-let N = $resource(M);
-let O = restSettings.buildUrl('auth_settings/:organization');
-let P = $resource(O);
-let loadCurrentUserUrl = restSettings.buildUrl('me');
-
-let S = restSettings.buildUrl('password_reset/:token');
-let T = $resource(S, null, {
-    update: {
-        method: 'PUT',
-    },
-});
-let U = restSettings.buildUrl('accept_invitation/:token');
-let V = $resource(U);
-let W = restSettings.buildUrl('register/trial');
-let X = $resource(W);
-let Y = restSettings.buildUrl('register/validation/user');
-let Z = $resource(Y);
-let validateEmailUrl = restSettings.buildUrl('register/validation/email');
-let aa = restSettings.buildUrl('organization_url');
-let ba = $resource(aa);
+const loggedIn = 'loggedIn';
+const loggedOut = 'loggedOut';
 
 function login(username: string, password: string) {
+    const loginUrl = restSettings.buildUrl('login');
+
     const Authorization = tokenManager.generateBasicToken(username + ':' + password);
     const headers = {
         headers: {
@@ -60,9 +36,8 @@ function login(username: string, password: string) {
         });
 }
 function getAuthMethod(organization) {
-    return promise.execute(N.get, {
-        organization: organization,
-    });
+    const url = restSettings.buildUrl('auth_method/' + organization);
+    return fetch(url).then(res => res.json());
 }
 function logout() {
     I = null;
@@ -75,6 +50,8 @@ function loadCurrentUser() {
             resolve(I);
         } else {
             if (hasAuthToken()) {
+                let loadCurrentUserUrl = restSettings.buildUrl('me');
+
                 fetch(loadCurrentUserUrl)
                     .then(res => res.json())
                     .then(res => {
@@ -120,33 +97,37 @@ function hasAuthToken() {
     return tokenManager.hasAuthToken();
 }
 function s(a, b) {
-    $rootScope.$broadcast(J, a, b);
+    $rootScope.$broadcast(loggedIn, a, b);
 }
 function t(a?) {
-    $rootScope.$broadcast(K, a);
+    $rootScope.$broadcast(loggedOut, a);
 }
 function onLoggedIn(a) {
-    $rootScope.$on(J, a);
+    $rootScope.$on(loggedIn, a);
 }
 function onLoggedOut(a) {
-    $rootScope.$on(K, a);
+    $rootScope.$on(loggedOut, a);
 }
-function resetPassword(email) {
-    return promise.execute(T.save, {
-        email: email,
-    });
+function resetPassword(email: string) {
+    const url = restSettings.buildUrl('password_reset/' + email);
+
+    return fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({
+            email: email,
+        }),
+    }).then(res => res.json());
 }
-function getPasswordResetEmail(token) {
-    return promise.execute(T.get, {
-        token: token,
-    });
+function getPasswordResetEmail(token: string) {
+    const url = restSettings.buildUrl('password_reset/' + token);
+
+    return fetch(url).then(res => res.json());
 }
-function setNewPassword(token, newPassword, passwordConfirmation) {
-    return fetch('T.update', {
+function setNewPassword(token: string, newPassword: string, passwordConfirmation: string) {
+    const url = restSettings.buildUrl('password_reset/' + token);
+
+    return fetch(url, {
         method: 'PUT',
-        headers: {
-            token: token,
-        },
         body: JSON.stringify({
             newPassword: newPassword,
             passwordConfirmation: passwordConfirmation,
@@ -160,39 +141,42 @@ function onAuthenticate(data) {
         hasLoggedFromLogin: true,
     });
 }
-function acceptInvitation(a, token) {
-    return promise.execute(
-        V.save,
-        {
-            token: token,
-        },
-        {
+function acceptInvitation(a, token: string) {
+    const url = restSettings.buildUrl('accept_invitation/' + token);
+    return fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({
             email: a.email,
             password: a.password,
             firstName: a.firstName,
             lastName: a.lastName,
             organizationName: a.organizationName,
-        }
-    );
+        }),
+    }).then(res => res.json());
 }
 function register(a, referrer, redeem) {
-    return promise.execute(X.save, {
-        email: a.email,
-        password: a.password,
-        firstName: a.firstName,
-        lastName: a.lastName,
-        phoneNumber: a.phoneNumber,
-        organizationName: a.organizationName,
-        organizationRole: a.organizationRole,
-        supportTeamSize: a.supportTeamSize,
-        requestedDemo: a.requestedDemo,
-        referrer: referrer,
-        redeem: redeem,
-        organizationUrl: a.organizationUrl,
-    });
+    const url = restSettings.buildUrl('register/trial');
+    return fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({
+            email: a.email,
+            password: a.password,
+            firstName: a.firstName,
+            lastName: a.lastName,
+            phoneNumber: a.phoneNumber,
+            organizationName: a.organizationName,
+            organizationRole: a.organizationRole,
+            supportTeamSize: a.supportTeamSize,
+            requestedDemo: a.requestedDemo,
+            referrer: referrer,
+            redeem: redeem,
+            organizationUrl: a.organizationUrl,
+        }),
+    }).then(res => res.json());
 }
 function updateProfile(email, firstName, lastName, organizationName) {
-    return fetch('R.update', {
+    const url = '';
+    return fetch(url, {
         method: 'PUT',
 
         body: JSON.stringify({
@@ -204,33 +188,33 @@ function updateProfile(email, firstName, lastName, organizationName) {
     }).then(res => res.json());
 }
 function validateUser(a) {
-    return promise.execute(Z.save, {
-        email: a.email,
-        firstName: a.firstName,
-        lastName: a.lastName,
-        password: a.password,
-        phoneNumber: a.phoneNumber,
-        organizationRole: a.organizationRole,
-        organizationName: a.organizationName,
-        supportTeamSize: a.supportTeamSize,
-    });
+    const url = restSettings.buildUrl('register/validation/user');
+    return fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({
+            email: a.email,
+            firstName: a.firstName,
+            lastName: a.lastName,
+            password: a.password,
+            phoneNumber: a.phoneNumber,
+            organizationRole: a.organizationRole,
+            organizationName: a.organizationName,
+            supportTeamSize: a.supportTeamSize,
+        }),
+    }).then(res => res.json());
 }
 function validateEmail(data) {
-    return fetch(validateEmailUrl, { method: 'POST', body: JSON.stringify({ email: data.email }) }).then(res =>
-        res.json()
-    );
+    const url = restSettings.buildUrl('register/validation/email');
+    return fetch(url, { method: 'POST', body: JSON.stringify({ email: data.email }) }).then(res => res.json());
 }
 function getAuthSettings(organization) {
-    return promise.execute(P.get, {
-        organization: organization,
-    });
+    const url = restSettings.buildUrl('auth_settings/' + organization);
+    return fetch(url).then(res => res.json());
 }
 function saveAuthSettings(organization, b) {
-    return fetch('P.save', {
+    const url = restSettings.buildUrl('auth_settings/' + organization);
+    return fetch(url, {
         method: 'POST',
-        headers: {
-            organization: organization,
-        },
         body: JSON.stringify({
             authMethod: b.authMethod,
             entityId: b.entityId,
@@ -240,9 +224,13 @@ function saveAuthSettings(organization, b) {
     }).then(res => res.json());
 }
 function setUserOrganizationUrl(organizationUrl) {
-    return promise.execute(ba.save, {
-        organizationUrl: organizationUrl,
-    });
+    const url = restSettings.buildUrl('organization_url');
+    return fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({
+            organizationUrl: organizationUrl,
+        }),
+    }).then(res => res.json());
 }
 
 export const auth = {

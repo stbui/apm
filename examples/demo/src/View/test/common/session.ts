@@ -7,21 +7,21 @@ function getSession(sessionId: string) {
     const url = restSettings.buildUrl('sessions/' + sessionId + '.json');
     return fetch(url).then(res => res.json());
 }
-function getSessionLog(sessionId, logId) {
+function getSessionLog(sessionId: string, logId) {
     const url = restSettings.buildUrl(`sessions/${sessionId}/logs/${logId}`);
     return fetch(url).then(res => res.json());
 }
-function getSessionDetails(sessionId) {
+function getSessionDetails(sessionId: string) {
     const url = restSettings.buildUrl(`sessions/${sessionId}/details`);
     return fetch(url).then(res => res.json());
 }
-function getSessionLogs(sessionId, params) {
+function getSessionLogs(sessionId: string, params) {
     const url = restSettings.buildUrl(
         `sessions/${sessionId}/logs?skip=${params.skip}&limit=${params.limit}&search=${params.search}`
     );
     return fetch(url).then(res => res.json());
 }
-function getActivities(sessionId, params) {
+function getActivities(sessionId: string, params) {
     const url = restSettings.buildUrl(
         `sessions/${sessionId}/activities.${params.eventsTimestamp}.json?events_timestamp=${params.eventsTimestamp}&events_index=${params.eventsIndex}`
     );
@@ -35,7 +35,7 @@ function l(a: { session_id: string; events_timestamp?: number; events_index?: nu
           })
         : a;
 }
-function getSessions(websiteId, params) {
+function getSessions(websiteId: string, params) {
     // return promise.execute(z.get, {
     //     website_id: websiteId,
     //     skip: b.skip,
@@ -51,18 +51,18 @@ function getSessions(websiteId, params) {
     const url = restSettings.buildUrl(`websites/${websiteId}/sessions?skip=${params.skip}&limit=${params.limit}`);
     return fetch(url).then(res => res.json());
 }
-function deleteSession(websiteId, sessionId) {
+function deleteSession(websiteId: string, sessionId: string) {
     return deleteSessions(websiteId, [sessionId]);
 }
-function deleteSessions(websiteId, sessionIds) {
+function deleteSessions(websiteId: string, sessionIds: string[]) {
     const url = restSettings.buildUrl(`websites/${websiteId}/sessions?session_ids=${sessionIds}`);
     return fetch(url, { method: 'DELETE' }).then(res => res.json());
 }
-function sessionCanBeDownloaded(sessionId) {
+function sessionCanBeDownloaded(sessionId: string) {
     const url = restSettings.buildUrl(`sessions/${sessionId}/canbedownloaded`);
     return fetch(url).then(res => res.json());
 }
-function getActivitiesCount(sessionId) {
+function getActivitiesCount(sessionId: string) {
     const url = restSettings.buildUrl(`sessions/${sessionId}/activities/count`);
     return fetch(url).then(res => res.json());
 }

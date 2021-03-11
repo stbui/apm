@@ -30,8 +30,8 @@ function set(name, value) {
 function remove(name) {
     return localStorageService.remove(name);
 }
-function bind(b, c, d, e) {
-    return localStorageService.bind(b, c, d, e);
+function bind(playerController, c, d, e) {
+    return localStorageService.bind(playerController, c, d, e);
 }
 
 export const settings = {

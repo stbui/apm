@@ -1,31 +1,28 @@
 import { restSettings } from './restSettings';
-import { $resource, promise } from './resource';
 import { ANALYTICS_EVENT_TYPES } from './constant';
 
-var l = restSettings.buildUrl('analytics');
-var m = restSettings.buildUrl('analytics/sessions/:session_id');
-var n = restSettings.buildUrl('analytics/live_sessions');
-var o = $resource(l);
-var p = $resource(m);
-var q = $resource(n);
-
 function trackEvent(userId, eventType, eventProperties, userProperties?, time?) {
-    return promise.execute(o.save, {
-        userId: userId,
-        eventType: eventType,
-        eventProperties: eventProperties,
-        userProperties: userProperties,
-        time: time,
-    });
+    const url = restSettings.buildUrl('analytics');
+    return fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({
+            userId: userId,
+            eventType: eventType,
+            eventProperties: eventProperties,
+            userProperties: userProperties,
+            time: time,
+        }),
+    }).then(res => res.json());
 }
 function trackSessionOpened(userId, session_id, access_token, source) {
-    return promise.execute(
-        p.save,
-        {
+    const url = restSettings.buildUrl('analytics/sessions/:session_id');
+    return fetch(url, {
+        method: 'POST',
+        headers: {
             session_id: session_id,
             access_token: access_token,
         },
-        {
+        body: JSON.stringify({
             userId: userId,
             eventType: ANALYTICS_EVENT_TYPES.SESSION_OPENED,
             eventProperties: {
@@ -33,26 +30,34 @@ function trackSessionOpened(userId, session_id, access_token, source) {
                 access_token: access_token,
                 source: source,
             },
-        }
-    );
+        }),
+    }).then(res => res.json());
 }
-function trackLiveSessionOpened(a, b) {
-    return promise.execute(q.save, {
-        userId: a,
-        eventType: ANALYTICS_EVENT_TYPES.LIVE_SESSION_OPENED,
-        eventProperties: {
-            session_id: b,
-        },
-    });
+function trackLiveSessionOpened(userId, sessionId) {
+    const url = restSettings.buildUrl('analytics/live_sessions');
+    return fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({
+            userId: userId,
+            eventType: ANALYTICS_EVENT_TYPES.LIVE_SESSION_OPENED,
+            eventProperties: {
+                session_id: sessionId,
+            },
+        }),
+    }).then(res => res.json());
 }
 function trackLiveSessionStopped(userId, sessionId) {
-    return promise.execute(q.save, {
-        userId: userId,
-        eventType: ANALYTICS_EVENT_TYPES.LIVE_SESSION_STOPPED,
-        eventProperties: {
-            session_id: sessionId,
-        },
-    });
+    const url = restSettings.buildUrl('analytics/live_sessions');
+    return fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({
+            userId: userId,
+            eventType: ANALYTICS_EVENT_TYPES.LIVE_SESSION_STOPPED,
+            eventProperties: {
+                session_id: sessionId,
+            },
+        }),
+    }).then(res => res.json());
 }
 function trackProjectOpened(userId, projectId, projectName) {
     return trackEvent(userId, ANALYTICS_EVENT_TYPES.PROJECT_OPENED, {

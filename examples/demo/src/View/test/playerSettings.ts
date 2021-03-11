@@ -13,11 +13,11 @@ var q = [
 
 function init(playerController) {
     playerController.settings = {};
-    f(playerController);
-    g(playerController);
-    h(playerController);
+    setGeneralFromUrl(playerController);
+    setAnalyticsFromUrl(playerController);
+    setPlayback(playerController);
 }
-function f(playerController) {
+function setGeneralFromUrl(playerController) {
     playerController.settings.general = {
         playFrom: utils.getQueryParameter('play_from'),
         pauseAt: utils.getQueryParameter('pause_at'),
@@ -30,10 +30,10 @@ function f(playerController) {
         isAssureCoWorkaroundEnabled: utils.getQueryParameter('assure_co_workaround') === true,
     };
 }
-function g(playerController) {
+function setAnalyticsFromUrl(playerController) {
     playerController.settings.analytics = { source: utils.getQueryParameter('source') };
 }
-function h(playerController) {
+function setPlayback(playerController) {
     var fromUrl = getSettingPlayerFromUrl();
     let fromLocal = getSettingPlayerFromlocalStorage();
 
@@ -51,13 +51,13 @@ function getSettingPlayerFromUrl() {
 }
 function getSettingPlayerFromlocalStorage() {
     return {
-        shouldSkipProlongedInactivity: k('shouldSkipProlongedInactivity', true),
-        shouldVisualizeClicks: k('shouldVisualizeClicks', true),
-        shouldPauseOnMarker: k('shouldPauseOnMarker', true),
-        speed: k('speed', 1),
+        shouldSkipProlongedInactivity: setlocal('shouldSkipProlongedInactivity', true),
+        shouldVisualizeClicks: setlocal('shouldVisualizeClicks', true),
+        shouldPauseOnMarker: setlocal('shouldPauseOnMarker', true),
+        speed: setlocal('speed', 1),
     };
 }
-function k(type, value) {
+function setlocal(type, value) {
     return settings.get(type, value);
 }
 /**
@@ -70,7 +70,7 @@ function l(playerController, queryParameter, local: object) {
     utils.forEach(local, function (value, key) {
         var params = queryParameter[key];
 
-        if (utils.isDefined(f)) {
+        if (utils.isDefined(params)) {
             playerController.settings.playback[key] = params;
         } else {
             playerController.settings.playback[key] = value;
@@ -90,27 +90,27 @@ function getActivitiesFilterFromUrl(): any[] {
     if (utils.isUndefined(activities)) return q;
     if (!utils.isString(activities)) return [];
 
-    var c = getActivitiesFromUrl(activities);
+    const _activities = getActivitiesFromUrl(activities);
 
-    return o(c);
+    return o(_activities);
 }
-function o(a) {
-    var e: any = [];
+function o(activities) {
+    let arr: any = [];
 
-    utils.forEach(a, function (a) {
-        a === PAGE_LOAD ? e.push(EVENT_TYPE.DOM_SNAPSHOT) : e.push(a);
+    utils.forEach(activities, function (activitie) {
+        activitie === PAGE_LOAD ? arr.push(EVENT_TYPE.DOM_SNAPSHOT) : arr.push(activitie);
     });
 
-    return e;
+    return arr;
 }
 function getActivitiesFromUrl(activities: string): any[] {
-    var c: any = [];
+    let _activities: any = [];
 
-    utils.forEach(activities.split(','), function (a) {
-        c.push(a.trim());
+    utils.forEach(activities.split(','), activitie => {
+        _activities.push(activitie.trim());
     });
 
-    return c;
+    return _activities;
 }
 
 export const playerSettings = { init: init, getActivitiesFilterFromUrl: getActivitiesFilterFromUrl };

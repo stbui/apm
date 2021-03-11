@@ -1,6 +1,6 @@
 import { TimeComponents } from './TimeComponents';
 
-export const momentformat = time => {
+export const momentformat = (time: number) => {
     const timeComponents = new TimeComponents(time);
     let dateStr = '';
 
