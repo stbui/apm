@@ -30,7 +30,7 @@
         "class-transformer": "^0.3.1",
         "class-validator": "^0.12.2",
         "mongoose": "^5.10.5",
-        "nodemailer": "^6.4.11",
+        "nodemailer": "^6.4.16",
         "passport": "^0.4.1",
         "passport-jwt": "^4.0.0",
         "reflect-metadata": "^0.1.13",
