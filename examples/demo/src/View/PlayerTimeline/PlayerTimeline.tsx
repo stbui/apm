@@ -50,30 +50,30 @@ export const PlayerTimeline = ({
     }
 
     function h(activityBlocks) {
-        var b: any = [];
+        var newActivityBlocks: any = [];
         var c = timelineOffset() / getTrackWitdh();
-        var d = { time: 0 };
+        var _activityBlock = { time: 0 };
         var e = 0;
 
         activityBlocks.forEach(activityBlock => {
             if (activityBlock.isFirstLiveActivity) {
-                const f: any = {
+                const time: any = {
                     unknown: true,
-                    time: d.time,
-                    duration: activityBlock.time - d.time,
+                    time: _activityBlock.time,
+                    duration: activityBlock.time - _activityBlock.time,
                 };
-                b.push(f);
+                newActivityBlocks.push(time);
             }
 
             if (activityBlock.time >= e) {
-                b.push(activityBlock);
+                newActivityBlocks.push(activityBlock);
                 e = activityBlock.time + c;
             }
 
-            d = activityBlock;
+            _activityBlock = activityBlock;
         });
 
-        return b;
+        return newActivityBlocks;
     }
 
     const refresh = (isFinish, activities: any[]) => {
