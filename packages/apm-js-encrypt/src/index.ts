@@ -20,18 +20,14 @@ import PrimitiveReader from './PrimitiveReader';
 // const encode = openReplayEncoder.flush();
 // console.log(encode);
 
-const reader = fs.readFileSync('./4');
+const reader = fs.readFileSync('./5.txt');
 
-// reader.forEach(byte => {
-//     console.log(byte);
-// });
+const r = new MessageReader(reader, 0);
+const msgs: Array<any> = [];
 
-const r = new PrimitiveReader(reader);
-const list = [];
-for (const b of reader) {
-    const t = ServiceReadMessage(r);
-    // console.log(t);
-    list.push(t);
+while (r.hasNext()) {
+    const msg = ServiceReadMessage(r);
+    msgs.push(msg);
 }
 
 ///////////////////////
@@ -68,7 +64,7 @@ http.createServer(function (req, response) {
         console.log('end');
     });
 
-    response.end(JSON.stringify(list));
+    response.end(JSON.stringify(msgs));
 }).listen(8888);
 
 // 终端打印如下信息
