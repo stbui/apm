@@ -1,0 +1,30 @@
+{
+    "name": "@stbui/apmjs-encrypt",
+    "version": "1.0.0",
+    "description": "apm",
+    "author": "stbui <stbui@stbui.com>",
+    "homepage": "https://github.com/stbui/apm#readme",
+    "license": "ISC",
+    "main": "lib/index.js",
+    "module": "esm/index.js",
+    "typings": "./lib/index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/stbui/apm.git"
+    },
+    "scripts": {
+        "build": "yarn run build:cjs && yarn run build:esm",
+        "build:cjs": "rm -rf ./lib && tsc",
+        "build:esm": "rm -rf ./esm && tsc --outDir esm --module es2015",
+        "watch": "tsc --watch",
+        "test":"node ./lib/index.js"
+    },
+    "bugs": {
+        "url": "https://github.com/stbui/apm/issues"
+    },
+    "dependencies": {},
+    "devDependencies": {},
+    "publishConfig": {
+        "access": "public"
+    }
+}
