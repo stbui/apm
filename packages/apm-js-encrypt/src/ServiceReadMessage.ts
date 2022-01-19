@@ -47,7 +47,7 @@ export const ID_TP_MAP = {
     105: 'ios_network_call',
 } as const;
 
-export interface Timestamp {
+export interface timestamp {
     tp: 'timestamp';
     timestamp: number;
 }
@@ -356,7 +356,7 @@ export default function (r) {
     switch (tp) {
         case 80:
             return {
-                byte: 80,
+                tp: 80,
                 pageNo: r.readUint(),
                 firstIndex: r.readUint(),
                 timestamp: r.readInt(),
@@ -364,43 +364,45 @@ export default function (r) {
 
         case 0:
             return {
+                tp: 0,
                 timestamp: r.readUint(),
             };
 
         case 1:
             return {
+                tp: 1,
                 timestamp: r.readUint(),
                 projectId: r.readUint(),
                 trackerVersion: r.readString(),
                 revID: r.readString(),
-                UserUUID: r.readString(),
-                UserAgent: r.readString(),
-                UserOS: r.readString(),
-                UserOSVersion: r.readString(),
-                UserBrowser: r.readString(),
-                UserBrowserVersion: r.readString(),
-                UserDevice: r.readString(),
-                UserDeviceType: r.readString(),
-                UserDeviceMemorySize: r.readUint(),
-                UserDeviceHeapSize: r.readUint(),
-                UserCountry: r.readString(),
+                userUUID: r.readString(),
+                userAgent: r.readString(),
+                userOS: r.readString(),
+                userOSVersion: r.readString(),
+                userBrowser: r.readString(),
+                userBrowserVersion: r.readString(),
+                userDevice: r.readString(),
+                userDeviceType: r.readString(),
+                userDeviceMemorySize: r.readUint(),
+                userDeviceHeapSize: r.readUint(),
+                userCountry: r.readString(),
             };
 
         case 2:
             return {
-                tp: ID_TP_MAP[2],
+                tp: 2,
                 timestamp: r.readUint(),
             };
 
         case 3:
             return {
-                tp: ID_TP_MAP[2],
+                tp: 3,
                 timestamp: r.readUint(),
             };
 
         case 4:
             return {
-                tp: ID_TP_MAP[4],
+                tp: 4,
                 url: r.readString(),
                 referrer: r.readString(),
                 navigationStart: r.readUint(),
@@ -408,26 +410,26 @@ export default function (r) {
 
         case 5:
             return {
-                tp: ID_TP_MAP[5],
+                tp: 5,
                 width: r.readUint(),
                 height: r.readUint(),
             };
 
         case 6:
             return {
-                tp: ID_TP_MAP[6],
+                tp: 6,
                 x: r.readInt(),
                 y: r.readInt(),
             };
 
         case 7:
             return {
-                tp: ID_TP_MAP[7],
+                tp: 7,
             };
 
         case 8:
             return {
-                tp: ID_TP_MAP[8],
+                tp: 8,
                 id: r.readUint(),
                 parentID: r.readUint(),
                 index: r.readUint(),
@@ -437,7 +439,7 @@ export default function (r) {
 
         case 9:
             return {
-                tp: ID_TP_MAP[9],
+                tp: 9,
                 id: r.readUint(),
                 parentID: r.readUint(),
                 index: r.readUint(),
@@ -445,7 +447,7 @@ export default function (r) {
 
         case 10:
             return {
-                tp: ID_TP_MAP[10],
+                tp: 10,
                 id: r.readUint(),
                 parentID: r.readUint(),
                 index: r.readUint(),
@@ -453,13 +455,13 @@ export default function (r) {
 
         case 11:
             return {
-                tp: ID_TP_MAP[11],
+                tp: 11,
                 id: r.readUint(),
             };
 
         case 12:
             return {
-                tp: ID_TP_MAP[12],
+                tp: 12,
                 id: r.readUint(),
                 name: r.readString(),
                 value: r.readString(),
@@ -467,28 +469,28 @@ export default function (r) {
 
         case 13:
             return {
-                tp: ID_TP_MAP[13],
+                tp: 13,
                 id: r.readUint(),
                 name: r.readString(),
             };
 
         case 14:
             return {
-                tp: ID_TP_MAP[14],
+                tp: 14,
                 id: r.readUint(),
                 data: r.readString(),
             };
 
         case 15:
             return {
-                tp: ID_TP_MAP[15],
+                tp: 15,
                 id: r.readUint(),
                 data: r.readString(),
             };
 
         case 16:
             return {
-                tp: ID_TP_MAP[16],
+                tp: 16,
                 id: r.readUint(),
                 x: r.readInt(),
                 y: r.readInt(),
@@ -496,7 +498,7 @@ export default function (r) {
 
         case 18:
             return {
-                tp: ID_TP_MAP[18],
+                tp: 18,
                 id: r.readUint(),
                 value: r.readString(),
                 mask: r.readInt(),
@@ -504,148 +506,143 @@ export default function (r) {
 
         case 19:
             return {
-                tp: ID_TP_MAP[19],
+                tp: 19,
                 id: r.readUint(),
                 checked: r.readBoolean(),
             };
 
         case 20:
             return {
-                tp: ID_TP_MAP[20],
+                tp: 20,
                 x: r.readUint(),
                 y: r.readUint(),
             };
 
         case 21:
-            return {
-                ID: r.readUint(),
-                HesitationTime: r.readUint(),
-            };
+            return { tp: 21, ID: r.readUint(), hesitationTime: r.readUint() };
 
         case 22:
             return {
-                tp: ID_TP_MAP[22],
+                tp: 22,
                 level: r.readString(),
                 value: r.readString(),
             };
 
         case 23:
             return {
-                RequestStart: r.readUint(),
-                ResponseStart: r.readUint(),
-                ResponseEnd: r.readUint(),
-                DomContentLoadedEventStart: r.readUint(),
-                DomContentLoadedEventEnd: r.readUint(),
-                LoadEventStart: r.readUint(),
-                LoadEventEnd: r.readUint(),
-                FirstPaint: r.readUint(),
-                FirstContentfulPaint: r.readUint(),
+                tp: 23,
+                requestStart: r.readUint(),
+                responseStart: r.readUint(),
+                responseEnd: r.readUint(),
+                domContentLoadedEventStart: r.readUint(),
+                domContentLoadedEventEnd: r.readUint(),
+                loadEventStart: r.readUint(),
+                loadEventEnd: r.readUint(),
+                firstPaint: r.readUint(),
+                firstContentfulPaint: r.readUint(),
             };
 
         case 24:
             return {
-                SpeedIndex: r.readUint(),
-                VisuallyComplete: r.readUint(),
-                TimeToInteractive: r.readUint(),
+                tp: 24,
+                speedIndex: r.readUint(),
+                visuallyComplete: r.readUint(),
+                timeToInteractive: r.readUint(),
             };
 
         case 25:
-            return {
-                Name: r.readString(),
-                Message: r.readString(),
-                Payload: r.readString(),
-            };
+            return { tp: 25, name: r.readString(), message: r.readString(), payload: r.readString() };
 
         case 26:
             return {
-                Timestamp: r.readUint(),
-                Source: r.readString(),
-                Name: r.readString(),
-                Message: r.readString(),
-                Payload: r.readString(),
+                tp: 26,
+                timestamp: r.readUint(),
+                source: r.readString(),
+                name: r.readString(),
+                message: r.readString(),
+                payload: r.readString(),
             };
 
         case 27:
-            return {
-                Name: r.readString(),
-                Payload: r.readString(),
-            };
+            return { tp: 27, name: r.readString(), payload: r.readString() };
 
         case 28:
-            return {
-                ID: r.readString(),
-            };
+            return { tp: 28, ID: r.readString() };
 
         case 29:
-            return {
-                ID: r.readString(),
-            };
+            return { tp: 29, ID: r.readString() };
 
         case 30:
             return {
+                tp: 30,
                 Key: r.readString(),
-                Value: r.readString(),
+                value: r.readString(),
             };
 
         case 31:
             return {
-                MessageID: r.readUint(),
-                Timestamp: r.readUint(),
-                URL: r.readString(),
+                tp: 31,
+                messageID: r.readUint(),
+                timestamp: r.readUint(),
+                url: r.readString(),
                 Referrer: r.readString(),
                 Loaded: r.readString(),
-                RequestStart: r.readUint(),
-                ResponseStart: r.readUint(),
-                ResponseEnd: r.readUint(),
-                DomContentLoadedEventStart: r.readUint(),
-                DomContentLoadedEventEnd: r.readUint(),
-                LoadEventStart: r.readUint(),
-                LoadEventEnd: r.readUint(),
-                FirstPaint: r.readUint(),
-                FirstContentfulPaint: r.readUint(),
-                SpeedIndex: r.readUint(),
-                VisuallyComplete: r.readUint(),
-                TimeToInteractive: r.readUint(),
+                requestStart: r.readUint(),
+                responseStart: r.readUint(),
+                responseEnd: r.readUint(),
+                domContentLoadedEventStart: r.readUint(),
+                domContentLoadedEventEnd: r.readUint(),
+                loadEventStart: r.readUint(),
+                loadEventEnd: r.readUint(),
+                firstPaint: r.readUint(),
+                firstContentfulPaint: r.readUint(),
+                speedIndex: r.readUint(),
+                visuallyComplete: r.readUint(),
+                timeToInteractive: r.readUint(),
             };
 
         case 32:
             return {
-                MessageID: r.readUint(),
-                Timestamp: r.readUint(),
-                Value: r.readString(),
-                ValueMasked: r.readBoolean(),
-                Label: r.readString(),
+                tp: 32,
+                messageID: r.readUint(),
+                timestamp: r.readUint(),
+                value: r.readString(),
+                valueMasked: r.readBoolean(),
+                label: r.readString(),
             };
 
         case 33:
             return {
-                MessageID: r.readUint(),
-                Timestamp: r.readUint(),
-                HesitationTime: r.readUint(),
-                Label: r.readString(),
+                tp: 33,
+                messageID: r.readUint(),
+                timestamp: r.readUint(),
+                hesitationTime: r.readUint(),
+                label: r.readString(),
                 Selector: r.readString(),
             };
 
         case 34:
             return {
-                MessageID: r.readUint(),
-                Timestamp: r.readUint(),
-                Source: r.readString(),
-                Name: r.readString(),
-                Message: r.readString(),
-                Payload: r.readString(),
+                tp: 34,
+                messageID: r.readUint(),
+                timestamp: r.readUint(),
+                source: r.readString(),
+                name: r.readString(),
+                message: r.readString(),
+                payload: r.readString(),
             };
 
         case 35:
             return {
-                MessageID: r.readUint(),
-                Timestamp: r.readUint(),
-                Duration: r.readUint(),
-                TTFB: r.readUint(),
-                HeaderSize: r.readUint(),
-                EncodedBodySize: r.readUint(),
-                DecodedBodySize: r.readUint(),
-                URL: r.readString(),
+                tp: 35,
+                messageID: r.readUint(),
+                timestamp: r.readUint(),
+                duration: r.readUint(),
+                ttfb: r.readUint(),
+                headerSize: r.readUint(),
+                encodedBodySize: r.readUint(),
+                decodedBodySize: r.readUint(),
+                url: r.readString(),
                 Type: r.readString(),
                 Success: r.readBoolean(),
                 Method: r.readString(),
@@ -654,15 +651,16 @@ export default function (r) {
 
         case 36:
             return {
-                MessageID: r.readUint(),
-                Timestamp: r.readUint(),
-                Name: r.readString(),
-                Payload: r.readString(),
+                tp: 36,
+                messageID: r.readUint(),
+                timestamp: r.readUint(),
+                name: r.readString(),
+                payload: r.readString(),
             };
 
         case 37:
             return {
-                tp: ID_TP_MAP[37],
+                tp: 37,
                 id: r.readUint(),
                 rule: r.readString(),
                 index: r.readUint(),
@@ -670,14 +668,14 @@ export default function (r) {
 
         case 38:
             return {
-                tp: ID_TP_MAP[38],
+                tp: 38,
                 id: r.readUint(),
                 index: r.readUint(),
             };
 
         case 39:
             return {
-                tp: ID_TP_MAP[39],
+                tp: 39,
                 method: r.readString(),
                 url: r.readString(),
                 request: r.readString(),
@@ -689,7 +687,7 @@ export default function (r) {
 
         case 40:
             return {
-                tp: ID_TP_MAP[40],
+                tp: 40,
                 name: r.readString(),
                 duration: r.readUint(),
                 args: r.readString(),
@@ -698,26 +696,28 @@ export default function (r) {
 
         case 41:
             return {
-                tp: ID_TP_MAP[41],
+                tp: 41,
                 key: r.readString(),
                 value: r.readString(),
             };
 
         case 42:
             return {
+                tp: 42,
                 Type: r.readString(),
             };
 
         case 43:
             return {
-                MessageID: r.readUint(),
-                Timestamp: r.readUint(),
+                tp: 43,
+                messageID: r.readUint(),
+                timestamp: r.readUint(),
                 Type: r.readString(),
             };
 
         case 44:
             return {
-                tp: ID_TP_MAP[44],
+                tp: 44,
                 action: r.readString(),
                 state: r.readString(),
                 duration: r.readUint(),
@@ -725,21 +725,21 @@ export default function (r) {
 
         case 45:
             return {
-                tp: ID_TP_MAP[45],
+                tp: 45,
                 mutation: r.readString(),
                 state: r.readString(),
             };
 
         case 46:
             return {
-                tp: ID_TP_MAP[46],
+                tp: 46,
                 type: r.readString(),
                 payload: r.readString(),
             };
 
         case 47:
             return {
-                tp: ID_TP_MAP[47],
+                tp: 47,
                 action: r.readString(),
                 state: r.readString(),
                 duration: r.readUint(),
@@ -747,7 +747,7 @@ export default function (r) {
 
         case 48:
             return {
-                tp: ID_TP_MAP[48],
+                tp: 48,
                 operationKind: r.readString(),
                 operationName: r.readString(),
                 variables: r.readString(),
@@ -756,7 +756,7 @@ export default function (r) {
 
         case 49:
             return {
-                tp: ID_TP_MAP[49],
+                tp: 49,
                 frames: r.readInt(),
                 ticks: r.readInt(),
                 totalJSHeapSize: r.readUint(),
@@ -765,66 +765,67 @@ export default function (r) {
 
         case 50:
             return {
-                MessageID: r.readUint(),
-                Timestamp: r.readUint(),
+                tp: 50,
+                messageID: r.readUint(),
+                timestamp: r.readUint(),
                 Name: r.readString(),
             };
 
         // 51 no
 
         case 52:
-            return {
-                Timestamp: r.readUint(),
-            };
+            return { tp: 52, timestamp: r.readUint() };
 
         case 53:
             return {
-                Timestamp: r.readUint(),
-                Duration: r.readUint(),
-                TTFB: r.readUint(),
-                HeaderSize: r.readUint(),
-                EncodedBodySize: r.readUint(),
-                DecodedBodySize: r.readUint(),
-                URL: r.readString(),
-                Initiator: r.readString(),
+                tp: 53,
+                timestamp: r.readUint(),
+                duration: r.readUint(),
+                ttfb: r.readUint(),
+                headerSize: r.readUint(),
+                encodedBodySize: r.readUint(),
+                decodedBodySize: r.readUint(),
+                url: r.readString(),
+                initiator: r.readString(),
             };
 
         case 54:
             return {
-                tp: ID_TP_MAP[54],
+                tp: 54,
                 downlink: r.readUint(),
                 type: r.readString(),
             };
 
         case 55:
             return {
-                tp: ID_TP_MAP[55],
+                tp: 55,
                 hidden: r.readBoolean(),
             };
 
         case 56:
             return {
-                TimestampStart: r.readUint(),
-                TimestampEnd: r.readUint(),
-                MinFPS: r.readUint(),
-                AvgFPS: r.readUint(),
-                MaxFPS: r.readUint(),
-                MinCPU: r.readUint(),
-                AvgCPU: r.readUint(),
-                MaxCPU: r.readUint(),
-                MinTotalJSHeapSize: r.readUint(),
-                AvgTotalJSHeapSize: r.readUint(),
-                MaxTotalJSHeapSize: r.readUint(),
-                MinUsedJSHeapSize: r.readUint(),
-                AvgUsedJSHeapSize: r.readUint(),
-                MaxUsedJSHeapSize: r.readUint(),
+                tp: 56,
+                timestampStart: r.readUint(),
+                timestampEnd: r.readUint(),
+                minFPS: r.readUint(),
+                avgFPS: r.readUint(),
+                maxFPS: r.readUint(),
+                minCPU: r.readUint(),
+                avgCPU: r.readUint(),
+                maxCPU: r.readUint(),
+                minTotalJSHeapSize: r.readUint(),
+                avgTotalJSHeapSize: r.readUint(),
+                maxTotalJSHeapSize: r.readUint(),
+                minUsedJSHeapSize: r.readUint(),
+                avgUsedJSHeapSize: r.readUint(),
+                maxUsedJSHeapSize: r.readUint(),
             };
 
         // 57,58 no
 
         case 59:
             return {
-                tp: ID_TP_MAP[59],
+                tp: 59,
                 timestamp: r.readUint(),
                 duration: r.readUint(),
                 context: r.readUint(),
@@ -836,39 +837,44 @@ export default function (r) {
 
         case 60:
             return {
+                tp: 60,
                 id: r.readUint(),
-                Name: r.readString(),
-                Value: r.readString(),
-                BaseURL: r.readString(),
+                name: r.readString(),
+                value: r.readString(),
+                baseURL: r.readString(),
             };
 
         case 61:
             return {
+                tp: 61,
                 id: r.readUint(),
                 Data: r.readString(),
-                BaseURL: r.readString(),
+                baseURL: r.readString(),
             };
 
         case 62:
             return {
-                MessageID: r.readUint(),
-                Timestamp: r.readUint(),
-                Type: r.readString(),
-                ContextString: r.readString(),
-                Context: r.readString(),
-                Payload: r.readString(),
+                tp: 62,
+                messageID: r.readUint(),
+                timestamp: r.readUint(),
+                type: r.readString(),
+                contextString: r.readString(),
+                context: r.readString(),
+                payload: r.readString(),
             };
 
         case 63:
             return {
-                Type: r.readString(),
-                Value: r.readString(),
+                tp: 63,
+                type: r.readString(),
+                value: r.readString(),
             };
 
         case 64:
             return {
-                Name: r.readString(),
-                Payload: r.readString(),
+                tp: 64,
+                name: r.readString(),
+                payload: r.readString(),
             };
 
         // case 65:
@@ -876,22 +882,24 @@ export default function (r) {
 
         case 66:
             return {
+                tp: 66,
                 URL: r.readString(),
             };
 
         case 67:
             return {
+                tp: 67,
                 id: r.readUint(),
                 Rule: r.readString(),
                 Index: r.readUint(),
-                BaseURL: r.readString(),
+                baseURL: r.readString(),
             };
 
         // 68  no
 
         case 69:
             return {
-                tp: ID_TP_MAP[69],
+                tp: 69,
                 id: r.readUint(),
                 hesitationTime: r.readUint(),
                 label: r.readString(),
@@ -900,14 +908,14 @@ export default function (r) {
 
         case 70:
             return {
-                tp: ID_TP_MAP[70],
+                tp: 70,
                 frameID: r.readUint(),
                 id: r.readUint(),
             };
 
         // case 90:
         //     return {
-        //         tp: ID_TP_MAP[90],
+        //         tp: 90,
         //         timestamp: r.readUint(),
         //         projectID: r.readUint(),
         //         trackerVersion: r.readString(),
@@ -984,13 +992,15 @@ export default function (r) {
 
         case 107:
             return {
+                tp: 107,
                 timestamp: r.readUint(),
                 length: r.readUint(),
-                FirstIndex: r.readUint(),
+                firstIndex: r.readUint(),
             };
 
         case 90:
             return {
+                tp: 90,
                 timestamp: r.readUint(),
                 projectID: r.readUint(),
                 trackerVersion: r.readString(),
@@ -1005,40 +1015,46 @@ export default function (r) {
 
         case 91:
             return {
+                tp: 91,
                 timestamp: r.readUint(),
             };
 
-        case 91:
+        case 92:
             return {
+                tp: 92,
                 timestamp: r.readUint(),
                 length: r.readUint(),
                 Key: r.readString(),
-                Value: r.readString(),
+                value: r.readString(),
             };
 
         case 93:
             return {
+                tp: 93,
                 timestamp: r.readUint(),
                 length: r.readUint(),
-                Name: r.readString(),
-                Payload: r.readString(),
+                name: r.readString(),
+                payload: r.readString(),
             };
 
         case 94:
             return {
+                tp: 94,
                 timestamp: r.readUint(),
                 length: r.readUint(),
-                Value: r.readString(),
+                value: r.readString(),
             };
 
         case 95:
             return {
+                tp: 95,
                 timestamp: r.readUint(),
                 length: r.readUint(),
-                Value: r.readString(),
+                value: r.readString(),
             };
         case 96:
             return {
+                tp: 96,
                 timestamp: r.readUint(),
                 length: r.readUint(),
                 x: r.readUint(),
@@ -1048,28 +1064,32 @@ export default function (r) {
             };
         case 97:
             return {
+                tp: 97,
                 timestamp: r.readUint(),
                 length: r.readUint(),
-                Name: r.readString(),
+                name: r.readString(),
                 Reason: r.readString(),
                 Stacktrace: r.readString(),
             };
         case 98:
             return {
+                tp: 98,
                 timestamp: r.readUint(),
                 length: r.readUint(),
-                Title: r.readString(),
-                ViewName: r.readString(),
+                title: r.readString(),
+                viewName: r.readString(),
             };
         case 99:
             return {
+                tp: 99,
                 timestamp: r.readUint(),
                 length: r.readUint(),
-                Title: r.readString(),
-                ViewName: r.readString(),
+                title: r.readString(),
+                viewName: r.readString(),
             };
         case 100:
             return {
+                tp: 100,
                 timestamp: r.readUint(),
                 length: r.readUint(),
                 label: r.readString(),
@@ -1078,16 +1098,17 @@ export default function (r) {
             };
         case 101:
             return {
+                tp: 101,
                 timestamp: r.readUint(),
                 length: r.readUint(),
-                Value: r.readString(),
-                ValueMasked: r.readBoolean(),
-                Label: r.readString(),
+                value: r.readString(),
+                valueMasked: r.readBoolean(),
+                label: r.readString(),
             };
 
         case 102:
             return {
-                tp: ID_TP_MAP[102],
+                tp: 102,
                 timestamp: r.readUint(),
                 length: r.readUint(),
                 name: r.readString(),
@@ -1096,7 +1117,7 @@ export default function (r) {
 
         case 103:
             return {
-                tp: ID_TP_MAP[103],
+                tp: 103,
                 timestamp: r.readUint(),
                 length: r.readUint(),
                 severity: r.readString(),
@@ -1105,6 +1126,7 @@ export default function (r) {
 
         case 104:
             return {
+                tp: 104,
                 timestamp: r.readUint(),
                 length: r.readUint(),
                 content: r.readString(),
@@ -1112,7 +1134,7 @@ export default function (r) {
 
         case 105:
             return {
-                tp: ID_TP_MAP[105],
+                tp: 105,
                 timestamp: r.readUint(),
                 length: r.readUint(),
                 duration: r.readUint(),
@@ -1126,28 +1148,30 @@ export default function (r) {
 
         case 110:
             return {
-                TimestampStart: r.readUint(),
-                TimestampEnd: r.readUint(),
-                MinFPS: r.readUint(),
-                AvgFPS: r.readUint(),
-                MaxFPS: r.readUint(),
-                MinCPU: r.readUint(),
-                AvgCPU: r.readUint(),
-                MaxCPU: r.readUint(),
-                MinMemory: r.readUint(),
-                AvgMemory: r.readUint(),
-                MaxMemory: r.readUint(),
-                MinBattery: r.readUint(),
-                AvgBattery: r.readUint(),
-                MaxBattery: r.readUint(),
+                tp: 110,
+                timestampStart: r.readUint(),
+                timestampEnd: r.readUint(),
+                minFPS: r.readUint(),
+                avgFPS: r.readUint(),
+                maxFPS: r.readUint(),
+                minCPU: r.readUint(),
+                avgCPU: r.readUint(),
+                maxCPU: r.readUint(),
+                minMemory: r.readUint(),
+                avgMemory: r.readUint(),
+                maxMemory: r.readUint(),
+                minBattery: r.readUint(),
+                avgBattery: r.readUint(),
+                maxBattery: r.readUint(),
             };
         case 111:
             return {
-                Timestamp: r.readUint(),
-                Type: r.readString(),
-                ContextString: r.readString(),
-                Context: r.readString(),
-                Payload: r.readString(),
+                tp: 111,
+                timestamp: r.readUint(),
+                type: r.readString(),
+                contextString: r.readString(),
+                context: r.readString(),
+                payload: r.readString(),
             };
         default:
             throw new Error(`Unrecognizable message type: ${tp}`);

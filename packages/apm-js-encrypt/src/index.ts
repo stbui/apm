@@ -5,31 +5,46 @@ import { OpenReplayDecoder } from './decoder';
 import MessageReader from './MessageReader';
 import ServiceReadMessage from './ServiceReadMessage';
 import PrimitiveReader from './PrimitiveReader';
-
-// const openReplayEncoder = new OpenReplayEncoder(200000);
-// timestamp
-// openReplayEncoder.uint(0);
-// openReplayEncoder.uint(1641375555383);
-
-// openReplayEncoder.uint(49);
-// openReplayEncoder.int(74);
-// openReplayEncoder.int(41);
-// openReplayEncoder.uint(15002696);
-// openReplayEncoder.uint(12712748);
-
-// const encode = openReplayEncoder.flush();
-// console.log(encode);
+import { Pipeline } from './pipeline';
+import ServiceEnCodeMessage from './ServiceEnCodeMessage';
 
 const reader = fs.readFileSync('./5.txt');
-
-const r = new MessageReader(reader, 0);
 const msgs: Array<any> = [];
 
-while (r.hasNext()) {
-    const msg = ServiceReadMessage(r);
+// const r = new MessageReader(reader, 0);
+// while (r.hasNext()) {
+//     const msg = ServiceReadMessage(r);
+//     msgs.push(msg);
+// }
+
+const b = Buffer.from([80, 8, 0, 224, 183, 141, 179, 204, 95]);
+const pipeline = new Pipeline(b, './test');
+pipeline.unpack(msg => {
     msgs.push(msg);
+});
+
+const test = fs.readFileSync('./test');
+console.log(test);
+
+// const b = ServiceEnCodeMessage({ tp: 80, pageNo: 8, firstIndex: 0, timestamp: 1642341707248 });
+// console.log(Buffer.from(b));
+
+function to64Int(value) {
+    const buffer = Buffer.alloc(8);
+    let offset = 0;
+
+    while (value >= 0x80) {
+        buffer[offset++] = value % 0x100 | 0x80;
+        value = Math.floor(value / 128);
+    }
+    buffer[offset++] = value;
+
+    return buffer;
 }
 
+console.log(to64Int(1642341707248));
+
+// // console.log(new d2(c).decode());
 ///////////////////////
 // const reader = fs.readFileSync('./6006400213795107');
 // const r = new MessageReader(reader, 0);
