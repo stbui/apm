@@ -83,7 +83,7 @@ export interface CreateDocument {
 export interface CreateElementNode {
     tp: 'create_element_node';
     id: number;
-    parentID: number;
+    parentId: number;
     index: number;
     tag: string;
     svg: boolean;
@@ -92,14 +92,14 @@ export interface CreateElementNode {
 export interface CreateTextNode {
     tp: 'create_text_node';
     id: number;
-    parentID: number;
+    parentId: number;
     index: number;
 }
 
 export interface MoveNode {
     tp: 'move_node';
     id: number;
-    parentID: number;
+    parentId: number;
     index: number;
 }
 
@@ -286,7 +286,7 @@ export interface IosSessionStart {
     timestamp: number;
     projectID: number;
     trackerVersion: string;
-    revID: string;
+    revId: string;
     userUUID: string;
     userOS: string;
     userOSVersion: string;
@@ -374,7 +374,7 @@ export default function (r) {
                 timestamp: r.readUint(),
                 projectId: r.readUint(),
                 trackerVersion: r.readString(),
-                revID: r.readString(),
+                revId: r.readString(),
                 userUUID: r.readString(),
                 userAgent: r.readString(),
                 userOS: r.readString(),
@@ -431,7 +431,7 @@ export default function (r) {
             return {
                 tp: 8,
                 id: r.readUint(),
-                parentID: r.readUint(),
+                parentId: r.readUint(),
                 index: r.readUint(),
                 tag: r.readString(),
                 svg: r.readBoolean(),
@@ -441,7 +441,7 @@ export default function (r) {
             return {
                 tp: 9,
                 id: r.readUint(),
-                parentID: r.readUint(),
+                parentId: r.readUint(),
                 index: r.readUint(),
             };
 
@@ -449,7 +449,7 @@ export default function (r) {
             return {
                 tp: 10,
                 id: r.readUint(),
-                parentID: r.readUint(),
+                parentId: r.readUint(),
                 index: r.readUint(),
             };
 
@@ -519,7 +519,7 @@ export default function (r) {
             };
 
         case 21:
-            return { tp: 21, ID: r.readUint(), hesitationTime: r.readUint() };
+            return { tp: 21, id: r.readUint(), hesitationTime: r.readUint() };
 
         case 22:
             return {
@@ -567,10 +567,10 @@ export default function (r) {
             return { tp: 27, name: r.readString(), payload: r.readString() };
 
         case 28:
-            return { tp: 28, ID: r.readString() };
+            return { tp: 28, id: r.readString() };
 
         case 29:
-            return { tp: 29, ID: r.readString() };
+            return { tp: 29, id: r.readString() };
 
         case 30:
             return {
@@ -582,11 +582,11 @@ export default function (r) {
         case 31:
             return {
                 tp: 31,
-                messageID: r.readUint(),
+                messageId: r.readUint(),
                 timestamp: r.readUint(),
                 url: r.readString(),
-                Referrer: r.readString(),
-                Loaded: r.readString(),
+                referrer: r.readString(),
+                loaded: r.readString(),
                 requestStart: r.readUint(),
                 responseStart: r.readUint(),
                 responseEnd: r.readUint(),
@@ -604,7 +604,7 @@ export default function (r) {
         case 32:
             return {
                 tp: 32,
-                messageID: r.readUint(),
+                messageId: r.readUint(),
                 timestamp: r.readUint(),
                 value: r.readString(),
                 valueMasked: r.readBoolean(),
@@ -614,17 +614,17 @@ export default function (r) {
         case 33:
             return {
                 tp: 33,
-                messageID: r.readUint(),
+                messageId: r.readUint(),
                 timestamp: r.readUint(),
                 hesitationTime: r.readUint(),
                 label: r.readString(),
-                Selector: r.readString(),
+                selector: r.readString(),
             };
 
         case 34:
             return {
                 tp: 34,
-                messageID: r.readUint(),
+                messageId: r.readUint(),
                 timestamp: r.readUint(),
                 source: r.readString(),
                 name: r.readString(),
@@ -635,7 +635,7 @@ export default function (r) {
         case 35:
             return {
                 tp: 35,
-                messageID: r.readUint(),
+                messageId: r.readUint(),
                 timestamp: r.readUint(),
                 duration: r.readUint(),
                 ttfb: r.readUint(),
@@ -643,16 +643,16 @@ export default function (r) {
                 encodedBodySize: r.readUint(),
                 decodedBodySize: r.readUint(),
                 url: r.readString(),
-                Type: r.readString(),
-                Success: r.readBoolean(),
-                Method: r.readString(),
-                Status: r.readUint(),
+                type: r.readString(),
+                success: r.readBoolean(),
+                method: r.readString(),
+                status: r.readUint(),
             };
 
         case 36:
             return {
                 tp: 36,
-                messageID: r.readUint(),
+                messageId: r.readUint(),
                 timestamp: r.readUint(),
                 name: r.readString(),
                 payload: r.readString(),
@@ -704,15 +704,15 @@ export default function (r) {
         case 42:
             return {
                 tp: 42,
-                Type: r.readString(),
+                type: r.readString(),
             };
 
         case 43:
             return {
                 tp: 43,
-                messageID: r.readUint(),
+                messageId: r.readUint(),
                 timestamp: r.readUint(),
-                Type: r.readString(),
+                type: r.readString(),
             };
 
         case 44:
@@ -766,9 +766,9 @@ export default function (r) {
         case 50:
             return {
                 tp: 50,
-                messageID: r.readUint(),
+                messageId: r.readUint(),
                 timestamp: r.readUint(),
-                Name: r.readString(),
+                name: r.readString(),
             };
 
         // 51 no
@@ -848,14 +848,14 @@ export default function (r) {
             return {
                 tp: 61,
                 id: r.readUint(),
-                Data: r.readString(),
+                data: r.readString(),
                 baseURL: r.readString(),
             };
 
         case 62:
             return {
                 tp: 62,
-                messageID: r.readUint(),
+                messageId: r.readUint(),
                 timestamp: r.readUint(),
                 type: r.readString(),
                 contextString: r.readString(),
@@ -883,15 +883,15 @@ export default function (r) {
         case 66:
             return {
                 tp: 66,
-                URL: r.readString(),
+                url: r.readString(),
             };
 
         case 67:
             return {
                 tp: 67,
                 id: r.readUint(),
-                Rule: r.readString(),
-                Index: r.readUint(),
+                rule: r.readString(),
+                index: r.readUint(),
                 baseURL: r.readString(),
             };
 
@@ -919,7 +919,7 @@ export default function (r) {
         //         timestamp: r.readUint(),
         //         projectID: r.readUint(),
         //         trackerVersion: r.readString(),
-        //         revID: r.readString(),
+        //         revId: r.readString(),
         //         userUUID: r.readString(),
         //         userOS: r.readString(),
         //         userOSVersion: r.readString(),
@@ -1004,7 +1004,7 @@ export default function (r) {
                 timestamp: r.readUint(),
                 projectID: r.readUint(),
                 trackerVersion: r.readString(),
-                revID: r.readString(),
+                revId: r.readString(),
                 userUUID: r.readString(),
                 userOS: r.readString(),
                 userOSVersion: r.readString(),
@@ -1024,7 +1024,7 @@ export default function (r) {
                 tp: 92,
                 timestamp: r.readUint(),
                 length: r.readUint(),
-                Key: r.readString(),
+                key: r.readString(),
                 value: r.readString(),
             };
 
@@ -1068,8 +1068,8 @@ export default function (r) {
                 timestamp: r.readUint(),
                 length: r.readUint(),
                 name: r.readString(),
-                Reason: r.readString(),
-                Stacktrace: r.readString(),
+                reason: r.readString(),
+                stacktrace: r.readString(),
             };
         case 98:
             return {

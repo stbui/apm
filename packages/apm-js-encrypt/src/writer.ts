@@ -1,3 +1,4 @@
+import fs from 'fs';
 declare const TextEncoder: any;
 const textEncoder: { encode(str: string): Uint8Array } =
     typeof TextEncoder === 'function'
