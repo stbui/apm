@@ -2,7 +2,8 @@ import writer from './writer';
 
 function len(val) {
     if (val) {
-        return val.length;
+        // 如果是字符串，返回字节数
+        return val.length * 4;
     }
 
     return 0;

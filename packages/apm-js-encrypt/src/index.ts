@@ -3,8 +3,11 @@ import fs from 'fs';
 import MessageReader from './MessageReader';
 import { Pipeline } from './pipeline';
 
-const reader = fs.readFileSync('./5.txt');
-const pipeline = new Pipeline(reader, './test1');
+const aaa = Buffer.from('平均价格 148.615    转股溢价率 34.99%    到期收益率 -5.33%')
+console.log(aaa)
+
+const reader = fs.readFileSync('./11.txt');
+const pipeline = new Pipeline(reader, './test');
 const msgs = [];
 pipeline.unpack(msg => msgs.push(msg));
 
@@ -33,15 +36,13 @@ http.createServer(function (req, response) {
 
     req.on('data', chunk => {
         console.log(`可用的数据块: `);
-
-        fs.writeFileSync('./1', chunk);
     });
     req.on('end', () => {
         //数据结束
         console.log('end');
     });
 
-    response.end(JSON.stringify(msgs1, null,2 ));
+    response.end(JSON.stringify(msgs1, null, 2));
 }).listen(8888);
 
 // 终端打印如下信息

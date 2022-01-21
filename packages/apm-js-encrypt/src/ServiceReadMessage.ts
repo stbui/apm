@@ -475,11 +475,13 @@ export default function (r) {
             };
 
         case 14:
-            return {
+            const msg = {
                 tp: 14,
                 id: r.readUint(),
                 data: r.readString(),
             };
+
+            return msg;
 
         case 15:
             return {

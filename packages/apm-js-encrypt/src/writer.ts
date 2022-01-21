@@ -85,6 +85,8 @@ export default class Writer {
         return this.uint(value >= 0 ? value * 2 : value * -2 - 1);
     }
     string(value: string): boolean {
+        // return new TextDecoder().decode(this.buf.subarray(this.p, this.p+=l));
+
         const encoded = textEncoder.encode(value);
         const length = encoded.byteLength;
         if (!this.uint(length) || this.offset + length > this.size) {
