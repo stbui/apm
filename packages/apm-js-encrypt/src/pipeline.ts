@@ -98,7 +98,7 @@ export class Pipeline {
 
         let index = 0;
         while (messageReader.hasNext()) {
-            const msg = ServiceReadMessage(messageReader);
+            const msg: any = ServiceReadMessage(messageReader);
 
             msg.index = index;
             this.pack(msg);
