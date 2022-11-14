@@ -60,7 +60,7 @@
         "stackEvents": [],
         "errors": [],
         "userEvents": [],
-        "mobsUrl": "/6062791290173460",
+        "mobsUrl": "http://127.0.0.1:8888/test1",
         "resources": [
             {
                 "datetime": 1642510784000,

@@ -91,8 +91,17 @@ function IsIOSType(id): boolean {
 export class Pipeline {
     public message: Array<any> = [];
 
+    /**
+     *
+     * @param bufferMeta 数据包
+     * @param path 数据包写入新文件
+     */
     constructor(protected bufferMeta: Buffer, protected path: string) {}
 
+    /**
+     * 拆包
+     * @param callback
+     */
     unpack(callback?: Function) {
         const messageReader = new MessageReader(this.bufferMeta, 0);
 
@@ -101,13 +110,18 @@ export class Pipeline {
             const msg: any = ServiceReadMessage(messageReader);
 
             msg.index = index;
-            this.pack(msg);
             callback && callback(msg);
 
+            this.pack(msg);
             index++;
         }
     }
 
+    /**
+     * 打包数据源
+     * @param msg 数据源
+     * @returns
+     */
     pack(msg: any) {
         //
         if (msg.tp === 80) {
