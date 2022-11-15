@@ -354,17 +354,9 @@ export interface IosNetworkCall {
 export default function (r) {
     const tp = r.readUint();
     switch (tp) {
-        case 80:
-            return {
-                tp: 80,
-                pageNo: r.readUint(),
-                firstIndex: r.readUint(),
-                timestamp: r.readInt(),
-            };
-
         case 0:
             return {
-                tp: 0,
+                tp: 'timestamp',
                 timestamp: r.readUint(),
             };
 
@@ -386,23 +378,24 @@ export default function (r) {
                 userDeviceMemorySize: r.readUint(),
                 userDeviceHeapSize: r.readUint(),
                 userCountry: r.readString(),
+                UserID: r.readString(),
             };
 
-        case 2:
-            return {
-                tp: 2,
-                timestamp: r.readUint(),
-            };
+        // case 2:
+        //     return {
+        //         tp: 2,
+        //         timestamp: r.readUint(),
+        //     };
 
         case 3:
             return {
-                tp: 3,
+                tp: 'SessionEnd',
                 timestamp: r.readUint(),
             };
 
         case 4:
             return {
-                tp: 4,
+                tp: 'set_page_location',
                 url: r.readString(),
                 referrer: r.readString(),
                 navigationStart: r.readUint(),
@@ -410,26 +403,26 @@ export default function (r) {
 
         case 5:
             return {
-                tp: 5,
+                tp: 'set_viewport_size',
                 width: r.readUint(),
                 height: r.readUint(),
             };
 
         case 6:
             return {
-                tp: 6,
+                tp: 'set_viewport_scroll',
                 x: r.readInt(),
                 y: r.readInt(),
             };
 
         case 7:
             return {
-                tp: 7,
+                tp: 'create_document',
             };
 
         case 8:
             return {
-                tp: 8,
+                tp: 'create_element_node',
                 id: r.readUint(),
                 parentId: r.readUint(),
                 index: r.readUint(),
@@ -439,7 +432,7 @@ export default function (r) {
 
         case 9:
             return {
-                tp: 9,
+                tp: 'create_text_node',
                 id: r.readUint(),
                 parentId: r.readUint(),
                 index: r.readUint(),
@@ -1175,6 +1168,25 @@ export default function (r) {
                 context: r.readString(),
                 payload: r.readString(),
             };
+
+        case 80:
+            return {
+                tp: 80,
+                pageNo: r.readUint(),
+                firstIndex: r.readUint(),
+                timestamp: r.readInt(),
+            };
+
+        case 81:
+            return {
+                tp: 81,
+                version: r.readUint(),
+                page_no: r.readUint(),
+                first_index: r.readUint(),
+                timestamp: r.readInt(),
+                location: r.readString(),
+            };
+
         default:
             throw new Error(`Unrecognizable message type: ${tp}`);
             return null;

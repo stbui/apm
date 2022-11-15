@@ -48,6 +48,7 @@ export class Appliacation {
 
             try {
                 const fn = compose(this.middlewares);
+                ctx.setHeader(200);
                 await fn(ctx);
             } catch (e) {
                 console.error(e);
@@ -66,6 +67,14 @@ export class Appliacation {
     }
 
     get(path: string, fn) {
+        this.use(ctx => {
+            if (ctx.url === path) {
+                fn(ctx);
+            }
+        });
+    }
+
+    post(path: string, fn: Function) {
         this.use(ctx => {
             if (ctx.url === path) {
                 fn(ctx);
