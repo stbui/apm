@@ -1,28 +1,21 @@
 import fs from 'fs';
 import Service from './service';
 
-import MessageReader from './MessageReader';
-import { Pipeline } from './pipeline';
+import { BatchWriter } from './client';
+import { MStreamReader, RawMessageReader, MessageDistributor } from './server';
 
-// // 将客户端发送过来的数据重新打包;
-// const reader = fs.readFileSync('./5.txt');
-// const pipeline = new Pipeline(reader, './test5.json');
-// const msgs: any = [];
-// pipeline.unpack(msg => msgs.push(msg));
+const timestamp = +new Date();
+const batchWriter = new BatchWriter(1, timestamp, 'url', (batch: any) => {
+    console.log(batch);
 
-// //读取存档数据包
-// const reader1 = fs.readFileSync(process.cwd() + '/test');
-// const messageReader = new MessageReader(reader1, 0);
-// const msgs1: Array<any> = [];
+    const messageDistributor = new MessageDistributor();
+    let msg = messageDistributor.readAndDistributeMessages(batch);
 
-// while (messageReader.hasNext()) {
-//     const next: any = messageReader.next();
-//     if (next != null) {
-//         msgs1.push(next[0]);
-//     }
-// }
-console.log();
-/////////////////////
+    console.log(msg);
+});
+
+batchWriter.writeMessage([4, '2', '3', 1]);
+batchWriter.finaliseBatch();
 
 Service.use(ctx => {
     // ctx.body = content;
@@ -48,12 +41,8 @@ Service.use(ctx => {
     if (ctx.url === '/v1/web/i') {
         ctx.req.on('data', chunk => {
             console.log(`1可用的数据块: `, chunk);
-            // 将客户端发送过来的数据重新打包;
-            // const pipeline = new Pipeline(chunk, './20221115.json');
-            // const msgs: any = [];
-            // pipeline.unpack(msg => msgs.push(msg));
-            // console.log(msgs);
-            fs.writeFileSync('20221115.json', chunk);
+
+            fs.writeFileSync('20221117.json', chunk);
             process.exit();
         });
 

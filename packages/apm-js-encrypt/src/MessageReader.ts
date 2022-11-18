@@ -1,31 +1,12 @@
 import readMessage, { Message } from './messages';
 import PrimitiveReader from './PrimitiveReader';
 
-// function needSkipMessage(data: Uint8Array, p: number, pLast: number): boolean {
-//   for (let i = 7; i >= 0; i--) {
-//     if (data[ p + i ] !== data[ pLast + i ]) {
-//       return data[ p + i ] - data[ pLast + i ] < 0
-//     }
-//   }
-//   return true
-// }
-
 export default class MessageReader extends PrimitiveReader {
     private pLastMessageID: number = 0;
     private currentTime: number = 0;
     public error: boolean = false;
     constructor(data: Uint8Array, private readonly startTime: number) {
         super(data);
-    }
-
-    private needSkipMessage(): boolean {
-        if (this.p === 0) return false;
-        for (let i = 7; i >= 0; i--) {
-            if (this.buf[this.p + i] !== this.buf[this.pLastMessageID + i]) {
-                return this.buf[this.p + i] - this.buf[this.pLastMessageID + i] < 0;
-            }
-        }
-        return true;
     }
 
     private readMessage(): Message | null {
@@ -50,9 +31,9 @@ export default class MessageReader extends PrimitiveReader {
             return null;
         }
 
-        while (this.needSkipMessage()) {
-            this.readMessage();
-        }
+        // while (this.needSkipMessage()) {
+        //     this.readMessage();
+        // }
         this.pLastMessageID = this.p;
 
         const msg = this.readMessage();

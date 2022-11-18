@@ -1187,6 +1187,13 @@ export default function (r) {
                 location: r.readString(),
             };
 
+        case 82:
+            return {
+                tp: 82,
+                PartNo: r.readUint(),
+                PartTotal: r.readUint(),
+            };
+
         default:
             throw new Error(`Unrecognizable message type: ${tp}`);
             return null;
