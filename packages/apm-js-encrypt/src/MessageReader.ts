@@ -10,7 +10,7 @@ export default class MessageReader extends PrimitiveReader {
     }
 
     private readMessage(): Message | null {
-        this.skip(8);
+        // this.skip(8);
         try {
             let msg;
             msg = readMessage(this);

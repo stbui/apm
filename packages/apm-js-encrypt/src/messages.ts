@@ -398,6 +398,10 @@ export type Message =
 export default function (r: PrimitiveReader): Message | null {
     const tp = r.readUint();
 
+    if (!(tp === 81 || tp === 82 || tp === 80)) {
+        this.skip(3);
+    }
+
     switch (tp) {
         case 0:
             return {

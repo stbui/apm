@@ -1,1 +1,24 @@
-{"data":{"tenantId":2566,"name":"ch","apiKey":"wdD7B78dUgxovdYYUV85","remainingTrial":11.0,"trialEnded":false,"edition":"saas","billingPeriodStartDate":1642510038639,"nextBillingPeriodStartDate":1645188438639,"hasActivePlan":false,"projects":[{"projectId":3296,"name":"my first project","projectKey":"FC8cwpO5yLvmHKidhn6X","recorded":true,"stackIntegrations":false,"trackerVersion":"3.4.16","status":"red"}]}}
+{
+    "data": {
+        "tenantId": 2566,
+        "name": "ch",
+        "apiKey": "wdD7B78dUgxovdYYUV85",
+        "remainingTrial": 11.0,
+        "trialEnded": false,
+        "edition": "saas",
+        "billingPeriodStartDate": 1642510038639,
+        "nextBillingPeriodStartDate": 1645188438639,
+        "hasActivePlan": false,
+        "projects": [
+            {
+                "projectId": 3296,
+                "name": "my first project",
+                "projectKey": "FC8cwpO5yLvmHKidhn6X",
+                "recorded": true,
+                "stackIntegrations": false,
+                "trackerVersion": "3.4.16",
+                "status": "red"
+            }
+        ]
+    }
+}

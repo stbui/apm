@@ -5,7 +5,7 @@ import PrimitiveReader from './PrimitiveReader';
 import type { RawMessage } from './raw';
 
 export default class RawMessageReader extends PrimitiveReader {
-    readMessage(): RawMessage | null {
+    readMessage() {
         const p = this.p;
         const resetPointer = () => {
             this.p = p;
@@ -15,6 +15,10 @@ export default class RawMessageReader extends PrimitiveReader {
         const tp = this.readUint();
         if (tp === null) {
             return resetPointer();
+        }
+
+        if (!(tp === 81 || tp === 82 || tp === 80)) {
+            this.skip(3);
         }
 
         switch (tp) {
@@ -331,6 +335,37 @@ export default class RawMessageReader extends PrimitiveReader {
                 };
             }
 
+            case 23: {
+                return {
+                    tp: 'PageLoadTiming',
+                    requestStart: this.readUint(),
+                    responseStart: this.readUint(),
+                    responseEnd: this.readUint(),
+                    domContentLoadedEventStart: this.readUint(),
+                    domContentLoadedEventEnd: this.readUint(),
+                    loadEventStart: this.readUint(),
+                    loadEventEnd: this.readUint(),
+                    firstPaint: this.readUint(),
+                    firstContentfulPaint: this.readUint(),
+                };
+            }
+
+            case 24: {
+                return {
+                    tp: 'PageRenderTiming',
+                    speedIndex: this.readUint(),
+                    visuallyComplete: this.readUint(),
+                    timeToInteractive: this.readUint(),
+                };
+            }
+
+            case 28: {
+                return {
+                    tp: 'user_id',
+                    id: this.readString(),
+                };
+            }
+
             case 37: {
                 const id = this.readUint();
                 if (id === null) {
@@ -574,6 +609,20 @@ export default class RawMessageReader extends PrimitiveReader {
                     ticks,
                     totalJSHeapSize,
                     usedJSHeapSize,
+                };
+            }
+
+            case 53: {
+                return {
+                    tp: 'resource_timing',
+                    timestamp: this.readUint(),
+                    duration: this.readUint(),
+                    ttfb: this.readUint(),
+                    headerSize: this.readUint(),
+                    encodedBodySize: this.readUint(),
+                    decodedBodySize: this.readUint(),
+                    url: this.readString(),
+                    initiator: this.readString(),
                 };
             }
 

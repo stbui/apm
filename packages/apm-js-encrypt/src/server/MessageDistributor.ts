@@ -21,7 +21,6 @@ export class MessageDistributor {
 
         while ((next = this.fileReader.next())) {
             const [msg, index] = next;
-            console.log(msg);
             msgs.push(msg);
         }
 

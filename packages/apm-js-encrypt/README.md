@@ -21,3 +21,22 @@ var initOpts = {
     r.isActive=function(){return false};
     r.getSessionToken=function(){};
   })("//static.openreplay.com/latest/openreplay.js",1,0,initOpts,startOpts);
+
+
+
+  [
+   81,  1, 1,   0, 184, 185, 231, 236,
+  145, 97, 3, 117, 114, 108,   4,   5,
+    0,  0, 1,  50,   1,  51,   1
+]
+
+
+4,   5,   0,  0, 1,  50,   1,  51,   1
+
+1   2   3     4   5   6   7   8     9
+
+
+1 
+234 56789 长度
+56  5: 长度   6  数据
+78  7: 长度   68  数据

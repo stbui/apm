@@ -1,1 +1,14 @@
-{"data":[{"projectId":3296,"name":"my first project","projectKey":"FC8cwpO5yLvmHKidhn6X","gdpr":{"maskEmails":true,"sampleRate":33,"maskNumbers":false,"defaultInputMode":"plain"},"recorded":true,"stackIntegrations":false,"trackerVersion":"3.4.16","status":"red"}]}
+{
+    "data": [
+        {
+            "projectId": 3296,
+            "name": "my first project",
+            "projectKey": "FC8cwpO5yLvmHKidhn6X",
+            "gdpr": { "maskEmails": true, "sampleRate": 33, "maskNumbers": false, "defaultInputMode": "plain" },
+            "recorded": true,
+            "stackIntegrations": false,
+            "trackerVersion": "3.4.16",
+            "status": "red"
+        }
+    ]
+}

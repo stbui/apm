@@ -1237,6 +1237,10 @@ metadataMessage.set(111, IOSIssueEvent);
 
 export default function ServiceEnCodeMessage(msg) {
     // console.log(msg.tp);
-    const fun = metadataMessage.get(msg.tp);
+    const mt = {
+        set_page_location: 4,
+    };
+
+    const fun = metadataMessage.get(mt[msg.tp]);
     return fun(msg);
 }

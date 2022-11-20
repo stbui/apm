@@ -1,21 +1,36 @@
 import fs from 'fs';
 import Service from './service';
 
-import { BatchWriter } from './client';
+import { BatchWriter, MessageEncoder } from './client';
 import { MStreamReader, RawMessageReader, MessageDistributor } from './server';
+import ServiceEnCodeMessage from './ServiceEnCodeMessage';
+import { Pipeline } from './pipeline';
 
-const timestamp = +new Date();
-const batchWriter = new BatchWriter(1, timestamp, 'url', (batch: any) => {
-    console.log(batch);
+// 解
+const buf = fs.readFileSync('./20221115.json');
+const messageDistributor = new MessageDistributor();
+let msg = messageDistributor.readAndDistributeMessages(buf);
 
-    const messageDistributor = new MessageDistributor();
-    let msg = messageDistributor.readAndDistributeMessages(batch);
+fs.writeFileSync('./1.json', JSON.stringify(msg, null, 2));
 
-    console.log(msg);
-});
+// 加
+//
+// [
+//     {
+//         tp: 'set_page_location',
+//         url: 'https://newh5.dgzq.com.cn:8888/m/trade/views/account/index.html',
+//         referrer: 'https://newh5.dgzq.com.cn:8888/hqm/hq/views/market/mainPanel.html',
+//         navigationStart: 1668922882079,
+//         time: 277791,
+//         _index: 389,
+//     },
+// ].forEach(msg => {
+//     const data = ServiceEnCodeMessage(msg);
 
-batchWriter.writeMessage([4, '2', '3', 1]);
-batchWriter.finaliseBatch();
+//     const i = to64Int(0);
+//     const r = Buffer.concat([i, data]);
+//     console.log(r);
+// });
 
 Service.use(ctx => {
     // ctx.body = content;
@@ -40,10 +55,9 @@ Service.use(ctx => {
 
     if (ctx.url === '/v1/web/i') {
         ctx.req.on('data', chunk => {
-            console.log(`1可用的数据块: `, chunk);
+            console.log(`1可用的数据块: `);
 
-            fs.writeFileSync('20221117.json', chunk);
-            process.exit();
+            fs.appendFileSync('20221117.json', chunk);
         });
 
         ctx.body = 'ok';

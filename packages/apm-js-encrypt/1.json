@@ -1,0 +1,294 @@
+[
+  {
+    "tp": "batch_metadata",
+    "version": 1,
+    "page_no": 0,
+    "first_index": 0,
+    "timestamp": 1668672272048,
+    "location": "https://ihealth-test.zhongan.com/claim/selectHospital?channelCode=1000000004&applyNo=CL0500000982010705&largeAmount=0",
+    "_index": 0
+  },
+  {
+    "tp": "user_id",
+    "id": "",
+    "time": 0,
+    "_index": 138
+  },
+  {
+    "tp": "set_page_location",
+    "url": "https://ihealth-test.zhongan.com/claim/selectHospital?channelCode=1000000004&applyNo=CL0500000982010705&largeAmount=0",
+    "referrer": "",
+    "navigationStart": 1668672263494,
+    "time": 0,
+    "_index": 143
+  },
+  {
+    "tp": "set_viewport_size",
+    "width": 779,
+    "height": 984,
+    "time": 0,
+    "_index": 272
+  },
+  {
+    "tp": "set_page_visibility",
+    "hidden": false,
+    "time": 0,
+    "_index": 280
+  },
+  {
+    "tp": "resource_timing",
+    "timestamp": 1668672263919,
+    "duration": 69,
+    "ttfb": 0,
+    "headerSize": 0,
+    "encodedBodySize": 0,
+    "decodedBodySize": 0,
+    "url": "https://webapi.amap.com/maps?callback=___onAPILoaded&v=2.0&key=c327d0f961be02ba5103fe40b5afa8aa&plugin=",
+    "initiator": "script",
+    "time": 0,
+    "_index": 285
+  },
+  {
+    "tp": "resource_timing",
+    "timestamp": 1668672263920,
+    "duration": 565,
+    "ttfb": 564,
+    "headerSize": 174,
+    "encodedBodySize": 741,
+    "decodedBodySize": 1525,
+    "url": "https://ihealth-test.zhongan.com/favicon.ico",
+    "initiator": "other",
+    "time": 0,
+    "_index": 411
+  },
+  {
+    "tp": "resource_timing",
+    "timestamp": 1668672263970,
+    "duration": 39,
+    "ttfb": 0,
+    "headerSize": 0,
+    "encodedBodySize": 0,
+    "decodedBodySize": 0,
+    "url": "https://isee-uat.zhongan.com/iseeBiz.gif?v=1",
+    "initiator": "xmlhttprequest",
+    "time": 0,
+    "_index": 482
+  },
+  {
+    "tp": "resource_timing",
+    "timestamp": 1668672263971,
+    "duration": 39,
+    "ttfb": 0,
+    "headerSize": 0,
+    "encodedBodySize": 0,
+    "decodedBodySize": 0,
+    "url": "https://isee-uat.zhongan.com/record/listPage",
+    "initiator": "xmlhttprequest",
+    "time": 0,
+    "_index": 557
+  },
+  {
+    "tp": "resource_timing",
+    "timestamp": 1668672263989,
+    "duration": 42,
+    "ttfb": 0,
+    "headerSize": 0,
+    "encodedBodySize": 0,
+    "decodedBodySize": 0,
+    "url": "https://static-seraph.zhongan.io/sdk_web.json",
+    "initiator": "xmlhttprequest",
+    "time": 0,
+    "_index": 632
+  },
+  {
+    "tp": "resource_timing",
+    "timestamp": 1668672264051,
+    "duration": 255,
+    "ttfb": 0,
+    "headerSize": 0,
+    "encodedBodySize": 0,
+    "decodedBodySize": 0,
+    "url": "https://restapi.amap.com/v3/log/init?platform=JS&s=rsv3&logversion=2.0&product=JsInit&key=c327d0f961be02ba5103fe40b5afa8aa&t=1668672264051&sdkversion=2.0&appname=https%253A%252F%252Fihealth-test.zhongan.com%252Fclaim%252FselectHospital&csid=11B7B030-1CD1-44CD-8DBC-9AD90041A226&resolution=1792*1120&mob=0&vt=1&dpr=2&scale=2&detect=true&jscode=f363484ddec6ef2a0cece598feef3a1f&callback=jsonp_17685_1668672264051_",
+    "initiator": "script",
+    "time": 0,
+    "_index": 708
+  },
+  {
+    "tp": "resource_timing",
+    "timestamp": 1668672264070,
+    "duration": 84,
+    "ttfb": 0,
+    "headerSize": 0,
+    "encodedBodySize": 0,
+    "decodedBodySize": 0,
+    "url": "https://webapi.amap.com/maps/ipLocation?platform=JS&s=rsv3&logversion=2.0&key=c327d0f961be02ba5103fe40b5afa8aa&sdkversion=2.0.5.10&appname=https%253A%252F%252Fihealth-test.zhongan.com%252Fclaim%252FselectHospital&csid=F96505D0-B6B3-48E5-8155-DF7E90BDFA21&jscode=f363484ddec6ef2a0cece598feef3a1f&callback=jsonp_870527_1668672264070_",
+    "initiator": "script",
+    "time": 0,
+    "_index": 1144
+  },
+  {
+    "tp": "resource_timing",
+    "timestamp": 1668672264072,
+    "duration": 2,
+    "ttfb": 1,
+    "headerSize": 0,
+    "encodedBodySize": 1235,
+    "decodedBodySize": 1235,
+    "url": "https://a.amap.com/jsapi/static/image/plugin/waite.png",
+    "initiator": "img",
+    "time": 0,
+    "_index": 1499
+  },
+  {
+    "tp": "resource_timing",
+    "timestamp": 1668672264191,
+    "duration": 45,
+    "ttfb": 0,
+    "headerSize": 0,
+    "encodedBodySize": 0,
+    "decodedBodySize": 0,
+    "url": "https://restapi.amap.com/v3/assistant/coordinate/convert?platform=JS&s=rsv3&logversion=2.0&key=c327d0f961be02ba5103fe40b5afa8aa&sdkversion=2.0.5.10&appname=https%253A%252F%252Fihealth-test.zhongan.com%252Fclaim%252FselectHospital&csid=7C35E10B-1A3F-412B-A5D8-6602329650AA&jscode=f363484ddec6ef2a0cece598feef3a1f&coordsys=gps&locations=113.301914,23.11127&callback=jsonp_88165_1668672264191_",
+    "initiator": "script",
+    "time": 0,
+    "_index": 1575
+  },
+  {
+    "tp": "resource_timing",
+    "timestamp": 1668672264240,
+    "duration": 81,
+    "ttfb": 0,
+    "headerSize": 0,
+    "encodedBodySize": 0,
+    "decodedBodySize": 0,
+    "url": "https://restapi.amap.com/v3/geocode/regeo?platform=JS&s=rsv3&logversion=2.0&key=c327d0f961be02ba5103fe40b5afa8aa&sdkversion=2.0.5.10&appname=https%253A%252F%252Fihealth-test.zhongan.com%252Fclaim%252FselectHospital&csid=8288EDB1-781F-4EF3-89D5-71C6F281E53A&jscode=f363484ddec6ef2a0cece598feef3a1f&key=c327d0f961be02ba5103fe40b5afa8aa&s=rsv3&language=zh_cn&location=113.307294,23.108632&callback=jsonp_387451_1668672264240_",
+    "initiator": "script",
+    "time": 0,
+    "_index": 1989
+  },
+  {
+    "tp": "resource_timing",
+    "timestamp": 1668672264327,
+    "duration": 306,
+    "ttfb": 304,
+    "headerSize": 215,
+    "encodedBodySize": 18077,
+    "decodedBodySize": 18077,
+    "url": "https://ihealth-test.zhongan.com/api/metis/v1/medical/1000000004/query/pageHospitalList",
+    "initiator": "fetch",
+    "time": 0,
+    "_index": 2435
+  },
+  {
+    "tp": "resource_timing",
+    "timestamp": 1668672266262,
+    "duration": 14,
+    "ttfb": 0,
+    "headerSize": 0,
+    "encodedBodySize": 0,
+    "decodedBodySize": 0,
+    "url": "https://static-seraph.zhongan.io/sdk_web.json",
+    "initiator": "xmlhttprequest",
+    "time": 0,
+    "_index": 2551
+  },
+  {
+    "tp": "resource_timing",
+    "timestamp": 1668672266263,
+    "duration": 25,
+    "ttfb": 0,
+    "headerSize": 0,
+    "encodedBodySize": 0,
+    "decodedBodySize": 0,
+    "url": "https://static-seraph.zhongan.io/sdk_web.json",
+    "initiator": "xmlhttprequest",
+    "time": 0,
+    "_index": 2627
+  },
+  {
+    "tp": "resource_timing",
+    "timestamp": 1668672272040,
+    "duration": 3,
+    "ttfb": 0,
+    "headerSize": 0,
+    "encodedBodySize": 0,
+    "decodedBodySize": 0,
+    "url": "https://static.openreplay.com/latest/openreplay.js",
+    "initiator": "script",
+    "time": 0,
+    "_index": 2703
+  },
+  {
+    "tp": "performance_track",
+    "frames": -1,
+    "ticks": -1,
+    "totalJSHeapSize": 21712801,
+    "usedJSHeapSize": 13319809,
+    "time": 0,
+    "_index": 2776
+  },
+  {
+    "tp": "set_viewport_scroll",
+    "x": 0,
+    "y": 0,
+    "time": 0,
+    "_index": 2790
+  },
+  {
+    "tp": "create_document",
+    "time": 0,
+    "_index": 2796
+  },
+  {
+    "tp": "set_node_attribute_url_based",
+    "id": 0,
+    "name": "style",
+    "value": "font-size: 28px;",
+    "baseURL": "https://ihealth-test.zhongan.com/claim/selectHospital?channelCode=1000000004&applyNo=CL0500000982010705&largeAmount=0",
+    "time": 0,
+    "_index": 2800
+  },
+  {
+    "tp": "create_element_node",
+    "id": 1,
+    "parentID": 0,
+    "index": 0,
+    "tag": "HEAD",
+    "svg": false,
+    "time": 0,
+    "_index": 2946
+  },
+  {
+    "tp": "create_element_node",
+    "id": 2,
+    "parentID": 1,
+    "index": 0,
+    "tag": "STYLE",
+    "svg": false,
+    "time": 0,
+    "_index": 2959
+  },
+  {
+    "tp": "set_node_attribute",
+    "id": 2,
+    "name": "type",
+    "value": "text/css",
+    "time": 0,
+    "_index": 2973
+  },
+  {
+    "tp": "set_node_attribute",
+    "id": 2,
+    "name": "id",
+    "value": "AMap_Dynamic_style",
+    "time": 0,
+    "_index": 2992
+  },
+  {
+    "tp": "create_text_node",
+    "id": 3,
+    "parentID": 2,
+    "index": 0,
+    "time": 0,
+    "_index": 3019
+  }
+]

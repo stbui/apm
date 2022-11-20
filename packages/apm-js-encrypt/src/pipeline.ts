@@ -4,15 +4,15 @@ import ServiceReadMessage from './ServiceReadMessage';
 import PrimitiveReader from './PrimitiveReader';
 import ServiceEnCodeMessage from './ServiceEnCodeMessage';
 
-function to64Int(value) {
+export function to64Int(value) {
     const buffer = Buffer.alloc(8);
-    let offset = 0;
+    let offset = buffer.length - 1;
 
     while (value >= 255) {
-        buffer[offset++] = value % 255 | 0;
+        buffer[offset--] = value % 255 | 0;
         value = Math.floor(value / 255);
     }
-    buffer[offset++] = value;
+    buffer[offset--] = value;
 
     return buffer;
 }
@@ -88,6 +88,11 @@ function IsIOSType(id): boolean {
     );
 }
 
+// const pipeline = new Pipeline(buf, './test.json');
+// let msgs = [];
+// pipeline.unpack(msg => msgs.push(msg));
+// console.log(msgs);
+
 export class Pipeline {
     public message: Array<any> = [];
 
@@ -134,13 +139,18 @@ export class Pipeline {
 
         const data = ServiceEnCodeMessage(msg);
 
-        const buf = Buffer.from(data);
-        const dataBlock = this.resetBlock(buf, msg.index);
+        const dataBlock = this.insertFragment(data, 0);
         this.write(dataBlock);
     }
 
-    resetBlock(data, index): Buffer {
-        const serialNubmerBuffer = to64Int(index);
+    /**
+     *
+     * @param data
+     * @param index 数据类型
+     * @returns
+     */
+    insertFragment(data, type: number): Buffer {
+        const serialNubmerBuffer = to64Int(type);
         return Buffer.concat([serialNubmerBuffer, data]);
     }
 
