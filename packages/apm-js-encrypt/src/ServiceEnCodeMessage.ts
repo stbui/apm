@@ -19,6 +19,27 @@ function batchMeta({ pageNo, firstIndex, timestamp }) {
     return w.flush();
 }
 
+function batchMetadata({ version, pageNo, firstIndex, timestamp, location }) {
+    const w = new writer(51 + len(location));
+    w.uint(81);
+    w.uint(version);
+    w.uint(pageNo);
+    w.uint(firstIndex);
+    w.int(timestamp);
+    w.string(location);
+    w.checkpoint();
+    return w.flush();
+}
+
+function partitionedMessage({ partNo, partTotal }) {
+    const w = new writer(21);
+    w.uint(82);
+    w.uint(partNo);
+    w.uint(partTotal);
+    w.checkpoint();
+    return w.flush();
+}
+
 function timestamp({ timestamp }) {
     const w = new writer(11);
     w.uint(0);
@@ -29,7 +50,7 @@ function timestamp({ timestamp }) {
 
 function SessionStart(msg) {
     const w = new writer(
-        151 +
+        161 +
             len(msg.trackerVersion) +
             len(msg.revId) +
             len(msg.userUUID) +
@@ -40,7 +61,8 @@ function SessionStart(msg) {
             len(msg.userBrowserVersion) +
             len(msg.userDevice) +
             len(msg.userDeviceType) +
-            len(msg.userCountry)
+            len(msg.userCountry)+
+            len(msg.userId)
     );
     w.uint(1);
 
@@ -59,6 +81,7 @@ function SessionStart(msg) {
     w.uint(msg.userDeviceMemorySize);
     w.uint(msg.userDeviceHeapSize);
     w.string(msg.userCountry);
+    w.string(msg.userId);
 
     w.checkpoint();
     return w.flush();
@@ -1148,6 +1171,8 @@ function IOSIssueEvent(msg) {
 
 const metadataMessage = new Map();
 metadataMessage.set(80, batchMeta);
+metadataMessage.set(81, batchMetadata);
+metadataMessage.set(82, partitionedMessage);
 metadataMessage.set(0, timestamp);
 metadataMessage.set(1, SessionStart);
 metadataMessage.set(2, SessionDisconnect);
@@ -1236,9 +1261,64 @@ metadataMessage.set(110, IOSPerformanceAggregated);
 metadataMessage.set(111, IOSIssueEvent);
 
 export default function ServiceEnCodeMessage(msg) {
-    // console.log(msg.tp);
+    // console.log('++++++++++++++++',msg.tp);
     const mt = {
         set_page_location: 4,
+        batch_metadata: 81,
+        partitioned_message: 82,
+        timestamp: 0,
+        set_viewport_size: 5,
+        set_viewport_scroll: 6,
+        create_document: 7,
+        create_element_node: 8,
+        create_text_node: 9,
+        move_node: 10,
+        remove_node: 11,
+        set_node_attribute: 12,
+        remove_node_attribute: 13,
+        set_node_data: 14,
+        set_node_scroll: 16,
+        set_input_target: 17,
+        set_input_value: 18,
+        set_input_checked: 19,
+        mouse_move: 20,
+        console_log: 22,
+        page_load_timing: 23,
+        page_render_timing: 24,
+        JSException: 25,
+        RawCustomEvent: 27,
+        user_id: 28,
+        user_anonymous_id: 29,
+        metadata: 30,
+        CSSInsertRule: 37,
+        CSSDeleteRule: 38,
+        fetch: 39,
+        profiler: 40,
+        OTable: 41,
+        StateAction: 42,
+        Redux: 44,
+        Vuex: 45,
+        MobX: 46,
+        NgRx: 47,
+        GraphQL: 48,
+        performance_track: 49,
+        resource_timing: 53,
+        ConnectionInformation: 54,
+        set_page_visibility: 55,
+        LongTask: 59,
+        set_node_attribute_url_based: 60,
+        set_css_data_url_based: 61,
+        TechnicalInfo: 63,
+        CustomIssue: 64,
+        CSSInsertRuleURLBased: 67,
+        MouseClick: 69,
+        create_i_frame_document: 70,
+        AdoptedSSReplaceURLBased: 71,
+        AdoptedSSInsertRuleURLBased: 73,
+        AdoptedSSDeleteRule: 75,
+        AdoptedSSAddOwner: 76,
+        AdoptedSSRemoveOwner: 77,
+        Zustand: 79,
     };
 
     const fun = metadataMessage.get(mt[msg.tp]);

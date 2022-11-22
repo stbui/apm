@@ -337,7 +337,7 @@ export default class RawMessageReader extends PrimitiveReader {
 
             case 23: {
                 return {
-                    tp: 'PageLoadTiming',
+                    tp: 'page_load_timing',
                     requestStart: this.readUint(),
                     responseStart: this.readUint(),
                     responseEnd: this.readUint(),
@@ -352,7 +352,7 @@ export default class RawMessageReader extends PrimitiveReader {
 
             case 24: {
                 return {
-                    tp: 'PageRenderTiming',
+                    tp: 'page_render_timing',
                     speedIndex: this.readUint(),
                     visuallyComplete: this.readUint(),
                     timeToInteractive: this.readUint(),
