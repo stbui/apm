@@ -58,13 +58,13 @@ export default class MFileReader extends RawMessageReader {
       return null
     }
 
-    if (rMsg.tp === "timestamp") {
-      if (!this.startTime) {
-        this.startTime = rMsg.timestamp
-      }
-      this.currentTime = rMsg.timestamp - this.startTime
-      return this.next()
-    } 
+    // if (rMsg.tp === "timestamp") {
+    //   if (!this.startTime) {
+    //     this.startTime = rMsg.timestamp
+    //   }
+    //   this.currentTime = rMsg.timestamp - this.startTime
+    //   return this.next()
+    // } 
 
     const msg = Object.assign(rMsg, {
       time: this.currentTime,

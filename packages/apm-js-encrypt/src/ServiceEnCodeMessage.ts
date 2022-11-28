@@ -61,7 +61,7 @@ function SessionStart(msg) {
             len(msg.userBrowserVersion) +
             len(msg.userDevice) +
             len(msg.userDeviceType) +
-            len(msg.userCountry)+
+            len(msg.userCountry) +
             len(msg.userId)
     );
     w.uint(1);
@@ -154,7 +154,7 @@ function CreateElementNode(msg) {
     w.uint(8);
 
     w.uint(msg.id);
-    w.uint(msg.parentId);
+    w.uint(msg.parentID);
     w.uint(msg.index);
     w.string(msg.tag);
     w.boolean(msg.svg);
@@ -168,7 +168,7 @@ function CreateTextNode(msg) {
     w.uint(9);
 
     w.uint(msg.id);
-    w.uint(msg.parentId);
+    w.uint(msg.parentID);
     w.uint(msg.index);
 
     w.checkpoint();
@@ -180,7 +180,7 @@ function MoveNode(msg) {
     w.uint(10);
 
     w.uint(msg.id);
-    w.uint(msg.parentId);
+    w.uint(msg.parentID);
     w.uint(msg.index);
 
     w.checkpoint();
@@ -759,6 +759,16 @@ function PerformanceTrackAggr(msg) {
     return w.flush();
 }
 
+function RawSetNodeFocus(msg) {
+    const w = new writer(11);
+    w.uint(58);
+
+    w.uint(msg.id);
+
+    w.checkpoint();
+    return w.flush();
+}
+
 function LongTask(msg) {
     const w = new writer(71 + len(msg.containerSrc) + len(msg.containerId) + len(msg.containerName));
     w.uint(59);
@@ -1229,6 +1239,7 @@ metadataMessage.set(53, ResourceTiming);
 metadataMessage.set(54, ConnectionInformation);
 metadataMessage.set(55, SetPageVisibility);
 metadataMessage.set(56, PerformanceTrackAggr);
+metadataMessage.set(58, RawSetNodeFocus);
 metadataMessage.set(59, LongTask);
 metadataMessage.set(60, SetNodeAttributeURLBased);
 metadataMessage.set(61, SetCSSDataURLBased);
@@ -1261,7 +1272,7 @@ metadataMessage.set(110, IOSPerformanceAggregated);
 metadataMessage.set(111, IOSIssueEvent);
 
 export default function ServiceEnCodeMessage(msg) {
-    // console.log('++++++++++++++++',msg.tp);
+    console.log('++++++++++++++++', msg.tp);
     const mt = {
         set_page_location: 4,
         batch_metadata: 81,
@@ -1311,7 +1322,6 @@ export default function ServiceEnCodeMessage(msg) {
         TechnicalInfo: 63,
         CustomIssue: 64,
         CSSInsertRuleURLBased: 67,
-        MouseClick: 69,
         create_i_frame_document: 70,
         AdoptedSSReplaceURLBased: 71,
         AdoptedSSInsertRuleURLBased: 73,
@@ -1319,6 +1329,8 @@ export default function ServiceEnCodeMessage(msg) {
         AdoptedSSAddOwner: 76,
         AdoptedSSRemoveOwner: 77,
         Zustand: 79,
+        set_node_focus: 58,
+        mouse_click: 69,
     };
 
     const fun = metadataMessage.get(mt[msg.tp]);

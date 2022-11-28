@@ -83,7 +83,7 @@ export interface CreateDocument {
 export interface CreateElementNode {
     tp: 'create_element_node';
     id: number;
-    parentId: number;
+    parentID: number;
     index: number;
     tag: string;
     svg: boolean;
@@ -92,14 +92,14 @@ export interface CreateElementNode {
 export interface CreateTextNode {
     tp: 'create_text_node';
     id: number;
-    parentId: number;
+    parentID: number;
     index: number;
 }
 
 export interface MoveNode {
     tp: 'move_node';
     id: number;
-    parentId: number;
+    parentID: number;
     index: number;
 }
 
@@ -424,7 +424,7 @@ export default function (r) {
             return {
                 tp: 'create_element_node',
                 id: r.readUint(),
-                parentId: r.readUint(),
+                parentID: r.readUint(),
                 index: r.readUint(),
                 tag: r.readString(),
                 svg: r.readBoolean(),
@@ -434,7 +434,7 @@ export default function (r) {
             return {
                 tp: 'create_text_node',
                 id: r.readUint(),
-                parentId: r.readUint(),
+                parentID: r.readUint(),
                 index: r.readUint(),
             };
 
@@ -442,7 +442,7 @@ export default function (r) {
             return {
                 tp: 10,
                 id: r.readUint(),
-                parentId: r.readUint(),
+                parentID: r.readUint(),
                 index: r.readUint(),
             };
 

@@ -1,1 +1,30 @@
-{"data":{"id":4339,"userId":4339,"tenantId":2566,"email":"w431106@gmail.com","role":"owner","name":"demo","verifiedEmail":true,"generatedPassword":false,"superAdmin":true,"admin":false,"member":false,"appearance":{"runs":false,"tests":false,"dashboard":{"cpu":true,"fps":false,"avgCpu":true,"avgFps":false,"errors":true,"crashes":true,"overview":true,"sessions":true,"topMetrics":true,"callsErrors":false,"errorsTrend":true,"pageMetrics":true,"performance":true,"timeToRender":false,"userActivity":false,"avgFirstPaint":false,"countSessions":true,"errorsPerType":true,"slowestImages":true,"speedLocation":true,"slowestDomains":true,"avgPageLoadTime":true,"avgTillFirstBit":false,"avgTimeToRender":true,"avgVisitedPages":false,"callsErrors_4xx":false,"callsErrors_5xx":false,"avgImageLoadTime":true,"busiestTimeOfDay":true,"errorsPerDomains":true,"missingResources":true,"resourcesByParty":true,"sessionsFeedback":false,"slowestResources":true,"avgUsedJsHeapSize":true,"domainsErrors_4xx":false,"domainsErrors_5xx":false,"memoryConsumption":true,"pagesDomBuildtime":false,"pagesResponseTime":true,"avgRequestLoadTime":true,"avgSessionDuration":false,"sessionsPerBrowser":false,"applicationActivity":true,"sessionsFrustration":false,"avgPagesDomBuildtime":true,"avgPagesResponseTime":false,"avgTimeToInteractive":true,"resourcesCountByType":true,"resourcesLoadingTime":true,"avgDomContentLoadStart":true,"avgFirstContentfulPixel":false,"resourceTypeVsResponseEnd":true,"impactedSessionsByJsErrors":true,"impactedSessionsBySlowPages":true,"resourcesVsVisuallyComplete":true,"pagesResponseTimeDistribution":true}},"apiKey":"qn5BgBcdo1AllevTF4gb","origin":null,"roleId":9775,"roleName":"Owner","permissions":["SESSION_REPLAY","DEV_TOOLS","ERRORS","METRICS","ASSIST_LIVE","ASSIST_CALL"],"hasPassword":true,"limits":{"teamMember":{"limit":99,"remaining":98,"count":1},"projects":{"limit":99,"remaining":98,"count":1},"metadata":[{"projectId":3296,"name":"my first project","projectKey":"FC8cwpO5yLvmHKidhn6X","limit":10,"remaining":10,"count":0}]},"old":false,"trialEnded":false,"hasActivePlan":false,"current":{"edition":"saas","type":"trial","teamMember":-1,"recordedSessions":50000,"dataRetention":30,"trial":14,"projects":-1},"count":{"teamMember":1,"recordedSessions":3,"projects":1},"remaining":{"teamMember":-1,"recordedSessions":49997,"trial":11,"projects":-1},"smtp":true,"saml2":false,"iceServers":"stun:stun.l.google.com:19302|turn:turn.openreplay.com:443?transport=udp"}}
+{
+    "data": {
+        "userId": 4339,
+        "tenantId": 2566,
+        "email": "w431106@gmail.com",
+        "role": "owner",
+        "name": "demo",
+        "verifiedEmail": true,
+        "superAdmin": true,
+        "admin": false,
+        "member": false,
+        "origin": null,
+        "roleId": 9775,
+        "roleName": "Owner",
+        "permissions": ["SESSION_REPLAY", "DEV_TOOLS", "METRICS", "ASSIST_LIVE", "ASSIST_CALL"],
+        "allProjects": true,
+        "hasPassword": true,
+        "isEnterprise": false,
+        "plan": { "type": "free", "remainingSessions": 1000, "billingSetup": false, "remainingTrialDays": 0 },
+        "hasActivePlan": false,
+        "edition": "ee",
+        "expirationDate": -1,
+        "versionNumber": "v1.9.0-saas",
+        "tenantName": "ch",
+        "apiKey": "wdD7B78dUgxovdYYUV85",
+        "optOut": false,
+        "smtp": true,
+        "saml2": false
+    }
+}

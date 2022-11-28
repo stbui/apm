@@ -1,5 +1,6 @@
 import BatchWriter from './BatchWriter';
 import MessageEncoder from './MessageEncoder.gen.js';
+import PrimitiveEncoder from './PrimitiveEncoder';
 
 // const timestamp = +new Date();
 
@@ -27,4 +28,4 @@ import MessageEncoder from './MessageEncoder.gen.js';
 // batchWriter.writeMessage([22, '9', '9']);
 // batchWriter.finaliseBatch();
 
-export { BatchWriter, MessageEncoder };
+export { BatchWriter, MessageEncoder, PrimitiveEncoder };

@@ -27,11 +27,39 @@ export default class RawMessageReader extends PrimitiveReader {
                 if (timestamp === null) {
                     return resetPointer();
                 }
+                console.log(timestamp);
                 return {
                     tp: 'timestamp',
                     timestamp,
                 };
             }
+
+            case 1:
+                return {
+                    tp: 'session_start',
+                    timestamp: this.readUint(),
+                    projectId: this.readUint(),
+                    trackerVersion: this.readString(),
+                    revId: this.readString(),
+                    userUUID: this.readString(),
+                    userAgent: this.readString(),
+                    userOS: this.readString(),
+                    userOSVersion: this.readString(),
+                    userBrowser: this.readString(),
+                    userBrowserVersion: this.readString(),
+                    userDevice: this.readString(),
+                    userDeviceType: this.readString(),
+                    userDeviceMemorySize: this.readUint(),
+                    userDeviceHeapSize: this.readUint(),
+                    userCountry: this.readString(),
+                    UserID: this.readString(),
+                };
+
+            case 3:
+                return {
+                    tp: 'session_end',
+                    timestamp: this.readUint(),
+                };
 
             case 4: {
                 const url = this.readString();
@@ -359,12 +387,122 @@ export default class RawMessageReader extends PrimitiveReader {
                 };
             }
 
+            case 25:
+                return {
+                    tp: 'JSException',
+                    name: this.readString(),
+                    message: this.readString(),
+                    payload: this.readString(),
+                };
+
+            case 26:
+                return {
+                    tp: 'IntegrationEvent',
+                    timestamp: this.readUint(),
+                    source: this.readString(),
+                    name: this.readString(),
+                    message: this.readString(),
+                    payload: this.readString(),
+                };
+
+            case 27:
+                return { tp: 'RawCustomEvent', name: this.readString(), payload: this.readString() };
+
             case 28: {
                 return {
                     tp: 'user_id',
                     id: this.readString(),
                 };
             }
+
+            case 29:
+                return { tp: 'UserAnonymousID', id: this.readString() };
+
+            case 30:
+                return {
+                    tp: 'Metadata',
+                    Key: this.readString(),
+                    value: this.readString(),
+                };
+
+            case 31:
+                return {
+                    tp: 'PageEvent',
+                    messageId: this.readUint(),
+                    timestamp: this.readUint(),
+                    url: this.readString(),
+                    referrer: this.readString(),
+                    loaded: this.readString(),
+                    requestStart: this.readUint(),
+                    responseStart: this.readUint(),
+                    responseEnd: this.readUint(),
+                    domContentLoadedEventStart: this.readUint(),
+                    domContentLoadedEventEnd: this.readUint(),
+                    loadEventStart: this.readUint(),
+                    loadEventEnd: this.readUint(),
+                    firstPaint: this.readUint(),
+                    firstContentfulPaint: this.readUint(),
+                    speedIndex: this.readUint(),
+                    visuallyComplete: this.readUint(),
+                    timeToInteractive: this.readUint(),
+                };
+
+            case 32:
+                return {
+                    tp: 'InputEvent',
+                    messageId: this.readUint(),
+                    timestamp: this.readUint(),
+                    value: this.readString(),
+                    valueMasked: this.readBoolean(),
+                    label: this.readString(),
+                };
+
+            case 33:
+                return {
+                    tp: 'ClickEvent',
+                    messageId: this.readUint(),
+                    timestamp: this.readUint(),
+                    hesitationTime: this.readUint(),
+                    label: this.readString(),
+                    selector: this.readString(),
+                };
+
+            case 34:
+                return {
+                    tp: 'ErrorEvent',
+                    messageId: this.readUint(),
+                    timestamp: this.readUint(),
+                    source: this.readString(),
+                    name: this.readString(),
+                    message: this.readString(),
+                    payload: this.readString(),
+                };
+
+            case 35:
+                return {
+                    tp: 'ResourceEvent',
+                    messageId: this.readUint(),
+                    timestamp: this.readUint(),
+                    duration: this.readUint(),
+                    ttfb: this.readUint(),
+                    headerSize: this.readUint(),
+                    encodedBodySize: this.readUint(),
+                    decodedBodySize: this.readUint(),
+                    url: this.readString(),
+                    type: this.readString(),
+                    success: this.readBoolean(),
+                    method: this.readString(),
+                    status: this.readUint(),
+                };
+
+            case 36:
+                return {
+                    tp: 'CustomEvent',
+                    messageId: this.readUint(),
+                    timestamp: this.readUint(),
+                    name: this.readString(),
+                    payload: this.readString(),
+                };
 
             case 37: {
                 const id = this.readUint();
@@ -653,6 +791,13 @@ export default class RawMessageReader extends PrimitiveReader {
                 };
             }
 
+            case 58: {
+                return {
+                    tp: 'set_node_focus',
+                    id: this.readInt(),
+                };
+            }
+
             case 59: {
                 const timestamp = this.readUint();
                 if (timestamp === null) {
@@ -740,6 +885,45 @@ export default class RawMessageReader extends PrimitiveReader {
                     baseURL,
                 };
             }
+
+            case 61:
+                return {
+                    tp: 61,
+                    id: this.readUint(),
+                    data: this.readString(),
+                    baseURL: this.readString(),
+                };
+
+            case 62:
+                return {
+                    tp: 62,
+                    messageId: this.readUint(),
+                    timestamp: this.readUint(),
+                    type: this.readString(),
+                    contextString: this.readString(),
+                    context: this.readString(),
+                    payload: this.readString(),
+                };
+
+            case 63:
+                return {
+                    tp: 63,
+                    type: this.readString(),
+                    value: this.readString(),
+                };
+
+            case 64:
+                return {
+                    tp: 64,
+                    name: this.readString(),
+                    payload: this.readString(),
+                };
+
+            case 66:
+                return {
+                    tp: 66,
+                    url: this.readString(),
+                };
 
             case 67: {
                 const id = this.readUint();
