@@ -22,7 +22,9 @@
     "bugs": {
         "url": "https://github.com/stbui/apm/issues"
     },
-    "dependencies": {},
+    "dependencies": {
+        "sqlite3":"5.1.2"
+    },
     "devDependencies": {},
     "publishConfig": {
         "access": "public"

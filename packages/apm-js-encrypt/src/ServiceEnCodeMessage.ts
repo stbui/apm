@@ -1314,7 +1314,7 @@ export default function ServiceEnCodeMessage(msg) {
         GraphQL: 48,
         performance_track: 49,
         resource_timing: 53,
-        ConnectionInformation: 54,
+        connection_information: 54,
         set_page_visibility: 55,
         LongTask: 59,
         set_node_attribute_url_based: 60,
