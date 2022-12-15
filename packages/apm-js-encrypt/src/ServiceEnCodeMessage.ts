@@ -1272,7 +1272,7 @@ metadataMessage.set(105, IOSNetworkCall);
 // metadataMessage.set(111, IOSIssueEvent);
 
 export default function ServiceEnCodeMessage(msg) {
-    console.log('++++++++++++++++', msg.tp);
+    // console.log('++++++++++++++++', msg.tp);
     const mt = {
         set_page_location: 4,
         batch_metadata: 81,

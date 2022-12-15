@@ -27,7 +27,7 @@ export default class RawMessageReader extends PrimitiveReader {
                 if (timestamp === null) {
                     return resetPointer();
                 }
-                console.log(timestamp);
+                // console.log(timestamp);
                 return {
                     tp: 'timestamp',
                     timestamp,

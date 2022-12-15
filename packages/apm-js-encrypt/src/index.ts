@@ -5,6 +5,7 @@ import { BatchWriter, MessageEncoder, PrimitiveEncoder } from './client';
 import { MStreamReader, RawMessageReader, MessageDistributor, PrimitiveReader } from './server';
 import ServiceEnCodeMessage from './ServiceEnCodeMessage';
 import { Pipeline, to64Int } from './pipeline';
+import { SessionControl } from './database';
 
 function encode(msg) {
     const data = ServiceEnCodeMessage(msg);
@@ -41,8 +42,69 @@ function receive(buf: Buffer) {
     messageEncoder(msg);
 }
 
-// const buf = fs.readFileSync('./20221122.json');
-// receive(buf);
+class ReceiveBuffer {
+    ignoreMessage = ['batch_metadata', 'user_id', 'resource_timing', 'page_load_timing', 'page_render_timing'];
+
+    projectId: string;
+    sessionId: number;
+
+    private _storePath: string;
+    private storePath: string;
+
+    constructor() {}
+
+    // set storePath({ projectId, sessionId }: any) {
+    //     this._storePath = `./src/api/${projectId}/sessions/${sessionId}/dom.mobs.json`;
+    // }
+
+    // get storePath() {
+    //     return this._storePath;
+    // }
+
+    insert(buf: Buffer) {
+        const messageDistributor = new MessageDistributor();
+        let msg = messageDistributor.readAndDistributeMessages(buf);
+
+        this.messageEncoder(msg);
+    }
+
+    messageEncoder(data: any[]) {
+        data.forEach(msg => {
+            if ('batch_metadata'.includes(msg.tp)) {
+                encode({ tp: 'timestamp', timestamp: msg.timestamp });
+                return;
+            }
+
+            // 不需要
+            if (this.ignoreMessage.includes(msg.tp)) {
+                return;
+            }
+
+            const data = ServiceEnCodeMessage(msg);
+
+            const i = to64Int(0);
+            const r = Buffer.concat([i, data]);
+
+            fs.appendFileSync(this.storePath, r, {
+                encoding: 'binary',
+            });
+        });
+    }
+
+    start(projectId, sessionId) {
+        this.projectId = projectId;
+        this.sessionId = sessionId;
+        this.storePath = `./src/api/${projectId}/sessions/${sessionId}/dom.mobs.json`;
+        const dir = `./src/api/${projectId}/sessions/${sessionId}`;
+
+        if (fs.existsSync(dir)) {
+            // 是否要删除之前的数据文件
+            fs.rmSync(this.storePath);
+        }
+
+        fs.mkdirSync(dir, { recursive: true });
+    }
+}
 
 function bodyParse(ctx) {
     let chunks;
@@ -54,65 +116,16 @@ function bodyParse(ctx) {
     return chunks;
 }
 
+const sessionControl = new SessionControl();
+const receiveBuffer = new ReceiveBuffer();
+
 Service.use(ctx => {
     // ctx.body = content;
 
     if (ctx.url === '/3296/sessions/6062739610258400') {
-        const a = {
-            data: {
-                sessionId: '6062739610258400',
-                projectId: 3296,
-                startTs: 1669687939843,
-                duration: 309061,
-                userId: '',
-                userAnonymousId: null,
-                userUuid: '6a564991-8a20-4c1c-955f-96aa6da4dc84',
-                userAgent:
-                    'Mozilla/5.0 (Macintosh; Intel Mac OS X 12_5_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.128 Safari/537.36',
-                userOs: 'Mac OS X',
-                userBrowser: 'Chrome',
-                userDevice: '',
-                userDeviceType: 'desktop',
-                userCountry: 'HK',
-                pagesCount: 5,
-                eventsCount: 54,
-                errorsCount: 0,
-                revId: null,
-                userOsVersion: '12.5.1',
-                userBrowserVersion: '89.0.4389',
-                userDeviceHeapSize: 4294705152,
-                userDeviceMemorySize: 8192,
-                trackerVersion: '4.1.5',
-                watchdogsScore: 0,
-                platform: 'web',
-                issueScore: 1668429134,
-                issueTypes: '{dead_click,memory,cpu}',
-                isSnippet: false,
-                rehydrationId: null,
-                utmSource: null,
-                utmMedium: null,
-                utmCampaign: null,
-                referrer: null,
-                baseReferrer: null,
-                fileKey: null,
-                projectKey: 'FC8cwpO5yLvmHKidhn6X',
-                favorite: false,
-                viewed: true,
-                events: [],
-                stackEvents: [],
-                errors: [],
-                userEvents: [],
-                domURL: ['http://127.0.0.1:8888/3296/sessions/6062739610258400/dom.mobs'],
-                mobsUrl: ['http://127.0.0.1:8888/3296/sessions/6062739610258400/20221122'],
-                devtoolsURL: ['http://127.0.0.1:8888/3296/sessions/6062739610258400/devtools.mob'],
-                resources: [],
-                notes: [],
-                metadata: {},
-                issues: [],
-                live: false,
-                inDB: true,
-            },
-        };
+        sessionControl.getSessionById('6062739610258400').then(res => {
+            console.log(res);
+        });
     }
 
     if (ctx.url === '/v1/web/start') {
@@ -133,17 +146,24 @@ Service.use(ctx => {
                 userAgent: ctx.req.headers['user-agent'],
             };
 
-            console.log(sessionStart);
+            const startTimestamp = 1669628375223;
+            sessionControl
+                .start({
+                    timestamp: startTimestamp,
+                    userUUID: body.userUUID,
+                    userID: body.userID,
+                })
+                .then(session => {
+                    // receiveBuffer.start(session.projectID, session.sessionID);
+                });
         });
-
-        fs.rmSync('./src/api/3296/sessions/6062739610258400/dom.mobs.json');
     }
 
     if (ctx.url === '/v1/web/i') {
         ctx.req.on('data', chunk => {
             console.log(`可用的数据块: ${chunk.length}`);
 
-            receive(chunk);
+            receiveBuffer.insert(chunk);
         });
 
         ctx.body = 'ok';
@@ -154,6 +174,7 @@ Service.use(ctx => {
         let apiDir = process.cwd() + '/src/api' + ctx.url + '.json';
         const content = fs.readFileSync(apiDir);
         ctx.body = content;
+        console.log('[]', apiDir);
     } catch (e) {
         ctx.body = 'no ' + ctx.url;
     }
