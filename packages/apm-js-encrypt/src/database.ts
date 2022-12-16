@@ -1,16 +1,39 @@
+import path from 'path';
 import sqlite3 from 'sqlite3';
 
 const db = new sqlite3.Database('data.db', function (err) {
     if (err) throw err;
-    console.log('connect database successfully');
+    console.log('[]链接数据库成功！');
 });
 
-// db.close(function (err) {
-//     if (err) {
-//         return console.log(err.message)
-//     }
-//     console.log('close database connection')
-// })
+export class database {
+    private db: sqlite3.Database;
+
+    filename: string = 'data.db';
+
+    constructor() {
+        if (!this.db) {
+            this.db = new sqlite3.Database('data.db', function (err) {
+                if (err) throw err;
+                console.log('[]链接数据库成功！');
+            });
+        }
+    }
+
+    select() {}
+
+    findOne() {}
+
+    find() {}
+
+    add() {}
+
+    update() {}
+
+    delete() {}
+
+    query() {}
+}
 
 export class Sessions {
     constructor() {
@@ -66,14 +89,14 @@ export class Sessions {
                     if (err !== null) {
                         throw err;
                     }
-                    console.log('create table sessions');
+                    console.log('[创建表]: sessions');
                 }
             );
         });
     }
 
-    insert(obj) {
-        console.log('[session][insert]');
+    insert(sessionID: number, s) {
+        console.log('[session][insert]', sessionID);
 
         const sql = `INSERT INTO sessions 
         (
@@ -97,50 +120,50 @@ export class Sessions {
             user_device_heap_size,
 			user_id
         ) VALUES (
-            $session_id, 
-            $project_id, 
-            $start_ts,
-			$user_uuid, 
-            $user_device, 
-            $user_device_type, 
-            $user_country,
-			$user_os, 
-            $user_os_version,
-			$rev_id, 
-            $tracker_version, 
+            $sessionID, 
+            $ProjectID, 
+            $Timestamp,
+			$UserUUID, 
+            $UserDevice, 
+            $UserDeviceType, 
+            $UserCountry,
+			$UserOS, 
+            $UserOSVersion,
+			$RevID, 
+            $TrackerVersion, 
             $issue_score,
-			$platform,
-			$user_agent, 
-            $user_browser, 
-            $user_browser_version, 
-            $user_device_memory_size, 
-            $user_device_heap_size,
-			$user_id
+			$Platform,
+			$UserAgent, 
+            $UserBrowser, 
+            $UserBrowserVersion, 
+            $UserDeviceMemorySize, 
+            $UserDeviceHeapSize,
+			$UserID
         );`;
 
         return new Promise((resolve, reject) => {
             db.run(
                 sql,
                 {
-                    $session_id: obj.sessionID,
-                    $project_id: obj.projectID,
-                    $start_ts: obj.startTimestamp,
-                    $user_uuid: obj.userUUID,
-                    $user_device: '1',
-                    $user_device_type: '1',
-                    $user_country: '1',
-                    $user_os: '1',
-                    $user_os_version: '1',
-                    $rev_id: '1',
-                    $tracker_version: '1',
-                    $issue_score: '1',
-                    $platform: '1',
-                    $user_agent: '1',
-                    $user_browser: '1',
-                    $user_browser_version: '1',
-                    $user_device_memory_size: '1',
-                    $user_device_heap_size: '1',
-                    $user_id: obj.userID,
+                    $sessionID: sessionID,
+                    $ProjectID: s.ProjectID,
+                    $Timestamp: s.Timestamp,
+                    $UserUUID: s.UserUUID,
+                    $UserDevice: s.UserDevice,
+                    $UserDeviceType: s.UserDeviceType,
+                    $UserCountry: s.UserCountry,
+                    $UserOS: s.UserOS,
+                    $UserOSVersion: s.UserOSVersion,
+                    $RevID: s.RevID,
+                    $TrackerVersion: s.TrackerVersion,
+                    $issue_score: s.Timestamp / 1000,
+                    $Platform: s.Platform,
+                    $UserAgent: s.UserAgent,
+                    $UserBrowser: s.UserBrowser,
+                    $UserBrowserVersion: s.UserBrowserVersion,
+                    $UserDeviceMemorySize: s.UserDeviceMemorySize,
+                    $UserDeviceHeapSize: s.UserDeviceHeapSize,
+                    $UserID: s.UserID,
                 },
                 function (err) {
                     if (err !== null) {
@@ -154,17 +177,60 @@ export class Sessions {
     }
 
     query(sessionId: number) {
-        console.log('[session][query]', sessionId);
+        console.log('[query][session]', sessionId);
 
         const sql = 'SELECT * FROM sessions WHERE session_id = $session_id';
-        return new Promise(resolve => {
+        return new Promise((resolve, reject) => {
             db.all(
                 sql,
                 {
                     $session_id: sessionId,
                 },
                 (err, rows) => {
-                    resolve(rows);
+                    if (err !== null) {
+                        return reject(err);
+                    }
+
+                    const newRows = rows.map(row => {
+                        const temp = {};
+                        Object.keys(row).map(kv => (temp[toHump(kv)] = row[kv]));
+                        return temp;
+                    });
+
+                    resolve(newRows);
+                }
+            );
+        });
+    }
+
+    findOne(sessionId: number): Promise<any> {
+        return this.query(sessionId).then((rows: any) => {
+            if (rows.length) {
+                return rows[0];
+            }
+
+            return {};
+        });
+    }
+
+    queryAll(project_id) {
+        console.log('[session][query]', project_id);
+
+        const sql = 'SELECT * FROM sessions WHERE project_id = $project_id';
+        return new Promise(resolve => {
+            db.all(
+                sql,
+                {
+                    $project_id: project_id,
+                },
+                (err, rows) => {
+                    const newRows = rows.map(row => {
+                        const temp = {};
+                        Object.keys(row).map(kv => (temp[toHump(kv)] = row[kv]));
+                        return temp;
+                    });
+
+                    resolve(newRows);
                 }
             );
         });
@@ -209,52 +275,38 @@ export class SessionControl {
         // return Math.floor(Math.random() * new Date().getTime());
     }
 
-    async start({ timestamp, userUUID, userID }) {
-        // 如果已经存在的，只更新数据
-        this.sessionId = this.generateId();
-        const projectID = '3296';
+    async start(data) {}
 
-        try {
-            await this.sessions.insert({
-                sessionID: this.sessionId,
-                startTimestamp: 0,
-                delay: 0,
-                projectID: projectID,
-                userID: '1',
-                userUUID: 'userUUID',
-            });
-        } catch (e) {
-            // 存在
-        }
+    insertWebSessionStart(sessionID: number, s) {
+        this.sessions.insert(sessionID, {
+            Platform: 'web',
+            Timestamp: s.Timestamp,
+            ProjectID: s.ProjectID,
+            TrackerVersion: s.TrackerVersion,
+            RevID: s.RevID,
+            UserUUID: s.UserUUID,
+            UserOS: s.UserOS,
+            UserOSVersion: s.UserOSVersion,
+            UserDevice: s.UserDevice,
+            UserCountry: s.UserCountry,
+            UserAgent: s.UserAgent,
+            UserBrowser: s.UserBrowser,
+            UserBrowserVersion: s.UserBrowserVersion,
+            UserDeviceType: s.UserDeviceType,
+            UserDeviceMemorySize: s.UserDeviceMemorySize,
+            UserDeviceHeapSize: s.UserDeviceHeapSize,
+            UserID: s.UserID,
+        });
+    }
 
-        // 1nkms8z8pa2.kyh2v1yz.13nuC7Gc9o7ZHLoA38ZzVT1jmQbzzDD1BiNWAT4pSPit
-        // const token = { projectId: 1, sessionId: 1, userId: 1 };
-
-        return {
-            // timestamp: 0,
-            // 下次开始时间
-            // startTimestamp: timestamp,
-            // delay: 0,
-            // token: '2571aahe205.12e.lb0pwuya.7452Ag1X5rk2KFPbF8NBqjAeeER9CkkPXNA9ytiREQbH',
-            // userUUID: 'userUUID',
-            // sessionID: this.sessionId,
-            // projectID: projectID,
-            // beaconSizeLimit: 2900000,
-
-            timestamp: 0,
-            delay: 0,
-            token: '1nkms8z8pa2.kyh2v1yz.13nuC7Gc9o7ZHLoA38ZzVT1jmQbzzDD1BiNWAT4pSPit',
-            userUUID: 'e23a1491-21ab-438f-b5c2-838ddf1797d8',
-            sessionID: '6062739610258400',
-            beaconSizeLimit: 10000000,
-        };
+    searchSessions(projectId, userId) {
+        return this.sessions.queryAll(projectId);
     }
 
     async getSessionById(sessionId) {
-        const _sessions = await this.sessions.query(sessionId);
-        const session = _sessions[0];
+        const session = await this.sessions.findOne(sessionId);
 
-        const url = `http://127.0.0.1:8888/${session.project_id}/sessions/${session.session_id}`;
+        const url = `http://127.0.0.1:8888/${session.projectId}/sessions/${session.sessionId}`;
 
         const domURL = [`${url}/dom.mobs`];
         const mobsUrl = [];
@@ -263,31 +315,31 @@ export class SessionControl {
 
         return {
             data: {
-                sessionId: session.session_id,
-                projectId: session.project_id,
-                startTs: session.start_ts,
+                sessionId: session.sessionId,
+                projectId: session.projectId,
+                startTs: session.startTs,
                 duration: 3000,
-                userId: session.user_id,
+                userId: session.userId,
                 userAnonymousId: null,
-                userUuid: session.user_uuid,
-                userAgent: session.user_agent,
-                userOs: session.user_agent,
-                userBrowser: session.user_browser,
-                userDevice: session.user_device,
-                userDeviceType: session.user_device_type,
-                userCountry: session.user_country,
+                userUuid: session.userUuid,
+                userAgent: session.userAgent,
+                userOs: session.userOs,
+                userBrowser: session.userBrowser,
+                userDevice: session.userDevice,
+                userDeviceType: session.userDeviceType,
+                userCountry: session.userCountry,
                 pagesCount: 5,
                 eventsCount: 54,
                 errorsCount: 0,
-                revId: null,
-                userOsVersion: session.user_os_version,
-                userBrowserVersion: '89.0.4389',
-                userDeviceHeapSize: 4294705152,
-                userDeviceMemorySize: 8192,
+                revId: session.revId,
+                userOsVersion: session.userOsVersion,
+                userBrowserVersion: session.userBrowserVersion,
+                userDeviceHeapSize: session.userDeviceHeapSize,
+                userDeviceMemorySize: session.userDeviceMemorySize,
                 trackerVersion: '4.1.5',
                 watchdogsScore: 0,
-                platform: 'web',
-                issueScore: 1668429134,
+                platform: session.platform,
+                issueScore: session.issueScore,
                 issueTypes: '{dead_click,memory,cpu}',
                 isSnippet: false,
                 rehydrationId: null,
@@ -325,39 +377,100 @@ export class ProjectsService {
             db.run(
                 `CREATE TABLE IF NOT EXISTS projects 
                 (
-                    project_id                integer generated BY DEFAULT AS IDENTITY PRIMARY KEY,
-                    project_key               varchar(20)                 NOT NULL UNIQUE DEFAULT generate_api_key(20),
-                    name                      text                        NOT NULL,
-                    active                    boolean                     NOT NULL,
-                    sample_rate               smallint                    NOT NULL        DEFAULT 100 CHECK (sample_rate >= 0 AND sample_rate <= 100),
-                    created_at                timestamp without time zone NOT NULL        DEFAULT (now() at time zone 'utc'),
-                    deleted_at                timestamp without time zone NULL            DEFAULT NULL,
-                    max_session_duration      integer                     NOT NULL        DEFAULT 7200000,
-                    metadata_1                text                                        DEFAULT NULL,
-                    metadata_2                text                                        DEFAULT NULL,
-                    metadata_3                text                                        DEFAULT NULL,
-                    metadata_4                text                                        DEFAULT NULL,
-                    metadata_5                text                                        DEFAULT NULL,
-                    metadata_6                text                                        DEFAULT NULL,
-                    metadata_7                text                                        DEFAULT NULL,
-                    metadata_8                text                                        DEFAULT NULL,
-                    metadata_9                text                                        DEFAULT NULL,
-                    metadata_10               text                                        DEFAULT NULL,
-                    save_request_payloads     boolean                     NOT NULL        DEFAULT FALSE,
-                    gdpr                      jsonb                       NOT NULL        DEFAULT '{
-                      "maskEmails": true,
-                      "sampleRate": 33,
-                      "maskNumbers": false,
-                      "defaultInputMode": "plain"
-                    }'::jsonb,
-                    first_recorded_session_at timestamp without time zone NULL            DEFAULT NULL,
-                    sessions_last_check_at    timestamp without time zone NULL            DEFAULT NULL
+                    "project_id" integer PRIMARY KEY AUTOINCREMENT,
+                    "project_key" varchar(20) NOT NULL,
+                    "name" text NOT NULL,
+                    "active" boolean NOT NULL,
+                    "sample_rate" text,
+                    "created_at" text,
+                    "deleted_at" text DEFAULT NULL,
+                    "max_session_duration" integer NOT NULL DEFAULT 7200000,
+                    "metadata_1" text DEFAULT NULL,
+                    "metadata_2" text DEFAULT NULL,
+                    "metadata_3" text DEFAULT NULL,
+                    "metadata_4" text DEFAULT NULL,
+                    "metadata_5" text DEFAULT NULL,
+                    "metadata_6" text DEFAULT NULL,
+                    "metadata_7" text DEFAULT NULL,
+                    "metadata_8" text DEFAULT NULL,
+                    "metadata_9" text DEFAULT NULL,
+                    "metadata_10" text DEFAULT NULL,
+                    "save_request_payloads" boolean NOT NULL DEFAULT FALSE,
+                    "gdpr" text,
+                    "first_recorded_session_at" text DEFAULT NULL,
+                    "sessions_last_check_at" text DEFAULT NULL
                 );`,
                 err => {
                     if (err !== null) {
                         throw err;
                     }
-                    console.log('create table sessions');
+                    console.log('[创建表]: projects');
+                }
+            );
+        });
+    }
+
+    query(project_key: number) {
+        console.log('[query][projects]', project_key);
+
+        const sql = 'SELECT * FROM projects WHERE project_key = $project_key';
+        return new Promise((resolve, reject) => {
+            db.all(
+                sql,
+                {
+                    $project_key: project_key,
+                },
+                (err, rows) => {
+                    if (err !== null) {
+                        return reject(err);
+                    }
+
+                    resolve(covertHump(rows));
+                }
+            );
+        });
+    }
+
+    findOne(project_key: number): Promise<{}> {
+        return this.query(project_key).then((rows: any) => {
+            if (rows.length) {
+                return rows[0];
+            }
+
+            return {};
+        });
+    }
+
+    insert(p: {
+        project_key: string;
+        name: string;
+        active: boolean;
+        max_session_duration: number;
+        save_request_payloads: boolean;
+    }): Promise<any> {
+        const sql = `INSERT INTO projects 
+        (
+            project_key,name,active,max_session_duration,save_request_payloads
+        ) VALUES (
+            $project_key,$name,$active,$max_session_duration,$save_request_payloads
+        );`;
+
+        return new Promise((resolve, reject) => {
+            db.run(
+                sql,
+                {
+                    $project_key: p.project_key,
+                    $name: p.name,
+                    $active: p.active,
+                    $max_session_duration: p.max_session_duration,
+                    $save_request_payloads: p.save_request_payloads,
+                },
+                function (err) {
+                    if (err !== null) {
+                        return reject(err);
+                    }
+
+                    resolve(this.lastID);
                 }
             );
         });
@@ -365,14 +478,39 @@ export class ProjectsService {
 }
 
 export class ProjectsControl {
+    projectsService: ProjectsService = new ProjectsService();
+
     constructor() {}
+
+    create() {
+        this.projectsService.insert({
+            project_key: 'FC8cwpO5yLvmHKidhn6X',
+            name: 'stbui',
+            active: true,
+            max_session_duration: 1000,
+            save_request_payloads: false,
+        });
+    }
+
+    findOne(projectKey: string) {
+        return {
+            projectId: 3296,
+            name: 'stbui',
+            projectKey: 'FC8cwpO5yLvmHKidhn6X',
+            saveRequestPayloads: false,
+            gdpr: { maskEmails: true, sampleRate: 33, maskNumbers: false, defaultInputMode: 'plain' },
+            stackIntegrations: false,
+            recorded: true,
+            status: 'red',
+        };
+    }
 
     toJSON() {
         return {
             data: [
                 {
                     projectId: 3296,
-                    name: 'my first project',
+                    name: 'stbui',
                     projectKey: 'FC8cwpO5yLvmHKidhn6X',
                     saveRequestPayloads: false,
                     gdpr: { maskEmails: true, sampleRate: 33, maskNumbers: false, defaultInputMode: 'plain' },
@@ -396,10 +534,10 @@ export class UserService {
                     email         text                        NOT NULL UNIQUE,
                     role          user_role                   NOT NULL DEFAULT 'member',
                     name          text                        NOT NULL,
-                    created_at    timestamp without time zone NOT NULL default (now() at time zone 'utc'),
-                    deleted_at    timestamp without time zone NULL     DEFAULT NULL,
+                    created_at    text NOT NULL default (now() at time zone 'utc'),
+                    deleted_at    text NULL     DEFAULT NULL,
                     api_key       text UNIQUE                          default generate_api_key(20) not null,
-                    jwt_iat       timestamp without time zone NULL     DEFAULT NULL,
+                    jwt_iat       text NULL     DEFAULT NULL,
                     data          jsonb                       NOT NULL DEFAULT '{}'::jsonb,
                     weekly_report boolean                     NOT NULL DEFAULT TRUE
                 );`,
@@ -466,4 +604,36 @@ export class AccountControl {
             },
         };
     }
+}
+
+export function toHump(name) {
+    return name.replace(/\_(\w)/g, function (all, letter) {
+        return letter.toUpperCase();
+    });
+}
+
+export function covertHump(rows: any[]): any[] {
+    return rows.map(row => {
+        const temp = {};
+        Object.keys(row).map(kv => (temp[toHump(kv)] = row[kv]));
+        return temp;
+    });
+}
+
+export class Config {
+    public _storePath: string;
+
+    constructor() {}
+
+    set storePath(value: string) {
+        this._storePath = path.join(process.cwd(), value);
+    }
+
+    get storePath() {
+        return this._storePath;
+    }
+}
+
+export class UserAgent {
+    constructor() {}
 }

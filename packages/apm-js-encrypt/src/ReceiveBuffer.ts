@@ -1,11 +1,7 @@
 import fs from 'fs';
-
-import { BatchWriter, MessageEncoder, PrimitiveEncoder } from './client';
-import { MStreamReader, RawMessageReader, MessageDistributor, PrimitiveReader } from './server';
+import { MessageDistributor } from './server';
 import ServiceEnCodeMessage from './ServiceEnCodeMessage';
-import { Pipeline, to64Int } from './pipeline';
-
-import { Sessions } from './database';
+import { to64Int } from './pipeline';
 
 export class ReceiveBuffer {
     private ignoreMessage = ['batch_metadata', 'user_id', 'resource_timing', 'page_load_timing', 'page_render_timing'];
@@ -15,9 +11,7 @@ export class ReceiveBuffer {
 
     private storePath: string;
 
-    private sessions: Sessions = new Sessions();
-
-    constructor() {}
+    constructor(protected config) {}
 
     private encode(msg) {
         const data = ServiceEnCodeMessage(msg);
@@ -25,7 +19,7 @@ export class ReceiveBuffer {
         const i = to64Int(0);
         const r = Buffer.concat([i, data]);
 
-        // console.log('写入数据到文件', this.storePath);
+        console.log('写入数据到文件', this.storePath);
         fs.appendFileSync(this.storePath, r, { encoding: 'binary' });
     }
 
@@ -33,13 +27,15 @@ export class ReceiveBuffer {
         data.forEach(msg => {
             // 文件开头，包含了时间
             if ('batch_metadata'.includes(msg.tp)) {
-                this.sessions.update(this.sessionId, { startTimestamp: msg.timestamp });
                 this.encode({ tp: 'timestamp', timestamp: msg.timestamp });
                 return;
             }
 
             // 不需要
             if (this.ignoreMessage.includes(msg.tp)) {
+                // 更新到数据库
+                // if(resource_timing) {}
+
                 return;
             }
 
@@ -57,8 +53,8 @@ export class ReceiveBuffer {
     start(projectId, sessionId) {
         this.projectId = projectId;
         this.sessionId = sessionId;
-        this.storePath = `./src/api/${projectId}/sessions/${sessionId}/dom.mobs.json`;
-        const dir = `./src/api/${projectId}/sessions/${sessionId}`;
+        this.storePath = `${this.config.storePath}/${projectId}/sessions/${sessionId}/dom.mobs.json`;
+        const dir = `${this.config.storePath}/${projectId}/sessions/${sessionId}`;
 
         if (fs.existsSync(this.storePath)) {
             // 是否要删除之前的数据文件

@@ -3,8 +3,9 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import { readFileSync } from 'fs';
 
-import { AccountControl, ProjectsControl, SessionControl } from './database';
+import { AccountControl, ProjectsControl, SessionControl, Config } from './database';
 import { ReceiveBuffer } from './ReceiveBuffer';
+import { UserAgent } from './UserAgent';
 
 const app = express();
 app.use(cors());
@@ -12,11 +13,13 @@ app.use(bodyParser.json());
 
 const port = 8888;
 
+const config = new Config();
+config.storePath = './src/api';
+
 // =============================================================
 app.get('/:projectId/sessions/:sessionId', async (req, res) => {
     const sessionControl = new SessionControl();
-    // console.log(req.params.sessionId);
-    const json = await sessionControl.getSessionById(req.params.sessionId, req);
+    const json = await sessionControl.getSessionById(req.params.sessionId);
     res.send(json);
 });
 
@@ -25,8 +28,9 @@ app.get('/:projectId/sessions/:sessionId/notes', (req, res) => {
 });
 
 app.get('/:projectId/sessions/:sessionId/dom.mobs', (req, res) => {
-    const path = `./src/api/${req.params.projectId}/sessions/${req.params.sessionId}/dom.mobs.json`;
+    const path = `${config.storePath}/${req.params.projectId}/sessions/${req.params.sessionId}/dom.mobs.json`;
     const buff = readFileSync(path);
+    console.log('[]: 读取数据文件', path);
     res.send(buff);
 });
 
@@ -38,7 +42,7 @@ app.get('/:projectId/sessions/:sessionId/dom.mobs', (req, res) => {
 
 app.get('/account', (req, res) => {
     const accountControl = new AccountControl();
-    res.send(accountControl.toJSON());
+    res.send(accountControl);
 });
 app.get('/projects', (req, res) => {
     const projectsControl = new ProjectsControl();
@@ -100,84 +104,14 @@ app.get('/:projectId/saved_search', (req, res) => {
 app.get('/:projectId/metadata', (req, res) => {
     res.send({ data: [] });
 });
-app.post('/:projectId/sessions/search', (req, res) => {
+app.post('/:projectId/sessions/search', async (req, res) => {
+    const sessionControl = new SessionControl();
+    const sessions = await sessionControl.searchSessions(req.params.projectId, 1);
+
     res.send({
         data: {
-            total: 3,
-            sessions: [
-                {
-                    projectId: 3296,
-                    sessionId: '6062791290173460',
-                    userUuid: 'cbe7af94-60a7-46ee-94a2-15e7232fb289',
-                    userId: null,
-                    userAgent:
-                        'Mozilla/5.0 (Macintosh; Intel Mac OS X 12_0_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.128 Safari/537.36',
-                    userOs: 'Mac OS X',
-                    userBrowser: 'Chrome',
-                    userDevice: '',
-                    userDeviceType: 'desktop',
-                    userCountry: 'CN',
-                    startTs: 1642510851772,
-                    duration: 108114,
-                    eventsCount: 1,
-                    pagesCount: 1,
-                    errorsCount: 0,
-                    userAnonymousId: null,
-                    platform: 'web',
-                    issueScore: 1642510851,
-                    issueTypes: [],
-                    favorite: false,
-                    viewed: true,
-                },
-                {
-                    projectId: 3296,
-                    sessionId: '6062770913379269',
-                    userUuid: 'cbe7af94-60a7-46ee-94a2-15e7232fb289',
-                    userId: null,
-                    userAgent:
-                        'Mozilla/5.0 (Macintosh; Intel Mac OS X 12_0_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.128 Safari/537.36',
-                    userOs: 'Mac OS X',
-                    userBrowser: 'Chrome',
-                    userDevice: '',
-                    userDeviceType: 'desktop',
-                    userCountry: 'CN',
-                    startTs: 1642510540951,
-                    duration: 47538,
-                    eventsCount: 1,
-                    pagesCount: 1,
-                    errorsCount: 0,
-                    userAnonymousId: null,
-                    platform: 'web',
-                    issueScore: 1642510540,
-                    issueTypes: [],
-                    favorite: false,
-                    viewed: true,
-                },
-                {
-                    projectId: 3296,
-                    sessionId: '6062739610258400',
-                    userUuid: 'cbe7af94-60a7-46ee-94a2-15e7232fb289',
-                    userId: null,
-                    userAgent:
-                        'Mozilla/5.0 (Macintosh; Intel Mac OS X 12_0_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.128 Safari/537.36',
-                    userOs: 'Mac OS X',
-                    userBrowser: 'Chrome',
-                    userDevice: '',
-                    userDeviceType: 'desktop',
-                    userCountry: 'TW',
-                    startTs: 1642510064170,
-                    duration: 173766,
-                    eventsCount: 1,
-                    pagesCount: 1,
-                    errorsCount: 0,
-                    userAnonymousId: null,
-                    platform: 'web',
-                    issueScore: 1642510064,
-                    issueTypes: [],
-                    favorite: false,
-                    viewed: true,
-                },
-            ],
+            total: 10,
+            sessions: sessions,
         },
     });
 });
@@ -185,20 +119,81 @@ app.post('/:projectId/sessions/search', (req, res) => {
 
 // =============================================================
 
-const receiveBuffer = new ReceiveBuffer();
-app.post('/v1/web/start', async (req, res) => {
+const receiveBuffer = new ReceiveBuffer(config);
+
+app.post('/v1/web/start', (req, res) => {
     const sessionControl = new SessionControl();
-    const session = await sessionControl.start(req.body);
 
-    receiveBuffer.start(3296, session.sessionID);
+    let tokenData: any = {};
+    const userUUID = req.body.userUUID;
+    const reset = req.body.reset;
+    // 当前时间
+    const timestamp = req.body.timestamp;
 
-    res.send(session);
+    const projectsControl = new ProjectsControl();
+    const p = projectsControl.findOne(req.body.projectKey);
+    const projectID = p.projectId;
+
+    // 如果token不存在 或者 是reset
+    if (!req.body.token || reset) {
+        const now = new Date().getTime();
+        // 生成id, 时间戳+64数据
+        const sessionId = now;
+        tokenData = {
+            id: sessionId,
+            // 客户端与服务端时间延迟
+            delay: now - timestamp,
+            // MaxSessionDuration
+            expTime: new Date().getTime() * 100000,
+        };
+
+        const ua = req.headers['user-agent'];
+        const uu = new UserAgent();
+        const userAgent = uu.parse(ua);
+
+        const sessionStart = {
+            Timestamp: timestamp || now,
+            ProjectID: projectID,
+            TrackerVersion: req.body.trackerVersion,
+            RevID: req.body.revID,
+            UserUUID: userUUID,
+            UserAgent: ua,
+            UserOS: userAgent.os,
+            UserOSVersion: userAgent.userOsVersion,
+            UserBrowser: userAgent.browser,
+            UserBrowserVersion: uu.getBrowserVersion(ua),
+            UserDevice: '',
+            UserDeviceType: '',
+            UserCountry: 'TW',
+            UserDeviceMemorySize: req.body.deviceMemory,
+            UserDeviceHeapSize: req.body.jsHeapSizeLimit,
+            UserID: req.body.UserID,
+        };
+        // save
+        sessionControl.insertWebSessionStart(sessionId, sessionStart);
+        receiveBuffer.start(projectID, sessionId);
+    } else {
+        tokenData = JSON.parse(req.body.token);
+        receiveBuffer.start(projectID, tokenData.id);
+    }
+
+    // 加密token数据
+    const token = JSON.stringify(tokenData);
+    res.send({
+        timestamp: 0,
+        delay: tokenData.delay,
+        token: token,
+        startTimestamp: parseInt(tokenData.id),
+        userUUID: userUUID,
+        sessionID: String(tokenData.id),
+        projectID: projectID,
+        beaconSizeLimit: 10000000,
+    });
 });
 app.post('/v1/web/i', (req, res) => {
-    const userInfo = {
-        sessionId: '',
-        projectId: '',
-        userId: '',
+    // Authorization Bearer
+    const sessionData = {
+        ID: '',
     };
 
     req.on('data', chunk => {
